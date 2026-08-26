@@ -129,7 +129,7 @@ export const taxonomyColumns: ColumnDef<TaxonomyTableFeatures, TaxonRecord>[] =
               <button
                 type="button"
                 aria-label={row.getIsExpanded() ? "Collapse" : "Expand"}
-                className="text-muted-foreground hover:text-foreground mr-1 flex size-4 items-center justify-center"
+                className="mr-1 flex size-4 items-center justify-center text-muted-foreground hover:text-foreground"
                 onClick={(event) => {
                   event.stopPropagation();
                   row.toggleExpanded();
@@ -151,7 +151,7 @@ export const taxonomyColumns: ColumnDef<TaxonomyTableFeatures, TaxonRecord>[] =
             )}
             <Link
               href={`/taxonomy/${String(record.taxon_id)}`}
-              className="text-primary truncate hover:underline dark:text-blue-400"
+              className="truncate text-primary hover:underline dark:text-blue-400"
               onClick={(event) => {
                 event.stopPropagation();
               }}

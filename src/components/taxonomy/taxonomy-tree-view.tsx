@@ -70,20 +70,20 @@ export function TreeTableView({
           }}
           placeholder="Search by taxonomy name..."
           aria-label="Search by taxonomy name"
-          className="border-border bg-background focus-visible:ring-ring/50 w-full max-w-96 rounded-lg border px-3 py-1.5 text-xs outline-none focus-visible:ring-2"
+          className="w-full max-w-96 rounded-lg border border-border bg-background px-3 py-1.5 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         />
         {hasSelection && (
           <button
             type="button"
             aria-label="Clear selected"
             onClick={clearSelection}
-            className="text-muted-foreground hover:bg-muted hover:text-foreground flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs transition-colors"
+            className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <X className="size-3" /> Clear selected
           </button>
         )}
       </div>
-      <div className="border-border relative min-h-0 flex-1 overflow-hidden rounded-lg border">
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-lg border border-border">
         <div
           className={clsx(
             "h-full overflow-auto",
@@ -99,7 +99,7 @@ export function TreeTableView({
             <TableBody>
               {rows.length === 0 ? (
                 <TableRow className="flex w-full">
-                  <TableCell className="border-border text-muted-foreground w-full border-t py-8 text-center">
+                  <TableCell className="w-full border-t border-border py-8 text-center text-muted-foreground">
                     No results
                   </TableCell>
                 </TableRow>
@@ -119,7 +119,7 @@ export function TreeTableView({
                       {table.getVisibleLeafColumns().map((column) => (
                         <td
                           key={column.id}
-                          className="border-border border-r"
+                          className="border-r border-border"
                           style={{
                             width: column.getSize() || undefined,
                             flex: column.id === "taxon_name" ? 1 : undefined,
@@ -151,12 +151,12 @@ function TreeTableHeader({
       {table.getHeaderGroups().map((group) => (
         <TableRow
           key={group.id}
-          className="border-border bg-muted flex border-y"
+          className="flex border-y border-border bg-muted"
         >
           {group.headers.map((header) => (
             <TableHead
               key={header.id}
-              className="border-border flex items-center border-r px-2 py-0"
+              className="flex items-center border-r border-border px-2 py-0"
               style={{
                 width: header.getSize() || undefined,
                 height: 32,
@@ -219,7 +219,7 @@ function TreeBodyRow({
               : undefined
           }
           className={clsx(
-            "border-border flex items-center overflow-hidden border-r px-2",
+            "flex items-center overflow-hidden border-r border-border px-2",
             cell.column.id === "__select__" && "cursor-pointer",
           )}
           style={{

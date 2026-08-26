@@ -99,9 +99,7 @@ function toggleSelected(
 ): RowSelectionState {
   const next = { ...selected };
   if (rowId in next) {
-    // RowSelectionState permits selected keys only.
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete next[rowId];
+    Reflect.deleteProperty(next, rowId);
   } else {
     next[rowId] = true;
   }

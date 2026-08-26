@@ -1,0 +1,26 @@
+e2e/fixtures/overrides/interactions.ts
+  s_79f4acba331f83::t_0b07d8d3f1603c 63-64
+  s_79f4acba331f83::t_b098d0d7565957 60
+  s_79f4acba331f83::t_26373d44d64d4b 3-9
+e2e/tests/organisms/interactions.spec.ts
+  s_79f4acba331f83::t_310b0e59b54141 129
+  s_79f4acba331f83::t_bd28c3211a4e5e 111-113
+pnpm-lock.yaml
+  s_79f4acba331f83::t_d1d38275709700 106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "8fa2c993aac86a0066223d09ba18fdf802a23e21",
+  "prompts": {},
+  "sessions": {
+    "s_79f4acba331f83": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc16186baffe2XvrzlikQA6jYi",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

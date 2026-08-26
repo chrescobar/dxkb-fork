@@ -92,6 +92,22 @@ describe("fetchDbStatistics", () => {
     }
   });
 
+  it("applies a request timeout while preserving a caller abort signal", async () => {
+    const callerSignal = new AbortController().signal;
+    const timeoutSignal = new AbortController().signal;
+    const timeoutSpy = vi
+      .spyOn(AbortSignal, "timeout")
+      .mockReturnValue(timeoutSignal);
+    const anySpy = vi.spyOn(AbortSignal, "any").mockReturnValue(callerSignal);
+    mockAllCores({}, 1);
+
+    await fetchDbStatistics({ signal: callerSignal });
+
+    expect(timeoutSpy).toHaveBeenCalledTimes(dbStatisticsDefinitions.length);
+    expect(timeoutSpy).toHaveBeenCalledWith(10_000);
+    expect(anySpy).toHaveBeenCalledWith([callerSignal, timeoutSignal]);
+  });
+
   it("logs the original upstream error message verbatim", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
     server.use(

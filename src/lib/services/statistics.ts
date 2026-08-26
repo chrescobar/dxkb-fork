@@ -39,6 +39,7 @@ interface SolrCountResponse {
 }
 
 const oneHourSeconds = 3600;
+const requestTimeoutMs = 10_000;
 
 function buildCountUrl(baseUrl: string, definition: StatisticDefinition): string {
   const trimmedBase = baseUrl.replace(/\/+$/, "");
@@ -55,7 +56,9 @@ async function fetchCount(
   const response = await fetch(url, {
     method: "GET",
     headers: { Accept: "application/solr+json" },
-    signal,
+    signal: signal
+      ? AbortSignal.any([signal, AbortSignal.timeout(requestTimeoutMs)])
+      : AbortSignal.timeout(requestTimeoutMs),
     next: { revalidate: oneHourSeconds },
   });
 

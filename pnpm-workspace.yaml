@@ -17,9 +17,9 @@ overrides:
   webpack-bundle-analyzer@3.9.0>ejs: 3.1.10
   request@2.88.2>form-data: 2.5.6
   compression-webpack-plugin@3.1.0>serialize-javascript: 7.1.0
-  auspice@2.73.0>css-loader: 7.1.4
-  auspice@2.73.0>dompurify: 3.4.13
-  auspice@2.73.0>webpack-dev-middleware: 5.3.4
+  auspice@2.73.2>css-loader: 7.1.4
+  auspice@2.73.2>dompurify: 3.4.13
+  auspice@2.73.2>webpack-dev-middleware: 5.3.4
   react-tooltip@4.5.1>uuid: 11.1.1
   phyloxml@1.0.0>sax: 1.6.1
 allowBuilds:
@@ -36,6 +36,17 @@ allowBuilds:
   unrs-resolver: true
 patchedDependencies:
   archaeopteryx@2.3.2: patches/archaeopteryx@2.3.2.patch
-  auspice@2.73.0: patches/auspice@2.73.0.patch
+  auspice@2.73.2: patches/auspice@2.73.2.patch
   molstar: patches/molstar.patch
   phyloxml@1.0.0: patches/phyloxml@1.0.0.patch
+minimumReleaseAgeExclude:
+  - '@next/env@16.3.3'
+  - '@next/swc-darwin-arm64@16.3.3'
+  - '@next/swc-darwin-x64@16.3.3'
+  - '@next/swc-linux-arm64-gnu@16.3.3'
+  - '@next/swc-linux-arm64-musl@16.3.3'
+  - '@next/swc-linux-x64-gnu@16.3.3'
+  - '@next/swc-linux-x64-musl@16.3.3'
+  - '@next/swc-win32-arm64-msvc@16.3.3'
+  - '@next/swc-win32-x64-msvc@16.3.3'
+  - next@16.3.3

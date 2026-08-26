@@ -48,7 +48,7 @@ export async function TaxonomySummary({
             {metric.label}
           </p>
           <p
-            className="text-lg leading-tight font-bold tracking-tight break-words"
+            className="text-lg leading-tight font-bold tracking-tight wrap-break-word"
             title={metric.value}
           >
             {metric.value}

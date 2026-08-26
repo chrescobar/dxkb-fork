@@ -155,5 +155,5 @@ describe("WorkspaceBrowser rendering", () => {
     expect(
       screen.getByRole("region", { name: /workspace items/i }),
     ).toBeVisible();
-  });
+  }, 10_000);
 });

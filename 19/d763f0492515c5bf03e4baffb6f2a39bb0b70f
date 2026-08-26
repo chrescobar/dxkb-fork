@@ -1,0 +1,19 @@
+src/components/taxonomy/taxonomy-tree.tsx
+  s_c59697936361de::t_251e6139579513 102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "19d763f0492515c5bf03e4baffb6f2a39bb0b70f",
+  "prompts": {},
+  "sessions": {
+    "s_c59697936361de": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc141c5edffe3U0TAW4bzs38gO",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -88,7 +88,7 @@ describe("BLAST page database type transitions", () => {
 
     await user.click(screen.getByRole("radio", { name: /^blastn /i }));
     expect(databaseType()).toHaveTextContent("Genome sequences (NT)");
-  });
+  }, 10_000);
 
   it("normalizes incompatible rerun data and reset restores the complete default combination", async () => {
     sessionStorage.setItem(

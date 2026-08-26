@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect, useRef } from "react";
+import type { RowSelectionState } from "@tanstack/react-table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
 import { GenomeShell } from "@/components/genome/genome-shell";
@@ -91,8 +92,8 @@ interface TabsRendererProps {
   urlQ: string;
   tabsForType: Record<string, string>;
   tablist: string[];
-  rowSelection: Record<string, boolean>;
-  setRowSelection: (sel: Record<string, boolean>) => void;
+  rowSelection: RowSelectionState;
+  setRowSelection: (selection: RowSelectionState) => void;
   pageIndex: number;
   setPageIndex: (page: number) => void;
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
@@ -310,7 +311,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const tablist = Object.keys(tabsForType);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const [totalItems, setTotalItems] = useState(0);

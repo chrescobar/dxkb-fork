@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { parse } from "csv-parse/sync";
 import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  type SortingState,
+  columnVisibilityFeature,
+  createSortedRowModel,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_text,
+  tableFeatures,
+  useTable,
   type ColumnDef,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -38,10 +40,23 @@ export function CsvViewer({ filePath, fileName, fileSize }: CsvViewerProps) {
 
 const rowHeight = 33;
 
+const csvTableFeatures = tableFeatures({
+  rowSortingFeature,
+  columnVisibilityFeature,
+  sortedRowModel: createSortedRowModel(),
+  sortFns: {
+    text: sortFn_text,
+    alphanumeric: sortFn_alphanumeric,
+  },
+});
+
+type CsvTableFeatures = typeof csvTableFeatures;
+type CsvRow = Record<string, string>;
+
 interface CsvData {
-  records: Record<string, string>[];
+  records: CsvRow[];
   columnNames: string[];
-  columns: ColumnDef<Record<string, string>, string>[];
+  columns: ColumnDef<CsvTableFeatures, CsvRow>[];
 }
 
 const emptyCsvData: CsvData = {
@@ -61,7 +76,6 @@ function InteractiveCsvViewer({
   const [data, setData] = useState<CsvData>(emptyCsvData);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sorting, setSorting] = useState<SortingState>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -91,11 +105,12 @@ function InteractiveCsvViewer({
           });
           const columnNames = records[0] ? Object.keys(records[0]) : [];
           const columns = columnNames.map(
-            (column): ColumnDef<Record<string, string>, string> => ({
+            (column): ColumnDef<CsvTableFeatures, CsvRow> => ({
               accessorFn: (row) => row[column] ?? "",
               id: column,
               header: column,
               cell: (info) => info.getValue(),
+              sortFn: "auto",
             }),
           );
           setData({ records, columnNames, columns });
@@ -125,13 +140,10 @@ function InteractiveCsvViewer({
 
   const { records, columnNames, columns } = data;
 
-  const table = useReactTable({
+  const table = useTable({
+    features: csvTableFeatures,
     data: records,
     columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
   });
 
   const { rows } = table.getRowModel();
@@ -191,13 +203,11 @@ function InteractiveCsvViewer({
                   >
                     <button
                       type="button"
+                      aria-label={`Sort by ${header.column.id}`}
                       className="w-full cursor-pointer px-3 py-2 text-left select-none"
                       onClick={header.column.getToggleSortingHandler()}
                     >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      <table.FlexRender header={header} />
                       {header.column.getIsSorted() === "asc"
                         ? " ↑"
                         : header.column.getIsSorted() === "desc"
@@ -234,10 +244,7 @@ function InteractiveCsvViewer({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-3 py-1.5 whitespace-nowrap">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      <table.FlexRender cell={cell} />
                     </td>
                   ))}
                 </tr>

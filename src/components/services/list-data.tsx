@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/shared/data-table";
-import { SortingState, RowSelectionState } from "@tanstack/react-table";
+import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { noop } from "@/lib/utils";
 import { getIdField } from "@/constants/resources";
@@ -25,8 +25,8 @@ interface ListDataProps {
   q: string;
   resource: string; // 'genome', 'gene', etc.
   onSelectionChange?: (ids: string[]) => void;
-  rowSelection?: Record<string, boolean>;
-  onRowSelectionChange?: (selection: Record<string, boolean>) => void;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: (selection: RowSelectionState) => void;
   pageIndex?: number;
   onPageChange?: (page: number) => void;
   selectedIds?: string[];
@@ -335,7 +335,7 @@ function useListData({
       ? `Error: ${(metaError ?? dataError)?.message ?? "Unknown error"} — Query: ${JSON.stringify(q)}`
       : undefined;
 
-  const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
+  const handleRowSelectionChange = (newSelection: RowSelectionState) => {
     // Apply new selection from table. Avoiding aggressive ignores here so
     // header "select all" and explicit deselect actions work reliably.
     setRowSelection(newSelection);
@@ -345,9 +345,7 @@ function useListData({
       setIsAllPagesSelected(false);
     }
 
-    const selectedIds = Object.keys(newSelection).filter(
-      (id) => newSelection[id],
-    );
+    const selectedIds = Object.keys(newSelection);
 
     // Pre-populate the detail panel's query cache from already-fetched page data so
     // GenomeDetailPanel renders instantly (no loading flash) without an extra fetch.

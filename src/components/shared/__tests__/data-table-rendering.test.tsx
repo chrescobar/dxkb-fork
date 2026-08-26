@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { RowSelectionState } from "@tanstack/react-table";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
@@ -53,11 +54,17 @@ function selectionCell(checkbox: HTMLElement) {
 function ControlledSelectionTable({
   onGenomeSelect,
   onActiveRowChange,
+  onRowSelectionChange,
 }: {
   onGenomeSelect?: (id: string | null) => void;
   onActiveRowChange?: (id: string | null) => void;
+  onRowSelectionChange?: (selection: RowSelectionState) => void;
 }) {
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const handleRowSelectionChange = (selection: RowSelectionState) => {
+    setRowSelection(selection);
+    onRowSelectionChange?.(selection);
+  };
   return (
     <DataTable
       id="controlled-selection"
@@ -66,7 +73,7 @@ function ControlledSelectionTable({
       totalItems={selectionRows.length}
       resource="genome"
       rowSelection={rowSelection}
-      onRowSelectionChange={setRowSelection}
+      onRowSelectionChange={handleRowSelectionChange}
       onGenomeSelect={onGenomeSelect}
       onActiveRowChange={onActiveRowChange}
     />
@@ -136,16 +143,23 @@ describe("DataTable row selection checkboxes", () => {
     expect(second).toBeChecked();
   });
 
-  it("does not double-toggle when the checkbox itself is clicked", async () => {
+  it("does not double-toggle and removes deselected row keys", async () => {
     const user = userEvent.setup();
-    render(<ControlledSelectionTable />);
+    const onRowSelectionChange = vi.fn();
+    render(
+      <ControlledSelectionTable
+        onRowSelectionChange={onRowSelectionChange}
+      />,
+    );
 
     const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
     await user.click(checkbox);
     expect(checkbox).toBeChecked();
+    expect(onRowSelectionChange).toHaveBeenLastCalledWith({ "100.1": true });
 
     await user.click(checkbox);
     expect(checkbox).not.toBeChecked();
+    expect(onRowSelectionChange).toHaveBeenLastCalledWith({});
   });
 
   it("updates controlled selection when checkbox cells are clicked", async () => {
@@ -159,6 +173,26 @@ describe("DataTable row selection checkboxes", () => {
 
     expect(first).toBeChecked();
     expect(second).toBeChecked();
+  });
+
+  it("marks partial page selection indeterminate but not full page selection", async () => {
+    const user = userEvent.setup();
+    render(<ControlledSelectionTable />);
+
+    await user.click(
+      screen.getByRole("checkbox", { name: "Select row 100.1" }),
+    );
+    const partialSelection = screen.getByRole("checkbox", {
+      name: "Select all rows on this page",
+    });
+    expect(partialSelection).toBePartiallyChecked();
+
+    await user.click(partialSelection);
+    const fullSelection = screen.getByRole("checkbox", {
+      name: "Deselect all rows on this page",
+    });
+    expect(fullSelection).toBeChecked();
+    expect(fullSelection).not.toBePartiallyChecked();
   });
 
   it.each([

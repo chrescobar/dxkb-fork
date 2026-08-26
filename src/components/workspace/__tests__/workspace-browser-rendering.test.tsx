@@ -63,6 +63,58 @@ function makeWrapper(repository: InMemoryWorkspaceRepository) {
 }
 
 describe("WorkspaceBrowser rendering", () => {
+  it("keeps sorting external to the file table", () => {
+    const onSortChange = vi.fn();
+    const items = [
+      {
+        id: "zeta",
+        name: "zeta.txt",
+        path: "/alice@bvbrc/home/zeta.txt",
+        type: "txt",
+        size: 1,
+      },
+      {
+        id: "alpha",
+        name: "alpha.txt",
+        path: "/alice@bvbrc/home/alpha.txt",
+        type: "txt",
+        size: 2,
+      },
+    ];
+    const { rerender } = render(
+      <WorkspaceDataTable
+        items={items}
+        isLoading={false}
+        path=""
+        sort={{ field: "name", direction: "asc" }}
+        onSortChange={onSortChange}
+      />,
+    );
+    const renderedNames = () =>
+      screen
+        .getAllByText(/(?:zeta|alpha)\.txt/)
+        .map((element) => element.textContent);
+
+    expect(renderedNames()).toEqual(["zeta.txt", "alpha.txt"]);
+    fireEvent.click(screen.getByRole("button", { name: "Sort by Name" }));
+    expect(onSortChange).toHaveBeenCalledWith({
+      field: "name",
+      direction: "desc",
+    });
+    expect(renderedNames()).toEqual(["zeta.txt", "alpha.txt"]);
+
+    rerender(
+      <WorkspaceDataTable
+        items={[...items].reverse()}
+        isLoading={false}
+        path=""
+        sort={{ field: "name", direction: "desc" }}
+        onSortChange={onSortChange}
+      />,
+    );
+    expect(renderedNames()).toEqual(["alpha.txt", "zeta.txt"]);
+  });
+
   it("throws when selection mode omits folder activation", () => {
     expect(() =>
       render(

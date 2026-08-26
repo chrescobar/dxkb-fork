@@ -7,6 +7,7 @@ import {
 } from "./workspace-item-icon";
 import type { SortField, WorkspaceSortConfig } from "@/types/workspace-browser";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
+import type { FileTableFeatures } from "@/components/shared/file-table";
 import {
   formatFileSize,
   formatDate,
@@ -50,7 +51,7 @@ export function useWorkspaceColumns(
     }
   };
 
-  const columns: ColumnDef<WorkspaceItem>[] = (() => {
+  const columns: ColumnDef<FileTableFeatures, WorkspaceItem>[] = (() => {
     const favoriteSet = new Set(favoritePaths);
     return [
       {
@@ -85,7 +86,7 @@ export function useWorkspaceColumns(
         },
         meta: {
           className: columnClassMap.name,
-          sortField: "name" as SortField,
+          sortField: "name",
         },
         size: 220,
         enableResizing: true,
@@ -101,7 +102,7 @@ export function useWorkspaceColumns(
         ),
         meta: {
           className: columnClassMap.size,
-          sortField: "size" as SortField,
+          sortField: "size",
         },
         size: 50,
         enableResizing: true,
@@ -117,7 +118,7 @@ export function useWorkspaceColumns(
         ),
         meta: {
           className: columnClassMap.ownerId,
-          sortField: "ownerId" as SortField,
+          sortField: "ownerId",
         },
         size: 70,
         enableResizing: true,
@@ -133,7 +134,7 @@ export function useWorkspaceColumns(
         ),
         meta: {
           className: columnClassMap.createdAt,
-          sortField: "createdAt" as SortField,
+          sortField: "createdAt",
         },
         size: 80,
         enableResizing: true,
@@ -164,7 +165,7 @@ export function useWorkspaceColumns(
         ),
         meta: {
           className: columnClassMap.type,
-          sortField: "type" as SortField,
+          sortField: "type",
         },
         size: 60,
         enableResizing: true,

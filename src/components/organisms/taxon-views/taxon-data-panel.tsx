@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useRef, useState } from "react";
+import type { RowSelectionState } from "@tanstack/react-table";
 
 import { GenomeShell } from "@/components/genome/genome-shell";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
@@ -26,7 +27,7 @@ export function TaxonDataPanel({
   onKeywordChange,
 }: TaxonDataPanelProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const [totalItems, setTotalItems] = useState(0);

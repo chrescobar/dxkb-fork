@@ -1,5 +1,11 @@
 import { useLayoutEffect } from "react";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { http, HttpResponse } from "msw";
 
 import { server } from "@/test-helpers/msw-server";
@@ -63,14 +69,22 @@ function child(
   genomes: number,
   parentId = rootTaxon.taxonId,
 ): TaxonRecord {
-  return { taxon_id: id, taxon_name: name, taxon_rank: rank, parent_id: parentId, genomes };
+  return {
+    taxon_id: id,
+    taxon_name: name,
+    taxon_rank: rank,
+    parent_id: parentId,
+    genomes,
+  };
 }
 
 // Children for the two-root ([rootTaxon, virusesRoot]) scenarios: one bacterial
 // species under Brucella, one viral family under Viruses.
 const twoRootChildren: Record<number, TaxonRecord[]> = {
   234: [child(235, "Brucella abortus", "species", 581)],
-  10239: [child(11308, "Orthomyxoviridae", "family", 245000, virusesRoot.taxonId)],
+  10239: [
+    child(11308, "Orthomyxoviridae", "family", 245000, virusesRoot.taxonId),
+  ],
 };
 
 // parentId -> rows, served with a Content-Range covering the whole set in one page.
@@ -85,7 +99,10 @@ function mockChildren(byParent: Record<number, TaxonRecord[]>) {
       if (query.includes("facet")) {
         const inMatch = /in\(parent_id,\(([\d,]+)\)\)/.exec(query);
         const ids = inMatch ? inMatch[1].split(",").map(Number) : [];
-        const flat = ids.flatMap((id) => [String(id), (byParent[id] ?? []).length]);
+        const flat = ids.flatMap((id) => [
+          String(id),
+          (byParent[id] ?? []).length,
+        ]);
         return HttpResponse.json([], {
           headers: {
             "Content-Range": "items 0-0/0",
@@ -98,7 +115,9 @@ function mockChildren(byParent: Record<number, TaxonRecord[]>) {
       const parentId = match ? Number(match[1]) : -1;
       const rows = byParent[parentId] ?? [];
       return HttpResponse.json(rows, {
-        headers: { "Content-Range": `items 0-${String(rows.length)}/${String(rows.length)}` },
+        headers: {
+          "Content-Range": `items 0-${String(rows.length)}/${String(rows.length)}`,
+        },
       });
     }),
   );
@@ -125,13 +144,19 @@ describe("TaxonomyTree", () => {
       ],
     });
 
-    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
 
     expect(screen.getByRole("link", { name: "Brucella" })).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Brucella abortus" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: "Brucella abortus" }),
+      ).toBeInTheDocument();
     });
-    expect(screen.getByRole("link", { name: "Brucella melitensis" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Brucella melitensis" }),
+    ).toBeInTheDocument();
   });
 
   it("renders multiple roots and their children in one table", async () => {
@@ -144,8 +169,12 @@ describe("TaxonomyTree", () => {
     expect(screen.getByRole("link", { name: "Brucella" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Viruses" })).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Brucella abortus" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "Orthomyxoviridae" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: "Brucella abortus" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: "Orthomyxoviridae" }),
+      ).toBeInTheDocument();
     });
     expect(screen.getAllByRole("table")).toHaveLength(1);
   });
@@ -162,11 +191,17 @@ describe("TaxonomyTree", () => {
           });
         }
         if (query.includes("eq(parent_id,10239)")) {
-          return HttpResponse.json({ message: "viral branch unavailable" }, { status: 500 });
+          return HttpResponse.json(
+            { message: "viral branch unavailable" },
+            { status: 500 },
+          );
         }
-        return HttpResponse.json([child(235, "Brucella abortus", "species", 581)], {
-          headers: { "Content-Range": "items 0-1/1" },
-        });
+        return HttpResponse.json(
+          [child(235, "Brucella abortus", "species", 581)],
+          {
+            headers: { "Content-Range": "items 0-1/1" },
+          },
+        );
       }),
     );
 
@@ -174,7 +209,9 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    expect(await screen.findByRole("link", { name: "Brucella abortus" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Brucella abortus" }),
+    ).toBeInTheDocument();
     expect(await screen.findByText(/error:.*500/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Brucella" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Viruses" })).toBeInTheDocument();
@@ -184,18 +221,29 @@ describe("TaxonomyTree", () => {
   it("resets stale roots, selection, and filtering when the root set changes", async () => {
     mockChildren(twoRootChildren);
     const onSelect = vi.fn();
-    const { rerender } = render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
-      wrapper: createQueryClientWrapper(),
-    });
+    const { rerender } = render(
+      <TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />,
+      {
+        wrapper: createQueryClientWrapper(),
+      },
+    );
 
-    const childLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const childLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     fireEvent.click(childLink.closest("tr") as HTMLElement);
-    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Brucella" } });
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "Brucella" },
+    });
 
     rerender(<TaxonomyTree rootTaxa={[virusesRoot]} onSelect={onSelect} />);
 
-    expect(await screen.findByRole("link", { name: "Orthomyxoviridae" })).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Brucella" })).not.toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Orthomyxoviridae" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Brucella" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("searchbox")).toHaveValue("");
     await waitFor(() => {
       expect(onSelect).toHaveBeenLastCalledWith([]);
@@ -231,9 +279,12 @@ describe("TaxonomyTree", () => {
   it("refreshes a selected root's lineage when only lineageNames change", async () => {
     mockChildren({ 234: [child(235, "Brucella abortus", "species", 581)] });
     const onSelect = vi.fn();
-    const { rerender } = render(<TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />, {
-      wrapper: createQueryClientWrapper(),
-    });
+    const { rerender } = render(
+      <TaxonomyTree rootTaxa={[rootTaxon]} onSelect={onSelect} />,
+      {
+        wrapper: createQueryClientWrapper(),
+      },
+    );
 
     const rootLink = await screen.findByRole("link", { name: "Brucella" });
     fireEvent.click(rootLink.closest("tr") as HTMLElement);
@@ -244,7 +295,10 @@ describe("TaxonomyTree", () => {
     });
 
     // Same id/name/rank/genomes — only the lineage was corrected by a refresh.
-    const relineaged = { ...rootTaxon, lineageNames: ["cellular organisms", "Bacteria"] };
+    const relineaged = {
+      ...rootTaxon,
+      lineageNames: ["cellular organisms", "Bacteria"],
+    };
     rerender(<TaxonomyTree rootTaxa={[relineaged]} onSelect={onSelect} />);
 
     const refreshedRoot = await screen.findByRole("link", { name: "Brucella" });
@@ -265,17 +319,26 @@ describe("TaxonomyTree", () => {
       235: [child(999, "Brucella abortus 544", "strain", 2)],
     });
 
-    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
 
-    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     const speciesRow = speciesLink.closest("tr");
     expect(speciesRow).not.toBeNull();
     // The expand arrow appears once the batched child-count facet resolves (async).
-    const expandBtn = await within(speciesRow as HTMLElement).findByRole("button", { name: "Expand" });
+    const expandBtn = await within(speciesRow as HTMLElement).findByRole(
+      "button",
+      { name: "Expand" },
+    );
     fireEvent.click(expandBtn);
 
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Brucella abortus 544" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: "Brucella abortus 544" }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -285,28 +348,44 @@ describe("TaxonomyTree", () => {
       235: [child(999, "Brucella abortus 544", "strain", 2)],
     });
 
-    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
 
-    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     const speciesRow = speciesLink.closest("tr") as HTMLElement;
-    const expand = await within(speciesRow).findByRole("button", { name: "Expand" });
+    const expand = await within(speciesRow).findByRole("button", {
+      name: "Expand",
+    });
 
     // Let the count query switch from its populated key to the empty disabled key.
     // The toggle must remain because the settled count is part of rendered state.
     await waitFor(() => {
-      expect(within(speciesRow).getByRole("button", { name: "Expand" })).toBe(expand);
+      expect(within(speciesRow).getByRole("button", { name: "Expand" })).toBe(
+        expand,
+      );
     });
     fireEvent.click(expand);
-    expect(await screen.findByRole("link", { name: "Brucella abortus 544" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Brucella abortus 544" }),
+    ).toBeInTheDocument();
 
-    fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
+    fireEvent.click(
+      within(speciesRow).getByRole("button", { name: "Collapse" }),
+    );
     await waitFor(() => {
-      expect(screen.queryByRole("link", { name: "Brucella abortus 544" })).toBeNull();
+      expect(
+        screen.queryByRole("link", { name: "Brucella abortus 544" }),
+      ).toBeNull();
     });
 
     const reExpand = within(speciesRow).getByRole("button", { name: "Expand" });
     fireEvent.click(reExpand);
-    expect(await screen.findByRole("link", { name: "Brucella abortus 544" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Brucella abortus 544" }),
+    ).toBeInTheDocument();
   });
 
   it("renders strain (leaf) rows without an expand toggle", async () => {
@@ -315,16 +394,29 @@ describe("TaxonomyTree", () => {
       235: [child(999, "Brucella abortus 544", "strain", 2)],
     });
 
-    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
 
-    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     fireEvent.click(
-      await within(speciesLink.closest("tr") as HTMLElement).findByRole("button", { name: "Expand" }),
+      await within(speciesLink.closest("tr") as HTMLElement).findByRole(
+        "button",
+        { name: "Expand" },
+      ),
     );
 
-    const strainLink = await screen.findByRole("link", { name: "Brucella abortus 544" });
+    const strainLink = await screen.findByRole("link", {
+      name: "Brucella abortus 544",
+    });
     const strainRow = strainLink.closest("tr");
-    expect(within(strainRow as HTMLElement).queryByRole("button", { name: /Expand|Collapse/ })).toBeNull();
+    expect(
+      within(strainRow as HTMLElement).queryByRole("button", {
+        name: /Expand|Collapse/,
+      }),
+    ).toBeNull();
   });
 
   it("clicking a row body calls onSelect with the selected taxon records", async () => {
@@ -335,7 +427,9 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     fireEvent.click(speciesLink.closest("tr") as HTMLElement);
 
     // onSelect fires with the full selected-row array (driven by the selection
@@ -372,6 +466,35 @@ describe("TaxonomyTree", () => {
     });
   });
 
+  it("keeps select-all checked and indeterminate states mutually exclusive", () => {
+    mockChildren(twoRootChildren);
+
+    render(<TaxonomyTree rootTaxa={[rootTaxon, virusesRoot]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
+
+    const selectAll = screen.getByRole("checkbox", { name: "Select all" });
+    const first = screen.getByRole("checkbox", {
+      name: "Select Brucella",
+    });
+
+    fireEvent.click(first);
+    expect(selectAll).not.toBeChecked();
+    expect(selectAll).toBePartiallyChecked();
+
+    fireEvent.click(selectAll);
+    expect(selectAll).toBeChecked();
+    expect(selectAll).not.toBePartiallyChecked();
+
+    fireEvent.click(first);
+    expect(selectAll).not.toBeChecked();
+    expect(selectAll).toBePartiallyChecked();
+
+    fireEvent.click(first);
+    expect(selectAll).toBeChecked();
+    expect(selectAll).not.toBePartiallyChecked();
+  });
+
   it("unchecking a collapsed parent preserves selected-but-hidden children in onSelect", async () => {
     mockChildren({
       234: [child(235, "Brucella abortus", "species", 581)],
@@ -387,19 +510,33 @@ describe("TaxonomyTree", () => {
     });
 
     // Expand to load strains
-    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     const speciesRow = speciesLink.closest("tr") as HTMLElement;
-    fireEvent.click(await within(speciesRow).findByRole("button", { name: "Expand" }));
+    fireEvent.click(
+      await within(speciesRow).findByRole("button", { name: "Expand" }),
+    );
 
     // Select parent + both strains via checkboxes (additive).
-    fireEvent.click(within(speciesRow).getByRole("checkbox", { name: "Select Brucella abortus" }));
     fireEvent.click(
-      within((await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement)
-        .getByRole("checkbox", { name: "Select Brucella abortus 544" }),
+      within(speciesRow).getByRole("checkbox", {
+        name: "Select Brucella abortus",
+      }),
     );
     fireEvent.click(
-      within((await screen.findByRole("link", { name: "Brucella abortus 2308" })).closest("tr") as HTMLElement)
-        .getByRole("checkbox", { name: "Select Brucella abortus 2308" }),
+      within(
+        (
+          await screen.findByRole("link", { name: "Brucella abortus 544" })
+        ).closest("tr") as HTMLElement,
+      ).getByRole("checkbox", { name: "Select Brucella abortus 544" }),
+    );
+    fireEvent.click(
+      within(
+        (
+          await screen.findByRole("link", { name: "Brucella abortus 2308" })
+        ).closest("tr") as HTMLElement,
+      ).getByRole("checkbox", { name: "Select Brucella abortus 2308" }),
     );
 
     await waitFor(() => {
@@ -407,11 +544,17 @@ describe("TaxonomyTree", () => {
     });
 
     // Collapse — strains leave the row model (childrenMap drops entry for 235)
-    fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
+    fireEvent.click(
+      within(speciesRow).getByRole("button", { name: "Collapse" }),
+    );
 
     // Uncheck parent via checkbox — triggers the selection effect that previously returned 0
     // because getSelectedRowModel() only saw visible rows.
-    fireEvent.click(within(speciesRow).getByRole("checkbox", { name: "Select Brucella abortus" }));
+    fireEvent.click(
+      within(speciesRow).getByRole("checkbox", {
+        name: "Select Brucella abortus",
+      }),
+    );
 
     await waitFor(() => {
       const lastCall = onSelect.mock.calls.at(-1)?.[0] as TaxonRecord[];
@@ -440,12 +583,19 @@ describe("TaxonomyTree", () => {
     });
 
     // Expand Brucella abortus and select its strain via checkbox (additive).
-    const speciesLink = await screen.findByRole("link", { name: "Brucella abortus" });
+    const speciesLink = await screen.findByRole("link", {
+      name: "Brucella abortus",
+    });
     const speciesRow = speciesLink.closest("tr") as HTMLElement;
-    fireEvent.click(await within(speciesRow).findByRole("button", { name: "Expand" }));
     fireEvent.click(
-      within((await screen.findByRole("link", { name: "Brucella abortus 544" })).closest("tr") as HTMLElement)
-        .getByRole("checkbox", { name: "Select Brucella abortus 544" }),
+      await within(speciesRow).findByRole("button", { name: "Expand" }),
+    );
+    fireEvent.click(
+      within(
+        (
+          await screen.findByRole("link", { name: "Brucella abortus 544" })
+        ).closest("tr") as HTMLElement,
+      ).getByRole("checkbox", { name: "Select Brucella abortus 544" }),
     );
 
     await waitFor(() => {
@@ -453,13 +603,18 @@ describe("TaxonomyTree", () => {
     });
 
     // Collapse — strain leaves the row model
-    fireEvent.click(within(speciesRow).getByRole("button", { name: "Collapse" }));
+    fireEvent.click(
+      within(speciesRow).getByRole("button", { name: "Collapse" }),
+    );
 
     // Select a different visible row via checkbox — additive, preserves hidden strain.
     await screen.findByRole("link", { name: "Brucella melitensis" });
     fireEvent.click(
-      within(screen.getByRole("link", { name: "Brucella melitensis" }).closest("tr") as HTMLElement)
-        .getByRole("checkbox", { name: "Select Brucella melitensis" }),
+      within(
+        screen
+          .getByRole("link", { name: "Brucella melitensis" })
+          .closest("tr") as HTMLElement,
+      ).getByRole("checkbox", { name: "Select Brucella melitensis" }),
     );
 
     // Should count 2: hidden strain + newly checked species
@@ -490,8 +645,12 @@ describe("TaxonomyTree", () => {
     });
 
     // Rows in visible order: root (234), 235, 236, 237.
-    const firstRow = (await screen.findByRole("link", { name: "Brucella abortus" })).closest("tr") as HTMLElement;
-    const lastRow = (await screen.findByRole("link", { name: "Brucella suis" })).closest("tr") as HTMLElement;
+    const firstRow = (
+      await screen.findByRole("link", { name: "Brucella abortus" })
+    ).closest("tr") as HTMLElement;
+    const lastRow = (
+      await screen.findByRole("link", { name: "Brucella suis" })
+    ).closest("tr") as HTMLElement;
 
     // Plain click sets the anchor.
     fireEvent.click(firstRow);
@@ -531,8 +690,12 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const middleRow = (await screen.findByRole("link", { name: "Brucella melitensis" })).closest("tr") as HTMLElement;
-    const firstRow = (await screen.findByRole("link", { name: "Brucella abortus" })).closest("tr") as HTMLElement;
+    const middleRow = (
+      await screen.findByRole("link", { name: "Brucella melitensis" })
+    ).closest("tr") as HTMLElement;
+    const firstRow = (
+      await screen.findByRole("link", { name: "Brucella abortus" })
+    ).closest("tr") as HTMLElement;
 
     // Anchor on the middle row, then shift-click upward to the first.
     fireEvent.click(middleRow);
@@ -568,7 +731,9 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const row = (await screen.findByRole("link", { name: "Brucella melitensis" })).closest("tr") as HTMLElement;
+    const row = (
+      await screen.findByRole("link", { name: "Brucella melitensis" })
+    ).closest("tr") as HTMLElement;
 
     // No anchor yet → shift-click behaves like a plain toggle.
     fireEvent.keyDown(document, { key: "Shift" });
@@ -595,9 +760,15 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const firstRow = (await screen.findByRole("link", { name: "Brucella abortus" })).closest("tr") as HTMLElement;
-    const secondRow = screen.getByRole("link", { name: "Brucella melitensis" }).closest("tr") as HTMLElement;
-    const thirdRow = screen.getByRole("link", { name: "Brucella suis" }).closest("tr") as HTMLElement;
+    const firstRow = (
+      await screen.findByRole("link", { name: "Brucella abortus" })
+    ).closest("tr") as HTMLElement;
+    const secondRow = screen
+      .getByRole("link", { name: "Brucella melitensis" })
+      .closest("tr") as HTMLElement;
+    const thirdRow = screen
+      .getByRole("link", { name: "Brucella suis" })
+      .closest("tr") as HTMLElement;
 
     // Plain click: exclusive select of first row.
     fireEvent.click(firstRow);
@@ -655,8 +826,12 @@ describe("TaxonomyTree", () => {
     });
 
     // Select two rows via checkboxes (additive).
-    const cb235 = await screen.findByRole("checkbox", { name: "Select Brucella abortus" });
-    const cb236 = screen.getByRole("checkbox", { name: "Select Brucella melitensis" });
+    const cb235 = await screen.findByRole("checkbox", {
+      name: "Select Brucella abortus",
+    });
+    const cb236 = screen.getByRole("checkbox", {
+      name: "Select Brucella melitensis",
+    });
     fireEvent.click(cb235);
     fireEvent.click(cb236);
     await waitFor(() => {
@@ -664,7 +839,9 @@ describe("TaxonomyTree", () => {
     });
 
     // Plain whitespace click on a third row — should exclusively select only that row.
-    const thirdRow = screen.getByRole("link", { name: "Brucella suis" }).closest("tr") as HTMLElement;
+    const thirdRow = screen
+      .getByRole("link", { name: "Brucella suis" })
+      .closest("tr") as HTMLElement;
     fireEvent.click(thirdRow);
 
     await waitFor(() => {
@@ -688,8 +865,12 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const firstCb = await screen.findByRole("checkbox", { name: "Select Brucella abortus" });
-    const lastCb = screen.getByRole("checkbox", { name: "Select Brucella suis" });
+    const firstCb = await screen.findByRole("checkbox", {
+      name: "Select Brucella abortus",
+    });
+    const lastCb = screen.getByRole("checkbox", {
+      name: "Select Brucella suis",
+    });
 
     // Plain checkbox click sets the anchor.
     fireEvent.click(firstCb);
@@ -728,8 +909,12 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const middleCb = await screen.findByRole("checkbox", { name: "Select Brucella melitensis" });
-    const firstCb = screen.getByRole("checkbox", { name: "Select Brucella abortus" });
+    const middleCb = await screen.findByRole("checkbox", {
+      name: "Select Brucella melitensis",
+    });
+    const firstCb = screen.getByRole("checkbox", {
+      name: "Select Brucella abortus",
+    });
 
     fireEvent.click(middleCb);
     await waitFor(() => {
@@ -764,7 +949,9 @@ describe("TaxonomyTree", () => {
       wrapper: createQueryClientWrapper(),
     });
 
-    const cb = await screen.findByRole("checkbox", { name: "Select Brucella melitensis" });
+    const cb = await screen.findByRole("checkbox", {
+      name: "Select Brucella melitensis",
+    });
 
     fireEvent.keyDown(document, { key: "Shift" });
     fireEvent.click(cb);
@@ -791,14 +978,18 @@ describe("TaxonomyTree", () => {
     });
 
     // Set anchor via checkbox click.
-    const firstCb = await screen.findByRole("checkbox", { name: "Select Brucella abortus" });
+    const firstCb = await screen.findByRole("checkbox", {
+      name: "Select Brucella abortus",
+    });
     fireEvent.click(firstCb);
     await waitFor(() => {
       expect(onSelect.mock.calls.at(-1)?.[0]).toHaveLength(1);
     });
 
     // Shift + row-body click on last species should range from the checkbox anchor.
-    const lastRow = screen.getByRole("link", { name: "Brucella suis" }).closest("tr") as HTMLElement;
+    const lastRow = screen
+      .getByRole("link", { name: "Brucella suis" })
+      .closest("tr") as HTMLElement;
     fireEvent.keyDown(document, { key: "Shift" });
     fireEvent.click(lastRow);
 
@@ -823,15 +1014,22 @@ describe("TaxonomyTree", () => {
       ],
     });
 
-    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, { wrapper: createQueryClientWrapper() });
+    render(<TaxonomyTree rootTaxa={[rootTaxon]} />, {
+      wrapper: createQueryClientWrapper(),
+    });
 
     await screen.findByRole("link", { name: "Brucella abortus" });
 
-    fireEvent.change(screen.getByRole("searchbox", { name: "Search by taxonomy name" }), {
-      target: { value: "melitensis" },
-    });
+    fireEvent.change(
+      screen.getByRole("searchbox", { name: "Search by taxonomy name" }),
+      {
+        target: { value: "melitensis" },
+      },
+    );
 
     expect(screen.queryByRole("link", { name: "Brucella abortus" })).toBeNull();
-    expect(screen.getByRole("link", { name: "Brucella melitensis" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Brucella melitensis" }),
+    ).toBeInTheDocument();
   });
 });

@@ -1,0 +1,21 @@
+src/app/services/(genomics)/blast/__tests__/page-database-types.test.tsx
+  s_c0e13780ee622a::t_ca63a67af92616 91
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_c0e13780ee622a::t_a935c9017f3c45 158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "68cdafcd4215cb97854900b196964dbeee92e2d6",
+  "prompts": {},
+  "sessions": {
+    "s_c0e13780ee622a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc1aa1921ffeYNFjtpldXdySfe",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

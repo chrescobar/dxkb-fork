@@ -1,0 +1,30 @@
+.claude/settings.json
+  h_dbd94c95afa702 9,18
+.github/workflows/pnpm-a11y.yml
+  h_dbd94c95afa702 77-78,131-132,185-186,239-240
+.github/workflows/pnpm-e2e.yml
+  h_dbd94c95afa702 157-158
+e2e/a11y/report.ts
+  h_dbd94c95afa702 13
+e2e/a11y/teardown.ts
+  h_dbd94c95afa702 6,25-26
+e2e/scripts/update-baseline.ts
+  h_dbd94c95afa702 4,10
+eslint.config.mjs
+  h_dbd94c95afa702 25
+playwright.a11y.config.ts
+  h_dbd94c95afa702 24,27
+playwright.config.ts
+  h_dbd94c95afa702 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "5b384f0a53e66f2a59722f7ac5a4c46bdc2a0c62",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

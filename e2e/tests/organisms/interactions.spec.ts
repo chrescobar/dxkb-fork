@@ -108,9 +108,9 @@ test.describe("taxon interactions tab: filter sync between Table and Graph", () 
   // observable row/node-count delta instead of an all-or-nothing assertion.
   const rows = buildPpiRows(2);
 
-  // In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data,
-  // so all ppi fetches (table count/rows, graph rows) go through this loopback.
-  const ppiLoopback = /\/api\/e2e-mock\/data\/ppi\//;
+  // Match independently of origin because NEXT_PUBLIC_DATA_API is embedded at build
+  // time and may point at either the loopback mock or the public API in a local build.
+  const ppiRequest = /\/ppi\//;
 
   // buildPpiOverrides (used by the describe block above) always returns the
   // full row set regardless of query — it can't prove filtering actually
@@ -126,7 +126,7 @@ test.describe("taxon interactions tab: filter sync between Table and Graph", () 
   ): Promise<TaxonInteractionsPage> {
     await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
 
-    await page.route(ppiLoopback, async (route) => {
+    await page.route(ppiRequest, async (route) => {
       if (route.request().method() !== "GET") return route.fallback();
       const url = decodeURIComponent(route.request().url());
       const keyword = /keyword\(([^*)]+)\*?\)/.exec(url)?.[1];

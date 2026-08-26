@@ -1,14 +1,12 @@
 import type { JsonOverride } from "../../mocks/backends";
 
-// In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data so all
-// ppi fetches (count, rows, facets) go through the loopback, not bv-brc.org.
-const ppiLoopback = /\/api\/e2e-mock\/data\/ppi\//;
-// Anchored on `limit(1)` at the end of the URL — that's how ListData's count fetch
-// (list-data.tsx) always ends. A bare `.*limit` also matched FacetPanel's facet
-// request (`...&limit(1)&facet(...)`), which ends with the facet clause, not
-// `limit(1)` — that collision would've served the count body (no facet_counts) to
-// a facet request instead of falling through to ppiLoopback.
-const ppiLoopbackCount = /\/api\/e2e-mock\/data\/ppi\/.*limit\(1\)$/;
+// Match the resource path independently of origin. NEXT_PUBLIC_DATA_API is embedded
+// at build time, so a build made without .env.e2e.test can still target the public
+// API while Playwright intercepts it before any network request leaves the browser.
+const ppiRequest = /\/ppi\//;
+// The count query is the only PPI request ending in limit(1). Keep the end anchor so
+// facet requests containing limit(1) continue to fall through to the row fixture.
+const ppiCountRequest = /\/ppi\/.*limit(?:\(1\)|%281%29)$/;
 
 export interface MockPpiRow {
   id: string;
@@ -59,10 +57,10 @@ export function buildPpiRows(count: number): MockPpiRow[] {
   }));
 }
 
-/** Build the PPI count + row overrides for the e2e-mock data loopback. */
+/** Build origin-independent PPI count and row overrides for browser requests. */
 export function buildPpiOverrides(rows: MockPpiRow[]): JsonOverride[] {
   return [
-    { url: ppiLoopbackCount, method: "GET", body: { response: { numFound: rows.length } } },
-    { url: ppiLoopback, method: "GET", body: rows },
+    { url: ppiCountRequest, method: "GET", body: { response: { numFound: rows.length } } },
+    { url: ppiRequest, method: "GET", body: rows },
   ];
 }

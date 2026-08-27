@@ -1,0 +1,745 @@
+src/app/(views)/genome/error.tsx
+  s_5a139dccc7ae3e::t_b8db3d3944d3a0 1-4,12,17,22-24
+  s_ae771eb10b3781::t_ad31323f280c0c 5-11,13-16,18-21
+src/constants/datafields/strain.ts
+  s_be0239fa013c4f::t_000dd90a235aeb 105
+src/components/organisms/taxon-views/__tests__/taxon-data-panel.test.tsx
+  s_ae771eb10b3781::t_cf92f573e60efa 4-5
+  s_ae771eb10b3781::t_083076c6470317 85-123,133-148,178-193,196-199,201-204,218-229,237-243,246-252,256-262,271-273,275-278
+src/app/(views)/genome/[genomeId]/genome-child-collection.tsx
+  s_ae771eb10b3781::t_ad31323f280c0c 4-7,15-20,25-28,33-35,37-42,66-70,86-88,90-93,99-102
+  s_5a139dccc7ae3e::t_dda59fde3e2367 23-24,29-32
+  s_5a139dccc7ae3e::t_977590121791b5 1-3,8-14,21-22,36,43-65,71-85,89,94-98,103-108
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_f656ade05e9d17::t_62774887be3049 1-4,8-34,41-48,53-57,63-92,96-97,121,125-142
+  s_f656ade05e9d17::t_952691d27c6202 5-7,35-40,49-52,58-62,93-95,122-124
+  s_c054be8f97dc7a::t_6d8df076c7dbb8 98-120
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_fbe506820af3dd::t_a55606d3524e65 11
+  s_c054be8f97dc7a::t_be22f621ff3e9a 69-94
+src/lib/data-api/validation.ts
+  s_f656ade05e9d17::t_d208906c665f06 4
+  s_f656ade05e9d17::t_b675bc845ce357 37-40,53-57,68-70,75-78,82-84,87-90,93-95,100-103
+  s_f656ade05e9d17::t_3ab75850786cd2 61-67
+  s_f656ade05e9d17::t_10c140f8e919a0 80-81
+  s_f656ade05e9d17::t_11b19669339066 1-3,5-36,41-52,58-60,71-74,79,85-86,91-92,96-99,104-105
+src/lib/data-api/rql.ts
+  s_f656ade05e9d17::t_67ec56232f3f51 221,225
+  s_b4201639438c95::t_ab4ac6883b71f8 189
+  s_f656ade05e9d17::t_655494fd191c77 149-150,154
+  s_f656ade05e9d17::t_b2db9c3829a5d0 220,226
+  s_f656ade05e9d17::t_b675bc845ce357 6-18,45-46,65-66,68-69,75-78,90-91,96-98,105-111,116-118,120-121,125-132,135-136,140-141,151-153,160-166,176-179,185-188,194-197,199-200,202-205,208-209,212-214,216-217,222-224,233-237
+  s_f656ade05e9d17::t_1cc394dd056da0 211,215
+  s_ae771eb10b3781::t_4ea71b62f25e29 190
+  s_f656ade05e9d17::t_1a1172cb3d4081 1-5,19-44,47-64,67,70-74,79-89,92-95,99-104,112-115,119,122-124,133-134,137-139,142-148,155-159,167-175,180-184,191-193,198,201,206-207,210,218-219,227-232,238-239
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_ae771eb10b3781::t_f3eb83ec17156e 34
+  s_602a72db124111::t_fa72227f53f941 28-31,45-50,67-69,84-86,89-91,93-98,120-123,130-132,135,137-142,145-148,150-152
+  s_ae771eb10b3781::t_df4ca4d6e47e00 1
+  s_602a72db124111::t_20ef85427c1c99 87-88
+  s_ae771eb10b3781::t_13bd3357ba31ab 70
+  s_ae771eb10b3781::t_a331cc23406734 107
+  s_602a72db124111::t_fbfa770da2afe6 2-27,32-33,35-38,44,51-66,71-83,92,99-106,108-115,117-119,126-129,133-134,143-144,149,153
+  s_ae771eb10b3781::t_1028351d12d009 116,124-125
+  s_ae771eb10b3781::t_638409c4ce19b0 136
+  s_ae771eb10b3781::t_1328b0875ed4a9 39-43
+src/components/views/entity-view-shell.tsx
+  s_ae771eb10b3781::t_7d3e4288a485c1 3,5-7,12,18,32,47-48,50-58,60-61,66-67,69-70,72-74,78-79,83-95,97-104,106,108-133
+  s_bc07b4c8f23cde::t_d36fdce1afec6e 19
+  s_ae771eb10b3781::t_8ef105856e7038 96
+  s_ae771eb10b3781::t_b124c08b4c6a95 71
+  s_ae771eb10b3781::t_5b617e09da821d 68,75-77,107
+  s_602a72db124111::t_68a021be8c23b8 1-2,8,11,14-16,29-30,33,38-40,81-82,105,134-135
+  s_bc07b4c8f23cde::t_50934997223042 4,9-10,13,17,20-28,31,34-37,41-46,49,59,62-65,80
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_ae771eb10b3781::t_5b617e09da821d 53-55,66,69-73,77-80,85-89,112,115-118,121-122
+  s_ae771eb10b3781::t_3e24a4c4957cd6 33,37
+  s_ae771eb10b3781::t_cada271b6b1df4 20-23
+  s_ae771eb10b3781::t_85d4f48531c234 42
+  s_ae771eb10b3781::t_0efc7e1f68bdf7 123
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_ae771eb10b3781::t_d986853246a77c 6
+  s_ae771eb10b3781::t_6e9c3d8a91f448 45-47,95-97,101-138,141-142
+  s_ae771eb10b3781::t_3d282cac3baf1c 56-66
+src/constants/datafields/genome_feature.ts
+  s_be0239fa013c4f::t_c5722b3d0ec847 19
+  s_be0239fa013c4f::t_d6ee51ce19b311 9
+src/app/(views)/genome/genome-collection.tsx
+  s_5a139dccc7ae3e::t_eb8edde3de0daf 1-2,6,12,23-24
+  s_ae771eb10b3781::t_4515040f9ae185 8
+  s_ae771eb10b3781::t_083645f89851d8 21
+  s_ae771eb10b3781::t_78929483c5a8ce 3
+  s_ae771eb10b3781::t_4e3f20a2046ab1 5
+  s_ae771eb10b3781::t_a221e69aeab1a8 4
+  s_ae771eb10b3781::t_ad31323f280c0c 7,9,11
+  s_ae771eb10b3781::t_0e995c3f581dc8 10
+  s_ae771eb10b3781::t_fbfd40b2b3f85c 13-20
+  s_ae771eb10b3781::t_be3b4a199c6015 22
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_ae771eb10b3781::t_97982a77f9eeb4 120,123,125
+  s_ae771eb10b3781::t_62807404b2e956 37-49
+  s_ae771eb10b3781::t_7a7d4f01590e7e 19-33,70-71,124,141-143,149-151,163-165,209-211,318-321,339-342,345-348,363-366,372-375,393-395
+  s_ae771eb10b3781::t_4b443c7ee98ef0 300-314
+  s_ae771eb10b3781::t_fd0fbf6a194d33 34-36
+src/components/search/__tests__/search-bar.test.tsx
+  s_be0239fa013c4f::t_35a7b8671bd153 103
+  s_be0239fa013c4f::t_52edbb18187f3a 149-164
+  s_be0239fa013c4f::t_e18a0f15661278 101-102,104-113
+src/lib/data-api/__tests__/client.test.ts
+  s_f656ade05e9d17::t_a1859e35b241ae 1-12,24-25,35-42,46-48,53-56,68-71
+  s_f656ade05e9d17::t_b675bc845ce357 26-34,43-45,49-52,57-67
+  s_f656ade05e9d17::t_caa2dcffbeeed0 13-23
+src/lib/genome-view/profile.ts
+  s_ae771eb10b3781::t_dde5605b26d808 17
+  s_ae771eb10b3781::t_bc0edfec637934 39
+  s_5a139dccc7ae3e::t_032a5bf50b349f 1-3,5-7,9,11,14-16,32
+  s_ae771eb10b3781::t_f77d83e2c1fa4a 8,10,12,18-31
+  s_5a139dccc7ae3e::t_2d41f3e6532272 4,13
+  s_ae771eb10b3781::t_0a252e19c53436 44
+  s_ae771eb10b3781::t_ad31323f280c0c 33-38,40-43,45-50
+src/components/search/search-action-bar.tsx
+  s_ae771eb10b3781::t_cddc9bc5f02370 117
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_bc07b4c8f23cde::t_7e2c3d5996c5ec 122
+  s_bc07b4c8f23cde::t_e32223f4435ef9 112-121,123-130,149-151,215,264-268,270-283,288-299,301-314
+  s_bc07b4c8f23cde::t_dd0417fe43de19 91-111,131-148,152-155
+src/components/search/search-bar.tsx
+  s_be0239fa013c4f::t_2db807447595a6 78
+  s_be0239fa013c4f::t_32e9d759ec98ec 15
+  s_be0239fa013c4f::t_1a48d02511b23d 79-80
+src/app/api/e2e-mock/[...path]/route.ts
+  s_ae771eb10b3781::t_b3194bc1ec73ac 48-69,72-76,88-89
+  s_ae771eb10b3781::t_26f25980590395 82
+  s_ae771eb10b3781::t_039abea1297fd0 83-87
+  s_ae771eb10b3781::t_d397ce2f309cf7 902
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_724413237e6463::t_b3f2c3ae25eea3 41-43,61-72
+  s_c054be8f97dc7a::t_6d8df076c7dbb8 58-60,73
+  s_724413237e6463::t_18988559b4ab24 3
+  s_724413237e6463::t_244b8886ea8e5f 110-122
+  s_5a139dccc7ae3e::t_97f47c89a11d4e 1-2,4,17-19,26-33,45-47,57,80-82,92-94,101,108-109,123-124,131-132
+  s_ae771eb10b3781::t_ad31323f280c0c 5-16,20-25,34-40,44,48-56,74-79,83-91,95-100,102-107,125-130
+src/hooks/views/collection-state.ts
+  s_bc07b4c8f23cde::t_bf47033ef5f8bf 1-15
+src/lib/views/collection-state.ts
+  s_ae771eb10b3781::t_d56aae8ce2c900 13
+  s_ae771eb10b3781::t_98e9e4a7c0292b 21
+  s_ae771eb10b3781::t_3ff3837ae27b9c 84,90-91
+  s_ae771eb10b3781::t_ccbaf231b38d59 220
+  s_f422d8910dd3f6::t_b724972e475e96 178-179,187
+  s_ae771eb10b3781::t_93ddf61bcf666f 43-51
+  s_ae771eb10b3781::t_bcbc480a851d43 109,113-114,132-133,149-155,184,213-214
+  s_602a72db124111::t_fa72227f53f941 245-247
+  s_f422d8910dd3f6::t_b02d9655ef71b0 137-138,180-183,185-186,190-191,212,215,236-239,242-243
+  s_f422d8910dd3f6::t_c1d791124f50f1 193
+  s_602a72db124111::t_e240c5a5626e87 1-12,14-20,22-42,52-83,85-89,92-108,110-112,115-131,134-136,139-148,156-177,188-189,192,194-211,216-218,227-235,240-241,244,248-249
+  s_ae771eb10b3781::t_485c39da76e11e 219,221-226
+src/lib/genome-view/schema.ts
+  s_5a139dccc7ae3e::t_d1eb6c9fa8f319 1-42
+src/hooks/views/index.ts
+  s_bc07b4c8f23cde::t_de5baa4ef3efa8 1-2
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_c054be8f97dc7a::t_2cc2df3bb72fd5 22
+  s_ae771eb10b3781::t_6e9c3d8a91f448 46-48
+  s_bc07b4c8f23cde::t_5fd3b93214cb81 11,49-50,159-160
+  s_ae771eb10b3781::t_b0155c2e2e45ab 44-45,51-55
+  s_c054be8f97dc7a::t_004dd0b22ca96c 2
+  s_c054be8f97dc7a::t_fa9e80f8dee1bf 75-77,79-81,106-108,136-138,140-142,144-145,148-149
+  s_c054be8f97dc7a::t_6e518e1aeedaa1 3-10,12-21,23-43,56-74,78,82-105,109-135,139,143,146-147,150-158
+  s_b4201639438c95::t_72afa2d6021186 1
+src/components/organisms/taxon-views/genomes.tsx
+  s_ae771eb10b3781::t_7e3b132e1d5412 1,7-9
+src/lib/data-api/query-options.ts
+  s_f656ade05e9d17::t_b675bc845ce357 7-12
+  s_f656ade05e9d17::t_a6bea492103c2e 1-6,13-38
+src/constants/search-info.ts
+  s_be0239fa013c4f::t_289a0be2d243e0 61
+  s_be0239fa013c4f::t_36d0a4e77c29ed 1-2,26,40
+  s_c054be8f97dc7a::t_8d2c1300b908e8 155
+  s_be0239fa013c4f::t_5c48fdc4aee323 3,5,9,15-19
+  s_fbe506820af3dd::t_82e019845727a6 10-12,22,27-35,41-56,62-64,70-72,82-83,89-91,97-99,105-107,112-113,118-119,125-127,133-135,141-143,146-149,152-154,156-166,168-175
+  s_be0239fa013c4f::t_7003aaf8f5e90c 69
+  s_fbe506820af3dd::t_fba4423c1c4755 77
+  s_fbe506820af3dd::t_616726ae105ff8 167
+  s_fbe506820af3dd::t_53afd386ac4d54 4
+  s_be0239fa013c4f::t_56247d16774994 88,96,104,124,132,140
+  s_724413237e6463::t_709658229d213c 20-21
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_ae771eb10b3781::t_ad31323f280c0c 45-46,50-51,53-57,59,82-88,91-96,98-100,102-111
+  s_5a139dccc7ae3e::t_29f7765b81f085 1,14-21,26-39,48-49,61-62,67-69,89-90,101,112,118,144-145
+  s_ae771eb10b3781::t_33ef8a547317be 3-13
+  s_ae771eb10b3781::t_6b0f5da8b49e43 113-117,119-124,126-143
+  s_ae771eb10b3781::t_2fcf1e29e69860 40-41,43-44,47,58,60,64-66
+  s_724413237e6463::t_53a10e6b8523a6 97
+  s_724413237e6463::t_fc31e0e5589986 22-25
+  s_ae771eb10b3781::t_a772618c57bceb 70
+  s_ae771eb10b3781::t_fd4b8788d1c62d 2
+  s_ae771eb10b3781::t_415444edeec9e0 71-81
+  s_ae771eb10b3781::t_5b617e09da821d 42,52,63,125
+src/components/services/list-data.tsx
+  s_ae771eb10b3781::t_9420f5251d4803 358
+  s_ae771eb10b3781::t_810442cfe0d564 28
+  s_ae771eb10b3781::t_7abdf88b7c2d21 359-360
+  s_ae771eb10b3781::t_a9156126f8e156 47
+  s_ae771eb10b3781::t_a9b8320059f91e 370
+src/lib/data-api/index.ts
+  s_f656ade05e9d17::t_b675bc845ce357 2-11
+  s_f656ade05e9d17::t_3c7f80c56675d2 1,12,28
+  s_b4201639438c95::t_0ed8a2999e4783 13-27
+src/lib/views/child-resources.ts
+  s_724413237e6463::t_c918c1cfd0ac46 1-16,27-41
+  s_724413237e6463::t_c4b1d2342bf45e 17-26
+src/app/(views)/__tests__/scaffold-routes.test.tsx
+  s_ae771eb10b3781::t_75260ac316881a 25,33
+  s_ae771eb10b3781::t_ad31323f280c0c 4-6,26-32,35-36,40-48,52-56
+src/hooks/views/use-collection-url-state.ts
+  s_ae771eb10b3781::t_6e9c3d8a91f448 31-33,61-66
+  s_ae771eb10b3781::t_4d45d23ab895f9 57-60,67-68
+  s_ae771eb10b3781::t_a04ed02f21bd99 4
+  s_ae771eb10b3781::t_9aaf1a352a552b 1-3,5-30,34-56,69-71
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_ae771eb10b3781::t_40f149a5ef80fc 1-87
+e2e/a11y/routes.ts
+  s_ae771eb10b3781::t_dcf4248670791e 268
+  s_ae771eb10b3781::t_23e0e25125d26b 281
+  s_ae771eb10b3781::t_63a84157ff6f17 351
+  s_ae771eb10b3781::t_ad31323f280c0c 74-76,101-103,109-111,117-119,125-127,133-135,141-143,149-151,157-159,173-175,181-183,189-191,201-203,210-212,219-221,231-233,244-247,273-275,282-284,290-292,298-300,306-308,314-316,322-324,330-332,338-340,346-348,357-359,365-367,373-375,381-383,389-391,397-399,408-410,417-419,428-430,438-440,445-447,452-454,459-461,466-468,473-475,480-482,489-491,496-498,503-505,512-514,521-523,528-530,535-537,542-544,551-553,560-562,567-569,574-576,581-583,588-590,619-621,627-629,635-637,643-645,667-669,754-755
+  s_ae771eb10b3781::t_5dab69df6fe649 356
+src/lib/views/legacy-hash-adapter.tsx
+  s_fbe506820af3dd::t_3ef11e500a3073 23-33
+  s_fbe506820af3dd::t_53afd386ac4d54 37-38
+  s_c054be8f97dc7a::t_e4e1e01b7d70df 41-46
+  s_fbe506820af3dd::t_235b6f505d9e2e 9-10
+src/lib/data-api/resources.ts
+  s_f656ade05e9d17::t_5cc36ad9f6b2c2 52-57
+  s_b4201639438c95::t_5b382f63bd2ca1 165-170
+  s_f656ade05e9d17::t_3dc972fc489f1a 190
+  s_b4201639438c95::t_6808a5f8f77616 14-28
+  s_b4201639438c95::t_3f491e76ea8327 159-161
+  s_b4201639438c95::t_aca1dde30ef409 104-124
+  s_f656ade05e9d17::t_952691d27c6202 182-185
+  s_b4201639438c95::t_18158dde5b5786 187
+  s_f656ade05e9d17::t_ff8dc3be6e5c43 1-13,29-51,58-98,125-144,155-158,162-163,171-181,186,188-189,191-210
+  s_f656ade05e9d17::t_4117a17e2b2e0d 145-154,164
+  s_f656ade05e9d17::t_b675bc845ce357 99-103
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_ae771eb10b3781::t_6e9c3d8a91f448 68
+  s_ae771eb10b3781::t_ca5be8d4af5cb2 6
+  s_ae771eb10b3781::t_7e0711e08d7ab3 29,46,50,73
+src/hooks/views/__tests__/collection-state.test.ts
+  s_bc07b4c8f23cde::t_d6ccbf87552a6b 1,6-8,12-13,32-34,36-39,52-53
+  s_ae771eb10b3781::t_1c4b2be3640655 48
+  s_bc07b4c8f23cde::t_5213068b9ea1e5 42-44
+  s_bc07b4c8f23cde::t_5d4ee735ff5019 2-5,9-11,14-31,35,40-41,45-47,49-51
+src/app/(views)/genome/[genomeId]/genome-tab-canonicalizer.tsx
+  s_ae771eb10b3781::t_ad31323f280c0c 19-21,27-29
+  s_5a139dccc7ae3e::t_b997f3b119e76e 1-18,22-26,30-33
+src/components/shared/data-table.tsx
+  s_602a72db124111::t_b175c9584f6a9e 1461
+  s_bc07b4c8f23cde::t_58d63142efd939 371
+  s_bc07b4c8f23cde::t_3ddb78da7c3a5a 123
+  s_bc07b4c8f23cde::t_83abdfd12ec047 1084
+  s_bc07b4c8f23cde::t_a68ef70cfb53bf 1404-1407
+  s_bc07b4c8f23cde::t_393589fe0872d7 1169-1171
+  s_bc07b4c8f23cde::t_e32223f4435ef9 206,274,1051,1059,1065,1088,1090,1093,1096,1101,1103,1106,1109,1112-1155,1159,1195,1225,1366,1414,1443,1462,1522,1528,1554,1643
+  s_bc07b4c8f23cde::t_09bb6446e52bc3 1270-1280,1288
+  s_bc07b4c8f23cde::t_ad40118789e04d 1215-1223
+  s_bc07b4c8f23cde::t_b2308cc3e06e57 1448
+  s_bc07b4c8f23cde::t_db51b686777da1 26
+  s_bc07b4c8f23cde::t_5d53da2c9836c9 308,310,314
+  s_bc07b4c8f23cde::t_f0a8f603d8b2e4 1466
+  s_bc07b4c8f23cde::t_4560c5d745a25f 89-91,95-96
+  s_bc07b4c8f23cde::t_0768408129345a 1413
+  s_bc07b4c8f23cde::t_e4e198b9f3e1fe 391-393
+  s_bc07b4c8f23cde::t_f5279adbb17d87 268-273,275-278,280-281,283-284,287
+  s_bc07b4c8f23cde::t_6bb80a71b6679b 875-883
+  s_bc07b4c8f23cde::t_4bf370d5a2a7b2 251,311,1699
+  s_bc07b4c8f23cde::t_4e05e914f0a118 279,282
+  s_bc07b4c8f23cde::t_65ab7b57ff5a5a 351-357
+  s_bc07b4c8f23cde::t_a0f9e92138301c 456
+src/lib/views/__tests__/hrefs.test.ts
+  s_be0239fa013c4f::t_9c6f2273794fa8 29-33,41-42
+  s_be0239fa013c4f::t_6e5890273ebbf4 48-57
+  s_ae771eb10b3781::t_d3ad09bbdaaf92 1,3-7
+  s_724413237e6463::t_6ad03adc6b9811 19-28
+  s_fbe506820af3dd::t_8f96dfbf40ba83 2
+  s_ae771eb10b3781::t_c24b39a577e2ad 34-40
+src/components/views/resource-export.ts
+  s_ae771eb10b3781::t_f11239c3846557 1-4,17-46
+  s_ae771eb10b3781::t_d93e56bfc52236 5-16
+src/components/views/__tests__/resource-collection.test.tsx
+  s_c054be8f97dc7a::t_2475e079d8abb3 1
+  s_c054be8f97dc7a::t_e1ecf7cccb3271 10-16
+  s_c054be8f97dc7a::t_f101a49ce3b3ab 283-290
+  s_c054be8f97dc7a::t_932a5283a2d1de 2-5,7-9,17-26,31-71,73-74,76-79,81,83-84,91-135,139-206,210-224,228-245,252-282,291,295-298
+  s_c054be8f97dc7a::t_9d4361e1b94ace 6
+  s_c054be8f97dc7a::t_602d51637c9083 72,75
+  s_c054be8f97dc7a::t_81ccadc88d068f 27-30,85-90,136-138,207-209,225-227,246-251,292-294
+  s_c054be8f97dc7a::t_53a94887ff77b6 80,82
+src/lib/genome-view/query.ts
+  s_5a139dccc7ae3e::t_55d37aabedc73a 1-8,11,17,19-20,29-33,35-43,66-67
+  s_ae771eb10b3781::t_8d9bff7c419a11 10,12
+  s_5a139dccc7ae3e::t_2b912832b4369b 21-28
+  s_ae771eb10b3781::t_1b3dca045dcc59 18,34
+  s_5a139dccc7ae3e::t_feb7780bf04979 44-51,64-65
+  s_ae771eb10b3781::t_ef338f4fb15772 52-63
+  s_ae771eb10b3781::t_6dba46460889aa 9,13-16
+e2e/fixtures/overrides/catchall.ts
+  s_ae771eb10b3781::t_43d60a7af405e4 9-25,30-44,46-48,59-64
+  s_ae771eb10b3781::t_346a62fb3de002 26-29,79-86
+  s_ae771eb10b3781::t_99e2db5393e649 49-58
+src/constants/datafields/genome_sequence.ts
+  s_be0239fa013c4f::t_75a684b2c602ef 9
+src/components/views/resource-collection.tsx
+  s_ae771eb10b3781::t_574cf9aaa538ce 67
+  s_ae771eb10b3781::t_951ec57bc5089d 34
+  s_ae771eb10b3781::t_c2bcb28da60aa7 64-65
+  s_ae771eb10b3781::t_f01b2c0032cab0 191
+  s_ae771eb10b3781::t_33733389acc463 300-304
+  s_ae771eb10b3781::t_e893b1e11d64f7 323,328-332
+  s_ae771eb10b3781::t_adf634aed76875 26
+  s_ae771eb10b3781::t_73bef5c0238993 44,47-52
+  s_ae771eb10b3781::t_0e170594aec452 166,181-182
+  s_ae771eb10b3781::t_a1965399284013 187-190
+  s_ae771eb10b3781::t_18d558fd1a6639 96-99
+  s_bc07b4c8f23cde::t_6b3253a720f025 262
+  s_ae771eb10b3781::t_eca90ddfdc6ce8 84-88
+  s_ae771eb10b3781::t_dca3847804b756 8
+  s_ae771eb10b3781::t_0752f7a667e5ba 76-77
+  s_ae771eb10b3781::t_12a496bd5cc390 291-292,298-299,306-307,309-322,333-344
+  s_ae771eb10b3781::t_6964d466d04d74 287-290,293-297
+  s_bc07b4c8f23cde::t_962da92598f986 18,20
+  s_ae771eb10b3781::t_7a4012e03a8c3f 117
+  s_c054be8f97dc7a::t_fa9e80f8dee1bf 167,202,208,280
+  s_ae771eb10b3781::t_03cc237801d9cf 7,9,11
+  s_ae771eb10b3781::t_3bb657cbd78a47 21
+  s_bc07b4c8f23cde::t_19288cbeb1e573 61-63
+  s_ae771eb10b3781::t_f625040b96696b 324-327
+  s_ae771eb10b3781::t_8b91dca9e476cc 193-201,203-207,209-217
+  s_bc07b4c8f23cde::t_e32223f4435ef9 107-110,186,192,254-261,265-267,271-279,281-283,308
+  s_bc07b4c8f23cde::t_7a04b210f97c5c 19
+  s_ae771eb10b3781::t_ee59841d99c298 79
+  s_ae771eb10b3781::t_db71372cb96b1b 68
+  s_c054be8f97dc7a::t_ea034c116743f8 124-161
+  s_ae771eb10b3781::t_4826ada088253a 345
+  s_bc07b4c8f23cde::t_51986c74e257a5 30,35
+  s_c054be8f97dc7a::t_9452b241f4778d 83
+  s_ae771eb10b3781::t_138432b935f5c7 162
+  s_bc07b4c8f23cde::t_f294dbab49c3c4 263-264
+  s_ae771eb10b3781::t_62e70ca3fb5162 165,168-180
+  s_c054be8f97dc7a::t_19f36527223fcc 241-242,246-249
+  s_ae771eb10b3781::t_0ec350d5be1f92 104-106
+  s_ae771eb10b3781::t_002f8280d6e946 45-46
+  s_ae771eb10b3781::t_9f9494c700e3e6 17
+  s_bc07b4c8f23cde::t_594de09c7282a8 38
+  s_ae771eb10b3781::t_3c07bba89be9f4 94
+  s_ae771eb10b3781::t_af087071923108 10
+  s_ae771eb10b3781::t_67567f3be7208e 114-116
+  s_ae771eb10b3781::t_fdd31a9cd74fd4 219-223,226-228,231-239
+  s_bc07b4c8f23cde::t_0d3027a9482394 1-3,5-6,12-16,22-25,27-29,31-33,36-37,39-40,42-43,53-60,66,69-75,78,80-81,89-93,95,100-103,111-113,118-123,163-164,183-185,218,240,250-253,268-270,284-286,305,346-349
+  s_ae771eb10b3781::t_54bea54be04657 4
+  s_ae771eb10b3781::t_35f92013a6d9f9 224-225,229-230
+  s_c054be8f97dc7a::t_81ccadc88d068f 243-245
+  s_ae771eb10b3781::t_4b729661d36cc9 82
+  s_ae771eb10b3781::t_efe82785d21d30 41
+src/lib/genome-view/index.ts
+  s_724413237e6463::t_8c0e0b79bff70c 5-8
+  s_5a139dccc7ae3e::t_a42fa49c6bfe1f 1-4
+src/components/organisms/taxon-views/sequences.tsx
+  s_724413237e6463::t_f6e9dfac0c2c06 1,10
+src/app/(views)/genome/page.tsx
+  s_5a139dccc7ae3e::t_acbdd276956560 19-22
+  s_5a139dccc7ae3e::t_cd6f18972f61c2 4-8
+  s_ae771eb10b3781::t_1aa80cb0b7fb15 24-26
+  s_5a139dccc7ae3e::t_18d7e994e87b59 1,3
+  s_5a139dccc7ae3e::t_4efdb27e6e91f5 2,9,11-18,23,27-28
+src/lib/data-api/schemas.ts
+  s_f656ade05e9d17::t_8dd731f192fa65 1-2,11
+  s_b4201639438c95::t_9af24eb8797e36 3-10,13,16-91
+  s_f656ade05e9d17::t_caa2dcffbeeed0 12,14-15,92
+src/hooks/views/use-resource-collection.ts
+  s_bc07b4c8f23cde::t_a1bbd95c181aaf 12
+  s_bc07b4c8f23cde::t_dcb713c0d48bc8 6,10,13-14,19-21,32,34-46,54,60,75-76,80-82,86,100-101,103-104,108-109,111,116-117,119,143
+  s_bc07b4c8f23cde::t_12d95fc8c8741f 91-92
+  s_bc07b4c8f23cde::t_631878af527dcc 110
+  s_ae771eb10b3781::t_c5615b23de4297 17
+  s_ae771eb10b3781::t_2195761540c5e6 68-71,74
+  s_bc07b4c8f23cde::t_42a55faaf88ef7 135-137
+  s_ae771eb10b3781::t_34b5fe86af7e45 30-31
+  s_bc07b4c8f23cde::t_07937a3e0199b1 33
+  s_bc07b4c8f23cde::t_d95673cf43881e 8
+  s_bc07b4c8f23cde::t_e32223f4435ef9 7,87-88
+  s_ae771eb10b3781::t_3ca7d77c1c9ca9 93
+  s_ae771eb10b3781::t_79c75969f68d7e 98,105
+  s_bc07b4c8f23cde::t_8cfd4cdc7ce228 128
+  s_ae771eb10b3781::t_0d02fefb452984 102
+  s_ae771eb10b3781::t_6e9c3d8a91f448 26-28
+  s_ae771eb10b3781::t_513625421f8f2d 115,118,122,129-130,133
+  s_ae771eb10b3781::t_0ba0f5f2129828 94-95
+  s_ae771eb10b3781::t_a9dae9dcbcf78f 52
+  s_ae771eb10b3781::t_a6c53666a4824f 4,29
+  s_ae771eb10b3781::t_d5e33e6aedc63a 59,61-67,72-73
+  s_bc07b4c8f23cde::t_692c1e4f29b8f7 57
+  s_bc07b4c8f23cde::t_e68d40d7261a32 1-3,5,9,11,15-16,18,22-25,47-51,53,55-56,58,77-79,83-85,89-90,96-97,99,106-107,112-114,120-121,123-127,131-132,134,138-142,144-147
+.env.e2e.test
+  s_ae771eb10b3781::t_b796be57c98c87 29
+src/lib/genome-view/tabs.ts
+  s_5a139dccc7ae3e::t_d180607b02dcfc 1-16,20-88,91-93
+  s_ae771eb10b3781::t_ad31323f280c0c 17-19,89-90
+src/components/organisms/taxon-views/interactions.tsx
+  s_724413237e6463::t_03f059d265aeb1 3,9
+docs/architecture.md
+  s_fdc3ef57243a78::t_c27876e59db6f3 54
+  s_ef0f6ca0ab7fbb::t_ea97aa3dc80f5a 53,55-61,107
+  s_ae771eb10b3781::t_f06689be286063 78
+  s_ef0f6ca0ab7fbb::t_80c693e9937608 14,25
+  s_ef0f6ca0ab7fbb::t_22de3d7b99903d 74,76-77,79-80
+src/constants/datafields/protein_feature.ts
+  s_be0239fa013c4f::t_d2e27aec921021 18
+src/components/views/resource-workspace.tsx
+  s_724413237e6463::t_706fb71538615b 19-20
+  s_ae771eb10b3781::t_6e9c3d8a91f448 29-30,99-102
+  s_ae771eb10b3781::t_f733d0785f0a50 4-5,12,21,26,31-33,48,52-58,60-61,63,65-67,110
+  s_c054be8f97dc7a::t_f50c790d257159 50-51
+  s_724413237e6463::t_755943777e4305 28,36,38-47
+  s_ae771eb10b3781::t_be1cfa73e45e6f 37
+  s_724413237e6463::t_d0a8e050d68058 3
+  s_724413237e6463::t_63cae60bd06d25 59
+  s_724413237e6463::t_36367bc8b1273c 69
+  s_724413237e6463::t_c73325372a31bf 75-93,95-98
+src/app/all-term-search-results.tsx
+  s_be0239fa013c4f::t_37f98fa2652135 480,485-489
+  s_fbe506820af3dd::t_53afd386ac4d54 443,458,484
+  s_be0239fa013c4f::t_a78ab252f5c15a 475-479,483
+  s_be0239fa013c4f::t_67c77d4f5a9e1e 22
+  s_fbe506820af3dd::t_12b39bbf4b2015 18-21
+  s_be0239fa013c4f::t_cb66686090f318 449-450,452-453,455
+  s_be0239fa013c4f::t_b987b7d888416b 4
+  s_c054be8f97dc7a::t_e4e1e01b7d70df 86,451,454
+  s_fbe506820af3dd::t_9aea3c5b6df063 416,430
+src/lib/views/__tests__/collection-state.test.ts
+  s_f422d8910dd3f6::t_b02d9655ef71b0 27-29,38-40,65,67-68,93-94,96-98,129-133,139-141,143-147
+  s_f422d8910dd3f6::t_9a94f826bf18cf 37,41
+  s_f422d8910dd3f6::t_9cab30d9b46ab6 1-26,30-36,42-63,69,71-72,77-78,91-92,99-125,127-128,134-138,142,148-159
+  s_ae771eb10b3781::t_eeec9690430f25 79-90
+  s_ae771eb10b3781::t_9d58896b86fef7 64,66,70,73-76
+  s_ae771eb10b3781::t_8b8d2f30d03011 95
+  s_ae771eb10b3781::t_c0245e28cabeb4 126
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_ae771eb10b3781::t_5b617e09da821d 47,53,100-104,119,132-134,146-148
+  s_ae771eb10b3781::t_5861e29e57a29b 18-20,23,27
+  s_ae771eb10b3781::t_d7821de7baa855 66-67
+  s_ae771eb10b3781::t_e937d7a168bda2 45
+  s_ae771eb10b3781::t_8bfcf695d46abe 34
+  s_ae771eb10b3781::t_8ce5c349f51991 30
+  s_ae771eb10b3781::t_17d00894db66a1 21
+src/lib/data-api/types.ts
+  s_f656ade05e9d17::t_b675bc845ce357 32-34,80
+  s_f656ade05e9d17::t_97ed45e5ac3459 36
+  s_b4201639438c95::t_ebacaf85f0c515 25
+  s_f656ade05e9d17::t_f3f8692cd2183e 1-24,26-31,35,37-79,81-101
+src/lib/genome-view/server.ts
+  s_ae771eb10b3781::t_597ba43087f5d0 12-13
+  s_ae771eb10b3781::t_ad31323f280c0c 9-10
+  s_5a139dccc7ae3e::t_be5a524c1b6a98 1-8,11,14-16,19-26
+  s_ae771eb10b3781::t_e37e976d01c53a 17-18
+src/components/phylogeny/bacterial-phylogeny-panel.tsx
+  s_ae771eb10b3781::t_1c5232dae6bf5a 54,118
+  s_ae771eb10b3781::t_f0fc05471a82e6 6
+  s_ae771eb10b3781::t_6e9c3d8a91f448 14-20,22-25,30-37,43,45,60-65,67-80,85-95,102,114-116
+src/constants/datafields/genome.ts
+  s_be0239fa013c4f::t_94fc070ca4ff9c 10
+src/components/views/index.ts
+  s_ae771eb10b3781::t_190edad73a86cb 2,4
+  s_bc07b4c8f23cde::t_40f5ed79542fd2 1,3
+src/components/organisms/types.ts
+  s_ae771eb10b3781::t_cd81dd4a9ebbf2 38-39
+src/app/(views)/genome/loading.tsx
+  s_5a139dccc7ae3e::t_70f1376b4fd2ec 1-4,10-11,13-15
+  s_ae771eb10b3781::t_ad31323f280c0c 5-9
+  s_5a139dccc7ae3e::t_c0df67e73ee730 12
+src/components/taxonomy/__tests__/taxonomy-tree-panel.test.tsx
+  s_ae771eb10b3781::t_4abec3e4adef06 63
+  s_ae771eb10b3781::t_083076c6470317 33-35,45-49,99-101,111-113
+src/lib/data-api/__tests__/repository.test.ts
+  s_f656ade05e9d17::t_f2ab72a89e1c00 1,3-14,19-21,26-37,42-51,72-73,85-89,93,97-98,114-116,125,129-133,186
+  s_f656ade05e9d17::t_8b78837e4442c4 38-41
+  s_ae771eb10b3781::t_1914a6384f5610 52,56-71
+  s_b4201639438c95::t_20a06cb2f3d684 99-103,107-113
+  s_b4201639438c95::t_468e903a4fa2a9 134-144,148-151,157-170,176-185
+  s_f656ade05e9d17::t_541a816ce3f36f 2
+  s_ae771eb10b3781::t_083076c6470317 53-55
+  s_f656ade05e9d17::t_b675bc845ce357 15-18,22-25,74-84,90-92,94-96,117-120,122-124,126-128
+  s_ae771eb10b3781::t_4ea71b62f25e29 104-106,145-147,152-156,171-175
+  s_ae771eb10b3781::t_d850ddd2d8c8cb 121
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_ae771eb10b3781::t_26086237e4bf72 217-224
+  s_ae771eb10b3781::t_13e79dea2c08d5 135-140,142-143
+  s_ae771eb10b3781::t_90b0107251fb58 15,45,75-86,172-182,186-188,488-500,506-516
+  s_ae771eb10b3781::t_39c1e9059fb7f2 253-255
+  s_ae771eb10b3781::t_fe99adc463be31 120-122
+  s_ef0f6ca0ab7fbb::t_80c693e9937608 4-5
+  s_ae771eb10b3781::t_8b5e9704a7544f 239-242
+  s_ef0f6ca0ab7fbb::t_8d72989d5ca678 129-134,141,144,229-238,243-252,256,345-364
+  s_ef0f6ca0ab7fbb::t_c09bdf744c4800 365
+src/app/(views)/genome/not-found.tsx
+  s_ae771eb10b3781::t_ad31323f280c0c 7-15
+  s_5a139dccc7ae3e::t_3703b6d836bed2 1-6,16-18
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_5a139dccc7ae3e::t_e994c0ec11a9a3 8,56-57,65-66
+  s_ae771eb10b3781::t_ad31323f280c0c 38-40,49-52,59-62
+  s_5a139dccc7ae3e::t_33fed94f62675c 2,58,63-64
+  s_5a139dccc7ae3e::t_75bfe9dc2715c6 5-6
+  s_724413237e6463::t_a1d3d783e2a0d6 23-35
+  s_fbe506820af3dd::t_8f96dfbf40ba83 4
+  s_5a139dccc7ae3e::t_c62a2543893ca6 1,3,7,10-22,36-37,41-48,53-55,67
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_ae771eb10b3781::t_083076c6470317 50-52,81-85
+  s_ae771eb10b3781::t_bacf0c92f5c39c 7
+  s_ae771eb10b3781::t_dc0a9d1c069f35 5
+  s_ae771eb10b3781::t_ab2c08d39b9a7a 38
+  s_ae771eb10b3781::t_e5358f845f7ef5 57,106
+  s_ae771eb10b3781::t_fc2096a3c230e1 91,93
+  s_ae771eb10b3781::t_e7297d1a6911ef 92
+  s_ae771eb10b3781::t_fb3f17e6c71742 64-68
+  s_ae771eb10b3781::t_d9c34e608d094f 31
+  s_ae771eb10b3781::t_720b16e5167f9d 11
+src/lib/data-api/repository.ts
+  s_f656ade05e9d17::t_2ed1a7555758c6 21-22
+  s_f656ade05e9d17::t_11d10cf4a38427 87
+  s_f656ade05e9d17::t_e6e39510a9a1a7 319
+  s_ae771eb10b3781::t_060fb3e12de5fa 47-50,52-55
+  s_f656ade05e9d17::t_c25c9a1b7b5f60 240
+  s_f656ade05e9d17::t_84894c7df4703a 327-328
+  s_b4201639438c95::t_cf53bc80ff785d 111-114,120-124
+  s_f656ade05e9d17::t_c85ad22976f43d 329-331,333-338
+  s_f656ade05e9d17::t_701b8a23b2bd28 1-20,23-39,45-46,56-78,84-86,88,100-110,125-132,138-153,167,176-179,185-192,224-232,238-239,244-248,255-257,263-267,275-277,286-287,293-294,304-311,326,339,360-362,367-370,378-380
+  s_f656ade05e9d17::t_5854f55b68a79c 332
+  s_b4201639438c95::t_2929619f98a3fd 340-353,356-357,359
+  s_f656ade05e9d17::t_97473176dcd0f2 288-292,302
+  s_f656ade05e9d17::t_b675bc845ce357 40-44,51,79-83,89-99,115-119,133-137,154-166,168-175,180-184,193-223,233-237,241-243,249-254,258-262,268-274,278-285,295-301,303,312-318,320-325,354-355,358,363-366,371-377
+src/components/views/genome-resource-collection.tsx
+  s_ae771eb10b3781::t_f9cb1b4113f139 1-36
+src/components/views/__tests__/resource-workspace.test.tsx
+  s_724413237e6463::t_e0a5790d9d40c6 73-78
+  s_724413237e6463::t_0fe99bebbd33ab 8
+  s_724413237e6463::t_084b2270fb2dd6 2
+  s_ae771eb10b3781::t_22dba59e07f1bd 4
+  s_724413237e6463::t_f1f20d9c11717a 27,39-72
+  s_724413237e6463::t_c5ea454da7fd8d 83-93,95,97-98
+  s_724413237e6463::t_cfc45fe0438118 94,96
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_ae771eb10b3781::t_4dc8357167bd90 60
+  s_ae771eb10b3781::t_083076c6470317 6-12,14,17-19,22-23,49-57,64-67,74-77,136-138,140-144,210-212
+src/app/search/typesearch.tsx
+  s_ae771eb10b3781::t_4502769c75d832 449
+  s_c054be8f97dc7a::t_e4e1e01b7d70df 341
+  s_ae771eb10b3781::t_6e9c3d8a91f448 125,381
+  s_ae771eb10b3781::t_d4b89389be9571 408,456
+  s_ae771eb10b3781::t_875f50072d3c42 21
+  s_ae771eb10b3781::t_30b089ba6a4070 114
+  s_ae771eb10b3781::t_64d5c944893ccd 420-424
+  s_ae771eb10b3781::t_1ca1045c3b61e2 86
+  s_be0239fa013c4f::t_53a4b7342d9940 361-362
+  s_fbe506820af3dd::t_466436c38fe956 56
+  s_fbe506820af3dd::t_53afd386ac4d54 279
+  s_ae771eb10b3781::t_9368c00bcaeca4 295
+  s_be0239fa013c4f::t_3c677f2cc3a876 16-17,19-20
+  s_ae771eb10b3781::t_24bd9d14b94df3 189,191
+  s_ae771eb10b3781::t_4e52357ffa5e0e 283
+  s_ae771eb10b3781::t_3c6c09e0587fce 63
+  s_ae771eb10b3781::t_00b27b26e9be8a 190
+  s_fbe506820af3dd::t_e9be04421206b6 18
+  s_ae771eb10b3781::t_3fed2369d1f5de 8
+  s_be0239fa013c4f::t_333730b87e0c19 358-360,363-364
+src/app/(views)/genome/[genomeId]/genome-overview.tsx
+  s_c054be8f97dc7a::t_fa9e80f8dee1bf 104-127
+  s_724413237e6463::t_ac173ff5c6b52c 4-5
+  s_5a139dccc7ae3e::t_8cec15d55e5ad0 9-14,17
+  s_ae771eb10b3781::t_ad31323f280c0c 15-16,24-26,61-67,70-75,98-101,134-137
+  s_724413237e6463::t_3fbe4fd93393c0 32-60
+  s_5a139dccc7ae3e::t_c0df67e73ee730 27
+  s_5a139dccc7ae3e::t_75d59659536c91 1-3,6-8,18-23,28-31,68-69,76-97,102-103,128-133,138-141
+src/app/(views)/genome/__tests__/page.test.tsx
+  s_5a139dccc7ae3e::t_299c0a9a5f6895 1-3,15-18,29,31-33
+  s_ae771eb10b3781::t_ad31323f280c0c 4-10,12-14,19-28
+  s_ae771eb10b3781::t_32a4c442d428ad 11
+  s_ae771eb10b3781::t_6e9c3d8a91f448 30
+src/components/views/resource-filter-bar.tsx
+  s_ae771eb10b3781::t_6777203ba7b984 30
+  s_ae771eb10b3781::t_09fc59f29a75f1 52-58,62,67
+  s_ae771eb10b3781::t_6e9c3d8a91f448 35-41,118-119
+  s_ae771eb10b3781::t_26a8d394236487 135,138
+  s_ae771eb10b3781::t_f933ff02587bb5 1-2,4-16,18-20,22-29,31-34,42-44,51,59-61,63-66,68-117,120-134,136-137,139-174,176-184
+  s_ae771eb10b3781::t_dfe7145ca48240 45-50
+  s_ae771eb10b3781::t_d8be6e670c51ec 3
+  s_ae771eb10b3781::t_5da54395ed984e 17,21
+  s_ae771eb10b3781::t_5da438902738c8 175
+src/lib/data-api/__tests__/validation.test.ts
+  s_f656ade05e9d17::t_1a75442c328349 3
+  s_f656ade05e9d17::t_b675bc845ce357 10-14,18-20,38-56,60-80,84-89
+  s_f656ade05e9d17::t_536938fbdeb029 23
+  s_b4201639438c95::t_2b604a9540160c 24,26-34
+  s_f656ade05e9d17::t_ffb4f53512cae2 91,93-95,97-99,109-114,116-123
+  s_f656ade05e9d17::t_cdfebe54adb7cc 1-2,4,15-17,21-22,25,35-37,57-59,81-83,90,124
+  s_b4201639438c95::t_1c7d357e58b703 5-9
+  s_b4201639438c95::t_813d9906224ba2 92,100-108
+  s_f656ade05e9d17::t_1e96b640c175a7 96
+  s_f656ade05e9d17::t_212b42f253425a 115
+src/lib/data-api/client.ts
+  s_f656ade05e9d17::t_63a294fdc096aa 1-25,30,34-46,49-62,67-76,81-98,104-112
+  s_f656ade05e9d17::t_b675bc845ce357 26-29,31-33,47-48,63-66,77-80,99-103
+src/lib/views/hrefs.ts
+  s_fbe506820af3dd::t_8f96dfbf40ba83 39-42
+  s_ae771eb10b3781::t_444fa04a7835a7 10-19
+  s_be0239fa013c4f::t_e7b7321eb6c9ab 20-24,26-27,29-32,36,38
+  s_be0239fa013c4f::t_63f1e431a9d12d 33-35,37
+src/lib/data-api/__tests__/rql.test.ts
+  s_f656ade05e9d17::t_da2746e4027226 4
+  s_f656ade05e9d17::t_a89a0e5a4d5186 1-3,5,9-20,24,26-40,49-56
+  s_f656ade05e9d17::t_8f8443df78bc09 46-48
+  s_f656ade05e9d17::t_b675bc845ce357 6-8,41-45
+  s_b4201639438c95::t_7142d53963e87d 21-23,25
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_ae771eb10b3781::t_6b54b1c595b8c1 47
+  s_ae771eb10b3781::t_ad31323f280c0c 27-35,39-46,48-50,65-68,75-83,88-90,103-105,107-119,124-138
+  s_724413237e6463::t_25ac53c94b4d85 91-99
+  s_ae771eb10b3781::t_87e1a0ef4dc576 106
+  s_5a139dccc7ae3e::t_d81d59e1d41336 1-2,8-26,36-38,51-53,64,69-74,84-87,100-102,120-123,139-143
+  s_724413237e6463::t_73cea92a2962d3 3-7
+  s_5a139dccc7ae3e::t_11a9159fba3680 54-63
+src/app/api/data/[resource]/route.ts
+  s_f656ade05e9d17::t_eab9c4db9a3c10 44
+  s_f656ade05e9d17::t_b675bc845ce357 5-8,10-13,20-23,26-29,32-35,38-41,47-48,54-57,62-63,74-77,91-95,98-101,104-106,111-115,117-123,132-133,141,143-145,148-150,159-162,171-174,178-181,185-186,188-191,193-196,200-204
+  s_f656ade05e9d17::t_488f535e70edfc 142
+  s_f656ade05e9d17::t_caa2dcffbeeed0 192
+  s_f656ade05e9d17::t_eceea2425333df 9
+  s_f656ade05e9d17::t_92748902b8cd73 1-4,14-19,24-25,30-31,36-37,42-43,45-46,49-53,58-61,64-73,78-90,96-97,102-103,107-110,116,124-131,134-140,146-147,151-158,163-170,175-177,182-184,187,197-199,205-206
+e2e/tests/genome-view.spec.ts
+  s_ae771eb10b3781::t_fb63636c26107b 1-12,76-78,85,88-90,94,96-105,114-115
+  s_ae771eb10b3781::t_4ea71b62f25e29 42-43,59-61,79-81,111-113
+  s_ae771eb10b3781::t_acd8da8f0826cf 16-17,20-25,37-40,44-48,62-63
+  s_ae771eb10b3781::t_ec8733500f6056 18-19,26-36,56-58,64-66,82-84,86-87,91-93,108-110
+  s_ae771eb10b3781::t_36c84443d5ee7a 55
+  s_ae771eb10b3781::t_9086297eb253f8 67-72,74-75
+  s_ae771eb10b3781::t_90b0107251fb58 13-15,49-54
+  s_ae771eb10b3781::t_00c7e8a66bfa87 106-107
+  s_ae771eb10b3781::t_71cdf4bd014ce8 73
+  s_ae771eb10b3781::t_9260b1623d867d 41,95
+src/components/search/__tests__/search-action-bar.test.tsx
+  s_ae771eb10b3781::t_3a8dc208be8bee 10-15,21-26,28-30,34-43,45-47,60-62,68-70,77-83,90-96,110-118,145-152,160-164,175-177
+  s_ae771eb10b3781::t_ca064e0855df85 156-159,165-166,168-174,178
+  s_ae771eb10b3781::t_eced38ee1c8478 167
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "bbbd5cf065bb1836bcf688078283536ead76773f",
+  "prompts": {},
+  "sessions": {
+    "s_5a139dccc7ae3e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc27ab0bffesQBEw7wsCGaCRg",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_602a72db124111": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc3b9561ffeLoxg8MIS2IabNi",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_724413237e6463": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb4c88e2ffeEeCDfTfN2TgOCB",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ae771eb10b3781": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc413398ffe64XyxNfZhsMT64",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b4201639438c95": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb4c8916ffej6C6YsrfF34epl",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bc07b4c8f23cde": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc3b9584ffeLlbtQkKQKjsYjK",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_be0239fa013c4f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc27aae6ffeQ0yQQ1rkXzyRj9",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c054be8f97dc7a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb4c88cbffeGKvPLqMNjZyYkg",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ef0f6ca0ab7fbb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc27aab0ffeCd1ZmoirQp0RAx",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f422d8910dd3f6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc3b9536ffe4bYNdAu8MBQ5Wt",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f656ade05e9d17": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbc3b95c1ffeGZbjIE0Aw7gzAS",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_fbe506820af3dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb4c88ffffedpAcAABgMmtKP8",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_fdc3ef57243a78": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc0bd3273ffeCWwnINIVu6iwPo",
+        "model": "gpt56sol"
+      },
+      "human_author": null
+    }
+  }
+}

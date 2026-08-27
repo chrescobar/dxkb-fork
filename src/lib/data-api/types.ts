@@ -1,5 +1,7 @@
 import type { z } from "zod";
 
+export const maxExportRows = 10_000;
+
 export const dataResources = [
   "genome",
   "genome_feature",
@@ -73,6 +75,7 @@ export interface ExportRequest {
   keyword?: string;
   fields: string[];
   limit: number;
+  offset?: number;
   sort?: DataSort;
 }
 

@@ -53,6 +53,50 @@ describe("DataRepository", () => {
     );
   });
 
+  it("exports every row across capped server batches", async () => {
+    const firstBatch = Array.from({ length: 10_000 }, (_, index) => ({
+      genome_id: String(index),
+    }));
+    global.fetch = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ rows: firstBatch })),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ rows: [{ genome_id: "10000" }] })),
+      );
+
+    const result = await new DataRepository().exportAll("genome", {
+      fields: ["genome_id"],
+    });
+
+    expect(result.rows).toHaveLength(10_001);
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      1,
+      "/api/data/genome",
+      expect.objectContaining({
+        body: JSON.stringify({
+          operation: "export",
+          fields: ["genome_id"],
+          limit: 10_000,
+          offset: 0,
+        }),
+      }),
+    );
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      2,
+      "/api/data/genome",
+      expect.objectContaining({
+        body: JSON.stringify({
+          operation: "export",
+          fields: ["genome_id"],
+          limit: 10_000,
+          offset: 10_000,
+        }),
+      }),
+    );
+  });
+
   it("surfaces gateway errors", async () => {
     global.fetch = vi
       .fn<typeof fetch>()

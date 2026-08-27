@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { createElement, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
@@ -91,6 +90,7 @@ describe("useResourceCollection", () => {
 
   it("represents all-matching selection without requesting a member detail", async () => {
     const data = repository();
+    const member = vi.spyOn(data, "member");
     const { result } = renderHook(
       () =>
         useResourceCollection({
@@ -115,11 +115,12 @@ describe("useResourceCollection", () => {
     expect(result.current.isAllPagesSelected).toBe(true);
     expect(result.current.activeId).toBeNull();
     expect(result.current.selectedIds).toEqual([]);
-    expect(data.member).not.toHaveBeenCalled();
+    expect(member).not.toHaveBeenCalled();
   });
 
   it("requests the detail projection and replaces the page-row fallback", async () => {
     const data = repository();
+    const member = vi.spyOn(data, "member");
     const { result } = renderHook(
       () =>
         useResourceCollection({
@@ -147,7 +148,7 @@ describe("useResourceCollection", () => {
         host_name: "Human",
       });
     });
-    expect(data.member).toHaveBeenCalledWith(
+    expect(member).toHaveBeenCalledWith(
       "genome",
       {
         id: "100.1",

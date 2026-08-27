@@ -1,3 +1,4 @@
+import { maxExportRows } from "./types";
 import type {
   CollectionRequest,
   CollectionResult,
@@ -94,6 +95,30 @@ export class DataRepository {
     signal?: AbortSignal,
   ): Promise<RowsResult<T>> {
     return this.post(resource, { operation: "export", ...request }, signal);
+  }
+
+  async exportAll<
+    T extends Record<string, unknown> = Record<string, unknown>,
+  >(
+    resource: DataResource,
+    request: Omit<ExportRequest, "operation" | "limit" | "offset">,
+    signal?: AbortSignal,
+  ): Promise<RowsResult<T>> {
+    const rows: T[] = [];
+    let result: RowsResult<T>;
+    do {
+      result = await this.export<T>(
+        resource,
+        {
+          ...request,
+          limit: maxExportRows,
+          offset: rows.length,
+        },
+        signal,
+      );
+      rows.push(...result.rows);
+    } while (result.rows.length === maxExportRows);
+    return { rows };
   }
 
   private post<T>(

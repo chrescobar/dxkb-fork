@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/unbound-method */
 import type { ReactNode } from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { DataRepository } from "@/lib/data-api";
 import { genomeCollectionProfile } from "@/lib/genome-view/profile";
 import type { CollectionState } from "@/lib/views/collection-state";
+import type { useResourceCollection as useResourceCollectionHook } from "@/hooks/views/use-resource-collection";
 import { ResourceCollection } from "../resource-collection";
 
 const { push, downloadResourceExport, useResourceCollection } = vi.hoisted(
   () => ({
     push: vi.fn(),
     downloadResourceExport: vi.fn(),
-    useResourceCollection: vi.fn(),
+    useResourceCollection: vi.fn<typeof useResourceCollectionHook>(),
   }),
 );
 let dataTableProps: Record<string, unknown>;
@@ -20,7 +20,7 @@ let actionBarProps: Record<string, unknown>;
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 vi.mock("../resource-export", () => ({ downloadResourceExport }));
 vi.mock("@/hooks/views/use-resource-collection", () => ({
-  useResourceCollection: (options: unknown) => useResourceCollection(options),
+  useResourceCollection,
 }));
 vi.mock("../resource-filter-bar", () => ({
   ResourceFilterBar: (props: Record<string, unknown>) => (
@@ -122,7 +122,7 @@ function collectionResult() {
     error: null,
     refetch: vi.fn(),
     rows: [row],
-    selection: { "83332.12": true },
+    selection: { "83332.12": true as const },
     selectedIds: ["83332.12"],
     sorting: [{ id: "genome_length", desc: true }],
     total: 1,
@@ -137,7 +137,7 @@ function repository(
   exportResult: Promise<unknown> = Promise.resolve({ rows: [row] }),
 ) {
   return {
-    export: vi.fn(() => exportResult),
+    exportAll: vi.fn(() => exportResult),
     selected: vi.fn(),
   } as unknown as DataRepository;
 }
@@ -165,6 +165,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       />,
     );
     const globalHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    if (!globalHookOptions) throw new Error("Collection hook was not called");
     const globalTable = dataTableProps;
     const globalActions = actionBarProps;
     const globalFacets = screen.getByTestId("filter-bar").dataset.definitions;
@@ -229,8 +230,9 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(push).toHaveBeenCalledWith("/genome/83332.12");
   });
 
-  it("requests up to 10,000 matching rows using the active scope, sort, and columns", async () => {
+  it("requests all matching rows using the active scope, sort, and columns", async () => {
     const data = repository();
+    const exportAll = vi.spyOn(data, "exportAll");
     render(
       <ResourceCollection
         profile={genomeCollectionProfile}
@@ -251,11 +253,10 @@ describe("ResourceCollection Genome integration contracts", () => {
       )("csv", null);
     });
 
-    expect(data.export).toHaveBeenCalledWith("genome", {
+    expect(exportAll).toHaveBeenCalledWith("genome", {
       rql: "and(eq(taxon_lineage_ids,561),eq(genome_status,Complete))",
       keyword: "coli",
       fields: genomeCollectionProfile.columns.map((column) => column.id),
-      limit: 10_000,
       sort: { field: "genome_length", direction: "desc" },
     });
     expect(downloadResourceExport).toHaveBeenCalledWith(

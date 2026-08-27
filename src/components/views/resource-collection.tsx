@@ -135,7 +135,7 @@ export function ResourceCollection<Row extends DataTableRow>({
             ids: [...selectedIds],
             fields: selectedFields,
           })
-        : await repository.export(profile.resource, {
+        : await repository.exportAll(profile.resource, {
             rql: combinePredicates(
               baseRql,
               state.rql ??
@@ -144,7 +144,6 @@ export function ResourceCollection<Row extends DataTableRow>({
             ),
             keyword: state.keyword,
             fields: selectedFields,
-            limit: 10_000,
             sort: {
               field: state.sort.split(":")[0],
               direction: state.sort.endsWith(":desc") ? "desc" : "asc",

@@ -265,10 +265,11 @@ export class ServerDataRepository {
     addPredicate(url, request, resource);
     addFields(url, request.fields);
     addSort(url, request.sort, definition.idField);
+    const offset = request.offset ?? 0;
     const payload = await this.request(
       url,
-      0,
-      request.limit,
+      offset,
+      offset + request.limit,
       signal,
       "application/json",
     );

@@ -49,6 +49,27 @@ describe("ServerDataRepository", () => {
     });
   });
 
+  it("applies the requested offset to export ranges", async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(jsonResponse([{ genome_id: "10000" }]));
+    const repository = new ServerDataRepository({
+      baseUrl: "https://data.test",
+      fetch: fetcher,
+    });
+
+    await repository.export("genome", {
+      operation: "export",
+      fields: ["genome_id"],
+      limit: 10_000,
+      offset: 10_000,
+    });
+
+    expect(new Headers(fetcher.mock.calls[0][1]?.headers).get("Range")).toBe(
+      "items=10000-20000",
+    );
+  });
+
   it("uses tokenized prefix matching for keywords", async () => {
     const fetcher = vi
       .fn<typeof fetch>()

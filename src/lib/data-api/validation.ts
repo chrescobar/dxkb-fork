@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { DataApiValidationError, getResourceDefinition } from "./resources";
 import { validateRql } from "./rql";
+import { maxExportRows } from "./types";
 import type { DataApiRequest, DataResource, DataSort } from "./types";
+
+export { maxExportRows } from "./types";
 
 export const pageSize = 200;
 export const maxSelectedRows = 500;
-export const maxExportRows = 10_000;
 export const maxFields = 200;
 export const maxIdentifierLength = 1_000;
 export const maxRequestBytes = 32_000;
@@ -46,6 +48,7 @@ const requestSchema = z.discriminatedUnion("operation", [
     keyword: z.string().max(500).optional(),
     fields: fieldListSchema.min(1),
     limit: z.number().int().min(1).max(maxExportRows),
+    offset: z.number().int().min(0).optional(),
     sort: sortSchema.optional(),
   }),
 ]);

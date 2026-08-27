@@ -3,6 +3,7 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useState, type ReactNode } from "react";
+import { genomeCollectionOptions } from "@/lib/genome-view";
 
 import { LandingNav } from "./landing-nav";
 import { LandingMobileNav } from "./landing-mobile-nav";
@@ -41,7 +42,9 @@ export function LandingShellClient({
   const [navCollapsed, setNavCollapsed] = useState(false);
 
   useHotkey("Mod+B", () => {
-    startTransition(() => { setNavCollapsed((current) => !current); });
+    startTransition(() => {
+      setNavCollapsed((current) => !current);
+    });
   });
 
   function handleViewChange(nextView: OrganismViewKey) {
@@ -50,6 +53,17 @@ export function LandingShellClient({
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete("view");
+    if (nextView !== serverActiveView) {
+      for (const name of [
+        "keyword",
+        "rql",
+        "page",
+        "sort",
+        ...(genomeCollectionOptions.friendlyFilters ?? []),
+      ]) {
+        params.delete(name);
+      }
+    }
     if (nextView === defaultView) {
       params.delete("tab");
     } else {
@@ -78,48 +92,54 @@ export function LandingShellClient({
             collapsed={navCollapsed}
             onChange={handleViewChange}
             onCollapseToggle={() => {
-              startTransition(() => { setNavCollapsed((current) => !current); });
+              startTransition(() => {
+                setNavCollapsed((current) => !current);
+              });
             }}
           />
         </div>
-      <section className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <div className="mb-0.5 flex items-center justify-between rounded-lg border bg-card px-5 py-3 shadow-sm">
-          {headerContent ?? (
-            <div>
-              <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                Organisms
-              </p>
-              <h1 className="text-2xl font-bold tracking-tight">{displayName}</h1>
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <div className="bg-card mb-0.5 flex items-center justify-between rounded-lg border px-5 py-3 shadow-sm">
+            {headerContent ?? (
+              <div>
+                <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
+                  Organisms
+                </p>
+                <h1 className="text-2xl font-bold tracking-tight">
+                  {displayName}
+                </h1>
+              </div>
+            )}
+          </div>
+          {layout === "fill" ? (
+            // Bounded, non-scrolling region: the view fills it exactly and owns
+            // its own internal scroll (e.g. a virtualized table). No page scroll,
+            // so no forced overflow-x and no inset page scrollbar. The negative
+            // right margin cancels the outer row's px-* so the table (and its
+            // right-flush action strip) reach the viewport edge — no right gutter.
+            <div className="-mr-2 flex min-h-0 flex-1 overflow-hidden sm:-mr-3 lg:-mr-4">
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                {children}
+              </div>
+            </div>
+          ) : (
+            // Doc-style scroll region. The negative right margin cancels the outer
+            // row's px-* so the scrollbar rides on the true viewport edge, while the
+            // matching right padding (pr-2/3/4 == the outer px) insets the content
+            // back to the header card's right edge. The thin themed scrollbar (6px)
+            // is narrower than that padding, so it sits in the padding gutter and
+            // the cards line up with the header instead of the viewport edge.
+            // pl-1/py-4 keep the left/top/bottom borders + shadows off the clip box
+            // edge (overflow-y:auto forces overflow-x:auto).
+            <div
+              data-testid="landing-scroll-region"
+              className="scrollbar-themed -mr-2 min-h-0 flex-1 overflow-y-auto py-4 pr-2 pl-1 sm:-mr-3 sm:pr-3 lg:-mr-4 lg:pr-4"
+            >
+              {children}
             </div>
           )}
-        </div>
-        {layout === "fill" ? (
-          // Bounded, non-scrolling region: the view fills it exactly and owns
-          // its own internal scroll (e.g. a virtualized table). No page scroll,
-          // so no forced overflow-x and no inset page scrollbar. The negative
-          // right margin cancels the outer row's px-* so the table (and its
-          // right-flush action strip) reach the viewport edge — no right gutter.
-          <div className="-mr-2 flex min-h-0 flex-1 overflow-hidden sm:-mr-3 lg:-mr-4">
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
-          </div>
-        ) : (
-          // Doc-style scroll region. The negative right margin cancels the outer
-          // row's px-* so the scrollbar rides on the true viewport edge, while the
-          // matching right padding (pr-2/3/4 == the outer px) insets the content
-          // back to the header card's right edge. The thin themed scrollbar (6px)
-          // is narrower than that padding, so it sits in the padding gutter and
-          // the cards line up with the header instead of the viewport edge.
-          // pl-1/py-4 keep the left/top/bottom borders + shadows off the clip box
-          // edge (overflow-y:auto forces overflow-x:auto).
-          <div
-            data-testid="landing-scroll-region"
-            className="scrollbar-themed -mr-2 min-h-0 flex-1 overflow-y-auto py-4 pr-2 pl-1 sm:-mr-3 sm:pr-3 lg:-mr-4 lg:pr-4"
-          >
-            {children}
-          </div>
-        )}
-      </section>
-    </div>
+        </section>
+      </div>
     </>
   );
 }

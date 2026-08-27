@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { GenomeShell } from "@/components/genome/genome-shell";
+import { ResourceWorkspace } from "@/components/views/resource-workspace";
 import { InfoPanel } from "@/components/detail-panel/info-panel";
 import {
   SearchActionBar,
@@ -26,7 +26,7 @@ interface TaxonomyTreePanelProps {
  * Client shell for the taxonomy tab: the tree plus a detail panel for the
  * selected node. Kept separate from the make…View factory so the factory module
  * stays server-callable (buildTaxonomyNavItems invokes it during SSR), and so
- * GenomeShell's resizable panels (which need ResizeObserver) live outside the
+ * ResourceWorkspace's resizable panels (which need ResizeObserver) live outside the
  * tree's jsdom unit tests.
  */
 export function TaxonomyTreePanel({ taxa }: TaxonomyTreePanelProps) {
@@ -43,11 +43,11 @@ export function TaxonomyTreePanel({ taxa }: TaxonomyTreePanelProps) {
   }
 
   // No wrapper div: the shell's fill region already bounds height
-  // (flex-1 min-h-0 overflow-hidden), and GenomeShell wraps its children in a
+  // (flex-1 min-h-0 overflow-hidden), and ResourceWorkspace wraps its children in a
   // flex-col overflow-hidden box of its own. Extra wrappers only risk breaking
   // the min-h-0 chain.
   return (
-    <GenomeShell
+    <ResourceWorkspace
       hasSidePanel={selectedRows.length > 0}
       actionBar={
         <SearchActionBar
@@ -65,11 +65,11 @@ export function TaxonomyTreePanel({ taxa }: TaxonomyTreePanelProps) {
           variant="search"
           activeTab="taxonomy"
           selectedRow={singleRow}
-          selectedIds={selectedRows.map(r => String(r.taxon_id))}
+          selectedIds={selectedRows.map((r) => String(r.taxon_id))}
         />
       }
     >
       <TaxonomyTree rootTaxa={taxa} onSelect={setSelectedRows} />
-    </GenomeShell>
+    </ResourceWorkspace>
   );
 }

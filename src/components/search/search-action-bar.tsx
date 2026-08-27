@@ -114,7 +114,7 @@ const actionConfig: ActionConfig[] = [
       "protein_structure",
     ],
     requiresSelection: true,
-    disabledWithTooltip: notReady,
+    maxSelection: 1,
   },
   {
     id: "genomes",

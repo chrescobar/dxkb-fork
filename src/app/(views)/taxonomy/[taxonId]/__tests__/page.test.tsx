@@ -3,22 +3,24 @@ import { render, screen } from "@testing-library/react";
 import TaxonomyPage from "../page";
 import { TaxonomyNotFoundError } from "@/lib/services/organisms/taxonomy";
 
-const { fetchOrganismTaxonomyMock, metadataSpy, notFoundSpy } = vi.hoisted(() => ({
-  fetchOrganismTaxonomyMock: vi.fn(),
-  metadataSpy: vi.fn(),
-  notFoundSpy: vi.fn(() => {
-    throw new Error("NEXT_NOT_FOUND");
+const { fetchOrganismTaxonomyMock, metadataSpy, notFoundSpy } = vi.hoisted(
+  () => ({
+    fetchOrganismTaxonomyMock: vi.fn(),
+    metadataSpy: vi.fn(),
+    notFoundSpy: vi.fn(() => {
+      throw new Error("NEXT_NOT_FOUND");
+    }),
   }),
-}));
+);
 
 vi.mock("@/lib/services/organisms/taxonomy", async () => {
-  const actual =
-    await vi.importActual<typeof import("@/lib/services/organisms/taxonomy")>(
-      "@/lib/services/organisms/taxonomy",
-    );
+  const actual = await vi.importActual<
+    typeof import("@/lib/services/organisms/taxonomy")
+  >("@/lib/services/organisms/taxonomy");
   return {
     ...actual,
-    fetchOrganismTaxonomy: (...args: unknown[]) => fetchOrganismTaxonomyMock(...args) as unknown,
+    fetchOrganismTaxonomy: (...args: unknown[]) =>
+      fetchOrganismTaxonomyMock(...args) as unknown,
   };
 });
 
@@ -44,30 +46,35 @@ beforeEach(() => {
   fetchOrganismTaxonomyMock.mockResolvedValue(bacterialTaxon);
 });
 
-vi.mock("@/components/organisms/metadata-distributions/metadata-distributions", () => ({
-  MetadataDistributions: (props: Record<string, unknown>) => {
-    metadataSpy(props);
-    return <div data-testid="metadata-distributions" />;
-  },
-}));
+vi.mock(
+  "@/components/organisms/metadata-distributions/metadata-distributions",
+  () => ({
+    MetadataDistributions: (props: Record<string, unknown>) => {
+      metadataSpy(props);
+      return <div data-testid="metadata-distributions" />;
+    },
+  }),
+);
 
 // The taxonomy tree view client-fetches via TanStack Query and renders inside
-// GenomeShell (react-resizable-panels needs ResizeObserver, absent in jsdom). Its
+// ResourceWorkspace (react-resizable-panels needs ResizeObserver, absent in jsdom). Its
 // behavior is covered by taxonomy-tree.test.tsx; here we only assert the page wires
 // it under tab=taxa-tree, so stub the factory to a plain marker.
 vi.mock("@/components/organisms/taxon-views/taxonomy-tree-view", () => ({
-  makeTaxonomyTreeView: () => function TaxonomyTreeView() {
-    return <div data-testid="taxonomy-tree" />;
-  },
+  makeTaxonomyTreeView: () =>
+    function TaxonomyTreeView() {
+      return <div data-testid="taxonomy-tree" />;
+    },
 }));
 
 // The sequences view renders ListData (useQueryClient, useQuery, react-resizable-panels)
 // and is covered by view-factories.test.tsx. Stub the factory here so this page-level
 // test stays focused on routing/wiring, not TanStack Query provider setup.
 vi.mock("@/components/organisms/taxon-views/sequences", () => ({
-  makeSequencesView: () => function SequencesView() {
-    return <div data-testid="sequences-view" />;
-  },
+  makeSequencesView: () =>
+    function SequencesView() {
+      return <div data-testid="sequences-view" />;
+    },
 }));
 
 vi.mock("next/navigation", () => ({
@@ -126,9 +133,15 @@ describe("TaxonomyPage", () => {
     render(node);
 
     // Present in the desktop rail, now rendered disabled rather than omitted.
-    const interactionsButtons = screen.getAllByRole("button", { name: /Interactions/ });
+    const interactionsButtons = screen.getAllByRole("button", {
+      name: /Interactions/,
+    });
     expect(interactionsButtons.length).toBeGreaterThan(0);
-    expect(interactionsButtons.some((b) => b.getAttribute("aria-disabled") === "true")).toBe(true);
+    expect(
+      interactionsButtons.some(
+        (b) => b.getAttribute("aria-disabled") === "true",
+      ),
+    ).toBe(true);
   });
 
   it("calls notFound for non-numeric taxonId", async () => {
@@ -194,7 +207,9 @@ describe("TaxonomyPage", () => {
 
   it("calls notFound when fetchOrganismTaxonomy throws TaxonomyNotFoundError", async () => {
     notFoundSpy.mockClear();
-    fetchOrganismTaxonomyMock.mockRejectedValueOnce(new TaxonomyNotFoundError(999));
+    fetchOrganismTaxonomyMock.mockRejectedValueOnce(
+      new TaxonomyNotFoundError(999),
+    );
 
     await expect(
       TaxonomyPage({

@@ -88,6 +88,71 @@ beforeAll(() => {
   };
 });
 
+describe("DataTable shared view seams", () => {
+  it("uses an explicit row identity, named focusable region, links, and pagination semantics", () => {
+    render(
+      <DataTable
+        id="shared-seams"
+        data={[{ stable_id: "row-1", public_id: "ABC" }]}
+        columns={[
+          {
+            id: "public_id",
+            label: "Public ID",
+            href: (row) => `/feature/${String(row.public_id)}`,
+          },
+        ]}
+        totalItems={201}
+        resource="unregistered-resource"
+        idField="stable_id"
+        pageIndex={0}
+        pageSize={200}
+      />,
+    );
+
+    expect(
+      screen.getByRole("region", { name: "unregistered-resource results" }),
+    ).toHaveAttribute("tabindex", "0");
+    expect(screen.getByRole("link", { name: "ABC" })).toHaveAttribute(
+      "href",
+      "/feature/ABC",
+    );
+    expect(
+      screen.getByRole("columnheader", { name: /Public ID/ }),
+    ).toHaveAttribute("aria-sort", "none");
+    expect(screen.getByRole("button", { name: "1" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(
+      screen.getByRole("navigation", {
+        name: "unregistered-resource results pagination",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("delegates selected exports without fetching", async () => {
+    const user = userEvent.setup();
+    const onDownloadSelected = vi.fn();
+    render(
+      <DataTable
+        id="selected-export"
+        data={[{ stable_id: "row-1", value: "A" }]}
+        columns={[{ id: "value", label: "Value" }]}
+        totalItems={1}
+        resource="unregistered-resource"
+        idField="stable_id"
+        selectedIds={["row-1"]}
+        onDownloadSelected={onDownloadSelected}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+    );
+    expect(onDownloadSelected).toHaveBeenCalledWith("csv", ["row-1"], null);
+  });
+});
+
 describe("DataTable row selection checkboxes", () => {
   it("keeps each checkbox checked when multiple rows are selected", async () => {
     const user = userEvent.setup();
@@ -147,9 +212,7 @@ describe("DataTable row selection checkboxes", () => {
     const user = userEvent.setup();
     const onRowSelectionChange = vi.fn();
     render(
-      <ControlledSelectionTable
-        onRowSelectionChange={onRowSelectionChange}
-      />,
+      <ControlledSelectionTable onRowSelectionChange={onRowSelectionChange} />,
     );
 
     const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
@@ -198,49 +261,57 @@ describe("DataTable row selection checkboxes", () => {
   it.each([
     ["checkbox", (checkbox: HTMLElement) => checkbox],
     ["selection cell", selectionCell],
-  ])("shift-clicking the %s adds the inclusive range", async (_label, targetFor) => {
-    const user = userEvent.setup();
-    render(<ControlledSelectionTable />);
+  ])(
+    "shift-clicking the %s adds the inclusive range",
+    async (_label, targetFor) => {
+      const user = userEvent.setup();
+      render(<ControlledSelectionTable />);
 
-    const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
-    const fourth = screen.getByRole("checkbox", { name: "Select row 100.4" });
-    await user.click(targetFor(first));
-    await user.keyboard("{Shift>}");
-    await user.click(targetFor(fourth));
-    await user.keyboard("{/Shift}");
+      const first = screen.getByRole("checkbox", { name: "Select row 100.1" });
+      const fourth = screen.getByRole("checkbox", { name: "Select row 100.4" });
+      await user.click(targetFor(first));
+      await user.keyboard("{Shift>}");
+      await user.click(targetFor(fourth));
+      await user.keyboard("{/Shift}");
 
-    for (const row of selectionRows) {
-      expect(
-        screen.getByRole("checkbox", { name: `Select row ${row.genome_id}` }),
-      ).toBeChecked();
-    }
-  });
+      for (const row of selectionRows) {
+        expect(
+          screen.getByRole("checkbox", { name: `Select row ${row.genome_id}` }),
+        ).toBeChecked();
+      }
+    },
+  );
 
   it.each([
     ["checkbox", (checkbox: HTMLElement) => checkbox],
     ["selection cell", selectionCell],
-  ])("notifies active-row callbacks once when the %s selects and deselects", async (_label, targetFor) => {
-    const user = userEvent.setup();
-    const onGenomeSelect = vi.fn();
-    const onActiveRowChange = vi.fn();
-    render(
-      <ControlledSelectionTable
-        onGenomeSelect={onGenomeSelect}
-        onActiveRowChange={onActiveRowChange}
-      />,
-    );
+  ])(
+    "notifies active-row callbacks once when the %s selects and deselects",
+    async (_label, targetFor) => {
+      const user = userEvent.setup();
+      const onGenomeSelect = vi.fn();
+      const onActiveRowChange = vi.fn();
+      render(
+        <ControlledSelectionTable
+          onGenomeSelect={onGenomeSelect}
+          onActiveRowChange={onActiveRowChange}
+        />,
+      );
 
-    const checkbox = screen.getByRole("checkbox", { name: "Select row 100.1" });
-    await user.click(targetFor(checkbox));
-    expect(onGenomeSelect).toHaveBeenLastCalledWith("100.1");
-    expect(onActiveRowChange).toHaveBeenLastCalledWith("100.1");
+      const checkbox = screen.getByRole("checkbox", {
+        name: "Select row 100.1",
+      });
+      await user.click(targetFor(checkbox));
+      expect(onGenomeSelect).toHaveBeenLastCalledWith("100.1");
+      expect(onActiveRowChange).toHaveBeenLastCalledWith("100.1");
 
-    await user.click(targetFor(checkbox));
-    expect(onGenomeSelect).toHaveBeenLastCalledWith(null);
-    expect(onActiveRowChange).toHaveBeenLastCalledWith(null);
-    expect(onGenomeSelect).toHaveBeenCalledTimes(2);
-    expect(onActiveRowChange).toHaveBeenCalledTimes(2);
-  });
+      await user.click(targetFor(checkbox));
+      expect(onGenomeSelect).toHaveBeenLastCalledWith(null);
+      expect(onActiveRowChange).toHaveBeenLastCalledWith(null);
+      expect(onGenomeSelect).toHaveBeenCalledTimes(2);
+      expect(onActiveRowChange).toHaveBeenCalledTimes(2);
+    },
+  );
 });
 
 // Regression: "Showing 1-0 of N" appeared during page-data loading because end was

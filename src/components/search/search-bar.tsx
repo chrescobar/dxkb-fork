@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { searchTypes } from "@/constants/search-info";
+import { searchHref, searchTypes } from "@/constants/search-info";
 import { Input } from "@/components/ui/input";
 
 import { Search } from "lucide-react";
@@ -75,7 +75,9 @@ function SearchBarForm({
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    router.push(`/search?type=${selected}&q=${encodeURIComponent(inputValue)}`);
+    const searchType = searchTypes.find((type) => type.id === selected);
+    if (!searchType) return;
+    router.push(searchHref(searchType, inputValue));
     void queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0];

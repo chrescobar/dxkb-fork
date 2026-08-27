@@ -23,6 +23,7 @@ import {
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { getIdField } from "@/constants/resources";
 import {
@@ -85,10 +86,14 @@ const skeletonWidthPcts = [60, 80, 50, 75, 90, 45, 70];
 // Stable identity for the "no sizing yet" case.
 const emptyColumnSizing: Record<string, number> = {};
 
-interface ColumnInfo {
+export type DataTableRow = Record<string, unknown>;
+
+export interface DataTableColumn {
   id: string;
   label: string;
   visible?: boolean;
+  sortable?: boolean;
+  href?: (row: DataTableRow) => string | undefined;
 }
 
 interface DataTableMeta {
@@ -115,7 +120,7 @@ const dataTableFeatures = tableFeatures({
 });
 
 type DataTableFeatures = typeof dataTableFeatures;
-type DataRow = Record<string, unknown>;
+type DataRow = DataTableRow;
 
 function getTableMeta(table: TanStackTable<DataTableFeatures, DataRow>) {
   const meta = table.options.meta;
@@ -198,9 +203,7 @@ function SelectionHeader({
   const somePageRowsSelected = table.getIsSomePageRowsSelected();
   const isChecked = meta.isAllPagesSelected || allPageRowsSelected;
   const isIndeterminate =
-    !meta.isAllPagesSelected &&
-    somePageRowsSelected &&
-    !allPageRowsSelected;
+    !meta.isAllPagesSelected && somePageRowsSelected && !allPageRowsSelected;
   const selectionLabel = meta.isAllPagesSelected
     ? "Deselect all results"
     : allPageRowsSelected
@@ -245,7 +248,7 @@ function SelectionHeader({
   );
 }
 
-function createColumnDefs(columns: ColumnInfo[]) {
+function createColumnDefs(columns: DataTableColumn[]) {
   const definitions: ColumnDef<DataTableFeatures, DataRow>[] = [
     {
       id: "__select__",
@@ -262,11 +265,26 @@ function createColumnDefs(columns: ColumnInfo[]) {
     definitions.push({
       accessorKey: column.id,
       header: column.label,
-      cell: (info: CellContext<DataTableFeatures, DataRow>) =>
-        formatCellValue(info.getValue()),
+      cell: (info: CellContext<DataTableFeatures, DataRow>) => {
+        const value = formatCellValue(info.getValue());
+        const href = column.href?.(info.row.original);
+        return href ? (
+          <Link
+            href={href}
+            className="text-primary truncate underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
+            {value as React.ReactNode}
+          </Link>
+        ) : (
+          (value as React.ReactNode)
+        );
+      },
       size: estimateHeaderWidth(column.label),
       enableResizing: true,
-      enableSorting: true,
+      enableSorting: column.sortable !== false,
       sortFn: (
         rowA: TanStackRow<DataTableFeatures, DataRow>,
         rowB: TanStackRow<DataTableFeatures, DataRow>,
@@ -287,12 +305,13 @@ function createColumnDefs(columns: ColumnInfo[]) {
   return definitions;
 }
 
-interface DataTableProps {
+export interface DataTableProps {
   id: string;
-  data: Record<string, unknown>[];
-  columns: ColumnInfo[];
+  data: DataTableRow[];
+  columns: DataTableColumn[];
   totalItems: number;
   resource: string;
+  idField?: string;
   errorMessage?: string;
   onSelectionChange?: (rows: Record<string, unknown>[]) => void;
   onGenomeSelect?: (id: string | null) => void;
@@ -329,6 +348,13 @@ interface DataTableProps {
     format: "csv" | "txt",
     visibleColumns: string[] | null,
   ) => void | Promise<void>;
+  onDownloadSelected?: (
+    format: "csv" | "txt",
+    selectedIds: string[],
+    visibleColumns: string[] | null,
+  ) => void | Promise<void>;
+  showExportControls?: boolean;
+  scrollRegionLabel?: string;
   // Loading indicator: parent can set this while data is being fetched
   isLoading?: boolean;
 
@@ -342,6 +368,7 @@ function useDataTableContent(
     columns,
     totalItems,
     resource,
+    idField: explicitIdField,
     errorMessage,
     onSelectionChange,
     onGenomeSelect,
@@ -361,6 +388,9 @@ function useDataTableContent(
     onAllPagesSelectionChange,
     totalSelectedCount,
     onDownloadAll,
+    onDownloadSelected,
+    showExportControls = true,
+    scrollRegionLabel,
     isLoading = false,
     onActiveRowChange,
   }: DataTableProps,
@@ -423,7 +453,7 @@ function useDataTableContent(
     pageSize: pageSize ?? internalPagination.pageSize,
   };
 
-  const idField = getIdField(resource);
+  const idField = explicitIdField ?? getIdField(resource);
 
   const shiftHeld = useKeyHold("Shift");
   const ctrlHeld = useKeyHold("Control");
@@ -842,7 +872,15 @@ function useDataTableContent(
         if (!isAllPagesSelected && (!selectedIds || selectedIds.length === 0))
           return;
 
-        const idField = getIdField(resource);
+        const selectedColumnIds = visibleCols.map((col) => col.id);
+        if (onDownloadSelected) {
+          await onDownloadSelected(
+            format,
+            selectedIds ?? [],
+            onlyVisibleColumns ? selectedColumnIds : null,
+          );
+          return;
+        }
 
         const idFilter = (selectedIds ?? [])
           .map((id) => `eq(${idField},${id})`)
@@ -1010,7 +1048,7 @@ function useDataTableContent(
           {" "}
           {/* This is the button for changing the visibility of columns in the table */}
           <Button
-            className="mr-2 flex w-full justify-end rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+            className="border-border bg-background text-foreground hover:bg-muted mr-2 flex w-full justify-end rounded border px-2 py-1 text-xs font-medium"
             onClick={() => {
               setShowColumnMenu((prev) => !prev);
             }}
@@ -1018,13 +1056,13 @@ function useDataTableContent(
             Columns ▾
           </Button>
           {showColumnMenu && (
-            <div className="ring-opacity-5 absolute left-0 z-50 mt-1 w-40 rounded-md bg-background shadow-lg ring-1 ring-border">
+            <div className="ring-opacity-5 bg-background ring-border absolute left-0 z-50 mt-1 w-40 rounded-md shadow-lg ring-1">
               <div className="max-h-64 overflow-auto py-1 text-xs">
                 {table.getAllColumns().map((column) =>
                   column.id === "__select__" ? null : (
                     <label
                       key={column.id}
-                      className="flex cursor-pointer items-center space-x-2 px-2 py-1 text-foreground hover:bg-muted"
+                      className="text-foreground hover:bg-muted flex cursor-pointer items-center space-x-2 px-2 py-1"
                     >
                       <input
                         type="checkbox"
@@ -1043,78 +1081,82 @@ function useDataTableContent(
         </div>
 
         {/* Download buttons */}
-        <Button
-          onClick={() => {
-            void handleDownload("csv");
-          }}
-          className="mx-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-          disabled={downloadingButton !== null}
-        >
-          {downloadingButton === "csv-all" ? (
-            <span className="text-red-600">Downloading...</span>
-          ) : (
-            "Download (CSV)"
-          )}
-        </Button>
-        <Button
-          onClick={() => {
-            void handleDownload("txt");
-          }}
-          className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-          disabled={downloadingButton !== null}
-        >
-          {downloadingButton === "txt-all" ? (
-            <span className="text-red-600">Downloading...</span>
-          ) : (
-            "Download (TXT)"
-          )}
-        </Button>
-
-        {/* These next two only show up if rows are selected */}
-        {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && (
+        {showExportControls && (
           <>
             <Button
               onClick={() => {
-                void handleDownload("csv", true);
+                void handleDownload("csv");
               }}
-              className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+              className="border-border bg-background text-foreground hover:bg-muted mx-2 rounded border px-2 py-1 text-xs font-medium"
               disabled={downloadingButton !== null}
             >
-              {downloadingButton === "csv-selected" ? (
+              {downloadingButton === "csv-all" ? (
                 <span className="text-red-600">Downloading...</span>
               ) : (
-                "Download Selected (CSV)"
+                "Download (CSV)"
               )}
             </Button>
             <Button
               onClick={() => {
-                void handleDownload("txt", true);
+                void handleDownload("txt");
               }}
-              className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+              className="border-border bg-background text-foreground hover:bg-muted mr-2 rounded border px-2 py-1 text-xs font-medium"
               disabled={downloadingButton !== null}
             >
-              {downloadingButton === "txt-selected" ? (
+              {downloadingButton === "txt-all" ? (
                 <span className="text-red-600">Downloading...</span>
               ) : (
-                "Download Selected (TXT)"
+                "Download (TXT)"
               )}
             </Button>
+
+            {/* These next two only show up if rows are selected */}
+            {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && (
+              <>
+                <Button
+                  onClick={() => {
+                    void handleDownload("csv", true);
+                  }}
+                  className="border-border bg-background text-foreground hover:bg-muted mr-2 rounded border px-2 py-1 text-xs font-medium"
+                  disabled={downloadingButton !== null}
+                >
+                  {downloadingButton === "csv-selected" ? (
+                    <span className="text-red-600">Downloading...</span>
+                  ) : (
+                    "Download Selected (CSV)"
+                  )}
+                </Button>
+                <Button
+                  onClick={() => {
+                    void handleDownload("txt", true);
+                  }}
+                  className="border-border bg-background text-foreground hover:bg-muted mr-2 rounded border px-2 py-1 text-xs font-medium"
+                  disabled={downloadingButton !== null}
+                >
+                  {downloadingButton === "txt-selected" ? (
+                    <span className="text-red-600">Downloading...</span>
+                  ) : (
+                    "Download Selected (TXT)"
+                  )}
+                </Button>
+              </>
+            )}
+
+            <label className="text-foreground ml-4 flex items-center text-xs">
+              <input
+                type="checkbox"
+                checked={onlyVisibleColumns}
+                onChange={() => {
+                  setOnlyVisibleColumns((prev) => !prev);
+                }}
+                className="mr-1"
+              />
+              Download Displayed Columns Only
+            </label>
           </>
         )}
-
-        <label className="ml-4 flex items-center text-xs text-foreground">
-          <input
-            type="checkbox"
-            checked={onlyVisibleColumns}
-            onChange={() => {
-              setOnlyVisibleColumns((prev) => !prev);
-            }}
-            className="mr-1"
-          />
-          Download Displayed Columns Only
-        </label>
       </div>
-      <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-border">
+      <div className="border-border relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border">
         <div
           className={clsx(
             "relative flex-1",
@@ -1124,6 +1166,9 @@ function useDataTableContent(
             (shiftHeld || ctrlOrCmdHeld) && "select-none",
           )}
           ref={tableContainerRef}
+          role="region"
+          aria-label={scrollRegionLabel ?? `${resource} results`}
+          tabIndex={0}
           style={{
             maxHeight: "100%",
             position: "relative",
@@ -1147,7 +1192,7 @@ function useDataTableContent(
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
                     key={headerGroup.id}
-                    className="flex border-y border-border bg-muted"
+                    className="border-border bg-muted flex border-y"
                   >
                     {headerGroup.headers.map((header) => {
                       const column = header.column;
@@ -1167,8 +1212,17 @@ function useDataTableContent(
                         <TableHead
                           key={header.id}
                           colSpan={header.colSpan}
+                          aria-sort={
+                            column.id === "__select__" || !column.getCanSort()
+                              ? undefined
+                              : column.getIsSorted() === "asc"
+                                ? "ascending"
+                                : column.getIsSorted() === "desc"
+                                  ? "descending"
+                                  : "none"
+                          }
                           className={clsx(
-                            "group relative border-r border-foreground/20 bg-muted text-foreground",
+                            "group border-foreground/20 bg-muted text-foreground relative border-r",
                             column.id === "__select__"
                               ? "flex h-auto! items-center justify-center p-0"
                               : "h-auto! min-h-7! cursor-pointer px-2 py-0 align-middle text-xs leading-tight font-bold whitespace-normal",
@@ -1183,20 +1237,6 @@ function useDataTableContent(
                               zIndex: 1,
                             }),
                           }}
-                          onClick={
-                            column.id !== "__select__"
-                              ? (e) => {
-                                  if (justResizedRef.current) {
-                                    e.stopPropagation();
-                                    return;
-                                  }
-                                  e.stopPropagation();
-                                  const handler =
-                                    column.getToggleSortingHandler();
-                                  if (handler) handler(e);
-                                }
-                              : undefined
-                          }
                         >
                           {column.id === "__select__" ? (
                             // Checkbox column - no sorting or dragging
@@ -1227,7 +1267,17 @@ function useDataTableContent(
                                       : "",
                                 }}
                               >
-                                <span className="leading-tight select-none">
+                                <button
+                                  type="button"
+                                  disabled={!column.getCanSort()}
+                                  aria-label={`Sort by ${String(column.columnDef.header)}`}
+                                  className="flex size-full items-center text-left leading-tight select-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-default"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    if (justResizedRef.current) return;
+                                    column.getToggleSortingHandler()?.(event);
+                                  }}
+                                >
                                   <table.FlexRender header={header} />
                                   {column.getIsSorted() === "asc" && (
                                     <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />
@@ -1235,7 +1285,7 @@ function useDataTableContent(
                                   {column.getIsSorted() === "desc" && (
                                     <ChevronDown className="ml-0.5 inline-block size-3 align-text-bottom" />
                                   )}
-                                </span>
+                                </button>
                               </div>
                               {column.getCanResize() && (
                                 <div
@@ -1313,7 +1363,7 @@ function useDataTableContent(
         </div>
 
         <div
-          className="z-10 w-full border-t border-border bg-muted py-1 shadow-sm"
+          className="border-border bg-muted z-10 w-full border-t py-1 shadow-sm"
           ref={footerRef}
         >
           <div className="flex flex-wrap items-center justify-between gap-y-1 px-2">
@@ -1351,13 +1401,17 @@ function useDataTableContent(
                 );
               })()}
             </div>
-            <div className="flex flex-wrap items-center gap-x-1">
+            <nav
+              className="flex flex-wrap items-center gap-x-1"
+              aria-label={`${resource} results pagination`}
+            >
               <Button
                 onClick={() => {
                   table.previousPage();
                 }}
                 disabled={!table.getCanPreviousPage()}
-                className="border border-border px-2 py-0.5 disabled:opacity-50"
+                aria-label="Previous page"
+                className="border-border border px-2 py-0.5 disabled:opacity-50"
               >
                 {"Prev"}
               </Button>
@@ -1386,11 +1440,12 @@ function useDataTableContent(
                           table.setPageIndex(page);
                         }}
                         className={clsx(
-                          "border bg-background px-2 py-0.5 text-foreground",
+                          "bg-background text-foreground border px-2 py-0.5",
                           currentPage === page
                             ? "bg-primary/15 font-bold"
                             : "bg-background",
                         )}
+                        aria-current={currentPage === page ? "page" : undefined}
                       >
                         {page + 1}
                       </Button>
@@ -1403,11 +1458,12 @@ function useDataTableContent(
                   table.nextPage();
                 }}
                 disabled={!table.getCanNextPage()}
-                className="border border-border px-2 py-0.5 disabled:opacity-50"
+                aria-label="Next page"
+                className="border-border border px-2 py-0.5 disabled:opacity-50"
               >
                 {"Next"}
               </Button>
-            </div>
+            </nav>
           </div>
         </div>
       </div>
@@ -1463,13 +1519,13 @@ function DataTableBody({
         Array.from({ length: skeletonRowCount }, (_, rowIdx) => (
           <TableRow
             key={rowIdx}
-            className="absolute flex w-full border-b border-border"
+            className="border-border absolute flex w-full border-b"
             style={{ top: rowIdx * 24, height: 24 }}
           >
             {table.getVisibleLeafColumns().map((col, colIdx) => (
               <TableCell
                 key={col.id}
-                className="flex items-center border border-border px-2 py-0"
+                className="border-border flex items-center border px-2 py-0"
                 style={{
                   width: `var(--col-${col.id}-size)`,
                   minWidth: `var(--col-${col.id}-size)`,
@@ -1495,7 +1551,7 @@ function DataTableBody({
         <TableRow className="flex h-6 w-full items-center">
           <TableCell
             colSpan={table.getVisibleLeafColumns().length}
-            className="w-full px-2 py-0 text-left text-muted-foreground"
+            className="text-muted-foreground w-full px-2 py-0 text-left"
             style={{ justifyContent: "left" }}
           >
             {errorMessage ? (
@@ -1584,7 +1640,7 @@ function DataTableBody({
                       : undefined
                   }
                   className={clsx(
-                    "flex items-center truncate border border-border",
+                    "border-border flex items-center truncate border",
                     cell.column.id === "__select__"
                       ? clsx(
                           "justify-center p-0",
@@ -1640,7 +1696,7 @@ function DataTableBody({
 // raw React children — React joins array children with no separator, reading as
 // "361218" instead of "3, 6, 12, 18".
 function computeAutoColumnSizes(
-  columns: ColumnInfo[],
+  columns: DataTableColumn[],
   data: Record<string, unknown>[],
   maxWidth = 250,
 ): Record<string, number> {

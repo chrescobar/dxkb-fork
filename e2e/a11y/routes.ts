@@ -71,7 +71,9 @@ export const routes: RouteEntry[] = [
     tripwire: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
-      await page.getByRole("button", { name: /sign in/i }).waitFor({ state: "visible" });
+      await page
+        .getByRole("button", { name: /sign in/i })
+        .waitFor({ state: "visible" });
     },
   },
   {
@@ -96,49 +98,65 @@ export const routes: RouteEntry[] = [
     name: "about",
     path: "/about",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "citations",
     path: "/citations",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "contact",
     path: "/contact",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "faq",
     path: "/faq",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "funding",
     path: "/funding",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "help",
     path: "/help",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "news",
     path: "/news",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "privacy-policy",
     path: "/privacy-policy",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "publications",
@@ -152,19 +170,25 @@ export const routes: RouteEntry[] = [
     name: "related-resources",
     path: "/related-resources",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "team",
     path: "/team",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "updates",
     path: "/updates",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Organism landing pages ────────────────────────────────────────────────────
@@ -174,21 +198,27 @@ export const routes: RouteEntry[] = [
     unauthenticated: true,
     tripwire: true,
     mobile: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "organisms-bacteria",
     path: "/organisms/bacteria",
     unauthenticated: true,
     mobile: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "organisms-viruses",
     path: "/organisms/viruses",
     unauthenticated: true,
     mobile: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Search ───────────────────────────────────────────────────────────────────
@@ -198,7 +228,9 @@ export const routes: RouteEntry[] = [
     unauthenticated: true,
     tripwire: true,
     mobile: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Taxonomy (dynamic — two variants for multi-param coverage) ───────────────
@@ -209,8 +241,10 @@ export const routes: RouteEntry[] = [
     mobile: true,
     prepare: async (page) => {
       // The section's <h2> renders synchronously; chart cards stream in after.
-      await page.getByRole("heading", { level: 2, name: /Metadata Distributions/ })
-        .waitFor({ timeout: 10_000 }).catch(() => undefined);
+      await page
+        .getByRole("heading", { level: 2, name: /Metadata Distributions/ })
+        .waitFor({ timeout: 10_000 })
+        .catch(() => undefined);
       await page.waitForLoadState("networkidle");
     },
     variants: [
@@ -231,104 +265,138 @@ export const routes: RouteEntry[] = [
     ],
   },
 
-  // ── Views — list pages (render PlaceholderList, no data fetch) ──────────────
+  // ── Views — list pages ─────────────────────────────────────────────────────
   {
     name: "taxonomy-list",
     path: "/taxonomy",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "genome-list",
     path: "/genome",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    mobile: true,
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "feature-list",
     path: "/feature",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "epitope-list",
     path: "/epitope",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "surveillance-list",
     path: "/surveillance",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "serology-list",
     path: "/serology",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "strain",
     path: "/strain",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "domains-and-motifs",
     path: "/domains-and-motifs",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "experiment",
     path: "/experiment",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "protein-structure",
     path: "/protein-structure",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
-  // ── Views — singular pages (skeleton stage: any valid id renders shell) ──────
+  // ── Views — singular pages ─────────────────────────────────────────────────
   {
     name: "genome",
     path: "/genome/1282460.2049",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    mobile: true,
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "feature",
     path: "/feature/fig|1282460.2049.peg.1",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "epitope",
     path: "/epitope/15780",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "surveillance",
     path: "/surveillance/example-sample-1",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "serology",
     path: "/serology/example-sample-1",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "experiment-singular",
     path: "/experiment/2000000",
     unauthenticated: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Jobs ─────────────────────────────────────────────────────────────────────
@@ -337,14 +405,18 @@ export const routes: RouteEntry[] = [
     path: "/jobs",
     needsJobs: true,
     tripwire: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Settings ─────────────────────────────────────────────────────────────────
   {
     name: "settings",
     path: "/settings",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Services index ───────────────────────────────────────────────────────────
@@ -353,7 +425,9 @@ export const routes: RouteEntry[] = [
     path: "/services",
     tripwire: true,
     mobile: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Genomics service forms ───────────────────────────────────────────────────
@@ -361,117 +435,159 @@ export const routes: RouteEntry[] = [
     name: "genome-assembly",
     path: "/services/genome-assembly",
     tripwire: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "genome-annotation",
     path: "/services/genome-annotation",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "genome-alignment",
     path: "/services/genome-alignment",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "blast",
     path: "/services/blast",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "primer-design",
     path: "/services/primer-design",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "similar-genome-finder",
     path: "/services/similar-genome-finder",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "variation-analysis",
     path: "/services/variation-analysis",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Metagenomics service forms ───────────────────────────────────────────────
   {
     name: "metagenomic-binning",
     path: "/services/metagenomic-binning",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "metagenomic-read-mapping",
     path: "/services/metagenomic-read-mapping",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "taxonomic-classification",
     path: "/services/taxonomic-classification",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Phylogenomics service forms ──────────────────────────────────────────────
   {
     name: "viral-genome-tree",
     path: "/services/viral-genome-tree",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Protein tools service forms ──────────────────────────────────────────────
   {
     name: "gene-protein-tree",
     path: "/services/gene-protein-tree",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "meta-cats",
     path: "/services/meta-cats",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "msa-snp-analysis",
     path: "/services/msa-snp-analysis",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "proteome-comparison",
     path: "/services/proteome-comparison",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Utilities service forms ──────────────────────────────────────────────────
   {
     name: "fastq-utilities",
     path: "/services/fastq-utilities",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Viral tools service forms ────────────────────────────────────────────────
   {
     name: "influenza-ha-subtype",
     path: "/services/influenza-ha-subtype",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "sars-cov2-genome-analysis",
     path: "/services/sars-cov2-genome-analysis",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "sars-cov2-wastewater-analysis",
     path: "/services/sars-cov2-wastewater-analysis",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "subspecies-classification",
     path: "/services/subspecies-classification",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "viral-assembly",
     path: "/services/viral-assembly",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // ── Workspace (authenticated) ────────────────────────────────────────────────
@@ -500,25 +616,33 @@ export const routes: RouteEntry[] = [
   {
     name: "workspace-public",
     path: "/workspace/public",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "workspace-public-user",
     path: `/workspace/public/${e2eUsername}`,
     covers: ["workspace/public/[username]/[...path]/page.tsx"],
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "workspace-shared",
     path: "/workspace/shared",
     needsWorkspace: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
   {
     name: "workspace-workshop",
     path: "/workspace/workshop",
     needsWorkspace: true,
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 
   // Redirect-only workspace routes — not scanned, just counted for meta-test accounting.
@@ -540,7 +664,9 @@ export const routes: RouteEntry[] = [
   {
     name: "structure-viewer",
     path: "/viewer/structure",
-    prepare: async (page) => { await page.waitForLoadState("networkidle"); },
+    prepare: async (page) => {
+      await page.waitForLoadState("networkidle");
+    },
   },
 ];
 
@@ -625,8 +751,8 @@ export const coveredPageFiles = new Set<string>([
   "viewer/structure/[[...path]]/page.tsx",
   // Workspace
   "workspace/page.tsx",
-  "workspace/home/[[...path]]/page.tsx",           // redirectOnly
-  "workspace/[username]/page.tsx",                 // redirectOnly
+  "workspace/home/[[...path]]/page.tsx", // redirectOnly
+  "workspace/[username]/page.tsx", // redirectOnly
   "workspace/[username]/home/[[...path]]/page.tsx",
   "workspace/[username]/[folder]/[[...path]]/page.tsx",
   "workspace/public/page.tsx",

@@ -98,6 +98,19 @@ describe("SearchBar", () => {
       );
     });
 
+    it("navigates Genome searches to the canonical list route", async () => {
+      const user = userEvent.setup();
+      mockSearchParams.current = new URLSearchParams({ type: "genome" });
+      renderSearchBar();
+
+      await user.type(screen.getByRole("textbox"), "E. coli & phage");
+      fireEvent.submit(getForm());
+
+      expect(mockPush).toHaveBeenCalledWith(
+        "/genome?keyword=E.%20coli%20%26%20phage",
+      );
+    });
+
     it("URL-encodes special characters in the query", async () => {
       const user = userEvent.setup();
       renderSearchBar();
@@ -130,6 +143,22 @@ describe("SearchBar", () => {
 
       await waitFor(() => {
         expect(screen.getByRole("textbox")).toHaveValue("SARS");
+      });
+    });
+
+    it("keeps legacy Genome search URLs renderable in the search bar", async () => {
+      mockSearchParams.current = new URLSearchParams({
+        type: "genome",
+        q: "keyword(E. coli)",
+      });
+
+      renderSearchBar();
+
+      await waitFor(() => {
+        expect(screen.getByRole("textbox")).toHaveValue("E. coli");
+        expect(
+          screen.getByRole("combobox", { name: /search type/i }),
+        ).toHaveTextContent("Genomes");
       });
     });
 

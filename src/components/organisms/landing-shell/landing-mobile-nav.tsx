@@ -17,10 +17,10 @@ import {
 import { useHideOnScroll } from "@/hooks/use-hide-on-scroll";
 import { cn } from "@/lib/utils";
 
-interface LandingMobileNavProps {
-  items: readonly OrganismLandingNavItem[];
-  activeView: OrganismViewKey;
-  onChange: (view: OrganismViewKey) => void;
+interface LandingMobileNavProps<Key extends string = OrganismViewKey> {
+  items: readonly OrganismLandingNavItem<Key>[];
+  activeView: Key;
+  onChange: (view: Key) => void;
 }
 
 /**
@@ -30,16 +30,16 @@ interface LandingMobileNavProps {
  * while the sheet is open and whenever it (or a child) holds focus, so
  * keyboard users can always reach it.
  */
-export function LandingMobileNav({
+export function LandingMobileNav<Key extends string>({
   items,
   activeView,
   onChange,
-}: LandingMobileNavProps) {
+}: LandingMobileNavProps<Key>) {
   const [open, setOpen] = useState(false);
   const active = items.find((item) => item.key === activeView) ?? items[0];
   const hidden = useHideOnScroll(open);
 
-  function select(key: OrganismViewKey) {
+  function select(key: Key) {
     onChange(key);
     setOpen(false);
   }
@@ -50,7 +50,9 @@ export function LandingMobileNav({
         className={cn(
           "fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 transition-all duration-300 ease-out",
           "has-focus-visible:pointer-events-auto has-focus-visible:translate-y-0 has-focus-visible:opacity-100",
-          hidden ? "pointer-events-none translate-y-24 opacity-0" : "translate-y-0 opacity-100",
+          hidden
+            ? "pointer-events-none translate-y-24 opacity-0"
+            : "translate-y-0 opacity-100",
         )}
       >
         <SheetTrigger
@@ -61,21 +63,30 @@ export function LandingMobileNav({
               // where axe treats the visible text as absent — the label keeps
               // the trigger named for assistive tech in every state.
               aria-label={`Views: ${active.label}`}
-              className="h-12 gap-2 rounded-full border border-background/10 bg-foreground pr-3 pl-4 text-background shadow-2xl hover:bg-foreground/90"
+              className="border-background/10 bg-foreground text-background hover:bg-foreground/90 h-12 gap-2 rounded-full border pr-3 pl-4 shadow-2xl"
               {...triggerProps}
             >
-              <LayoutGrid aria-hidden="true" className="size-4 text-background/60" />
-              <span className="text-[10px] font-bold tracking-widest text-background/50 uppercase">
+              <LayoutGrid
+                aria-hidden="true"
+                className="text-background/60 size-4"
+              />
+              <span className="text-background/50 text-[10px] font-bold tracking-widest uppercase">
                 Views
               </span>
               <span className="font-semibold">{active.label}</span>
-              <ChevronUp aria-hidden="true" className="size-4 text-background/60" />
+              <ChevronUp
+                aria-hidden="true"
+                className="text-background/60 size-4"
+              />
             </Button>
           )}
         />
       </div>
-      <SheetContent side="bottom" className="max-h-[75vh] gap-0 rounded-t-2xl p-0">
-        <SheetTitle className="px-4 pt-4 pb-2 text-sm font-semibold text-muted-foreground">
+      <SheetContent
+        side="bottom"
+        className="max-h-[75vh] gap-0 rounded-t-2xl p-0"
+      >
+        <SheetTitle className="text-muted-foreground px-4 pt-4 pb-2 text-sm font-semibold">
           Views
         </SheetTitle>
         <div className="grid grid-cols-4 gap-1.5 overflow-y-auto p-3 pb-8">
@@ -98,13 +109,18 @@ export function LandingMobileNav({
                   isActive
                     ? "border-primary bg-primary/10 text-primary"
                     : "bg-card text-foreground hover:bg-muted/50",
-                  isDisabled && "cursor-not-allowed opacity-40 hover:bg-card",
+                  isDisabled && "hover:bg-card cursor-not-allowed opacity-40",
                 )}
               >
-                <span aria-hidden="true" className="flex items-center [&_svg]:size-5">
+                <span
+                  aria-hidden="true"
+                  className="flex items-center [&_svg]:size-5"
+                >
                   {item.icon}
                 </span>
-                <span className="text-[10px] leading-tight font-medium">{item.label}</span>
+                <span className="text-[10px] leading-tight font-medium">
+                  {item.label}
+                </span>
               </button>
             );
           })}

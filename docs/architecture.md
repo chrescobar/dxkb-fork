@@ -11,7 +11,7 @@ Route groups `(…)` are organizational and do NOT appear in the URL.
 - `/` — Public home page (search, news, statistics)
 - `(auth)/` — `sign-in`, `sign-up`, `forgot-password`
 - `(footer)/` — static content pages (about, faq, news, privacy-policy, team, etc.)
-- `(views)/` — BV-BRC data view pages: `genome`, `taxonomy`, `strain`, `feature`, `epitope`, `experiment`, `serology`, `surveillance`, `protein-structure`, `domains-and-motifs`. Rendered off the view registry (see **Views & organism landing**)
+- `(views)/` — BV-BRC data view pages: `genome`, `taxonomy`, `strain`, `feature`, `epitope`, `experiment`, `serology`, `surveillance`, `protein-structure`, `domains-and-motifs`. The registry supplies route metadata; production views use explicit per-route composition (see **Views & organism landing**)
 - `/organisms/(all|bacteria|viruses)/...` — organism landing pages (tabbed; driven by `_config.ts` + view registry)
 - `/workspace/...` — workspace file browser. Route shapes: `/workspace/[username]/home/[[...path]]`, `/workspace/[username]/[folder]/[[...path]]`, `/workspace/home/[[...path]]`, `/workspace/shared/[[...path]]`, `/workspace/public/[username]/[...path]`, `/workspace/workshop`
 - `/services/(genomics|metagenomics|phylogenomics|protein-tools|utilities|viral-tools)/...` — service submission forms (route groups as categories)
@@ -22,6 +22,7 @@ Route groups `(…)` are organizational and do NOT appear in the URL.
 - `/api/auth/...` — Custom auth API routes
 - `/api/services/...` — Proxied service API routes
 - `/api/workspace/...` — Proxied workspace API routes
+- `/api/data/[resource]` — validated, rate-limited same-origin gateway to allowlisted BV-BRC Data API resources
 - `/api/taxon-view/tab-policy` — tab-visibility policy for views (see `docs/taxon-view-tab-visibility.md`)
 - `/api/e2e-mock/[...path]` — loopback backend mock used only by the Playwright suite
 
@@ -49,6 +50,15 @@ Notes:
 - `JsonRpcClient` (`src/lib/jsonrpc-client.ts`) — all backend calls use JSON-RPC 2.0 over HTTP POST; requires `APP_SERVICE_URL` env var
 - `AppService` (`src/lib/app-service.ts`) — job management: enumerate/query/kill jobs, submit services via `AppService.start_app2`
 - `WorkspaceApiClient` (`src/lib/services/workspace/client.ts`) — workspace CRUD operations
+- `src/lib/data-api/` — typed Data API resource registry, validation, RQL serialization, server/browser repositories, normalized response types, and TanStack Query option/key factories. Browser view code uses `/api/data/[resource]`; upstream URLs and BV-BRC tokens remain server-only.
+
+### Data API gateway contract
+
+- Supported resources: `genome`, `genome_feature`, `epitope`, `epitope_assay`, `surveillance`, `serology`, `strain`, `protein_feature`, `protein_structure`, `experiment`, `bioset`, `genome_sequence`, and `ppi`.
+- Stable IDs, in the same order: `genome_id`, `feature_id`, `epitope_id`, `assay_id`, `id`, `id`, `id`, `id`, `pdb_id`, `exp_id`, `bioset_id`, `sequence_id`, and `id`. `genome_feature` also accepts `patric_id`; Surveillance and Serology allow their documented compound public identifiers. Identifiers remain strings even when digit-only.
+- Resource metadata allowlists field type, selection, sorting, faceting, and RQL quoting. Requests are bounded and validated by resource, operation, identifier, field, operator, range/export size, URL/body size, and rate limit. Sorts gain the stable ID as a deterministic tie-break.
+- Upstream item ranges use an exclusive end: `items=0-200` yields 200 rows. Collection pages are one-based and fixed at 200 rows.
+- Anonymous public member lookups use five-minute shared caching (`s-maxage=300`). Authenticated/private requests, collections, selected-row requests, and exports use `no-store`.
 
 ## Workspace browser (`src/components/workspace/`)
 
@@ -61,10 +71,13 @@ Notes:
 
 ## Views & organism landing
 
-`src/lib/views/`, `src/components/organisms/`, `src/app/(views)`, `src/app/organisms/`
+`src/lib/views/`, `src/components/views/`, `src/hooks/views/`, `src/components/organisms/`, `src/app/(views)`, `src/app/organisms/`
 
-- `src/lib/views/view-registry.ts` — central registry mapping BV-BRC view types to render config. Add a new view here, not by hand-wiring a page.
-- `(views)/*` pages are thin — resolve config from the registry and render list/singular via `render-list.tsx` / `render-singular.tsx` / `page-factory.tsx`.
+- `src/lib/views/view-registry.ts` — enumerable, data-only route metadata for canonical segments, legacy redirects, search mapping, identifiers, resources, and defaults. Do not put components, fetch functions, columns, or tab query builders in it.
+- `src/lib/views/collection-state.ts` — canonical URL-owned collection state. Pages are one-based, sort uses `field:asc|desc`, page 1/default sort are omitted, and filtering changes reset page 1. Page size (200), row selection, and column layout remain outside the URL.
+- `src/components/views/` — generic `ResourceCollection`, `ResourceWorkspace`, controlled resource filtering, export formatting, and `EntityViewShell` composition. `EntityViewShell` reuses the organism landing navigation and content-frame primitives so resource views retain the Taxonomy layout across desktop and mobile. `GenomeResourceCollection` is the first profile-backed adapter shared by `/genome` and Taxonomy's Genomes tab; Taxonomy contributes only its immutable lineage scope. `src/hooks/views/` owns TanStack Query collection/detail behavior, URL synchronization, and local explicit/all-matching selection state.
+- Scaffolded routes may still use `render-list.tsx`, `render-singular.tsx`, or `page-factory.tsx`; production views replace those factories with explicit route modules under `src/app/(views)/<segment>/`. Domain schemas, profiles, query builders, columns, and tabs stay with the route rather than entering a universal singular-view dispatcher.
+- Genome is the first explicit implementation: `/genome` is the focused `genome` collection, and `/genome/[genomeId]` is the `genome_id` member. The member route explicitly composes Overview, Genome Browser, Sequences, Features, Proteins, Protein Structures, Domains and Motifs, Experiments, and Interactions, capability-gating tabs whose data/component contract is not yet available.
 - Organism landing pages (`src/app/organisms/(all|bacteria|viruses)`) are tabbed, driven by a per-organism `_config.ts` (`OrganismLandingConfig` in `src/components/organisms/types.ts`) + shared components in `src/components/organisms/`.
 - URL schema (view types → URL params, legacy hash redirects) documented in `docs/url-schema/`. Legacy `#`-URL support: `legacy-hash-adapter.tsx` / `legacy-redirect.ts`.
 - Tab visibility policy: `src/app/api/taxon-view/tab-policy` + `docs/taxon-view-tab-visibility.md`.
@@ -91,6 +104,7 @@ Notes:
 ## Data fetching
 
 - TanStack Query for all async state (client-side)
+- View collections and member detail panels use `src/hooks/views/` over the `DataRepository` boundary in `src/lib/data-api/`; components do not parse upstream wire formats.
 - Custom hooks in `src/hooks/services/workspace/` wrap workspace API calls
 - `src/lib/api/client.ts` uses credentialed fetch; only the app-specific `session_expired` code triggers one hard reload, while ordinary upstream 401 responses remain API errors
 

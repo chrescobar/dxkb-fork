@@ -25,6 +25,7 @@ interface ListDataProps {
   q: string;
   resource: string; // 'genome', 'gene', etc.
   onSelectionChange?: (ids: string[]) => void;
+  onSelectedRowChange?: (row: Record<string, unknown> | null) => void;
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: (selection: RowSelectionState) => void;
   pageIndex?: number;
@@ -43,6 +44,7 @@ function useListData({
   q,
   resource,
   onSelectionChange,
+  onSelectedRowChange,
   rowSelection: controlledRowSelection,
   onRowSelectionChange,
   pageIndex: controlledPageIndex,
@@ -353,6 +355,9 @@ function useListData({
       const id = selectedIds[0];
       const row = findPageRow(pageData, idField, id);
       if (row) queryClient.setQueryData(detailPanelQueryKey(resource, id), row);
+      onSelectedRowChange?.(row ?? null);
+    } else {
+      onSelectedRowChange?.(null);
     }
 
     onSelectionChange?.(selectedIds);
@@ -362,6 +367,7 @@ function useListData({
     setIsAllPagesSelected(selected);
     onAllPagesSelectionChange?.(selected);
 
+    onSelectedRowChange?.(null);
     if (selected) {
       // When selecting all pages, notify parent with all item IDs
       // For now, we'll just set the flag - actual implementation would need to fetch all IDs

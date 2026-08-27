@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -14,44 +15,13 @@ import { Badge } from "@/components/ui/badge";
 import { Dna, Bug, Microscope, Activity, Database } from "lucide-react";
 import { searchToQuery } from "@/app/search/search-to-query";
 import ResultsOverview from "@/components/search/results-overview";
+import {
+  allTermSearchTypes,
+  labelsBySearchType,
+} from "@/constants/search-info";
+import { genomeHref, genomeListHref } from "@/lib/views/hrefs";
 
 const bvbrcAPI = "https://p3.theseed.org/services/data_api/";
-
-const searchTypes = [
-  "taxonomy",
-  "genome",
-  "strain",
-  "genome_feature",
-  "sp_gene",
-  "protein_feature",
-  "epitope",
-  "protein_structure",
-  "pathway",
-  "subsystem",
-  "surveillance",
-  "serology",
-  "experiment",
-  "antibiotics",
-  "genome_sequence",
-] as const;
-
-const labelsByType: Record<string, string> = {
-  taxonomy: "Taxa",
-  genome: "Genomes",
-  strain: "Strains",
-  genome_feature: "Features",
-  sp_gene: "Specialty Genes",
-  protein_feature: "Domains and Motifs",
-  epitope: "Epitopes",
-  protein_structure: "Protein Structures",
-  pathway: "Pathways",
-  subsystem: "Subsystems",
-  surveillance: "Surveillance",
-  serology: "Serology",
-  experiment: "Experiments",
-  antibiotics: "Antibiotics",
-  genome_sequence: "Genomic Sequences",
-};
 
 interface BVBRCAPIResponse {
   result: {
@@ -113,7 +83,7 @@ async function fetchSearchResults(query: string): Promise<SearchResults> {
   const searchPayload: Record<string, unknown> = {};
   const processedQuery = processQuery(query);
 
-  searchTypes.forEach((searchType) => {
+  allTermSearchTypes.forEach(({ id: searchType }) => {
     let typeQuery = processedQuery;
     switch (searchType) {
       case "genome_feature":
@@ -443,7 +413,7 @@ function SearchResultsContent({ query }: { query: string }) {
           <ResultsOverview
             isLoading={isLoading}
             searchResults={searchResults}
-            labelsByType={labelsByType}
+            labelsByType={labelsBySearchType}
           />
           <div className="py-20 text-center">
             <h2 className="mb-4 text-2xl font-medium">No results found</h2>
@@ -457,7 +427,7 @@ function SearchResultsContent({ query }: { query: string }) {
           <ResultsOverview
             isLoading={isLoading}
             searchResults={searchResults}
-            labelsByType={labelsByType}
+            labelsByType={labelsBySearchType}
           />
 
           <div className="space-y-8">
@@ -470,16 +440,22 @@ function SearchResultsContent({ query }: { query: string }) {
               return (
                 <Card
                   key={dataType}
-                  className="gap-0 rounded-lg border bg-card px-4 py-0 text-card-foreground shadow-sm"
+                  className="bg-card text-card-foreground gap-0 rounded-lg border px-4 py-0 shadow-sm"
                 >
                   <CardHeader className="flex flex-row items-center justify-between border-b p-6">
                     <div className="flex items-center gap-2">
                       {getDataTypeIcon(dataType)}
                       <CardTitle className="text-xl font-semibold capitalize">
-                        {labelsByType[dataType]}
+                        {dataType === "genome" ? (
+                          <Link href={genomeListHref({ keyword: query })}>
+                            {labelsBySearchType[dataType]}
+                          </Link>
+                        ) : (
+                          labelsBySearchType[dataType]
+                        )}
                       </CardTitle>
                     </div>
-                    <Badge className="h-8 max-w-fit min-w-8 bg-secondary font-semibold text-white">
+                    <Badge className="bg-secondary h-8 max-w-fit min-w-8 font-semibold text-white">
                       {numFound}
                     </Badge>
                   </CardHeader>
@@ -496,9 +472,21 @@ function SearchResultsContent({ query }: { query: string }) {
                         typeof rawDocumentKey === "number"
                           ? String(rawDocumentKey)
                           : JSON.stringify(doc);
+                      const genomeId =
+                        typeof doc.genome_id === "string" ||
+                        typeof doc.genome_id === "number"
+                          ? doc.genome_id
+                          : null;
+                      const content = getFormattedContent(doc, dataType);
                       return (
                         <div key={documentKey} className="py-6">
-                          {getFormattedContent(doc, dataType)}
+                          {dataType === "genome" && genomeId != null ? (
+                            <Link href={genomeHref(genomeId)} className="block">
+                              {content}
+                            </Link>
+                          ) : (
+                            content
+                          )}
                         </div>
                       );
                     })}

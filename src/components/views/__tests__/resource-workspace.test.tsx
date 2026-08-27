@@ -96,4 +96,22 @@ describe("ResourceWorkspace", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show" }));
     expect(screen.getByText("Details")).toBeInTheDocument();
   });
+
+  it("removes the details region when the side panel is no longer available", () => {
+    mockViewport(false);
+    const { rerender } = renderWorkspace();
+
+    rerender(
+      <ResourceWorkspace
+        hasSidePanel={false}
+        actionBar={<span>Actions</span>}
+        sidePanel={<span>Details</span>}
+      >
+        <span>Table</span>
+      </ResourceWorkspace>,
+    );
+
+    expect(screen.queryByTestId("details-panel")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("resize-handle")).not.toBeInTheDocument();
+  });
 });

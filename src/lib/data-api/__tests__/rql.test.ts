@@ -16,10 +16,10 @@ describe("typed RQL", () => {
 
   it("quotes tokenized phrase fields and safely encodes delimiters", () => {
     expect(eq("strain", "strain", "A/B, isolate (one)")).toBe(
-      'eq(strain,"A%2FB%2C%20isolate%20%28one%29")',
+      "eq(strain,\"A%2FB%2C%20isolate%20%28one%29\")",
     );
     expect(eq("surveillance", "pathogen_test_type", "RAT/antigen")).toBe(
-      'eq(pathogen_test_type,"RAT%2Fantigen")',
+      "eq(pathogen_test_type,\"RAT%2Fantigen\")",
     );
     expect(eq("serology", "test_type", "neutralizing antibody")).toBe(
       "eq(test_type,neutralizing%20antibody)",

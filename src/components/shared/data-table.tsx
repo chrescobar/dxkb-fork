@@ -838,7 +838,6 @@ function useDataTableContent(
           format,
           onlyVisibleColumns ? visibleColumnIds : null,
         );
-        setDownloadingButton(null);
         return;
       }
 
@@ -856,7 +855,6 @@ function useDataTableContent(
           format,
           onlyVisibleColumns ? visibleColumnIds : null,
         );
-        setDownloadingButton(null);
         return;
       }
 
@@ -954,9 +952,6 @@ function useDataTableContent(
           })
           .catch((err: unknown) => {
             console.error("Download selected failed:", err);
-          })
-          .finally(() => {
-            setDownloadingButton(null);
           });
 
         return;
@@ -988,9 +983,9 @@ function useDataTableContent(
       ].join("\n");
 
       downloadFile(`${resource}.${format}`, content);
-      setDownloadingButton(null);
     } catch (error) {
       console.error("Download failed:", error);
+    } finally {
       setDownloadingButton(null);
     }
   };

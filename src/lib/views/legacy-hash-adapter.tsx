@@ -41,7 +41,11 @@ export function LegacyHashAdapter() {
     if (keyword && !url.searchParams.has("keyword")) {
       url.searchParams.set("keyword", keyword);
     }
-    if (defaultSort === "-score" && url.searchParams.get("keyword")) {
+    if (
+      defaultSort === "-score" &&
+      url.searchParams.get("keyword") &&
+      !url.searchParams.has("sort")
+    ) {
       url.searchParams.set("sort", "score:desc");
     }
     url.hash = "";

@@ -505,7 +505,7 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 
 | Decision              | Choice                                                                                                                                                                |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Deliverable           | Schema + routing skeleton (no real data views)                                                                                                                        |
+| Deliverable           | Schema + routing skeleton for all view types, plus the implemented Genome Phase 1 collection and member views                                                       |
 | List ↔ singular       | Combined: bare segment = list, `+id` = singular → **10 segments**                                                                                                     |
 | Segment casing        | lowercase kebab-case                                                                                                                                                  |
 | Tab param             | `?tab=` (query, server-readable), migrated from `?view=`                                                                                                              |
@@ -513,4 +513,4 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 | List query format     | Friendly named params **+** `?rql=` escape hatch                                                                                                                      |
 | Oddballs              | All 10 documented; scaffold the real ones; list-only → `notFound()` on `[id]`; protein-structure id-less; experiment singular uses legacy name `ExperimentComparison` |
 | Redirects (build now) | Internal `view`→`tab` + legacy `/view/*` two-stage (server path/query + client hash)                                                                                  |
-| Deferred              | Real list/singular data, search repoint, sitemap/JSON-LD/ISR                                                                                                          |
+| Deferred              | Real list/singular data for the remaining scaffolded types, search repoint, sitemap/JSON-LD/ISR                                                                       |

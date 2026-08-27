@@ -31,7 +31,7 @@ function saveRows(
           ? ""
           : JSON.stringify(input);
     return format === "csv"
-      ? `"${text.replaceAll('"', '""')}"`
+      ? `"${text.replaceAll("\"", "\"\"")}"`
       : text.replaceAll("\t", " ");
   };
   const body = [

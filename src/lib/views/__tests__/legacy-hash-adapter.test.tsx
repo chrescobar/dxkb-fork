@@ -85,6 +85,20 @@ it("promotes a hash keyword before converting defaultSort=-score", () => {
   );
 });
 
+it("preserves an explicit sort when converting defaultSort=-score", () => {
+  window.history.replaceState(
+    null,
+    "",
+    "/genome?keyword=influenza&sort=genome_name%3Aasc",
+  );
+  window.location.hash = "#defaultSort=-score";
+  render(<LegacyHashAdapter />);
+
+  expect(mockReplace).toHaveBeenCalledWith(
+    "/genome?keyword=influenza&sort=genome_name%3Aasc",
+  );
+});
+
 it("drops defaultSort=-score when no keyword is present", () => {
   window.location.hash = "#defaultSort=-score";
   render(<LegacyHashAdapter />);

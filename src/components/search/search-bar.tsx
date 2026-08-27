@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense, type SyntheticEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -32,9 +32,17 @@ function extractKeywordQuery(raw: string): string {
 }
 
 function SearchBarWithParams(props: SearchBarProps) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const rawQuery = searchParams.get("q") || props.initialValue || "";
-  const requestedType = searchParams.get("type") || "everything";
+  const rawQuery =
+    searchParams.get("keyword") ||
+    searchParams.get("q") ||
+    props.initialValue ||
+    "";
+  const requestedType =
+    pathname === "/genome"
+      ? "genome"
+      : searchParams.get("type") || "everything";
   const initialType = searchTypes.some((type) => type.id === requestedType)
     ? requestedType
     : "everything";

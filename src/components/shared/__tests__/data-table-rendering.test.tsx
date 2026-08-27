@@ -150,6 +150,12 @@ describe("DataTable shared view seams", () => {
       screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
     );
     expect(onDownloadSelected).toHaveBeenCalledWith("csv", ["row-1"], null);
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Download Selected \(CSV\)/i }),
+      ).toBeEnabled();
+    });
+    expect(screen.queryByText("Downloading...")).not.toBeInTheDocument();
   });
 });
 

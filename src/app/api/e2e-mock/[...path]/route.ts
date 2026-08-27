@@ -83,8 +83,15 @@ function maybeSolrCount(
   const isGenomeFixtureQuery =
     core === "genome" &&
     (query.includes("eq(genome_id,1282460.2049)") ||
-      query.includes("sort(+genome_name,+genome_id)"));
-  const docs = isGenomeFixtureQuery ? [genomeRecordFixture] : [];
+      (query.includes("keyword(MERS*)") &&
+        query.includes("sort(+genome_name,+genome_id)")));
+  const itemRange = (
+    request.headers.get("range") ?? request.headers.get("x-range")
+  )?.match(/^items=(\d+)-(\d+)$/i);
+  const includesFixtureRow =
+    !itemRange || (Number(itemRange[1]) <= 0 && Number(itemRange[2]) >= 0);
+  const docs =
+    isGenomeFixtureQuery && includesFixtureRow ? [genomeRecordFixture] : [];
   if (request.headers.get("accept") === "application/json") return docs;
   return { response: { numFound, docs } };
 }

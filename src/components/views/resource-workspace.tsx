@@ -82,7 +82,7 @@ export function ResourceWorkspace({
           {children}
         </div>
         <aside className="shrink-0">{actionStrip}</aside>
-        {panelExpanded && (
+        {hasSidePanel && panelExpanded && (
           <aside className="max-h-[45%] min-h-40 shrink-0 overflow-auto border-t bg-background shadow-[0_-8px_24px_-16px_rgb(0_0_0/0.5)]">
             {sidePanel}
           </aside>
@@ -109,7 +109,7 @@ export function ResourceWorkspace({
           </div>
           <aside className="shrink-0">{actionStrip}</aside>
         </ResizablePanel>
-        {panelExpanded && (
+        {hasSidePanel && panelExpanded && (
           <>
             <ResizableHandle withHandle />
             <ResizablePanel

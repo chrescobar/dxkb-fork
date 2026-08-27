@@ -1,0 +1,123 @@
+src/lib/views/legacy-hash-adapter.tsx
+  s_9d852fdaa744d2::t_f90813ccba4882 44-48
+src/lib/data-api/__tests__/rql.test.ts
+  s_a0c0624d70a1d0::t_83bdfacdb641c2 19,22
+src/components/navbars/__tests__/navbar.test.tsx
+  s_91910ba0c7b710::t_5ef5dace1d7cf2 44-46
+  s_91910ba0c7b710::t_5dc55a5a7be7be 1-43,47-49
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_12a5b6c3964387::t_89e6c9164ecfe9 355-370,402-415
+  s_ada9fcaa411c42::t_a2988de3897ded 371-401
+src/components/shared/data-table.tsx
+  s_5e6469977afcb8::t_4c912e12a65341 988
+src/components/views/__tests__/resource-workspace.test.tsx
+  s_b309213bc07d2a::t_f0b082a0e7eca4 99-116
+src/components/views/resource-export.ts
+  s_cb6aff313539c3::t_dcccc6acd12e6f 18-20
+src/constants/datafields/genome_sequence.ts
+  s_a0c0624d70a1d0::t_1287df50daa6d3 9
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_5e6469977afcb8::t_7a4c8a3987a610 153-158
+src/app/(views)/genome/[genomeId]/genome-child-collection.tsx
+  s_a0c0624d70a1d0::t_5b911acee471bd 34
+src/components/services/list-data-utils.ts
+  s_cb6aff313539c3::t_58af3c7e6d07b8 106-108
+docs/architecture.md
+  s_2c485dbb3ee982::t_5c5540037adc4d 79-80
+src/components/views/resource-workspace.tsx
+  s_b309213bc07d2a::t_e37144bfaa5acc 85,112
+src/components/search/search-bar.tsx
+  s_91910ba0c7b710::t_7d4ae3cb677ccf 4
+  s_91910ba0c7b710::t_16d1b285ca6823 35,37-45
+src/app/api/e2e-mock/[...path]/route.ts
+  s_12a5b6c3964387::t_714841bead7a9f 86-87
+  s_ada9fcaa411c42::t_2991c4a599f636 88-94
+src/components/search/__tests__/search-bar.test.tsx
+  s_91910ba0c7b710::t_403b0b026c116d 11
+src/constants/datafields/genome.ts
+  s_a0c0624d70a1d0::t_817b705afc0247 10
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_9d852fdaa744d2::t_e019edbb662223 88-101
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_2c485dbb3ee982::t_434b0f29532a22 508,516
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "268b884a680587207b28f8e8ced3bc811f2b49c5",
+  "prompts": {},
+  "sessions": {
+    "s_12a5b6c3964387": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb216f4effeEJ0G6Q5xoFlDww",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_2c485dbb3ee982": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb2365d1ffeKNpS4OTO1ksCwy",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5e6469977afcb8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb165344ffe6Zcx0l75FfQ3Yx",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_91910ba0c7b710": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb1a75ffffeyal8ZJHl0GHW90",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9d852fdaa744d2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb098c9cffeknXqDq265QZu5I",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a0c0624d70a1d0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb117ea0ffeOJgkPGTP94xRB1",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ada9fcaa411c42": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb1cf386ffeywX5RrTLsqroVb",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b309213bc07d2a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb14bd1bffemWF0WyX9WlH000",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_cb6aff313539c3": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fbb12ea91ffetHszJnWGg8NmXS",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -26,7 +26,7 @@ export default defineConfig({
   retries: isCi ? 2 : 0,
   workers: isCi ? 2 : undefined,
   reporter: isCi ? [["github"], ["html", { open: "never" }]] : [["list"], ["html", { open: "never" }]],
-  outputDir: ".misc/test-results",
+  outputDir: "test-results",
   snapshotDir: "e2e/__snapshots__",
   expect: {
     toHaveScreenshot: {

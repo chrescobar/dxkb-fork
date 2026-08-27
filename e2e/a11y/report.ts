@@ -10,7 +10,7 @@ export interface ScanRecord {
   warnings: Violation[];
 }
 
-const scansDir = ".misc/a11y-report/scans";
+const scansDir = "a11y-report/scans";
 
 export function recordScan(record: ScanRecord): void {
   fs.mkdirSync(scansDir, { recursive: true });

@@ -21,8 +21,7 @@ export default defineConfig(
       "public/nextstrain-viewer.html",
       "playwright-report/**",
       "test-results/**",
-      "next-env.d.ts",
-      ".misc/**"
+      "next-env.d.ts"
     ],
   },
   eslint.configs.recommended,

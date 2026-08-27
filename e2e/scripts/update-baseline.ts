@@ -1,13 +1,13 @@
 /**
  * Recalibrates maxNodes values in baseline.generated.ts from a live a11y scan.
  * Run via: pnpm a11y:baseline:update
- * Requires .misc/a11y-report/a11y-summary.json produced by pnpm a11y:routes.
+ * Requires a11y-report/a11y-summary.json produced by pnpm a11y:routes.
  */
 import * as fs from "fs";
 import type { Violation } from "../a11y/gate";
 import type { ScanRecord } from "../a11y/report";
 
-const summaryPath = ".misc/a11y-report/a11y-summary.json";
+const summaryPath = "a11y-report/a11y-summary.json";
 const baselinePath = "e2e/a11y/baseline.generated.ts";
 const headroom = 5;
 

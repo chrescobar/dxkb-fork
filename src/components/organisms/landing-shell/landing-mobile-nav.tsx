@@ -63,20 +63,20 @@ export function LandingMobileNav<Key extends string>({
               // where axe treats the visible text as absent — the label keeps
               // the trigger named for assistive tech in every state.
               aria-label={`Views: ${active.label}`}
-              className="border-background/10 bg-foreground text-background hover:bg-foreground/90 h-12 gap-2 rounded-full border pr-3 pl-4 shadow-2xl"
+              className="h-12 gap-2 rounded-full border border-background/10 bg-foreground pr-3 pl-4 text-background shadow-2xl hover:bg-foreground/90"
               {...triggerProps}
             >
               <LayoutGrid
                 aria-hidden="true"
-                className="text-background/60 size-4"
+                className="size-4 text-background/60"
               />
-              <span className="text-background/50 text-[10px] font-bold tracking-widest uppercase">
+              <span className="text-[10px] font-bold tracking-widest text-background/50 uppercase">
                 Views
               </span>
               <span className="font-semibold">{active.label}</span>
               <ChevronUp
                 aria-hidden="true"
-                className="text-background/60 size-4"
+                className="size-4 text-background/60"
               />
             </Button>
           )}
@@ -86,7 +86,7 @@ export function LandingMobileNav<Key extends string>({
         side="bottom"
         className="max-h-[75vh] gap-0 rounded-t-2xl p-0"
       >
-        <SheetTitle className="text-muted-foreground px-4 pt-4 pb-2 text-sm font-semibold">
+        <SheetTitle className="px-4 pt-4 pb-2 text-sm font-semibold text-muted-foreground">
           Views
         </SheetTitle>
         <div className="grid grid-cols-4 gap-1.5 overflow-y-auto p-3 pb-8">
@@ -109,7 +109,7 @@ export function LandingMobileNav<Key extends string>({
                   isActive
                     ? "border-primary bg-primary/10 text-primary"
                     : "bg-card text-foreground hover:bg-muted/50",
-                  isDisabled && "hover:bg-card cursor-not-allowed opacity-40",
+                  isDisabled && "cursor-not-allowed opacity-40 hover:bg-card",
                 )}
               >
                 <span

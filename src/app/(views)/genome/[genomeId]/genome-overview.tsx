@@ -21,7 +21,7 @@ function Field({ label, value }: { label: string; value: unknown }) {
   if (value == null || value === "") return null;
   return (
     <div>
-      <dt className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+      <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
         {label}
       </dt>
       <dd className="mt-0.5 wrap-break-word">{display(value)}</dd>
@@ -43,7 +43,7 @@ function FeatureCount({
   if (value == null || value === "") return null;
   return (
     <div>
-      <dt className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+      <dt className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
         {label}
       </dt>
       <dd className="mt-0.5">

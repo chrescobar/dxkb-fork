@@ -40,9 +40,9 @@ export function BacterialPhylogenyPanel({
     return (
       <div className="grid h-full place-items-center p-6 text-center">
         <div className="max-w-md">
-          <Network className="text-muted-foreground mx-auto mb-4 size-10" />
+          <Network className="mx-auto mb-4 size-10 text-muted-foreground" />
           <h2 className="text-lg font-semibold">No published tree</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="mt-1 text-sm text-muted-foreground">
             A phylogenetic tree is not currently available for {taxonName}.
           </p>
         </div>
@@ -57,7 +57,7 @@ export function BacterialPhylogenyPanel({
         <div className="h-full overflow-auto p-5">
           {selected ? (
             <>
-              <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 Selected leaf
               </p>
               <h2 className="mt-1 text-lg font-semibold wrap-break-word">
@@ -90,7 +90,7 @@ export function BacterialPhylogenyPanel({
                       <div className="font-medium wrap-break-word">
                         {property.ref ?? "Property"}
                       </div>
-                      <div className="text-muted-foreground wrap-break-word">
+                      <div className="wrap-break-word text-muted-foreground">
                         {String(property.value ?? "")}
                       </div>
                     </div>
@@ -99,7 +99,7 @@ export function BacterialPhylogenyPanel({
               )}
             </>
           ) : (
-            <div className="text-muted-foreground grid h-full place-items-center text-center text-sm">
+            <div className="grid h-full place-items-center text-center text-sm text-muted-foreground">
               Select a leaf to inspect its phyloXML attributes.
             </div>
           )}

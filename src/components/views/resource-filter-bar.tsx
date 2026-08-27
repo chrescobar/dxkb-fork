@@ -103,11 +103,11 @@ export function ResourceFilterBar({
                 Facets
               </Button>
               {facetMenuOpen && (
-                <div className="bg-background absolute right-0 z-50 mt-1 max-h-64 w-56 overflow-y-auto rounded border shadow-lg">
+                <div className="absolute right-0 z-50 mt-1 max-h-64 w-56 overflow-y-auto rounded border bg-background shadow-lg">
                   {definitions.map((definition) => (
                     <label
                       key={definition.field}
-                      className="hover:bg-muted flex cursor-pointer items-center gap-2 px-2 py-1 text-xs"
+                      className="flex cursor-pointer items-center gap-2 px-2 py-1 text-xs hover:bg-muted"
                     >
                       <input
                         type="checkbox"

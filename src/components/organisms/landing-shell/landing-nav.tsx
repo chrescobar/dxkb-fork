@@ -44,13 +44,13 @@ export function LandingNav<Key extends string>({
     <nav
       aria-label={ariaLabel}
       className={cn(
-        "bg-card text-card-foreground sticky top-4 h-fit shrink-0 rounded-lg border shadow-sm transition-[width] duration-150 ease-out",
+        "sticky top-4 h-fit shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm transition-[width] duration-150 ease-out",
         collapsed ? "w-14" : "w-56",
       )}
     >
       <div className="flex items-center justify-between gap-2 p-2.5">
         {!collapsed && (
-          <h2 className="text-muted-foreground truncate pl-2 text-sm font-semibold">
+          <h2 className="truncate pl-2 text-sm font-semibold text-muted-foreground">
             Views
           </h2>
         )}
@@ -116,7 +116,7 @@ export function LandingNav<Key extends string>({
                   className={cn(
                     "justify-start px-2",
                     isActive && "font-semibold",
-                    "text-muted-foreground pointer-events-none cursor-not-allowed opacity-50",
+                    "pointer-events-none cursor-not-allowed text-muted-foreground opacity-50",
                   )}
                 >
                   {buttonContent}

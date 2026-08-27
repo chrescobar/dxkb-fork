@@ -47,7 +47,7 @@ export function ResourceWorkspace({
   }, []);
 
   const actionStrip = (
-    <div className="bg-muted flex h-full min-h-0 w-20 shrink-0 flex-col rounded-l-lg border-l max-md:h-auto max-md:w-full max-md:flex-row max-md:rounded-l-none max-md:border-t max-md:border-l-0">
+    <div className="flex h-full min-h-0 w-20 shrink-0 flex-col rounded-l-lg border-l bg-muted max-md:h-auto max-md:w-full max-md:flex-row max-md:rounded-l-none max-md:border-t max-md:border-l-0">
       <div className="border-b p-2 max-md:border-r max-md:border-b-0">
         <Button
           variant="ghost"
@@ -83,7 +83,7 @@ export function ResourceWorkspace({
         </div>
         <aside className="shrink-0">{actionStrip}</aside>
         {panelExpanded && (
-          <aside className="bg-background max-h-[45%] min-h-40 shrink-0 overflow-auto border-t shadow-[0_-8px_24px_-16px_rgb(0_0_0/0.5)]">
+          <aside className="max-h-[45%] min-h-40 shrink-0 overflow-auto border-t bg-background shadow-[0_-8px_24px_-16px_rgb(0_0_0/0.5)]">
             {sidePanel}
           </aside>
         )}

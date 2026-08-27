@@ -65,14 +65,14 @@ export function EntityViewShell<Key extends string>({
 
   const header = (
     <div className="min-w-0">
-      <p className="text-foreground text-[12px] font-bold tracking-widest uppercase">
+      <p className="text-[12px] font-bold tracking-widest text-foreground uppercase">
         {viewLabel}
       </p>
       {breadcrumbs ?? (
         <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
       )}
       {headerContent && (
-        <div className="text-muted-foreground mt-1 text-sm">
+        <div className="mt-1 text-sm text-muted-foreground">
           {headerContent}
         </div>
       )}
@@ -104,7 +104,7 @@ export function EntityViewShell<Key extends string>({
           />
         </div>
         <article className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <header className="bg-card mb-0.5 flex items-center justify-between gap-4 rounded-lg border px-5 py-3 shadow-sm">
+          <header className="mb-0.5 flex items-center justify-between gap-4 rounded-lg border bg-card px-5 py-3 shadow-sm">
             {header}
             {metadataActions && (
               <div className="flex flex-wrap gap-2">{metadataActions}</div>

@@ -39,7 +39,7 @@ function lineage(genome: GenomeViewRecord) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
       <Link
-        className="text-muted-foreground hover:text-foreground transition-colors"
+        className="text-muted-foreground transition-colors hover:text-foreground"
         href="/genome"
       >
         Genomes
@@ -49,7 +49,7 @@ function lineage(genome: GenomeViewRecord) {
         <span key={`${name}-${String(index)}`} className="contents">
           {ids[index] ? (
             <Link
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
               href={`/taxonomy/${encodeURIComponent(String(ids[index]))}`}
             >
               {name}
@@ -60,7 +60,7 @@ function lineage(genome: GenomeViewRecord) {
           <span className="text-muted-foreground/50 select-none">»</span>
         </span>
       ))}
-      <h1 className="text-secondary m-0 inline text-sm leading-none font-bold">
+      <h1 className="m-0 inline text-sm leading-none font-bold text-secondary">
         {genome.genome_name ?? genome.genome_id}
       </h1>
     </div>
@@ -122,7 +122,7 @@ export function GenomeMember({
       breadcrumbs={lineage(genome)}
       headerContent={`Genome ${genome.genome_id}`}
       metadataSummary={
-        <div className="bg-card mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border px-4 py-3 text-sm">
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
           <span>
             <strong>Length:</strong> {genome.genome_length ?? "Not available"}
           </span>

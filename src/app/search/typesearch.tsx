@@ -122,7 +122,7 @@ function TabsRenderer({
       className="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
       {tablist.length > 1 && (
-        <TabsList className="bg-background mb-0 pb-0">
+        <TabsList className="mb-0 bg-background pb-0">
           {Object.entries(tabsForType).map(([term, label]) => (
             <TabsTrigger key={term} value={term}>
               {label}
@@ -378,7 +378,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     <div className="flex h-full min-h-0 flex-1">
       {/* Left collapsible nav — compact card, self-sized like LandingNav */}
       <div className="shrink-0 scrollbar-none overflow-y-auto p-2 [&::-webkit-scrollbar]:hidden">
-        <div className="bg-card w-fit rounded-lg border shadow-sm">
+        <div className="w-fit rounded-lg border bg-card shadow-sm">
           <div className="flex items-center justify-end p-2">
             <Button
               variant="ghost"

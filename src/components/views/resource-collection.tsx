@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { InfoPanel } from "@/components/detail-panel/info-panel";
@@ -89,7 +88,6 @@ export function ResourceCollection<Row extends DataTableRow>({
   showHeader = true,
   onExport,
 }: ResourceCollectionProps<Row>) {
-  const router = useRouter();
   const [exportError, setExportError] = useState<string | null>(null);
   const [columnVisibility, setColumnVisibility] = useState(() =>
     Object.fromEntries(
@@ -309,9 +307,17 @@ export function ResourceCollection<Row extends DataTableRow>({
               guideUrl={profile.guideUrl}
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
-                  router.push(genomeHref(selectedGenomeId));
+                  window.open(
+                    genomeHref(selectedGenomeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 } else if (actionId === "feature" && selectedFeatureId) {
-                  router.push(featureHref(selectedFeatureId));
+                  window.open(
+                    featureHref(selectedFeatureId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />

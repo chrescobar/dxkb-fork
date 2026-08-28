@@ -45,6 +45,9 @@ vi.mock("@/components/search/search-action-bar", () => ({
       data-resource={searchType}
       data-guide={guideUrl}
     >
+      <button type="button" onClick={() => onAction?.("genome")}>
+        genome-action
+      </button>
       <button type="button" onClick={() => onAction?.("feature")}>
         feature-action
       </button>
@@ -186,6 +189,7 @@ describe("TaxonDataPanel", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 
   it("forwards its data contract and tracks the latest selected detail row", () => {
@@ -237,7 +241,30 @@ describe("TaxonDataPanel", () => {
     expect(onFilterChange).toHaveBeenCalledWith("and(eq(a,b))");
   });
 
-  it("navigates the Feature action to the selected feature member", () => {
+  it("opens the selected genome member in a new tab", () => {
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    render(
+      <TaxonDataPanel
+        resource="genome_feature"
+        q="eq(genome_id,83332.12)"
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "select-feature" }));
+    fireEvent.click(screen.getByRole("button", { name: "genome-action" }));
+
+    expect(open).toHaveBeenCalledWith(
+      "/genome/83332.12",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("opens the selected feature member in a new tab", () => {
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
     render(
       <TaxonDataPanel
         resource="genome_feature"
@@ -248,7 +275,12 @@ describe("TaxonDataPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: "select-feature" }));
     fireEvent.click(screen.getByRole("button", { name: "feature-action" }));
 
-    expect(push).toHaveBeenCalledWith("/feature/canonical-feature");
+    expect(open).toHaveBeenCalledWith(
+      "/feature/canonical-feature",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("uses the total count for all-pages selection", () => {

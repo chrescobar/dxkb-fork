@@ -223,8 +223,10 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.getByTestId("detail")).toHaveTextContent("E. coli fixture");
   });
 
-  it("projects row links to members and navigates the Genome action", async () => {
+  it("projects row links and opens the Genome action in a new tab", async () => {
     const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
     render(
       <ResourceCollection
         profile={genomeCollectionProfile}
@@ -239,11 +241,18 @@ describe("ResourceCollection Genome integration contracts", () => {
       screen.getByRole("link", { name: "E. coli fixture" }),
     ).toHaveAttribute("href", "/genome/83332.12");
     await user.click(screen.getByRole("button", { name: "Genome action" }));
-    expect(push).toHaveBeenCalledWith("/genome/83332.12");
+    expect(open).toHaveBeenCalledWith(
+      "/genome/83332.12",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
   });
 
-  it("navigates the Feature action to the selected feature member", async () => {
+  it("opens the selected feature member in a new tab", async () => {
     const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
       activeId: "canonical-feature",
@@ -274,7 +283,12 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Feature action" }));
-    expect(push).toHaveBeenCalledWith("/feature/canonical-feature");
+    expect(open).toHaveBeenCalledWith(
+      "/feature/canonical-feature",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("requests all matching rows using the active scope, sort, and columns", async () => {

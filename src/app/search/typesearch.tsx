@@ -430,9 +430,17 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
               disabledActions={{ taxonOverview: notReady }}
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
-                  router.push(genomeHref(selectedGenomeId));
+                  window.open(
+                    genomeHref(selectedGenomeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 } else if (actionId === "feature" && selectedFeatureId) {
-                  router.push(featureHref(selectedFeatureId));
+                  window.open(
+                    featureHref(selectedFeatureId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />

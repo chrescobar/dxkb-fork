@@ -2,7 +2,6 @@
 
 import { Suspense, useRef, useState } from "react";
 import type { RowSelectionState } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
 
 import { ResourceWorkspace } from "@/components/views/resource-workspace";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
@@ -33,7 +32,6 @@ export function TaxonDataPanel({
   keywordValue,
   onKeywordChange,
 }: TaxonDataPanelProps) {
-  const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
@@ -69,9 +67,17 @@ export function TaxonDataPanel({
           guideUrl={guideUrl}
           onAction={(actionId) => {
             if (actionId === "genome" && selectedGenomeId) {
-              router.push(genomeHref(selectedGenomeId));
+              window.open(
+                genomeHref(selectedGenomeId),
+                "_blank",
+                "noopener,noreferrer",
+              );
             } else if (actionId === "feature" && selectedFeatureId) {
-              router.push(featureHref(selectedFeatureId));
+              window.open(
+                featureHref(selectedFeatureId),
+                "_blank",
+                "noopener,noreferrer",
+              );
             }
           }}
         />

@@ -54,6 +54,7 @@ export interface ResourceCollectionExportRequest {
   format: "csv" | "txt";
   selectedIds?: readonly string[];
   fields: readonly string[] | null;
+  rql?: string;
 }
 
 export interface ResourceCollectionProps<Row extends DataTableRow> {
@@ -86,6 +87,11 @@ export function ResourceCollection<Row extends DataTableRow>({
       profile.columns.map((column) => [column.id, column.visible !== false]),
     ),
   );
+  const structuralRql = combinePredicates(
+    baseRql,
+    profile.buildStructuralRql?.(state) ?? profile.basePredicate,
+  );
+  const effectiveRql = combinePredicates(structuralRql, state.rql);
   const collection = useResourceCollection({
     repository,
     resource: profile.resource,
@@ -93,10 +99,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     fields: profile.columns.map((column) => column.id),
     detailFields: profile.detailFields,
     facetFields: profile.facets?.map((facet) => facet.field),
-    structuralRql: combinePredicates(
-      baseRql,
-      profile.buildStructuralRql?.(state) ?? profile.basePredicate,
-    ),
+    structuralRql,
     state,
     onStateChange,
   });
@@ -124,7 +127,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     setExportError(null);
     try {
       if (onExport) {
-        await onExport({ format, selectedIds, fields });
+        await onExport({ format, selectedIds, fields, rql: effectiveRql });
         return;
       }
       const selectedFields = fields
@@ -136,12 +139,7 @@ export function ResourceCollection<Row extends DataTableRow>({
             fields: selectedFields,
           })
         : await repository.exportAll(profile.resource, {
-            rql: combinePredicates(
-              baseRql,
-              state.rql ??
-                profile.buildStructuralRql?.(state) ??
-                profile.basePredicate,
-            ),
+            rql: effectiveRql,
             keyword: state.keyword,
             fields: selectedFields,
             sort: {

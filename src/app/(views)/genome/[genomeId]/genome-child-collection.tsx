@@ -30,9 +30,10 @@ function saveRows(
         : input == null
           ? ""
           : JSON.stringify(input);
-    return format === "csv"
-      ? `"${text.replaceAll("\"", "\"\"")}"`
-      : text.replaceAll("\t", " ");
+    const cleaned = text.replace(/\r\n|\n|\r/g, " ");
+    if (format === "txt") return cleaned.replaceAll("\t", " ");
+    const safe = /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
+    return `"${safe.replaceAll("\"", "\"\"")}"`;
   };
   const body = [
     fields.join(separator),
@@ -48,6 +49,15 @@ function saveRows(
   URL.revokeObjectURL(url);
 }
 
+interface GenomeChildCollectionProps {
+  resource: DataResource;
+  label: string;
+  idField: string;
+  rql: string;
+  columns: ResourceCollectionProfile<ChildRow>["columns"];
+  defaultSort: string;
+}
+
 export function GenomeChildCollection({
   resource,
   label,
@@ -55,14 +65,7 @@ export function GenomeChildCollection({
   rql,
   columns,
   defaultSort,
-}: {
-  resource: DataResource;
-  label: string;
-  idField: string;
-  rql: string;
-  columns: ResourceCollectionProfile<ChildRow>["columns"];
-  defaultSort: string;
-}) {
+}: GenomeChildCollectionProps) {
   const [state, setState] = useState<CollectionState>({
     filters: {},
     page: 1,
@@ -82,7 +85,7 @@ export function GenomeChildCollection({
       repository={repository}
       state={state}
       onStateChange={setState}
-      onExport={async ({ format, selectedIds, fields }) => {
+      onExport={async ({ format, selectedIds, fields, rql: exportRql }) => {
         const selectedFields = fields
           ? [...fields]
           : columns.map((column) => column.id);
@@ -92,7 +95,7 @@ export function GenomeChildCollection({
               fields: selectedFields,
             })
           : await repository.exportAll(resource, {
-              rql,
+              rql: exportRql ?? rql,
               keyword: state.keyword,
               fields: selectedFields,
               sort: {

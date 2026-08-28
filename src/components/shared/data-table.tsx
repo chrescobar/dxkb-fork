@@ -930,19 +930,7 @@ function useDataTableContent(
               ...sortedRows.map((row) =>
                 visibleCols
                   .map((col) => {
-                    const val = row[col.id];
-                    if (typeof val === "string")
-                      return `"${val.replace(/"/g, '""')}"`;
-                    if (val == null) return "";
-                    if (typeof val === "object")
-                      return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-                    if (
-                      typeof val === "number" ||
-                      typeof val === "boolean" ||
-                      typeof val === "bigint"
-                    )
-                      return String(val);
-                    return "";
+                    return csvExportValue(row[col.id]);
                   })
                   .join(","),
               ),
@@ -964,19 +952,7 @@ function useDataTableContent(
         ...rowsToExport.map((row) =>
           visibleCols
             .map((col) => {
-              const val = row.getValue<unknown>(col.id);
-              if (typeof val === "string")
-                return `"${val.replace(/"/g, '""')}"`;
-              if (val == null) return "";
-              if (typeof val === "object")
-                return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-              if (
-                typeof val === "number" ||
-                typeof val === "boolean" ||
-                typeof val === "bigint"
-              )
-                return String(val);
-              return "";
+              return csvExportValue(row.getValue<unknown>(col.id));
             })
             .join(","),
         ),
@@ -1753,6 +1729,25 @@ function computeAutoColumnSizes(
   }
 
   return sizes;
+}
+
+function csvExportValue(value: unknown): string {
+  if (value == null) return "";
+  const quoted = typeof value === "string" || typeof value === "object";
+  let serialized: string;
+  if (typeof value === "string") serialized = value;
+  else if (typeof value === "object") serialized = JSON.stringify(value);
+  else if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "bigint"
+  )
+    serialized = String(value);
+  else return "";
+
+  const cleaned = serialized.replace(/\r\n|\n|\r/g, " ");
+  const safe = /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
+  return quoted ? `"${safe.replace(/"/g, "\"\"")}"` : safe;
 }
 
 function downloadFile(filename: string, content: string) {

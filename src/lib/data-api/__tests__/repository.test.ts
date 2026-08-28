@@ -105,6 +105,73 @@ describe("ServerDataRepository", () => {
     ).toBe("raw-token");
   });
 
+  it.each([
+    { response: { unsupported: [] } },
+    { items: null },
+    { rows: {} },
+  ])("rejects unsupported row envelopes", async (payload) => {
+    const repository = new ServerDataRepository({
+      baseUrl: "https://data.test",
+      fetch: vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(payload)),
+    });
+
+    await expect(
+      repository.member("genome", { operation: "member", id: "1" }),
+    ).rejects.toMatchObject({ code: "malformed_response" });
+  });
+
+  it.each([null, true, "", -1, Number.POSITIVE_INFINITY])(
+    "rejects invalid facet count %j",
+    async (count) => {
+      const repository = new ServerDataRepository({
+        baseUrl: "https://data.test",
+        fetch: vi.fn<typeof fetch>().mockResolvedValue(
+          jsonResponse({
+            response: { numFound: 0, docs: [] },
+            facet_counts: { facet_fields: { genus: ["Escherichia", count] } },
+          }),
+        ),
+      });
+
+      await expect(
+        repository.collection("genome", {
+          operation: "collection",
+          facets: ["genus"],
+        }),
+      ).rejects.toMatchObject({ code: "malformed_response" });
+    },
+  );
+
+  it("requires HTTPS and disables redirects for authenticated requests", async () => {
+    const insecureFetcher = vi.fn<typeof fetch>();
+    const insecureRepository = new ServerDataRepository({
+      baseUrl: "http://data.test",
+      token: "raw-token",
+      fetch: insecureFetcher,
+    });
+
+    await expect(
+      insecureRepository.member("epitope", {
+        operation: "member",
+        id: "12",
+      }),
+    ).rejects.toThrow(/HTTPS/);
+    expect(insecureFetcher).not.toHaveBeenCalled();
+
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(jsonResponse([]));
+    const repository = new ServerDataRepository({
+      baseUrl: "https://data.test",
+      token: "raw-token",
+      fetch: fetcher,
+    });
+    await repository.member("epitope", { operation: "member", id: "12" });
+
+    expect(fetcher).toHaveBeenCalledWith(
+      expect.any(URL),
+      expect.objectContaining({ redirect: "error" }),
+    );
+  });
+
   it("validates genome fields used by consumers", async () => {
     const repository = new ServerDataRepository({
       baseUrl: "https://data.test",

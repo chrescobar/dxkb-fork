@@ -85,12 +85,14 @@ function parseFacets(value: unknown): Record<string, FacetBucket[]> {
       const buckets: FacetBucket[] = [];
       for (let index = 0; index < raw.length; index += 2) {
         const value: unknown = raw[index];
-        const count = Number(raw[index + 1]);
+        const count: unknown = raw[index + 1];
         if (
           (typeof value !== "string" &&
             typeof value !== "number" &&
             typeof value !== "boolean") ||
-          !Number.isFinite(count)
+          typeof count !== "number" ||
+          !Number.isFinite(count) ||
+          count < 0
         ) {
           throw new DataApiError(
             `Malformed facet response for ${field}.`,
@@ -141,7 +143,12 @@ function normalizeRows(payload: unknown): unknown[] {
     if (Array.isArray(docs)) return docs;
   }
   if (Array.isArray(object.items)) return object.items;
-  return Array.isArray(object.rows) ? object.rows : [];
+  if (Array.isArray(object.rows)) return object.rows;
+  throw new DataApiError(
+    "Malformed data service response.",
+    502,
+    "malformed_response",
+  );
 }
 
 export class ServerDataRepository {
@@ -319,6 +326,13 @@ export class ServerDataRepository {
     method = "GET",
     body?: string,
   ): Promise<unknown> {
+    if (this.options.token && url.protocol !== "https:") {
+      throw new DataApiError(
+        "Authenticated data service requests require HTTPS.",
+        500,
+        "insecure_upstream",
+      );
+    }
     const headers = new Headers({
       Accept: accept,
       Range: `items=${String(start)}-${String(end)}`,
@@ -332,6 +346,7 @@ export class ServerDataRepository {
       headers,
       body,
       signal,
+      ...(this.options.token ? { redirect: "error" as const } : {}),
       cache: this.options.cache,
       next: this.options.revalidate
         ? { revalidate: this.options.revalidate }

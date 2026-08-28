@@ -1,4 +1,8 @@
-export { DataRepository, DataRepositoryError } from "./client";
+export {
+  DataExportError,
+  DataRepository,
+  DataRepositoryError,
+} from "./client";
 export {
   collectionQueryOptions,
   dataQueryKeys,

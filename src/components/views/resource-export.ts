@@ -15,9 +15,9 @@ function exportValue(value: unknown, format: "csv" | "txt"): string {
     serialized = String(value);
   else serialized = "";
   const cleaned = serialized.replace(/\r\n|\n|\r/g, " ");
-  return format === "csv"
-    ? `"${cleaned.replaceAll('"', '""')}"`
-    : cleaned.replaceAll("\t", " ");
+  if (format === "txt") return cleaned.replaceAll("\t", " ");
+  const safe = /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
+  return `"${safe.replaceAll("\"", "\"\"")}"`;
 }
 
 export function downloadResourceExport(

@@ -5,6 +5,7 @@ const originalFetch = global.fetch;
 
 afterEach(() => {
   global.fetch = originalFetch;
+  vi.useRealTimers();
 });
 
 describe("DataRepository", () => {
@@ -95,6 +96,95 @@ describe("DataRepository", () => {
         }),
       }),
     );
+  });
+
+  it("resumes an export batch after the gateway rate limit resets", async () => {
+    vi.useFakeTimers();
+    const fullBatch = Array.from({ length: 10_000 }, (_, index) => ({
+      genome_id: String(index),
+    }));
+    global.fetch = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ rows: fullBatch })))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({ error: "Too many requests", code: "rate_limited" }),
+          { status: 429, headers: { "Retry-After": "1" } },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ rows: [{ genome_id: "10000" }] })),
+      );
+
+    const resultPromise = new DataRepository().exportAll("genome", {
+      fields: ["genome_id"],
+    });
+    await vi.advanceTimersByTimeAsync(1_000);
+
+    await expect(resultPromise).resolves.toEqual({
+      rows: [...fullBatch, { genome_id: "10000" }],
+    });
+    expect(global.fetch).toHaveBeenNthCalledWith(
+      3,
+      "/api/data/genome",
+      expect.objectContaining({
+        body: JSON.stringify({
+          operation: "export",
+          fields: ["genome_id"],
+          limit: 10_000,
+          offset: 10_000,
+        }),
+      }),
+    );
+  });
+
+  it("fails with resumable progress after bounded rate-limit retries", async () => {
+    vi.useFakeTimers();
+    const fullBatch = Array.from({ length: 10_000 }, (_, index) => ({
+      genome_id: String(index),
+    }));
+    global.fetch = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ rows: fullBatch })))
+      .mockImplementation(() =>
+        Promise.resolve(
+          new Response(
+            JSON.stringify({
+              error: "Too many requests",
+              code: "rate_limited",
+            }),
+            { status: 429 },
+          ),
+        ),
+      );
+
+    const resultPromise = new DataRepository().exportAll("genome", {
+      fields: ["genome_id"],
+    });
+    const expectation = expect(resultPromise).rejects.toMatchObject({
+      name: "DataExportError",
+      message: "Too many requests",
+      status: 429,
+      code: "rate_limited",
+      rows: fullBatch,
+      nextOffset: 10_000,
+    });
+    await vi.runAllTimersAsync();
+
+    await expectation;
+    expect(global.fetch).toHaveBeenCalledTimes(5);
+    for (const [, init] of vi.mocked(global.fetch).mock.calls.slice(1)) {
+      expect(init).toEqual(
+        expect.objectContaining({
+          body: JSON.stringify({
+            operation: "export",
+            fields: ["genome_id"],
+            limit: 10_000,
+            offset: 10_000,
+          }),
+        }),
+      );
+    }
   });
 
   it("surfaces gateway errors", async () => {

@@ -268,6 +268,37 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
   });
 
+  it("passes the effective RQL to delegated exports", async () => {
+    const onExport = vi.fn();
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={{ ...state, rql: "eq(genome_id,83332.12)" }}
+        onStateChange={vi.fn()}
+        baseRql="eq(taxon_lineage_ids,561)"
+        showHeader={false}
+        onExport={onExport}
+      />,
+    );
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadAll as (
+          format: "csv",
+          fields: null,
+        ) => Promise<void>
+      )("csv", null);
+    });
+
+    expect(onExport).toHaveBeenCalledWith({
+      format: "csv",
+      selectedIds: undefined,
+      fields: null,
+      rql: "and(eq(taxon_lineage_ids,561),eq(genome_id,83332.12))",
+    });
+  });
+
   it("makes export failures visible while preserving the original message", async () => {
     const error = new Error("Genome export service unavailable");
     const data = repository(Promise.reject(error));

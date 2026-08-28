@@ -1,0 +1,26 @@
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_310157b08a70b5::t_6de6df972ba4c3 22-31
+  s_310157b08a70b5::t_665d81ba943b5a 66-67
+  s_310157b08a70b5::t_0e836fbaef837c 99-102
+  s_310157b08a70b5::t_dde17ce3d525e6 103-106
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_310157b08a70b5::t_78f629be6b5397 125-139
+src/app/(views)/genome/[genomeId]/genome-child-collection.tsx
+  s_310157b08a70b5::t_7b8d343d26976f 88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "a5525cc01bf7456a7eaba9ebf5798e90ea40be6f",
+  "prompts": {},
+  "sessions": {
+    "s_310157b08a70b5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb741a929ffeogXXUkePRqtvZj",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

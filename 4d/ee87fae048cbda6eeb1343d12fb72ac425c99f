@@ -1,0 +1,37 @@
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_3df61d5e796026::t_05ec03c51dcecf 70-74
+  s_3df61d5e796026::t_58a495a3d3d380 76-80
+src/components/organisms/taxon-views/__tests__/taxon-data-panel.test.tsx
+  s_3df61d5e796026::t_ee0b94bb4676a9 192
+  s_3df61d5e796026::t_9e24fd497fad08 265-267
+  s_3df61d5e796026::t_4dd81a81342ad5 278-283
+  s_3df61d5e796026::t_109c51c316a14c 48-50
+  s_3df61d5e796026::t_25515b2b312d74 244-264
+src/components/views/resource-collection.tsx
+  s_3df61d5e796026::t_5149709fe48d86 310-314
+  s_3df61d5e796026::t_733e724399373e 316-320
+src/components/views/__tests__/resource-collection.test.tsx
+  s_3df61d5e796026::t_c0101d7cb3777f 286-291
+  s_3df61d5e796026::t_4bf894c0e0ab79 226,228-229
+  s_3df61d5e796026::t_9f9364ee56f6f3 244-249
+  s_3df61d5e796026::t_9128d213da785f 252,254-255
+src/app/search/typesearch.tsx
+  s_3df61d5e796026::t_3f65f56b74abcf 433-437
+  s_3df61d5e796026::t_7bfecaf3f8f750 439-443
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "4dee87fae048cbda6eeb1343d12fb72ac425c99f",
+  "prompts": {},
+  "sessions": {
+    "s_3df61d5e796026": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb69a6830ffenNyIwC1hAiuYSJ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

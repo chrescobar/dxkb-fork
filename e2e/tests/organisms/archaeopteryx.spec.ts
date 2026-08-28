@@ -412,10 +412,14 @@ test.describe("Archaeopteryx phylogeny controls", () => {
     };
 
     const closedWidth = await expectFitted();
-    await page
-      .getByRole("button", { name: "Show" })
-      .filter({ has: page.locator("svg") })
-      .click();
+    await svg
+      .locator("g.node", { hasText: "Leaf A" })
+      .locator("circle.nodeCircleOptions")
+      .click({ force: true });
+    await svg
+      .getByText("Select/Deselect Node", { exact: true })
+      .dispatchEvent("click");
+    await expect(page.getByRole("heading", { name: "Leaf A" })).toBeVisible();
     await expect(
       page
         .getByRole("button", { name: "Hide" })

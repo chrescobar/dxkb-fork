@@ -1,0 +1,73 @@
+src/lib/data-api/repository.ts
+  s_b85cce075aa0b9::t_7d44277b753135 60-66
+  s_b85cce075aa0b9::t_7359ad435de8de 203,258,278,306
+src/lib/data-api/types.ts
+  s_b85cce075aa0b9::t_678a708836c9e3 24,33
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_b85cce075aa0b9::t_a5f9792cc9a1a6 74-77
+src/lib/data-api/__tests__/client.test.ts
+  s_b85cce075aa0b9::t_eac3bb9927822a 57-58,63,65-69,82,93,101-102,105,113-114,124-125,130
+  s_b85cce075aa0b9::t_0fe5834b52823d 107-111
+src/lib/data-api/validation.ts
+  s_b85cce075aa0b9::t_a44fa6175734a6 105-112
+src/lib/data-api/client.ts
+  s_b85cce075aa0b9::t_c4d1ab0d21cbb7 162,167,176
+src/lib/data-api/__tests__/repository.test.ts
+  s_b85cce075aa0b9::t_0bfa3075362ba3 52-75
+e2e/tests/genome-view.spec.ts
+  s_b85cce075aa0b9::t_c59b6f71b940dc 64-74,115-125
+  s_b85cce075aa0b9::t_65523f381960a7 131
+  s_b85cce075aa0b9::t_0c1828a450fa53 130
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_b85cce075aa0b9::t_28cfde5d82d28a 244-247,250-251
+src/components/views/resource-collection.tsx
+  s_b85cce075aa0b9::t_77dc6b4e671c42 136-141
+  s_b85cce075aa0b9::t_336724e43b15e7 179-188
+  s_b85cce075aa0b9::t_77c5f14a3494f1 20-24
+  s_b85cce075aa0b9::t_e4b45b7921aeec 132-135
+src/components/views/__tests__/resource-collection.test.tsx
+  s_b85cce075aa0b9::t_7eb619315127e2 363
+  s_b85cce075aa0b9::t_0f63bf4ed51b2b 271-306
+  s_b85cce075aa0b9::t_1ed6d64b44e0e9 141
+  s_b85cce075aa0b9::t_995c7f57a3f3c3 307-336
+  s_b85cce075aa0b9::t_b08fce5edae7a5 337-338,340-362,364-388
+  s_b85cce075aa0b9::t_3e66584e1783bd 339
+src/lib/data-api/__tests__/rql.test.ts
+  s_b85cce075aa0b9::t_3da15319d22245 50-56,63-64
+  s_b85cce075aa0b9::t_14589067b3a9b7 57-62
+src/lib/data-api/rql.ts
+  s_b85cce075aa0b9::t_e56f774b5596e9 187
+  s_b85cce075aa0b9::t_86ac6718622b09 172,234,245-250
+  s_b85cce075aa0b9::t_5c360a392a00d7 2-6,26-37
+  s_b85cce075aa0b9::t_37de48fa94eaa8 38
+e2e/fixtures/overrides/catchall.ts
+  s_b85cce075aa0b9::t_5be34823bc99b8 9-17,55-70
+src/lib/views/__tests__/collection-state.test.ts
+  s_b85cce075aa0b9::t_74bbf042ac8d3c 36,38,42-45,47-52
+src/lib/data-api/__tests__/validation.test.ts
+  s_b85cce075aa0b9::t_62a172d778f599 81-88
+src/lib/data-api/resources.ts
+  s_b85cce075aa0b9::t_f5366bd13b921b 90-91,99-105,107-110,115,117,119-124
+  s_b85cce075aa0b9::t_6326c2323fa295 34,131-138,201-203
+src/lib/views/collection-state.ts
+  s_b85cce075aa0b9::t_0593f01aa0f5ba 53,55,59,63-65,76,99-102
+  s_b85cce075aa0b9::t_6b36c22418b526 35
+src/lib/data-api/index.ts
+  s_b85cce075aa0b9::t_b7e33b9a070d90 32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b95d8bf8f197852c1c86ffbd09f9834a80466c46",
+  "prompts": {},
+  "sessions": {
+    "s_b85cce075aa0b9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb6dfe098ffen2yOnKERL3x3qJ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

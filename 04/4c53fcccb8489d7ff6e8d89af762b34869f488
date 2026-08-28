@@ -1,0 +1,37 @@
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_5d7957d7c3331c::t_1864d8b4446d41 75,97
+  s_5d7957d7c3331c::t_0f3fb18d41c868 77
+  s_5d7957d7c3331c::t_54ecf6cf4be1cc 69,71
+  s_5d7957d7c3331c::t_fd19dbfaa4d91e 41-42
+  s_5d7957d7c3331c::t_ea84ea1d7a9976 106-107
+src/app/(views)/feature/[featureId]/page.tsx
+  s_5d7957d7c3331c::t_4985ad2a7e6507 2
+  s_5d7957d7c3331c::t_1864d8b4446d41 26-30,40-42,51-54,64-65,68-70
+  s_5d7957d7c3331c::t_6bc17fffb05bb1 58-60,71-72
+  s_5d7957d7c3331c::t_77e37e7764c9e5 61-63,66-67
+  s_5d7957d7c3331c::t_c3a858d50105d3 11
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_5d7957d7c3331c::t_ca31687508fc3d 19
+  s_5d7957d7c3331c::t_f6d651cecb0bef 106,113-116
+  s_5d7957d7c3331c::t_1864d8b4446d41 6-14,31-35,70-78,82-90,94-99,107-112,119-124,128-146,150-158
+  s_5d7957d7c3331c::t_16a3a09c6e6a5f 65
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_5d7957d7c3331c::t_1864d8b4446d41 45,55,66,121-125,144,146,152
+  s_5d7957d7c3331c::t_7a504ef331d2fb 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "044c53fcccb8489d7ff6e8d89af762b34869f488",
+  "prompts": {},
+  "sessions": {
+    "s_5d7957d7c3331c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb5d8eeceffeZ4JweDuY7mspGx",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

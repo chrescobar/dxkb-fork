@@ -54,26 +54,19 @@ describe("DataRepository", () => {
     );
   });
 
-  it("exports every row across capped server batches", async () => {
-    const firstBatch = Array.from({ length: 10_000 }, (_, index) => ({
+  it("exports at most the server's aggregate row limit", async () => {
+    const rows = Array.from({ length: 10_000 }, (_, index) => ({
       genome_id: String(index),
     }));
     global.fetch = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ rows: firstBatch })),
-      )
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ rows: [{ genome_id: "10000" }] })),
-      );
+      .mockResolvedValue(new Response(JSON.stringify({ rows })));
 
-    const result = await new DataRepository().exportAll("genome", {
-      fields: ["genome_id"],
-    });
-
-    expect(result.rows).toHaveLength(10_001);
-    expect(global.fetch).toHaveBeenNthCalledWith(
-      1,
+    await expect(
+      new DataRepository().exportAll("genome", { fields: ["genome_id"] }),
+    ).resolves.toEqual({ rows });
+    expect(global.fetch).toHaveBeenCalledOnce();
+    expect(global.fetch).toHaveBeenCalledWith(
       "/api/data/genome",
       expect.objectContaining({
         body: JSON.stringify({
@@ -84,28 +77,12 @@ describe("DataRepository", () => {
         }),
       }),
     );
-    expect(global.fetch).toHaveBeenNthCalledWith(
-      2,
-      "/api/data/genome",
-      expect.objectContaining({
-        body: JSON.stringify({
-          operation: "export",
-          fields: ["genome_id"],
-          limit: 10_000,
-          offset: 10_000,
-        }),
-      }),
-    );
   });
 
-  it("resumes an export batch after the gateway rate limit resets", async () => {
+  it("retries the bounded export after the gateway rate limit resets", async () => {
     vi.useFakeTimers();
-    const fullBatch = Array.from({ length: 10_000 }, (_, index) => ({
-      genome_id: String(index),
-    }));
     global.fetch = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(new Response(JSON.stringify({ rows: fullBatch })))
       .mockResolvedValueOnce(
         new Response(
           JSON.stringify({ error: "Too many requests", code: "rate_limited" }),
@@ -113,7 +90,7 @@ describe("DataRepository", () => {
         ),
       )
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ rows: [{ genome_id: "10000" }] })),
+        new Response(JSON.stringify({ rows: [{ genome_id: "1" }] })),
       );
 
     const resultPromise = new DataRepository().exportAll("genome", {
@@ -121,42 +98,20 @@ describe("DataRepository", () => {
     });
     await vi.advanceTimersByTimeAsync(1_000);
 
-    await expect(resultPromise).resolves.toEqual({
-      rows: [...fullBatch, { genome_id: "10000" }],
-    });
-    expect(global.fetch).toHaveBeenNthCalledWith(
-      3,
-      "/api/data/genome",
-      expect.objectContaining({
-        body: JSON.stringify({
-          operation: "export",
-          fields: ["genome_id"],
-          limit: 10_000,
-          offset: 10_000,
-        }),
-      }),
-    );
+    await expect(resultPromise).resolves.toEqual({ rows: [{ genome_id: "1" }] });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
   });
 
-  it("fails with resumable progress after bounded rate-limit retries", async () => {
+  it("fails after bounded rate-limit retries without partial rows", async () => {
     vi.useFakeTimers();
-    const fullBatch = Array.from({ length: 10_000 }, (_, index) => ({
-      genome_id: String(index),
-    }));
-    global.fetch = vi
-      .fn<typeof fetch>()
-      .mockResolvedValueOnce(new Response(JSON.stringify({ rows: fullBatch })))
-      .mockImplementation(() =>
-        Promise.resolve(
-          new Response(
-            JSON.stringify({
-              error: "Too many requests",
-              code: "rate_limited",
-            }),
-            { status: 429 },
-          ),
+    global.fetch = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({ error: "Too many requests", code: "rate_limited" }),
+          { status: 429 },
         ),
-      );
+      ),
+    );
 
     const resultPromise = new DataRepository().exportAll("genome", {
       fields: ["genome_id"],
@@ -166,25 +121,13 @@ describe("DataRepository", () => {
       message: "Too many requests",
       status: 429,
       code: "rate_limited",
-      rows: fullBatch,
-      nextOffset: 10_000,
+      rows: [],
+      nextOffset: 0,
     });
     await vi.runAllTimersAsync();
 
     await expectation;
-    expect(global.fetch).toHaveBeenCalledTimes(5);
-    for (const [, init] of vi.mocked(global.fetch).mock.calls.slice(1)) {
-      expect(init).toEqual(
-        expect.objectContaining({
-          body: JSON.stringify({
-            operation: "export",
-            fields: ["genome_id"],
-            limit: 10_000,
-            offset: 10_000,
-          }),
-        }),
-      );
-    }
+    expect(global.fetch).toHaveBeenCalledTimes(4);
   });
 
   it("surfaces gateway errors", async () => {

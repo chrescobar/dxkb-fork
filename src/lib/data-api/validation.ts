@@ -102,6 +102,14 @@ export function validateDataApiRequest(
   validateSort(resource, "sort" in request ? request.sort : undefined);
   if (request.operation === "collection")
     validateFields(resource, request.facets, "facet");
+  if (
+    request.operation === "export" &&
+    (request.offset ?? 0) + request.limit > maxExportRows
+  ) {
+    throw new DataApiValidationError(
+      `Exports are limited to ${maxExportRows.toLocaleString()} rows.`,
+    );
+  }
   if ("rql" in request && request.rql)
     request.rql = validateRql(resource, request.rql);
   return request;

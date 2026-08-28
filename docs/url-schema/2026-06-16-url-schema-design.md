@@ -241,11 +241,14 @@ Surveillance additionally permits `sample_identifier` and multivalued
 compound member lookup. An `eq()` clause is a backend match predicate and does not imply
 scalar cardinality. Public identifiers remain strings even when digit-only.
 
-Each registered field declares its type and whether it may be selected, sorted, or faceted,
-plus its RQL quoting policy. The gateway rejects unknown resources, identifiers, fields,
+Each registered field declares its type, allowed RQL operators, and whether it may be
+selected, sorted, or faceted, plus its RQL quoting policy. String and boolean fields allow
+`eq`, `ne`, and `in`; number and date fields additionally allow `lt`, `le`, `gt`, and `ge`.
+The gateway rejects unknown resources, identifiers, fields, field/operator combinations,
 sorts, facets, operations, and unbounded requests before contacting the upstream service.
 It normalizes collection, member, selected-row, and bounded-export results; collection sorts
-append the stable ID as a deterministic tie-break.
+append the stable ID as a deterministic tie-break. Exports are limited to 10,000 total rows,
+and backend projections always include the resource ID required for response validation.
 
 Upstream item ranges have an exclusive end: `items=0-200` yields 200 rows. Thus page `p`
 uses `start = (p - 1) * 200` and `end = start + 200`. Anonymous public member responses may

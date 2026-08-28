@@ -49,6 +49,30 @@ describe("ServerDataRepository", () => {
     });
   });
 
+  it("includes the required resource ID in narrow export projections", async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(jsonResponse([{ genome_id: "1.1", genome_name: "One" }]));
+    const repository = new ServerDataRepository({
+      baseUrl: "https://data.test",
+      fetch: fetcher,
+    });
+
+    await expect(
+      repository.export("genome", {
+        operation: "export",
+        fields: ["genome_name"],
+        limit: 10,
+      }),
+    ).resolves.toEqual({
+      rows: [{ genome_id: "1.1", genome_name: "One" }],
+    });
+
+    expect((fetcher.mock.calls[0][0] as URL).href).toContain(
+      "select(genome_name,genome_id)",
+    );
+  });
+
   it("applies the requested offset to export ranges", async () => {
     const fetcher = vi
       .fn<typeof fetch>()

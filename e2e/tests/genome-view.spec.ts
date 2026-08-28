@@ -61,6 +61,17 @@ test.describe("Genome view", () => {
     ).toBeVisible();
   });
 
+  test("canonicalizes invalid collection position without rendering an error", async ({
+    page,
+  }) => {
+    await page.goto("/genome?page=0&sort=unknown%3Aasc&keep=yes");
+
+    await expect(page).toHaveURL(/\/genome\?keep=yes$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Genomes" }),
+    ).toBeVisible();
+  });
+
   test("searches, inspects, opens, and returns to the same collection", async ({
     page,
   }) => {
@@ -101,11 +112,23 @@ test.describe("Genome view", () => {
       }),
     ).toBeVisible();
     await expect(page.getByText("Assembly summary")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Sequences" })).toBeEnabled();
+    const sequenceRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname === "/api/data/genome_sequence" &&
+        url.searchParams.get("rql") === "eq(genome_id,1282460.2049)"
+      );
+    });
+    await page.getByRole("button", { name: "Sequences" }).click();
+    await sequenceRequest;
+    await expect(page).toHaveURL(/\?tab=sequences$/);
+    await expect(page.getByText("JX869059")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Genome Browser" }),
     ).toHaveAttribute("aria-disabled", "true");
 
+    await page.goBack();
+    await expect(page).toHaveURL(/\/genome\/1282460\.2049$/);
     await page.goBack();
     await expect(page).toHaveURL(/\/genome\?keyword=MERS$/);
     await expect(page.getByPlaceholder("Search keywords...")).toHaveValue(

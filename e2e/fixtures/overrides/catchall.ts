@@ -6,6 +6,15 @@ import type { JsonOverride } from "../../mocks/backends";
  * specific overrides registered later override them. Use to keep strict mode happy
  * without explicitly mocking every endpoint a page touches.
  */
+const genomeSequenceRows = [
+  {
+    sequence_id: "1282460.2049.con.0001",
+    genome_id: "1282460.2049",
+    accession: "JX869059",
+    length: 30_119,
+  },
+];
+
 const genomeRows = [
   {
     genome_id: "1282460.2049",
@@ -43,6 +52,22 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/data\/genome_sequence(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: genomeSequenceRows,
+      total: 1,
+      facets: {},
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/genome_sequence(?:\?|$)/,
+    method: "POST",
+    body: { rows: genomeSequenceRows },
+  },
   {
     url: /\/api\/data\/genome(?:\?|$)/,
     method: "GET",

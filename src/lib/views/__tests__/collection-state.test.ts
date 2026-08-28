@@ -33,21 +33,23 @@ describe("collection URL state", () => {
   });
 
   it.each(["0", "-1", "1.5", "01", "abc", "9007199254740992"])(
-    "rejects invalid page %s",
+    "canonicalizes invalid page %s to page 1",
     (page) => {
-      expect(() => parseCollectionState({ page }, options)).toThrow(
-        "Invalid collection page",
-      );
+      expect(parseCollectionState({ page }, options).page).toBe(1);
     },
   );
 
-  it("rejects repeated pages and sorts outside the allowlist", () => {
-    expect(() => parseCollectionState({ page: ["1", "2"] }, options)).toThrow(
-      "Repeated collection parameter: page",
+  it("canonicalizes repeated pages and invalid sorts to defaults", () => {
+    expect(parseCollectionState({ page: ["1", "2"] }, options).page).toBe(1);
+    expect(parseCollectionState({ sort: "score desc" }, options).sort).toBe(
+      "relevance",
     );
-    expect(() => parseCollectionState({ sort: "score desc" }, options)).toThrow(
-      "Invalid collection sort",
-    );
+    expect(
+      canonicalizeCollectionSearchParams(
+        { page: ["1", "2"], sort: "score desc", keep: "yes" },
+        options,
+      ).toString(),
+    ).toBe("keep=yes");
   });
 
   it("keeps keyword independent and gives explicit rql precedence over friendly filters", () => {

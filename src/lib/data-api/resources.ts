@@ -31,6 +31,7 @@ import type {
   FieldType,
   ResourceDefinition,
   ResourceField,
+  RqlFieldOperator,
 } from "./types";
 
 const ids: Record<DataResource, string> = {
@@ -86,6 +87,8 @@ const epitopeAssayFieldNames = [
 
 const numericFields = new Set([
   "taxon_id",
+  "taxon_id_a",
+  "taxon_id_b",
   "genome_length",
   "contigs",
   "patric_cds",
@@ -93,19 +96,46 @@ const numericFields = new Set([
   "start",
   "end",
   "length",
+  "na_length",
+  "aa_length",
+  "gc_content",
+  "segment_count",
+  "entity_count",
+  "classifier_score",
+  "score",
   "resolution",
+  "collection_latitude",
+  "collection_longitude",
+  "host_age",
+  "sequencing_depth",
 ]);
 const booleanFields = new Set(["public", "reference_genome"]);
 const dateFields = new Set([
   "date_created",
+  "date_inserted",
   "date_modified",
+  "date_updated",
   "collection_date",
+  "completion_date",
+  "embargo_end_date",
+  "last_update_date",
+  "release_date",
+  "sample_receipt_date",
+  "submission_date",
 ]);
 const phraseFields = new Set(["strain", "pathogen_test_type"]);
 const multipleFields: Partial<Record<DataResource, ReadonlySet<string>>> = {
   surveillance: new Set(["pathogen_test_type"]),
   strain: new Set(["genome_ids"]),
 };
+const equalityOperators = ["eq", "ne", "in"] as const;
+const orderedOperators = [
+  ...equalityOperators,
+  "lt",
+  "le",
+  "gt",
+  "ge",
+] as const satisfies readonly RqlFieldOperator[];
 
 const schemas: Record<DataResource, ResourceDefinition["schema"]> = {
   genome: genomeRecordSchema,
@@ -168,6 +198,9 @@ function buildFields(resource: DataResource): Record<string, ResourceField> {
               : phraseFields.has(name)
                 ? "always"
                 : "auto",
+          operators: ["number", "date"].includes(inferType(name))
+            ? orderedOperators
+            : equalityOperators,
         } satisfies ResourceField,
       ];
     }),

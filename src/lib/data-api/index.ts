@@ -29,4 +29,5 @@ export {
   strainRecordSchema,
   surveillanceRecordSchema,
 } from "./schemas";
+export { maxExportRows } from "./types";
 export type * from "./types";

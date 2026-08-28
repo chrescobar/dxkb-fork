@@ -57,8 +57,13 @@ function addPredicate(
   else if (clauses.length > 1) appendQuery(url, `and(${clauses.join(",")})`);
 }
 
-function addFields(url: URL, fields: string[] | undefined): void {
-  if (fields?.length) appendQuery(url, `select(${fields.join(",")})`);
+function addFields(
+  url: URL,
+  fields: string[] | undefined,
+  idField: string,
+): void {
+  if (fields?.length)
+    appendQuery(url, `select(${[...new Set([...fields, idField])].join(",")})`);
 }
 
 function addSort(url: URL, sort: DataSort | undefined, idField: string): void {
@@ -195,7 +200,7 @@ export class ServerDataRepository {
     const start = (page - 1) * size;
     const url = this.url(resource);
     addPredicate(url, request, resource);
-    addFields(url, request.fields);
+    addFields(url, request.fields, definition.idField);
     addSort(url, request.sort, definition.idField);
     if (request.facets?.length)
       appendQuery(
@@ -250,7 +255,7 @@ export class ServerDataRepository {
       );
     const url = this.url(resource);
     appendQuery(url, eq(resource, idField, request.id));
-    addFields(url, request.fields);
+    addFields(url, request.fields, definition.idField);
     const payload = await this.request(url, 0, 2, signal, "application/json");
     const rows = this.parseRows(resource, normalizeRows(payload));
     if (rows.length > 1)
@@ -270,7 +275,7 @@ export class ServerDataRepository {
     const definition = getResourceDefinition(resource);
     const url = this.url(resource);
     addPredicate(url, request, resource);
-    addFields(url, request.fields);
+    addFields(url, request.fields, definition.idField);
     addSort(url, request.sort, definition.idField);
     const offset = request.offset ?? 0;
     const payload = await this.request(
@@ -298,7 +303,7 @@ export class ServerDataRepository {
       field: definition.idField,
       values: ids,
     });
-    addFields(url, fields);
+    addFields(url, fields, definition.idField);
     addSort(url, sort, definition.idField);
     const payload = await this.request(
       url,

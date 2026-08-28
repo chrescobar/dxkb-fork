@@ -64,4 +64,3 @@ export function genomeStructuralRql(
   if (clauses.length === 0) return undefined;
   return clauses.length === 1 ? clauses[0] : `and(${clauses.join(",")})`;
 }
-

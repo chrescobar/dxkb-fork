@@ -78,6 +78,14 @@ describe("data API contracts", () => {
         limit: maxExportRows + 1,
       }),
     ).toThrow();
+    expect(() =>
+      validateDataApiRequest("genome", {
+        operation: "export",
+        fields: ["genome_id"],
+        limit: 1,
+        offset: maxExportRows,
+      }),
+    ).toThrow("Exports are limited to 10,000 rows");
   });
 
   it("preserves digit-only experiment identifiers as strings", () => {

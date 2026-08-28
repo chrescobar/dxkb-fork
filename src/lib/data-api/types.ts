@@ -21,6 +21,7 @@ export const dataResources = [
 export type DataResource = (typeof dataResources)[number];
 export type FieldType = "string" | "number" | "boolean" | "date";
 export type SortDirection = "asc" | "desc";
+export type RqlFieldOperator = "eq" | "ne" | "lt" | "le" | "gt" | "ge" | "in";
 
 export interface ResourceField {
   type: FieldType;
@@ -29,6 +30,7 @@ export interface ResourceField {
   sortable: boolean;
   facet: boolean;
   quote: "always" | "auto" | "never";
+  operators: readonly RqlFieldOperator[];
 }
 
 export interface ResourceDefinition<

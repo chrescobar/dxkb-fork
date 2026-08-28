@@ -71,12 +71,10 @@ describe("Genome view contracts", () => {
     expect(genomeStructuralRql(state)).toBeUndefined();
   });
 
-  it("rejects invalid pages, sorts, and transport RQL", () => {
-    expect(() => parseGenomeCollectionState({ page: "0" })).toThrow(
-      "Invalid collection page",
-    );
-    expect(() => parseGenomeCollectionState({ sort: "unknown:asc" })).toThrow(
-      "Invalid collection sort",
+  it("canonicalizes invalid pages and sorts while rejecting transport RQL", () => {
+    expect(parseGenomeCollectionState({ page: "0" }).page).toBe(1);
+    expect(parseGenomeCollectionState({ sort: "unknown:asc" }).sort).toBe(
+      "genome_name:asc",
     );
     expect(() =>
       parseGenomeCollectionState({ rql: "sort(+genome_id)" }),

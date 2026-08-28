@@ -1,5 +1,9 @@
 import { DataApiValidationError, getResourceDefinition } from "./resources";
-import type { DataResource, ResourceField } from "./types";
+import type {
+  DataResource,
+  ResourceField,
+  RqlFieldOperator,
+} from "./types";
 
 const maxRqlLength = 8_000;
 const maxDepth = 12;
@@ -18,6 +22,19 @@ const operators = new Set([
 ]);
 const transportOperators = new Set(["select", "sort", "limit", "facet"]);
 const fieldOperators = new Set(["eq", "ne", "lt", "le", "gt", "ge", "in"]);
+
+function assertFieldOperator(
+  resource: DataResource,
+  fieldName: string,
+  field: ResourceField,
+  operator: string,
+): asserts operator is RqlFieldOperator {
+  if (!field.operators.includes(operator as RqlFieldOperator)) {
+    throw new DataApiValidationError(
+      `Operator ${operator} is not allowed for ${resource}.${fieldName}.`,
+    );
+  }
+}
 
 export type RqlValue = string | number | boolean;
 export interface RqlComparison {
@@ -152,6 +169,7 @@ function parseExpression(
       `Field ${fieldName} is not allowed for ${resource}.`,
     );
   const field = fields[fieldName];
+  assertFieldOperator(resource, fieldName, field, operator);
   if (operator === "in") {
     if (!args[1].startsWith("(") || !args[1].endsWith(")")) {
       throw new DataApiValidationError("in values must be parenthesized.");
@@ -166,7 +184,7 @@ function parseExpression(
     };
   }
   return {
-    operator: operator as RqlComparison["operator"],
+    operator,
     field: fieldName,
     value: coerceValue(args[1], field),
   };
@@ -213,6 +231,7 @@ export function serializeRql(
         `Field ${expression.field} is not allowed for ${resource}.`,
       );
     const field = fields[expression.field];
+    assertFieldOperator(resource, expression.field, field, expression.operator);
     if (expression.values.length === 0 || expression.values.length > 500)
       throw new DataApiValidationError("in requires 1 to 500 values.");
     return `in(${expression.field},(${expression.values.map((value) => serializeValue(value, field)).join(",")}))`;
@@ -223,6 +242,12 @@ export function serializeRql(
       `Field ${comparison.field} is not allowed for ${resource}.`,
     );
   const field = fields[comparison.field];
+  assertFieldOperator(
+    resource,
+    comparison.field,
+    field,
+    comparison.operator,
+  );
   return `${comparison.operator}(${comparison.field},${serializeValue(comparison.value, field)})`;
 }
 

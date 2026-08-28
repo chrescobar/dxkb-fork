@@ -17,7 +17,11 @@ import {
 import { useResourceCollection } from "@/hooks/views/use-resource-collection";
 import type { CollectionState } from "@/lib/views/collection-state";
 import { resourceCollectionPageSize } from "@/hooks/views/collection-state";
-import type { DataRepository, DataResource } from "@/lib/data-api";
+import {
+  maxExportRows,
+  type DataRepository,
+  type DataResource,
+} from "@/lib/data-api";
 import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
 
 export interface ResourceCollectionFacet {
@@ -125,6 +129,16 @@ export function ResourceCollection<Row extends DataTableRow>({
     fields: readonly string[] | null = null,
   ) => {
     setExportError(null);
+    if (!selectedIds?.length && collection.isRefreshing) {
+      setExportError("Wait for the current results to finish loading before exporting.");
+      return;
+    }
+    if (!selectedIds?.length && collection.total > maxExportRows) {
+      setExportError(
+        `This export matches ${collection.total.toLocaleString()} rows. Narrow the results to ${maxExportRows.toLocaleString()} rows or fewer and try again.`,
+      );
+      return;
+    }
     try {
       if (onExport) {
         await onExport({ format, selectedIds, fields, rql: effectiveRql });
@@ -162,7 +176,16 @@ export function ResourceCollection<Row extends DataTableRow>({
   const detailContent = (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto bg-background text-foreground shadow-md">
-        {renderDetail && detail ? (
+        {collection.detailError ? (
+          <Alert variant="destructive" className="m-4">
+            <AlertTitle>Could not load record details</AlertTitle>
+            <AlertDescription>
+              {collection.detailError instanceof Error
+                ? collection.detailError.message
+                : String(collection.detailError)}
+            </AlertDescription>
+          </Alert>
+        ) : renderDetail && detail ? (
           renderDetail(detail)
         ) : (
           <InfoPanel

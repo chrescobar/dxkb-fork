@@ -32,9 +32,7 @@ function optionalValue(
 ): string | undefined {
   const value = params[name];
   if (Array.isArray(value)) {
-    if (rejectRepeated && value.length > 1) {
-      throw new Error(`Repeated collection parameter: ${name}`);
-    }
+    if (rejectRepeated && value.length > 1) return undefined;
     return value[0] || undefined;
   }
   return value || undefined;
@@ -52,24 +50,19 @@ function values(params: SearchParamsRecord, name: string): string[] {
 function parsePage(params: SearchParamsRecord): number {
   const rawPage = optionalValue(params, "page", true);
   if (rawPage === undefined) return 1;
-  if (!/^[1-9]\d*$/.test(rawPage)) {
-    throw new Error(`Invalid collection page: ${rawPage}`);
-  }
+  if (!/^[1-9]\d*$/.test(rawPage)) return 1;
   const page = Number(rawPage);
-  if (!Number.isSafeInteger(page)) {
-    throw new Error(`Invalid collection page: ${rawPage}`);
-  }
+  if (!Number.isSafeInteger(page)) return 1;
   return page;
 }
 
-function validateSort<Sort extends string>(
+function parseSort<Sort extends string>(
   sort: string,
   options: CollectionStateOptions<Sort>,
 ): Sort {
-  if (!options.sortAllowlist.includes(sort as Sort)) {
-    throw new Error(`Invalid collection sort: ${sort}`);
-  }
-  return sort as Sort;
+  return options.sortAllowlist.includes(sort as Sort)
+    ? (sort as Sort)
+    : options.defaultSort;
 }
 
 /** Parse and validate the URL-owned portion of collection state. */
@@ -80,7 +73,7 @@ export function parseCollectionState<Sort extends string>(
   const keyword = optionalValue(params, "keyword");
   const rql = optionalValue(params, "rql");
   const rawSort = optionalValue(params, "sort", true);
-  const sort = validateSort(rawSort ?? options.defaultSort, options);
+  const sort = parseSort(rawSort ?? options.defaultSort, options);
   const filters: Record<string, string[]> = {};
 
   // An explicit structural expression is authoritative. Keyword is deliberately
@@ -103,7 +96,10 @@ export function canonicalizeCollectionState<Sort extends string>(
   if (!Number.isSafeInteger(state.page) || state.page < 1) {
     throw new Error(`Invalid collection page: ${String(state.page)}`);
   }
-  const sort = validateSort(state.sort, options);
+  if (!options.sortAllowlist.includes(state.sort)) {
+    throw new Error(`Invalid collection sort: ${state.sort}`);
+  }
+  const sort = state.sort;
   const keyword = state.keyword || undefined;
   const rql = state.rql || undefined;
   const filters: Record<string, string[]> = {};

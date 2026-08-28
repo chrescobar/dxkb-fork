@@ -138,7 +138,7 @@ function repository(
 ) {
   return {
     exportAll: vi.fn(() => exportResult),
-    selected: vi.fn(),
+    selected: vi.fn(() => exportResult),
   } as unknown as DataRepository;
 }
 
@@ -266,6 +266,124 @@ describe("ResourceCollection Genome integration contracts", () => {
       genomeCollectionProfile.columns.map((column) => column.id),
       "csv",
     );
+  });
+
+  it("exports selected displayed columns without requiring the ID in the output", async () => {
+    const data = repository();
+    const selected = vi.spyOn(data, "selected");
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={data}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadSelected as (
+          format: "csv",
+          ids: string[],
+          fields: string[],
+        ) => Promise<void>
+      )("csv", ["83332.12"], ["genome_name"]);
+    });
+
+    expect(selected).toHaveBeenCalledWith("genome", {
+      ids: ["83332.12"],
+      fields: ["genome_name"],
+    });
+    expect(downloadResourceExport).toHaveBeenCalledWith(
+      "genome",
+      [row],
+      genomeCollectionProfile.columns,
+      ["genome_name"],
+      "csv",
+    );
+  });
+
+  it("does not export all using a stale total while results refresh", async () => {
+    const data = repository();
+    const exportAll = vi.spyOn(data, "exportAll");
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      isRefreshing: true,
+    });
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={data}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadAll as (
+          format: "csv",
+          fields: null,
+        ) => Promise<void>
+      )("csv", null);
+    });
+
+    expect(exportAll).not.toHaveBeenCalled();
+    expect(screen.getByText(/finish loading before exporting/)).toBeVisible();
+  });
+
+  it("rejects all-matching exports over 10,000 rows before requesting data", async () => {
+    const data = repository();
+    const exportAll = vi.spyOn(data, "exportAll");
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      total: 10_001,
+    });
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={data}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadAll as (
+          format: "csv",
+          fields: null,
+        ) => Promise<void>
+      )("csv", null);
+    });
+
+    expect(exportAll).not.toHaveBeenCalled();
+    expect(
+      screen.getByText(/This export matches 10,001 rows/),
+    ).toBeVisible();
+  });
+
+  it("surfaces full-detail errors instead of showing a partial row", () => {
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      detailError: new Error("Genome detail service unavailable"),
+    });
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(screen.getByText("Could not load record details")).toBeVisible();
+    expect(screen.getByText("Genome detail service unavailable")).toBeVisible();
+    expect(screen.queryByTestId("detail")).not.toBeInTheDocument();
   });
 
   it("passes the effective RQL to delegated exports", async () => {

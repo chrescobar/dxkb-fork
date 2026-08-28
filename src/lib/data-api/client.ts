@@ -156,17 +156,15 @@ export class DataRepository {
     request: Omit<ExportRequest, "operation" | "limit" | "offset">,
     signal?: AbortSignal,
   ): Promise<RowsResult<T>> {
-    const rows: T[] = [];
     let retries = 0;
     for (;;) {
-      let result: RowsResult<T>;
       try {
-        result = await this.export<T>(
+        return await this.export<T>(
           resource,
           {
             ...request,
             limit: maxExportRows,
-            offset: rows.length,
+            offset: 0,
           },
           signal,
         );
@@ -175,17 +173,13 @@ export class DataRepository {
           throw error;
         }
         if (retries >= maxExportRetries) {
-          throw new DataExportError(error, rows, rows.length);
+          throw new DataExportError(error, [], 0);
         }
         const delay =
           error.retryAfterMs ?? defaultRetryDelayMs * Math.pow(2, retries);
         retries += 1;
         await wait(delay, signal);
-        continue;
       }
-      retries = 0;
-      rows.push(...result.rows);
-      if (result.rows.length < maxExportRows) return { rows };
     }
   }
 

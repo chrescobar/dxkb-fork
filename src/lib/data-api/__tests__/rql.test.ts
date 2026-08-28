@@ -47,6 +47,21 @@ describe("typed RQL", () => {
     expect(() => validateRql("genome", rql)).toThrow(/not allowed/);
   });
 
+  it("enforces each field's allowed operators", () => {
+    expect(() => validateRql("genome", "gt(genome_id,1.1)")).toThrow(
+      /Operator gt is not allowed/,
+    );
+    expect(validateRql("genome", "ge(genome_length,1000)")).toBe(
+      "ge(genome_length,1000)",
+    );
+    expect(validateRql("genome_feature", "gt(na_length,100)")).toBe(
+      "gt(na_length,100)",
+    );
+    expect(
+      validateRql("protein_structure", "ge(date_inserted,2020-01-01)"),
+    ).toBe("ge(date_inserted,2020-01-01)");
+  });
+
   it("rejects unknown fields, malformed input, and excessive nesting", () => {
     expect(() => validateRql("genome", "eq(secret,x)")).toThrow(/not allowed/);
     expect(() => validateRql("genome", "eq(genome_id,x")).toThrow(/Malformed/);

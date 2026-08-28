@@ -94,7 +94,7 @@ export function TaxonDataPanel({
     >
       <Suspense
         fallback={
-          <div className="bg-muted size-full animate-pulse rounded-lg" />
+          <div className="size-full animate-pulse rounded-lg bg-muted" />
         }
       >
         <ListData

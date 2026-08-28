@@ -85,6 +85,7 @@ export function GenomeChildCollection({
       repository={repository}
       state={state}
       onStateChange={setState}
+      showHeader={false}
       onExport={async ({ format, selectedIds, fields, rql: exportRql }) => {
         const selectedFields = fields
           ? [...fields]

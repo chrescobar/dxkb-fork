@@ -19,8 +19,16 @@ vi.mock("@/components/views", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/components/views")>();
   return {
     ...original,
-    ResourceCollection: ({ profile }: { profile: { label: string } }) => (
-      <div>{profile.label}</div>
+    ResourceCollection: ({
+      profile,
+      showHeader,
+    }: {
+      profile: { label: string };
+      showHeader?: boolean;
+    }) => (
+      <div data-testid="resource-collection" data-show-header={showHeader}>
+        {profile.label}
+      </div>
     ),
   };
 });
@@ -55,6 +63,8 @@ describe("Genome member route", () => {
       screen.getByRole("heading", { name: "E. coli" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Assembly summary")).toBeInTheDocument();
+    expect(screen.getByText("Length:")).toBeInTheDocument();
+    expect(screen.getByText("Contigs:")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "10" })).toHaveAttribute(
       "href",
       "/feature?rql=and(eq(genome_id%2C83332.12)%2Ceq(feature_type%2CCDS))",
@@ -86,9 +96,14 @@ describe("Genome member route", () => {
         searchParams: Promise.resolve({ tab: "sequences" }),
       }),
     );
-    expect(
-      screen.getByText("Sequences", { selector: "div" }),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-show-header",
+      "false",
+    );
+    expect(screen.queryByText("Length:")).not.toBeInTheDocument();
+    expect(screen.queryByText("Contigs:")).not.toBeInTheDocument();
+    expect(screen.queryByText("Status:")).not.toBeInTheDocument();
+    expect(screen.queryByText("Browse sequences records.")).not.toBeInTheDocument();
   });
 
   it("uses notFound for malformed and missing IDs", async () => {

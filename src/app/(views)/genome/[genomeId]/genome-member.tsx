@@ -122,17 +122,21 @@ export function GenomeMember({
       breadcrumbs={lineage(genome)}
       headerContent={`Genome ${genome.genome_id}`}
       metadataSummary={
-        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
-          <span>
-            <strong>Length:</strong> {genome.genome_length ?? "Not available"}
-          </span>
-          <span>
-            <strong>Contigs:</strong> {genome.contigs ?? "Not available"}
-          </span>
-          <span>
-            <strong>Status:</strong> {genome.genome_status ?? "Not available"}
-          </span>
-        </div>
+        activeTab === "overview" ? (
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
+            <span>
+              <strong>Length:</strong>{" "}
+              {genome.genome_length ?? "Not available"}
+            </span>
+            <span>
+              <strong>Contigs:</strong> {genome.contigs ?? "Not available"}
+            </span>
+            <span>
+              <strong>Status:</strong>{" "}
+              {genome.genome_status ?? "Not available"}
+            </span>
+          </div>
+        ) : undefined
       }
       tabs={tabs}
       activeTab={activeTab}

@@ -38,8 +38,8 @@ export function TaxonDataPanel({
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
-  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
+  const selectedGenomeIdRef = useRef<string | null>(null);
+  const selectedFeatureIdRef = useRef<string | null>(null);
   // Debounce empty-selection by 120ms so the panel doesn't flicker when
   // clicking rapidly between rows (mirrors TypeSearch.activeGenomeId logic).
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,15 +66,15 @@ export function TaxonDataPanel({
           searchType={resource}
           guideUrl={guideUrl}
           onAction={(actionId) => {
-            if (actionId === "genome" && selectedGenomeId) {
+            if (actionId === "genome" && selectedGenomeIdRef.current) {
               window.open(
-                genomeHref(selectedGenomeId),
+                genomeHref(selectedGenomeIdRef.current),
                 "_blank",
                 "noopener,noreferrer",
               );
-            } else if (actionId === "feature" && selectedFeatureId) {
+            } else if (actionId === "feature" && selectedFeatureIdRef.current) {
               window.open(
-                featureHref(selectedFeatureId),
+                featureHref(selectedFeatureIdRef.current),
                 "_blank",
                 "noopener,noreferrer",
               );
@@ -94,7 +94,7 @@ export function TaxonDataPanel({
     >
       <Suspense
         fallback={
-          <div className="size-full animate-pulse rounded-lg bg-muted" />
+          <div className="bg-muted size-full animate-pulse rounded-lg" />
         }
       >
         <ListData
@@ -103,8 +103,8 @@ export function TaxonDataPanel({
           selectedIds={selectedIds}
           onSelectionChange={handleSelectionChange}
           onSelectedRowChange={(row) => {
-            setSelectedGenomeId(genomeIdFromRow(row));
-            setSelectedFeatureId(featureIdFromRow(row));
+            selectedGenomeIdRef.current = genomeIdFromRow(row);
+            selectedFeatureIdRef.current = featureIdFromRow(row);
           }}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}

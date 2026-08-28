@@ -4,6 +4,8 @@ export interface CollectionStateOptions<Sort extends string = string> {
   defaultSort: Sort;
   sortAllowlist: readonly Sort[];
   friendlyFilters?: readonly string[];
+  /** Filters that remain active and serialized alongside explicit structural RQL. */
+  independentFilters?: readonly string[];
   filterFieldMap?: Readonly<Record<string, string>>;
 }
 
@@ -78,11 +80,11 @@ export function parseCollectionState<Sort extends string>(
 
   // An explicit structural expression is authoritative. Keyword is deliberately
   // independent and may still be combined with it by the collection query.
-  if (rql === undefined) {
-    for (const name of options.friendlyFilters ?? []) {
-      const selected = values(params, name);
-      if (selected.length > 0) filters[name] = selected;
-    }
+  const independentFilters = new Set(options.independentFilters);
+  for (const name of options.friendlyFilters ?? []) {
+    if (rql !== undefined && !independentFilters.has(name)) continue;
+    const selected = values(params, name);
+    if (selected.length > 0) filters[name] = selected;
   }
 
   return { keyword, rql, filters, page: parsePage(params), sort };
@@ -103,12 +105,12 @@ export function canonicalizeCollectionState<Sort extends string>(
   const keyword = state.keyword || undefined;
   const rql = state.rql || undefined;
   const filters: Record<string, string[]> = {};
+  const independentFilters = new Set(options.independentFilters);
 
-  if (rql === undefined) {
-    for (const name of options.friendlyFilters ?? []) {
-      const selected = [...new Set(state.filters[name] ?? [])].filter(Boolean);
-      if (selected.length > 0) filters[name] = selected;
-    }
+  for (const name of options.friendlyFilters ?? []) {
+    if (rql !== undefined && !independentFilters.has(name)) continue;
+    const selected = [...new Set(state.filters[name] ?? [])].filter(Boolean);
+    if (selected.length > 0) filters[name] = selected;
   }
 
   return { keyword, rql, filters, page: state.page, sort };
@@ -122,12 +124,9 @@ export function serializeCollectionState<Sort extends string>(
   const canonical = canonicalizeCollectionState(state, options);
   const params = new URLSearchParams();
   if (canonical.keyword !== undefined) params.set("keyword", canonical.keyword);
-  if (canonical.rql !== undefined) {
-    params.set("rql", canonical.rql);
-  } else {
-    for (const [name, selected] of Object.entries(canonical.filters)) {
-      for (const value of selected) params.append(name, value);
-    }
+  if (canonical.rql !== undefined) params.set("rql", canonical.rql);
+  for (const [name, selected] of Object.entries(canonical.filters)) {
+    for (const value of selected) params.append(name, value);
   }
   if (canonical.page !== 1) params.set("page", String(canonical.page));
   if (canonical.sort !== options.defaultSort)

@@ -325,6 +325,20 @@ describe("DataTable row selection checkboxes", () => {
 // page range (pageIndex * pageSize + pageSize) while loading, so the display is
 // meaningful from the moment totalItems resolves.
 describe("DataTable Showing display during loading", () => {
+  it("renders the empty state inside the table body", () => {
+    render(
+      <DataTable
+        id="test"
+        data={[]}
+        columns={columns}
+        totalItems={0}
+        resource="strain"
+      />,
+    );
+
+    expect(screen.getByText("No results")).toBeInTheDocument();
+  });
+
   it("shows expected page range when isLoading=true and data is empty", () => {
     render(
       <DataTable
@@ -495,7 +509,7 @@ describe("DataTable empty state", () => {
     expect(screen.getByText("No results")).toBeInTheDocument();
   });
 
-  it("shows errorMessage in table body instead of 'No results'", () => {
+  it("shows errorMessage in table body instead of the empty-state message", () => {
     render(
       <DataTable
         id="test"

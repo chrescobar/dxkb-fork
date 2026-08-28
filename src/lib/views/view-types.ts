@@ -24,8 +24,12 @@ export interface ViewTypeEntry {
   label: string;
   /** Legacy BV-BRC singular view name, e.g. "Genome" (redirect source). */
   legacySingular?: string;
+  /** Additional confirmed legacy singular names for the same canonical route. */
+  legacySingularAliases?: readonly string[];
   /** Legacy BV-BRC list view name, e.g. "GenomeList" (redirect source). */
   legacyList?: string;
+  /** Additional confirmed legacy list names for the same canonical route. */
+  legacyListAliases?: readonly string[];
   /** searchtype id from constants/searchInfo.ts (for the deferred search repoint). */
   searchType?: string;
   /** Omitted ⇒ list-only type (strain, domains-and-motifs, experiment). */

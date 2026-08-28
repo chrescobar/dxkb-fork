@@ -335,7 +335,7 @@ function renderSearchInfoPanel(
         "strand",
         "location",
         "segments",
-        "Codon Start",
+        "codon_start",
         "na_length",
         "aa_length",
         "na_sequence_md5",

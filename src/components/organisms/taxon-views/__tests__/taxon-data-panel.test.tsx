@@ -1,6 +1,12 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 
+const { push } = vi.hoisted(() => ({ push: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push }),
+}));
+
 vi.mock("@/components/views/resource-workspace", () => ({
   ResourceWorkspace: ({
     hasSidePanel,
@@ -26,17 +32,23 @@ vi.mock("@/components/search/search-action-bar", () => ({
     selectedCount,
     searchType,
     guideUrl,
+    onAction,
   }: {
     selectedCount: number;
     searchType: string;
     guideUrl?: string;
+    onAction?: (actionId: string) => void;
   }) => (
     <div
       data-testid="action-bar"
       data-count={selectedCount}
       data-resource={searchType}
       data-guide={guideUrl}
-    />
+    >
+      <button type="button" onClick={() => onAction?.("feature")}>
+        feature-action
+      </button>
+    </div>
   ),
 }));
 
@@ -70,6 +82,7 @@ vi.mock("@/components/services/list-data", () => ({
     onKeywordChange,
     onFilterChange,
     onSelectionChange,
+    onSelectedRowChange,
     onAllPagesSelectionChange,
     onTotalItemsChange,
   }: {
@@ -79,6 +92,7 @@ vi.mock("@/components/services/list-data", () => ({
     onKeywordChange?: (value: string) => void;
     onFilterChange?: (value: string) => void;
     onSelectionChange: (ids: string[]) => void;
+    onSelectedRowChange?: (row: Record<string, unknown> | null) => void;
     onAllPagesSelectionChange: (selected: boolean) => void;
     onTotalItemsChange: (total: number) => void;
   }) => (
@@ -112,6 +126,19 @@ vi.mock("@/components/services/list-data", () => ({
         }}
       >
         clear-twice
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          onSelectedRowChange?.({
+            feature_id: "canonical-feature",
+            patric_id: "fig|83332.12.peg.1",
+            genome_id: "83332.12",
+          });
+          onSelectionChange(["canonical-feature"]);
+        }}
+      >
+        select-feature
       </button>
       <button
         type="button"
@@ -208,6 +235,20 @@ describe("TaxonDataPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: "filter" }));
     expect(onKeywordChange).toHaveBeenCalledWith("updated");
     expect(onFilterChange).toHaveBeenCalledWith("and(eq(a,b))");
+  });
+
+  it("navigates the Feature action to the selected feature member", () => {
+    render(
+      <TaxonDataPanel
+        resource="genome_feature"
+        q="eq(genome_id,83332.12)"
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "select-feature" }));
+    fireEvent.click(screen.getByRole("button", { name: "feature-action" }));
+
+    expect(push).toHaveBeenCalledWith("/feature/canonical-feature");
   });
 
   it("uses the total count for all-pages selection", () => {

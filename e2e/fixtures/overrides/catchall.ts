@@ -15,6 +15,24 @@ const genomeSequenceRows = [
   },
 ];
 
+const genomeFeatureRows = [
+  {
+    feature_id: "PATRIC.1282460.2049.JX869059.CDS.1.100.fwd",
+    patric_id: "fig|1282460.2049.peg.1",
+    genome_id: "1282460.2049",
+    genome_name: "Middle East respiratory syndrome-related coronavirus isolate",
+    taxon_id: 1335626,
+    annotation: "PATRIC",
+    feature_type: "CDS",
+    accession: "JX869059",
+    start: 1,
+    end: 100,
+    strand: "+",
+    product: "replicase polyprotein",
+    aa_length: 33,
+  },
+];
+
 const genomeRows = [
   {
     genome_id: "1282460.2049",
@@ -52,6 +70,25 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/data\/genome_feature(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: genomeFeatureRows,
+      total: 1,
+      facets: {
+        annotation: [{ value: "PATRIC", count: 1 }],
+        feature_type: [{ value: "CDS", count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/genome_feature(?:\?|$)/,
+    method: "POST",
+    body: { rows: genomeFeatureRows },
+  },
   {
     url: /\/api\/data\/genome_sequence(?:\?|$)/,
     method: "GET",

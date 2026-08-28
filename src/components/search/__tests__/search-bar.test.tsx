@@ -112,6 +112,17 @@ describe("SearchBar", () => {
       );
     });
 
+    it("navigates Feature searches to the canonical list route", async () => {
+      const user = userEvent.setup();
+      mockSearchParams.current = new URLSearchParams({ type: "genome_feature" });
+      renderSearchBar();
+
+      await user.type(screen.getByRole("textbox"), "DNA kinase");
+      fireEvent.submit(getForm());
+
+      expect(mockPush).toHaveBeenCalledWith("/feature?keyword=DNA%20kinase");
+    });
+
     it("URL-encodes special characters in the query", async () => {
       const user = userEvent.setup();
       renderSearchBar();

@@ -49,7 +49,7 @@ function FeatureCount({
       <dd className="mt-0.5">
         <Link
           className="text-primary underline"
-          href={featureListHref(genomeFeatureRql(genomeId, type))}
+          href={featureListHref({ rql: genomeFeatureRql(genomeId, type) })}
         >
           {display(value)}
         </Link>

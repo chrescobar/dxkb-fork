@@ -360,7 +360,7 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "feature",
-    path: "/feature/fig|1282460.2049.peg.1",
+    path: "/feature/PATRIC.1282460.2049.JX869059.CDS.1.100.fwd",
     unauthenticated: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");

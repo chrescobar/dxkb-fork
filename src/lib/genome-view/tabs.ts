@@ -48,18 +48,8 @@ export function buildGenomeTabs(
       enabled: false,
       disabledReason: "A supported modern genome browser is not yet available.",
     },
-    {
-      key: "features",
-      label: "Features",
-      enabled: false,
-      disabledReason: "Available after the Feature view is implemented.",
-    },
-    {
-      key: "proteins",
-      label: "Proteins",
-      enabled: false,
-      disabledReason: "Depends on the Feature view contract.",
-    },
+    { key: "features", label: "Features" },
+    { key: "proteins", label: "Proteins" },
     {
       key: "domains",
       label: "Domains and Motifs",

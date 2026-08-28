@@ -37,7 +37,30 @@ export function genomeListHref(opts?: {
   return "/genome";
 }
 
-/** Canonical Feature list route with explicit RQL state. */
-export function featureListHref(rql: string): string {
-  return `/feature?rql=${encodeURIComponent(rql)}`;
+/** Return the canonical Feature ID from an API row, falling back for legacy search payloads. */
+export function featureIdFromRow(
+  row: Record<string, unknown> | null,
+): string | null {
+  const featureId = row?.feature_id ?? row?.patric_id;
+  return typeof featureId === "string" || typeof featureId === "number"
+    ? String(featureId)
+    : null;
+}
+
+/** Internal Feature member route. */
+export function featureHref(featureId: number | string): string {
+  return `/feature/${encodeURIComponent(String(featureId))}`;
+}
+
+/** Canonical Feature list route. Explicit RQL takes precedence over keyword. */
+export function featureListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  filter?: string;
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else if (opts?.keyword) params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  if (opts?.filter) params.push(`filter=${encodeURIComponent(opts.filter)}`);
+  return params.length ? `/feature?${params.join("&")}` : "/feature";
 }

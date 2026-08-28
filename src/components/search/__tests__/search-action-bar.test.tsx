@@ -176,5 +176,28 @@ describe("SearchActionBar (taxonomy)", () => {
         screen.queryByRole("button", { name: /^ggenome$/i }),
       ).not.toBeInTheDocument();
     });
+
+    it("enables the Feature action for one selected feature", async () => {
+      const onAction = vi.fn();
+      render(
+        <SearchActionBar
+          selectedCount={1}
+          searchType="genome_feature"
+          onAction={onAction}
+        />,
+      );
+
+      const button = screen.getByRole("button", { name: /^ffeature$/i });
+      expect(button).not.toBeDisabled();
+      await userEvent.click(button);
+      expect(onAction).toHaveBeenCalledWith("feature");
+    });
+
+    it("hides the single-row Feature action for multiple selections", () => {
+      render(<SearchActionBar selectedCount={2} searchType="genome_feature" />);
+      expect(
+        screen.queryByRole("button", { name: /^ffeature$/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 });

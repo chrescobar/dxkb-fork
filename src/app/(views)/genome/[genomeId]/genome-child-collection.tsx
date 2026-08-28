@@ -6,6 +6,10 @@ import {
   type ResourceCollectionProfile,
 } from "@/components/views";
 import { DataRepository, type DataResource } from "@/lib/data-api";
+import {
+  featureCollectionProfile,
+  type FeatureViewRecord,
+} from "@/lib/feature-view";
 import type { CollectionState } from "@/lib/views/collection-state";
 
 const repository = new DataRepository();
@@ -71,14 +75,23 @@ export function GenomeChildCollection({
     page: 1,
     sort: defaultSort,
   });
-  const profile: ResourceCollectionProfile<ChildRow> = {
-    resource,
-    label,
-    idField,
-    columns,
-    defaultSort,
-    basePredicate: rql,
-  };
+  const profile: ResourceCollectionProfile<ChildRow> =
+    resource === "genome_feature"
+      ? {
+          ...featureCollectionProfile,
+          label,
+          basePredicate: rql,
+          rowHref: (row) =>
+            featureCollectionProfile.rowHref?.(row as FeatureViewRecord),
+        }
+      : {
+          resource,
+          label,
+          idField,
+          columns,
+          defaultSort,
+          basePredicate: rql,
+        };
   return (
     <ResourceCollection
       profile={profile}

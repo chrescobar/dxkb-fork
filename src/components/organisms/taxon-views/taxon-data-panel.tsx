@@ -8,7 +8,12 @@ import { ResourceWorkspace } from "@/components/views/resource-workspace";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
 import { ListData } from "@/components/services/list-data";
 import { SearchActionBar } from "@/components/search/search-action-bar";
-import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
+import {
+  featureHref,
+  featureIdFromRow,
+  genomeHref,
+  genomeIdFromRow,
+} from "@/lib/views/hrefs";
 
 interface TaxonDataPanelProps {
   resource: string;
@@ -36,6 +41,7 @@ export function TaxonDataPanel({
   const [totalItems, setTotalItems] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
+  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   // Debounce empty-selection by 120ms so the panel doesn't flicker when
   // clicking rapidly between rows (mirrors TypeSearch.activeGenomeId logic).
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -64,6 +70,8 @@ export function TaxonDataPanel({
           onAction={(actionId) => {
             if (actionId === "genome" && selectedGenomeId) {
               router.push(genomeHref(selectedGenomeId));
+            } else if (actionId === "feature" && selectedFeatureId) {
+              router.push(featureHref(selectedFeatureId));
             }
           }}
         />
@@ -90,6 +98,7 @@ export function TaxonDataPanel({
           onSelectionChange={handleSelectionChange}
           onSelectedRowChange={(row) => {
             setSelectedGenomeId(genomeIdFromRow(row));
+            setSelectedFeatureId(featureIdFromRow(row));
           }}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}

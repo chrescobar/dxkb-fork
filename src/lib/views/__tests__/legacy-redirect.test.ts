@@ -27,6 +27,17 @@ describe("mapLegacyViewPath", () => {
       search: "pathogen_test_type=Influenza+A",
     });
   });
+  it("maps Protein aliases to Feature member and list routes", () => {
+    expect(mapLegacyViewPath("/view/Protein/fig%7C83332.12.peg.1", "")).toEqual({
+      pathname: "/feature/fig%7C83332.12.peg.1",
+      search: "",
+    });
+    expect(mapLegacyViewPath("/view/ProteinList/", "keyword=kinase")).toEqual({
+      pathname: "/feature",
+      search: "keyword=kinase",
+    });
+  });
+
   it("returns null for an unknown legacy view name", () => {
     expect(mapLegacyViewPath("/view/Nonsense/1", "")).toBeNull();
   });

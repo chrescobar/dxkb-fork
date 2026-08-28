@@ -18,6 +18,14 @@ vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
     <div>{`${resource}:${q}`}</div>
   ),
 }));
+vi.mock("@/components/views", () => ({
+  FeatureResourceCollection: ({ baseRql }: { baseRql: string }) => (
+    <div>{`genome_feature:${baseRql}`}</div>
+  ),
+  GenomeResourceCollection: ({ baseRql }: { baseRql: string }) => (
+    <div>{`genome:${baseRql}`}</div>
+  ),
+}));
 vi.mock("@/components/taxonomy/taxonomy-tree-panel", () => ({
   TaxonomyTreePanel: ({ taxa }: { taxa: { taxonName: string }[] }) => (
     <div>{`${taxa.map((taxon) => taxon.taxonName).join(", ")} tree`}</div>

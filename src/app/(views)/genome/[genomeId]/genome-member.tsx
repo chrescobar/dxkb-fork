@@ -20,6 +20,9 @@ import {
   type GenomeViewRecord,
 } from "@/lib/genome-view";
 import {
+  featureColumns,
+  genomeFeatureRql,
+  genomeProteinRql,
   genomeSequenceColumns,
   interactionColumns,
 } from "@/lib/views/child-resources";
@@ -107,6 +110,17 @@ export function GenomeMember({
         rql={genomeInteractionsRql(genome.genome_id)}
         columns={interactionColumns}
         defaultSort="id:asc"
+      />
+    );
+  } else if (activeTab === "features" || activeTab === "proteins") {
+    content = (
+      <GenomeChildCollection
+        resource="genome_feature"
+        label={activeTab === "proteins" ? "Proteins" : "Features"}
+        idField="feature_id"
+        rql={activeTab === "proteins" ? genomeProteinRql(genome.genome_id) : genomeFeatureRql(genome.genome_id)}
+        columns={featureColumns}
+        defaultSort="patric_id:asc"
       />
     );
   }

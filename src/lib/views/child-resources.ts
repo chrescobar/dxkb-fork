@@ -1,3 +1,4 @@
+import { genomeFeatureFields } from "@/constants/datafields/genome_feature";
 import { genomeSequenceFields } from "@/constants/datafields/genome_sequence";
 import { ppiFields } from "@/constants/datafields/ppi";
 import type { DataFieldMap } from "@/constants/datafields/types";
@@ -11,6 +12,7 @@ function tableColumns(fields: DataFieldMap) {
   );
 }
 
+export const featureColumns = tableColumns(genomeFeatureFields);
 export const genomeSequenceColumns = tableColumns(genomeSequenceFields);
 export const interactionColumns = tableColumns(ppiFields);
 
@@ -22,6 +24,14 @@ export function genomeFeatureRql(
   return featureType
     ? `and(${genome},${eq("genome_feature", "feature_type", featureType)})`
     : genome;
+}
+
+export function genomeProteinRql(genomeId: string): string {
+  return `and(${eq("genome_feature", "genome_id", genomeId)},or(${eq("genome_feature", "feature_type", "CDS")},${eq("genome_feature", "feature_type", "mat_peptide")}),${eq("genome_feature", "annotation", "PATRIC")})`;
+}
+
+export function featureInteractionsRql(featureId: string): string {
+  return `and(or(${eq("ppi", "feature_id_a", featureId)},${eq("ppi", "feature_id_b", featureId)}),${eq("ppi", "evidence", "experimental")})`;
 }
 
 export function genomeSequenceRql(genomeId: string): string {

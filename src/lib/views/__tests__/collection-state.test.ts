@@ -63,6 +63,22 @@ describe("collection URL state", () => {
     expect(collectionStateToRql(state, options)).toBe("eq(public,true)");
   });
 
+  it("preserves explicitly independent filters alongside rql", () => {
+    const independentOptions = {
+      ...options,
+      friendlyFilters: [...options.friendlyFilters, "filter"],
+      independentFilters: ["filter"],
+    } satisfies CollectionStateOptions;
+    const state = parseCollectionState(
+      { rql: "eq(public,true)", taxon_id: "2", filter: "protein" },
+      independentOptions,
+    );
+    expect(state.filters).toEqual({ filter: ["protein"] });
+    expect(serializeCollectionState(state, independentOptions).toString()).toBe(
+      "rql=eq%28public%2Ctrue%29&filter=protein",
+    );
+  });
+
   it("maps multi-value friendly fields using OR within a field and AND across fields", () => {
     const state = parseCollectionState(
       { keyword: "coli", taxon_id: "2", host: ["human", "swine"] },

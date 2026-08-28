@@ -1,0 +1,16 @@
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  h_dbd94c95afa702 45,55,66,144
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  h_dbd94c95afa702 97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "1049ec1c9d3f7ddddf89a32c920a3a3424702216",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

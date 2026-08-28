@@ -103,7 +103,9 @@ function exportValue(value: unknown, format: "csv" | "txt"): string {
     serialized = "";
   }
   const cleaned = serialized.replace(/\r\n|\n|\r/g, " ");
-  return format === "csv" ? `"${cleaned.replace(/"/g, '""')}"` : cleaned;
+  if (format === "txt") return cleaned.replaceAll("\t", " ");
+  const safe = /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
+  return `"${safe.replace(/"/g, "\"\"")}"`;
 }
 
 export async function downloadResourceRows({

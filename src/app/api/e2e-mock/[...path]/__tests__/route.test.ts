@@ -352,6 +352,67 @@ describe("api/e2e-mock catch-all — enabled", () => {
     });
   });
 
+  it("GET returns the Genome collection fixture for the expected MERS query", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/genome/?keyword(MERS*)&sort(+genome_name,+genome_id)",
+      }),
+      ctx(["data", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toMatchObject({
+      response: {
+        docs: [{ genome_id: "1282460.2049" }],
+      },
+    });
+  });
+
+  it("GET omits the Genome fixture when Range excludes its row", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/genome/?keyword(MERS*)&sort(+genome_name,+genome_id)",
+        headers: { Range: "items=200-400" },
+      }),
+      ctx(["data", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toMatchObject({
+      response: { numFound: 12345, docs: [] },
+    });
+  });
+
+  it("GET returns an empty JSON array when X-Range excludes the Genome fixture", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/genome/?keyword(MERS*)&sort(+genome_name,+genome_id)",
+        headers: {
+          Accept: "application/json",
+          "X-Range": "items=200-400",
+        },
+      }),
+      ctx(["data", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toEqual([]);
+  });
+
+  it("GET does not return the Genome fixture for an unrelated filtered query", async () => {
+    const resp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/genome/?eq(taxon_lineage_ids,2)&sort(+genome_name,+genome_id)",
+      }),
+      ctx(["data", "genome"]),
+    );
+
+    expect(resp.status).toBe(200);
+    expect((await resp.json()) as unknown).toMatchObject({
+      response: { docs: [] },
+    });
+  });
+
   it("PUT returns 200 with empty object", async () => {
     const resp = await PUT(
       mockNextRequest({

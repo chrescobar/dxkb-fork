@@ -23,6 +23,7 @@ import {
 } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { getIdField } from "@/constants/resources";
 import {
@@ -85,10 +86,14 @@ const skeletonWidthPcts = [60, 80, 50, 75, 90, 45, 70];
 // Stable identity for the "no sizing yet" case.
 const emptyColumnSizing: Record<string, number> = {};
 
-interface ColumnInfo {
+export type DataTableRow = Record<string, unknown>;
+
+export interface DataTableColumn {
   id: string;
   label: string;
   visible?: boolean;
+  sortable?: boolean;
+  href?: (row: DataTableRow) => string | undefined;
 }
 
 interface DataTableMeta {
@@ -115,7 +120,7 @@ const dataTableFeatures = tableFeatures({
 });
 
 type DataTableFeatures = typeof dataTableFeatures;
-type DataRow = Record<string, unknown>;
+type DataRow = DataTableRow;
 
 function getTableMeta(table: TanStackTable<DataTableFeatures, DataRow>) {
   const meta = table.options.meta;
@@ -198,9 +203,7 @@ function SelectionHeader({
   const somePageRowsSelected = table.getIsSomePageRowsSelected();
   const isChecked = meta.isAllPagesSelected || allPageRowsSelected;
   const isIndeterminate =
-    !meta.isAllPagesSelected &&
-    somePageRowsSelected &&
-    !allPageRowsSelected;
+    !meta.isAllPagesSelected && somePageRowsSelected && !allPageRowsSelected;
   const selectionLabel = meta.isAllPagesSelected
     ? "Deselect all results"
     : allPageRowsSelected
@@ -245,7 +248,7 @@ function SelectionHeader({
   );
 }
 
-function createColumnDefs(columns: ColumnInfo[]) {
+function createColumnDefs(columns: DataTableColumn[]) {
   const definitions: ColumnDef<DataTableFeatures, DataRow>[] = [
     {
       id: "__select__",
@@ -262,11 +265,26 @@ function createColumnDefs(columns: ColumnInfo[]) {
     definitions.push({
       accessorKey: column.id,
       header: column.label,
-      cell: (info: CellContext<DataTableFeatures, DataRow>) =>
-        formatCellValue(info.getValue()),
+      cell: (info: CellContext<DataTableFeatures, DataRow>) => {
+        const value = formatCellValue(info.getValue());
+        const href = column.href?.(info.row.original);
+        return href ? (
+          <Link
+            href={href}
+            className="truncate text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
+            {value as React.ReactNode}
+          </Link>
+        ) : (
+          (value as React.ReactNode)
+        );
+      },
       size: estimateHeaderWidth(column.label),
       enableResizing: true,
-      enableSorting: true,
+      enableSorting: column.sortable !== false,
       sortFn: (
         rowA: TanStackRow<DataTableFeatures, DataRow>,
         rowB: TanStackRow<DataTableFeatures, DataRow>,
@@ -287,12 +305,13 @@ function createColumnDefs(columns: ColumnInfo[]) {
   return definitions;
 }
 
-interface DataTableProps {
+export interface DataTableProps {
   id: string;
-  data: Record<string, unknown>[];
-  columns: ColumnInfo[];
+  data: DataTableRow[];
+  columns: DataTableColumn[];
   totalItems: number;
   resource: string;
+  idField?: string;
   errorMessage?: string;
   onSelectionChange?: (rows: Record<string, unknown>[]) => void;
   onGenomeSelect?: (id: string | null) => void;
@@ -329,6 +348,13 @@ interface DataTableProps {
     format: "csv" | "txt",
     visibleColumns: string[] | null,
   ) => void | Promise<void>;
+  onDownloadSelected?: (
+    format: "csv" | "txt",
+    selectedIds: string[],
+    visibleColumns: string[] | null,
+  ) => void | Promise<void>;
+  showExportControls?: boolean;
+  scrollRegionLabel?: string;
   // Loading indicator: parent can set this while data is being fetched
   isLoading?: boolean;
 
@@ -342,6 +368,7 @@ function useDataTableContent(
     columns,
     totalItems,
     resource,
+    idField: explicitIdField,
     errorMessage,
     onSelectionChange,
     onGenomeSelect,
@@ -361,6 +388,9 @@ function useDataTableContent(
     onAllPagesSelectionChange,
     totalSelectedCount,
     onDownloadAll,
+    onDownloadSelected,
+    showExportControls = true,
+    scrollRegionLabel,
     isLoading = false,
     onActiveRowChange,
   }: DataTableProps,
@@ -423,7 +453,7 @@ function useDataTableContent(
     pageSize: pageSize ?? internalPagination.pageSize,
   };
 
-  const idField = getIdField(resource);
+  const idField = explicitIdField ?? getIdField(resource);
 
   const shiftHeld = useKeyHold("Shift");
   const ctrlHeld = useKeyHold("Control");
@@ -808,7 +838,6 @@ function useDataTableContent(
           format,
           onlyVisibleColumns ? visibleColumnIds : null,
         );
-        setDownloadingButton(null);
         return;
       }
 
@@ -826,7 +855,6 @@ function useDataTableContent(
           format,
           onlyVisibleColumns ? visibleColumnIds : null,
         );
-        setDownloadingButton(null);
         return;
       }
 
@@ -842,7 +870,15 @@ function useDataTableContent(
         if (!isAllPagesSelected && (!selectedIds || selectedIds.length === 0))
           return;
 
-        const idField = getIdField(resource);
+        const selectedColumnIds = visibleCols.map((col) => col.id);
+        if (onDownloadSelected) {
+          await onDownloadSelected(
+            format,
+            selectedIds ?? [],
+            onlyVisibleColumns ? selectedColumnIds : null,
+          );
+          return;
+        }
 
         const idFilter = (selectedIds ?? [])
           .map((id) => `eq(${idField},${id})`)
@@ -894,19 +930,7 @@ function useDataTableContent(
               ...sortedRows.map((row) =>
                 visibleCols
                   .map((col) => {
-                    const val = row[col.id];
-                    if (typeof val === "string")
-                      return `"${val.replace(/"/g, '""')}"`;
-                    if (val == null) return "";
-                    if (typeof val === "object")
-                      return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-                    if (
-                      typeof val === "number" ||
-                      typeof val === "boolean" ||
-                      typeof val === "bigint"
-                    )
-                      return String(val);
-                    return "";
+                    return csvExportValue(row[col.id]);
                   })
                   .join(","),
               ),
@@ -916,9 +940,6 @@ function useDataTableContent(
           })
           .catch((err: unknown) => {
             console.error("Download selected failed:", err);
-          })
-          .finally(() => {
-            setDownloadingButton(null);
           });
 
         return;
@@ -931,28 +952,16 @@ function useDataTableContent(
         ...rowsToExport.map((row) =>
           visibleCols
             .map((col) => {
-              const val = row.getValue<unknown>(col.id);
-              if (typeof val === "string")
-                return `"${val.replace(/"/g, '""')}"`;
-              if (val == null) return "";
-              if (typeof val === "object")
-                return `"${JSON.stringify(val).replace(/"/g, '""')}"`;
-              if (
-                typeof val === "number" ||
-                typeof val === "boolean" ||
-                typeof val === "bigint"
-              )
-                return String(val);
-              return "";
+              return csvExportValue(row.getValue<unknown>(col.id));
             })
             .join(","),
         ),
       ].join("\n");
 
       downloadFile(`${resource}.${format}`, content);
-      setDownloadingButton(null);
     } catch (error) {
       console.error("Download failed:", error);
+    } finally {
       setDownloadingButton(null);
     }
   };
@@ -1043,76 +1052,80 @@ function useDataTableContent(
         </div>
 
         {/* Download buttons */}
-        <Button
-          onClick={() => {
-            void handleDownload("csv");
-          }}
-          className="mx-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-          disabled={downloadingButton !== null}
-        >
-          {downloadingButton === "csv-all" ? (
-            <span className="text-red-600">Downloading...</span>
-          ) : (
-            "Download (CSV)"
-          )}
-        </Button>
-        <Button
-          onClick={() => {
-            void handleDownload("txt");
-          }}
-          className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
-          disabled={downloadingButton !== null}
-        >
-          {downloadingButton === "txt-all" ? (
-            <span className="text-red-600">Downloading...</span>
-          ) : (
-            "Download (TXT)"
-          )}
-        </Button>
-
-        {/* These next two only show up if rows are selected */}
-        {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && (
+        {showExportControls && (
           <>
             <Button
               onClick={() => {
-                void handleDownload("csv", true);
+                void handleDownload("csv");
               }}
-              className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+              className="mx-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
               disabled={downloadingButton !== null}
             >
-              {downloadingButton === "csv-selected" ? (
+              {downloadingButton === "csv-all" ? (
                 <span className="text-red-600">Downloading...</span>
               ) : (
-                "Download Selected (CSV)"
+                "Download (CSV)"
               )}
             </Button>
             <Button
               onClick={() => {
-                void handleDownload("txt", true);
+                void handleDownload("txt");
               }}
               className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
               disabled={downloadingButton !== null}
             >
-              {downloadingButton === "txt-selected" ? (
+              {downloadingButton === "txt-all" ? (
                 <span className="text-red-600">Downloading...</span>
               ) : (
-                "Download Selected (TXT)"
+                "Download (TXT)"
               )}
             </Button>
+
+            {/* These next two only show up if rows are selected */}
+            {((selectedIds?.length ?? 0) > 0 || isAllPagesSelected) && (
+              <>
+                <Button
+                  onClick={() => {
+                    void handleDownload("csv", true);
+                  }}
+                  className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+                  disabled={downloadingButton !== null}
+                >
+                  {downloadingButton === "csv-selected" ? (
+                    <span className="text-red-600">Downloading...</span>
+                  ) : (
+                    "Download Selected (CSV)"
+                  )}
+                </Button>
+                <Button
+                  onClick={() => {
+                    void handleDownload("txt", true);
+                  }}
+                  className="mr-2 rounded border border-border bg-background px-2 py-1 text-xs font-medium text-foreground hover:bg-muted"
+                  disabled={downloadingButton !== null}
+                >
+                  {downloadingButton === "txt-selected" ? (
+                    <span className="text-red-600">Downloading...</span>
+                  ) : (
+                    "Download Selected (TXT)"
+                  )}
+                </Button>
+              </>
+            )}
+
+            <label className="ml-4 flex items-center text-xs text-foreground">
+              <input
+                type="checkbox"
+                checked={onlyVisibleColumns}
+                onChange={() => {
+                  setOnlyVisibleColumns((prev) => !prev);
+                }}
+                className="mr-1"
+              />
+              Download Displayed Columns Only
+            </label>
           </>
         )}
-
-        <label className="ml-4 flex items-center text-xs text-foreground">
-          <input
-            type="checkbox"
-            checked={onlyVisibleColumns}
-            onChange={() => {
-              setOnlyVisibleColumns((prev) => !prev);
-            }}
-            className="mr-1"
-          />
-          Download Displayed Columns Only
-        </label>
       </div>
       <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded border border-border">
         <div
@@ -1124,6 +1137,9 @@ function useDataTableContent(
             (shiftHeld || ctrlOrCmdHeld) && "select-none",
           )}
           ref={tableContainerRef}
+          role="region"
+          aria-label={scrollRegionLabel ?? `${resource} results`}
+          tabIndex={0}
           style={{
             maxHeight: "100%",
             position: "relative",
@@ -1167,6 +1183,15 @@ function useDataTableContent(
                         <TableHead
                           key={header.id}
                           colSpan={header.colSpan}
+                          aria-sort={
+                            column.id === "__select__" || !column.getCanSort()
+                              ? undefined
+                              : column.getIsSorted() === "asc"
+                                ? "ascending"
+                                : column.getIsSorted() === "desc"
+                                  ? "descending"
+                                  : "none"
+                          }
                           className={clsx(
                             "group relative border-r border-foreground/20 bg-muted text-foreground",
                             column.id === "__select__"
@@ -1183,20 +1208,6 @@ function useDataTableContent(
                               zIndex: 1,
                             }),
                           }}
-                          onClick={
-                            column.id !== "__select__"
-                              ? (e) => {
-                                  if (justResizedRef.current) {
-                                    e.stopPropagation();
-                                    return;
-                                  }
-                                  e.stopPropagation();
-                                  const handler =
-                                    column.getToggleSortingHandler();
-                                  if (handler) handler(e);
-                                }
-                              : undefined
-                          }
                         >
                           {column.id === "__select__" ? (
                             // Checkbox column - no sorting or dragging
@@ -1227,7 +1238,17 @@ function useDataTableContent(
                                       : "",
                                 }}
                               >
-                                <span className="leading-tight select-none">
+                                <button
+                                  type="button"
+                                  disabled={!column.getCanSort()}
+                                  aria-label={`Sort by ${String(column.columnDef.header)}`}
+                                  className="flex size-full items-center text-left leading-tight select-none focus-visible:outline-2 focus-visible:outline-offset-1 disabled:cursor-default"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    if (justResizedRef.current) return;
+                                    column.getToggleSortingHandler()?.(event);
+                                  }}
+                                >
                                   <table.FlexRender header={header} />
                                   {column.getIsSorted() === "asc" && (
                                     <ChevronUp className="ml-0.5 inline-block size-3 align-text-bottom" />
@@ -1235,7 +1256,7 @@ function useDataTableContent(
                                   {column.getIsSorted() === "desc" && (
                                     <ChevronDown className="ml-0.5 inline-block size-3 align-text-bottom" />
                                   )}
-                                </span>
+                                </button>
                               </div>
                               {column.getCanResize() && (
                                 <div
@@ -1351,12 +1372,16 @@ function useDataTableContent(
                 );
               })()}
             </div>
-            <div className="flex flex-wrap items-center gap-x-1">
+            <nav
+              className="flex flex-wrap items-center gap-x-1"
+              aria-label={`${resource} results pagination`}
+            >
               <Button
                 onClick={() => {
                   table.previousPage();
                 }}
                 disabled={!table.getCanPreviousPage()}
+                aria-label="Previous page"
                 className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
                 {"Prev"}
@@ -1391,6 +1416,7 @@ function useDataTableContent(
                             ? "bg-primary/15 font-bold"
                             : "bg-background",
                         )}
+                        aria-current={currentPage === page ? "page" : undefined}
                       >
                         {page + 1}
                       </Button>
@@ -1403,11 +1429,12 @@ function useDataTableContent(
                   table.nextPage();
                 }}
                 disabled={!table.getCanNextPage()}
+                aria-label="Next page"
                 className="border border-border px-2 py-0.5 disabled:opacity-50"
               >
                 {"Next"}
               </Button>
-            </div>
+            </nav>
           </div>
         </div>
       </div>
@@ -1640,7 +1667,7 @@ function DataTableBody({
 // raw React children — React joins array children with no separator, reading as
 // "361218" instead of "3, 6, 12, 18".
 function computeAutoColumnSizes(
-  columns: ColumnInfo[],
+  columns: DataTableColumn[],
   data: Record<string, unknown>[],
   maxWidth = 250,
 ): Record<string, number> {
@@ -1702,6 +1729,25 @@ function computeAutoColumnSizes(
   }
 
   return sizes;
+}
+
+function csvExportValue(value: unknown): string {
+  if (value == null) return "";
+  const quoted = typeof value === "string" || typeof value === "object";
+  let serialized: string;
+  if (typeof value === "string") serialized = value;
+  else if (typeof value === "object") serialized = JSON.stringify(value);
+  else if (
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    typeof value === "bigint"
+  )
+    serialized = String(value);
+  else return "";
+
+  const cleaned = serialized.replace(/\r\n|\n|\r/g, " ");
+  const safe = /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
+  return quoted ? `"${safe.replace(/"/g, "\"\"")}"` : safe;
 }
 
 function downloadFile(filename: string, content: string) {

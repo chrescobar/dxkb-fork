@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, Suspense, type SyntheticEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { searchTypes } from "@/constants/search-info";
+import { searchHref, searchTypes } from "@/constants/search-info";
 import { Input } from "@/components/ui/input";
 
 import { Search } from "lucide-react";
@@ -32,9 +32,17 @@ function extractKeywordQuery(raw: string): string {
 }
 
 function SearchBarWithParams(props: SearchBarProps) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const rawQuery = searchParams.get("q") || props.initialValue || "";
-  const requestedType = searchParams.get("type") || "everything";
+  const rawQuery =
+    searchParams.get("keyword") ||
+    searchParams.get("q") ||
+    props.initialValue ||
+    "";
+  const requestedType =
+    pathname === "/genome"
+      ? "genome"
+      : searchParams.get("type") || "everything";
   const initialType = searchTypes.some((type) => type.id === requestedType)
     ? requestedType
     : "everything";
@@ -75,7 +83,9 @@ function SearchBarForm({
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    router.push(`/search?type=${selected}&q=${encodeURIComponent(inputValue)}`);
+    const searchType = searchTypes.find((type) => type.id === selected);
+    if (!searchType) return;
+    router.push(searchHref(searchType, inputValue));
     void queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0];

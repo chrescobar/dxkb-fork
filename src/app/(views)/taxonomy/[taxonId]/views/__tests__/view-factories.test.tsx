@@ -16,8 +16,37 @@ import { makeSfvtView } from "@/components/organisms/taxon-views/sfvt";
 // TaxonDataPanel has complex network + React dependencies; mock it so tests stay
 // focused on the factory guard logic (null taxon → render nothing).
 vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
-  TaxonDataPanel: ({ resource, q, guideUrl }: { resource: string; q: string; guideUrl?: string }) => (
-    <div data-testid="taxon-data-panel" data-resource={resource} data-q={q} data-guide={guideUrl} />
+  TaxonDataPanel: ({
+    resource,
+    q,
+    guideUrl,
+  }: {
+    resource: string;
+    q: string;
+    guideUrl?: string;
+  }) => (
+    <div
+      data-testid="taxon-data-panel"
+      data-resource={resource}
+      data-q={q}
+      data-guide={guideUrl}
+    />
+  ),
+}));
+
+vi.mock("@/components/views", () => ({
+  GenomeResourceCollection: ({
+    baseRql,
+    enableRowLinks,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+  }) => (
+    <div
+      data-testid="genome-resource-collection"
+      data-q={baseRql}
+      data-row-links={String(enableRowLinks)}
+    />
   ),
 }));
 
@@ -38,7 +67,8 @@ const compositeScope = {
     { ...fakeTaxon, taxonId: 10239, taxonName: "Viruses" },
   ],
 };
-const compositeClause = "or(eq(taxon_lineage_ids,131567),eq(taxon_lineage_ids,10239))";
+const compositeClause =
+  "or(eq(taxon_lineage_ids,131567),eq(taxon_lineage_ids,10239))";
 
 describe("makeStrainsView", () => {
   it("renders TaxonDataPanel with strain resource and taxon query", () => {
@@ -87,12 +117,12 @@ describe("makeSurveillanceView", () => {
 });
 
 describe("makeGenomesView", () => {
-  it("renders TaxonDataPanel with genome resource and taxon query", () => {
+  it("renders the shared Genome collection with taxon scope", () => {
     const GenomesView = makeGenomesView({ scope });
     const { getByTestId } = render(<GenomesView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "genome");
-    expect(panel.getAttribute("data-q")).toContain("1234");
+    const collection = getByTestId("genome-resource-collection");
+    expect(collection).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
+    expect(collection).toHaveAttribute("data-row-links", "false");
   });
 });
 
@@ -108,15 +138,17 @@ describe("makeSequencesView", () => {
     expect(panel).toHaveAttribute("data-resource", "genome_sequence");
     const q = panel.getAttribute("data-q") ?? "";
     expect(q).toContain("eq(genome_id,*)");
-    expect(q).toContain("genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+    expect(q).toContain(
+      "genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))",
+    );
   });
 
   it("passes the sequences guide URL", () => {
     const SequencesView = makeSequencesView({ scope });
     const { getByTestId } = render(<SequencesView />);
-    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toContain(
-      "sequences.html",
-    );
+    expect(
+      getByTestId("taxon-data-panel").getAttribute("data-guide"),
+    ).toContain("sequences.html");
   });
 });
 
@@ -128,7 +160,9 @@ describe("makeProteinStructuresView", () => {
     expect(panel).toHaveAttribute("data-resource", "protein_structure");
     const q = panel.getAttribute("data-q") ?? "";
     expect(q).toContain("eq(genome_id,*)");
-    expect(q).toContain("genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+    expect(q).toContain(
+      "genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))",
+    );
   });
 
   it("passes the protein structures guide URL", () => {
@@ -172,7 +206,9 @@ describe("makeFeaturesView", () => {
     expect(panel).toHaveAttribute("data-resource", "genome_feature");
     const q = panel.getAttribute("data-q") ?? "";
     expect(q).toContain("eq(genome_id,*)");
-    expect(q).toContain("genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+    expect(q).toContain(
+      "genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))",
+    );
     expect(q).toContain("eq(annotation,PATRIC)");
   });
 
@@ -261,12 +297,28 @@ describe("composite scope queries", () => {
     const View = makeView({ scope: compositeScope });
     render(<View />);
 
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-resource", resource);
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", expectedQuery);
+    if (resource === "genome") {
+      expect(screen.getByTestId("genome-resource-collection")).toHaveAttribute(
+        "data-q",
+        expectedQuery,
+      );
+      return;
+    }
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+      "data-resource",
+      resource,
+    );
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+      "data-q",
+      expectedQuery,
+    );
   });
 
   it("queries every curated SFVT cohort for a composite containing the Viruses root", () => {
-    const View = makeSfvtView({ scope: compositeScope, sfvtTaxonIds: new Set([12637, 2955291]) });
+    const View = makeSfvtView({
+      scope: compositeScope,
+      sfvtTaxonIds: new Set([12637, 2955291]),
+    });
     render(<View />);
 
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
@@ -284,10 +336,16 @@ describe("composite scope queries", () => {
         { ...fakeTaxon, taxonId: 2955291, lineageIds: [10239, 11308, 2955291] },
       ],
     };
-    const View = makeSfvtView({ scope, sfvtTaxonIds: new Set([12637, 2955291]) });
+    const View = makeSfvtView({
+      scope,
+      sfvtTaxonIds: new Set([12637, 2955291]),
+    });
     render(<View />);
 
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", "eq(taxon_id,11320)");
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+      "data-q",
+      "eq(taxon_id,11320)",
+    );
   });
 
   it("excludes remapped cohorts removed from the curated set", () => {
@@ -302,13 +360,19 @@ describe("composite scope queries", () => {
     const View = makeSfvtView({ scope, sfvtTaxonIds: new Set([12637]) });
     render(<View />);
 
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", "eq(taxon_id,12637)");
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+      "data-q",
+      "eq(taxon_id,12637)",
+    );
   });
 
   it("applies the composite clause to both experiment subviews", () => {
     const View = makeExperimentsView({ scope: compositeScope });
     render(<View />);
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute("data-q", compositeClause);
+    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+      "data-q",
+      compositeClause,
+    );
 
     fireEvent.click(screen.getByRole("tab", { name: "Biosets" }));
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
@@ -326,7 +390,9 @@ describe("makeInteractionsView", () => {
     expect(panel).toHaveAttribute("data-resource", "ppi");
     const q = panel.getAttribute("data-q") ?? "";
     expect(q).toContain("eq(genome_id_a,*)");
-    expect(q).toContain("genome(to(genome_id_a),and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))");
+    expect(q).toContain(
+      "genome(to(genome_id_a),and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated)))",
+    );
     expect(q).toContain("eq(evidence,experimental)");
   });
 

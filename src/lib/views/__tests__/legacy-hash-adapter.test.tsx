@@ -8,6 +8,7 @@ vi.mock("next/navigation", () => ({
 
 beforeEach(() => {
   mockReplace.mockClear();
+  window.history.replaceState(null, "", "/");
 });
 
 import { LegacyHashAdapter } from "../legacy-hash-adapter";
@@ -63,6 +64,46 @@ it("promotes #path= to ?path= for workspace ProteinStructure links", () => {
   const url = String(mockReplace.mock.calls[0][0]);
   expect(url).toContain("path=");
   expect(url).not.toContain("#");
+});
+
+it("converts defaultSort=-score when a canonical keyword is present", () => {
+  window.history.replaceState(null, "", "/genome?keyword=influenza");
+  window.location.hash = "#defaultSort=-score";
+  render(<LegacyHashAdapter />);
+
+  expect(mockReplace).toHaveBeenCalledWith(
+    "/genome?keyword=influenza&sort=score%3Adesc",
+  );
+});
+
+it("promotes a hash keyword before converting defaultSort=-score", () => {
+  window.location.hash = "#keyword=E.%20coli&defaultSort=-score";
+  render(<LegacyHashAdapter />);
+
+  expect(mockReplace).toHaveBeenCalledWith(
+    "/?keyword=E.+coli&sort=score%3Adesc",
+  );
+});
+
+it("preserves an explicit sort when converting defaultSort=-score", () => {
+  window.history.replaceState(
+    null,
+    "",
+    "/genome?keyword=influenza&sort=genome_name%3Aasc",
+  );
+  window.location.hash = "#defaultSort=-score";
+  render(<LegacyHashAdapter />);
+
+  expect(mockReplace).toHaveBeenCalledWith(
+    "/genome?keyword=influenza&sort=genome_name%3Aasc",
+  );
+});
+
+it("drops defaultSort=-score when no keyword is present", () => {
+  window.location.hash = "#defaultSort=-score";
+  render(<LegacyHashAdapter />);
+
+  expect(mockReplace).toHaveBeenCalledWith("/");
 });
 
 it("does nothing when hash has only unrelated keys", () => {

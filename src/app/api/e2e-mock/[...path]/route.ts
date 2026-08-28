@@ -45,15 +45,55 @@ const e2eDeterministicCounts: Record<string, number> = {
   ppi: 4358,
 };
 
+const genomeRecordFixture = {
+  genome_id: "1282460.2049",
+  genome_name: "Middle East respiratory syndrome-related coronavirus isolate",
+  strain: "MERS-CoV",
+  superkingdom: "Viruses",
+  genome_status: "Complete",
+  genome_quality: "Good",
+  genome_length: 30_119,
+  contigs: 1,
+  cds: 11,
+  collection_year: 2012,
+  isolation_country: "Saudi Arabia",
+  host_common_name: "Human",
+  genbank_accessions: ["JX869059"],
+  taxon_id: 1335626,
+  taxon_lineage_ids: [10239, 1335626],
+  taxon_lineage_names: [
+    "Viruses",
+    "Middle East respiratory syndrome-related coronavirus",
+  ],
+};
+
 function maybeSolrCount(
   path: string,
-): { response: { numFound: number; docs: never[] } } | null {
+  request: NextRequest,
+):
+  | { response: { numFound: number; docs: (typeof genomeRecordFixture)[] } }
+  | (typeof genomeRecordFixture)[]
+  | null {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "data" || segments.length < 2) return null;
   const core = segments[1];
   const numFound = e2eDeterministicCounts[core];
   if (typeof numFound !== "number") return null;
-  return { response: { numFound, docs: [] } };
+  const query = decodeURIComponent(new URL(request.url).search);
+  const isGenomeFixtureQuery =
+    core === "genome" &&
+    (query.includes("eq(genome_id,1282460.2049)") ||
+      (query.includes("keyword(MERS*)") &&
+        query.includes("sort(+genome_name,+genome_id)")));
+  const itemRange = (
+    request.headers.get("range") ?? request.headers.get("x-range")
+  )?.match(/^items=(\d+)-(\d+)$/i);
+  const includesFixtureRow =
+    !itemRange || (Number(itemRange[1]) <= 0 && Number(itemRange[2]) >= 0);
+  const docs =
+    isGenomeFixtureQuery && includesFixtureRow ? [genomeRecordFixture] : [];
+  if (request.headers.get("accept") === "application/json") return docs;
+  return { response: { numFound, docs } };
 }
 
 const bacteriaSummaryFixture = {
@@ -866,7 +906,7 @@ export async function GET(
     }
     return NextResponse.json(bvBrcWebsite.body);
   }
-  const solr = maybeSolrCount(path);
+  const solr = maybeSolrCount(path, request);
   if (solr) return NextResponse.json(solr);
   return NextResponse.json({});
 }

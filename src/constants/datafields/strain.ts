@@ -102,7 +102,7 @@ export const strainFields = {
         field: 'genome_ids', 
         hidden: true,
         group: 'Strain Info',
-        link: '/view/Genome/{value}',
+        link: '/genome/{value}',
         facet: false, 
         facet_hidden: true, 
         search: true 

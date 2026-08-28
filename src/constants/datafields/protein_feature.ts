@@ -15,7 +15,7 @@ export const proteinFeatureFields = {
         field: 'genome_id', 
         hidden: true,
         group: 'Genome Info',
-        link: '/view/Genome/{value}',
+        link: '/genome/{value}',
         facet: false, 
         facet_hidden: true, 
         search: true  

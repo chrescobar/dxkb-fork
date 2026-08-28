@@ -7,7 +7,7 @@ export const genomeFields = {
         field: 'genome_id',
         hidden: true,
         group: 'General Info',
-        link: '/view/Genome/{value}', 
+        link: "/genome/{value}",
         facet: false, 
         facet_hidden: true, 
         search: true 

@@ -35,8 +35,8 @@ export interface OrganismLandingView {
   layout?: "scroll" | "fill";
 }
 
-export interface OrganismLandingNavItem {
-  key: OrganismViewKey;
+export interface OrganismLandingNavItem<Key extends string = OrganismViewKey> {
+  key: Key;
   label: string;
   icon: ReactNode;
   enabled?: boolean;

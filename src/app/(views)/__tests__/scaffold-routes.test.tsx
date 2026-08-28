@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 
 const { notFoundSpy } = vi.hoisted(() => ({
-  notFoundSpy: vi.fn(() => { throw new Error("NEXT_NOT_FOUND"); }),
+  notFoundSpy: vi.fn(() => {
+    throw new Error("NEXT_NOT_FOUND");
+  }),
 }));
 
 // The singular render path mounts OrganismLandingShell → LandingShellClient, which uses
@@ -17,27 +19,41 @@ vi.mock("next/navigation", () => ({
 // LandingShellClient also calls useHotkey; stub it so the render path doesn't throw.
 vi.mock("@tanstack/react-hotkeys", () => ({ useHotkey: vi.fn() }));
 
-import GenomeListPage from "../genome/page";
 import GenomePage from "../genome/[genomeId]/page";
 import StrainListPage from "../strain/page";
 
-beforeEach(() => { notFoundSpy.mockClear(); });
+vi.mock("@/lib/genome-view/server", () => ({
+  getGenome: vi.fn((genomeId: string) =>
+    Promise.resolve({
+      genome_id: genomeId,
+      genome_name: "Test genome",
+      superkingdom: "Bacteria",
+    }),
+  ),
+}));
 
-it("genome list renders the placeholder with friendly rql", async () => {
-  render(await GenomeListPage({ searchParams: Promise.resolve({ keyword: "flu" }) }));
-  expect(screen.getByText("keyword(flu)")).toBeInTheDocument();
+beforeEach(() => {
+  notFoundSpy.mockClear();
 });
 
 it("genome singular renders for a dotted id", async () => {
-  render(await GenomePage({
-    params: Promise.resolve({ genomeId: "59201.7581" }),
-    searchParams: Promise.resolve({}),
-  }));
-  expect(screen.getByText(/Genome 59201\.7581/)).toBeInTheDocument();
+  render(
+    await GenomePage({
+      params: Promise.resolve({ genomeId: "59201.7581" }),
+      searchParams: Promise.resolve({}),
+    }),
+  );
+  expect(
+    screen.getByRole("heading", { name: "Test genome" }),
+  ).toBeInTheDocument();
 });
 
 it("strain list renders (list-only type)", async () => {
-  render(await StrainListPage({ searchParams: Promise.resolve({ keyword: "H1N1" }) }));
+  render(
+    await StrainListPage({
+      searchParams: Promise.resolve({ keyword: "H1N1" }),
+    }),
+  );
   expect(screen.getByText("keyword(H1N1)")).toBeInTheDocument();
 });
 

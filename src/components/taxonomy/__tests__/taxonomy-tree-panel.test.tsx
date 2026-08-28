@@ -30,7 +30,9 @@ vi.mock("../taxonomy-tree", () => ({
         <button
           type="button"
           onClick={() =>
-            onSelect?.([{ taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" }])
+            onSelect?.([
+              { taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" },
+            ])
           }
         >
           select-one
@@ -40,7 +42,11 @@ vi.mock("../taxonomy-tree", () => ({
           onClick={() =>
             onSelect?.([
               { taxon_id: 234, taxon_name: "Brucella", taxon_rank: "genus" },
-              { taxon_id: 10239, taxon_name: "Viruses", taxon_rank: "superkingdom" },
+              {
+                taxon_id: 10239,
+                taxon_name: "Viruses",
+                taxon_rank: "superkingdom",
+              },
             ])
           }
         >
@@ -54,7 +60,7 @@ vi.mock("../taxonomy-tree", () => ({
 import { TaxonomyTreePanel } from "../taxonomy-tree-panel";
 
 beforeAll(() => {
-  // GenomeShell's resizable panels need ResizeObserver, absent in jsdom.
+  // ResourceWorkspace's resizable panels need ResizeObserver, absent in jsdom.
   globalThis.ResizeObserver = class {
     observe = () => undefined;
     unobserve = () => undefined;
@@ -90,7 +96,9 @@ describe("TaxonomyTreePanel", () => {
     render(<TaxonomyTreePanel taxa={[taxon]} />);
 
     await userEvent.click(screen.getByRole("button", { name: "select-one" }));
-    await userEvent.click(screen.getByRole("button", { name: /taxon\s*overview/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /taxon\s*overview/i }),
+    );
 
     expect(mockPush).toHaveBeenCalledWith("/taxonomy/234?tab=overview");
   });
@@ -100,6 +108,8 @@ describe("TaxonomyTreePanel", () => {
 
     await userEvent.click(screen.getByRole("button", { name: "select-two" }));
 
-    expect(screen.queryByRole("button", { name: /taxon\s*overview/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /taxon\s*overview/i }),
+    ).not.toBeInTheDocument();
   });
 });

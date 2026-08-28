@@ -1,11 +1,12 @@
 import { InteractionsSubviewShell } from "@/components/interactions/interactions-subview-shell";
 
+import { taxonomyInteractionsRql } from "@/lib/views/child-resources";
 import { scopeRoots, taxonLineageClause, type TaxonViewScope } from "./scope";
 
 export function makeInteractionsView({ scope }: { scope: TaxonViewScope }) {
   function InteractionsView() {
     const [root] = scopeRoots(scope);
-    const q = `and(eq(genome_id_a,*),genome(to(genome_id_a),and(${taxonLineageClause(scope)},ne(genome_status,Deprecated))),eq(evidence,experimental))`;
+    const q = taxonomyInteractionsRql(taxonLineageClause(scope));
     return (
       <InteractionsSubviewShell
         taxonId={root.taxonId}

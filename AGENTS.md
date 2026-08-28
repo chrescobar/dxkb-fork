@@ -89,4 +89,4 @@ Find the existing example of the same shape and follow it:
 
 ## File Structure
 
-- All miscellaneous folders (e.g. `/graphify-out`, `/a11y-report`, `/.playwright-mcp`, `/.screenshots`) and any new folders like this should be placed in the `/.misc` folder in the root of the repository. The only exceptions to this rule are `/.claude`, `/.devcontainer`, `/.github`, `/.misc`, `/.next`, `/.vscode`, `/auspice`, `/.docs`, `/.e2e`, `/node_modules`, `/patches`, `/public`, `/scripts`, `/src`, and `/.git`.
+- All miscellaneous folders (e.g. `/a11y-report`, `/.playwright-mcp`, `/.screenshots`) and any new folders like this should be placed in the `/.misc` folder in the root of the repository. The only exceptions to this rule are `/.claude`, `/.devcontainer`, `/.github`, `/.misc`, `/.next`, `/.vscode`, `/auspice`, `/.docs`, `/.e2e`, `/node_modules`, `/patches`, `/public`, `/scripts`, `/src`, and `/.git`.

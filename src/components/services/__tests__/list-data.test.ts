@@ -127,6 +127,38 @@ describe("downloadResourceRows", () => {
     );
   });
 
+  it("neutralizes CSV formulas and keeps each value on one row", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify([{ genome_id: '=1+1\r\n"quoted"' }]),
+        { status: 200 },
+      ),
+    );
+    let blob: Blob | undefined;
+    vi.spyOn(URL, "createObjectURL").mockImplementation((value) => {
+      blob = value as Blob;
+      return "blob:download";
+    });
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+
+    await downloadResourceRows({
+      dataApi: "https://data.example",
+      resource: "genome",
+      query: "eq(public,true)",
+      totalItems: 1,
+      format: "csv",
+      visibleColumns: ["genome_id"],
+      fields: [{ id: "genome_id", label: "Genome ID", visible: true }],
+    });
+
+    await expect(blob?.text()).resolves.toBe(
+      'Genome ID\n"\'=1+1 ""quoted"""',
+    );
+  });
+
   it("does not treat an empty displayed-column selection as all columns", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")

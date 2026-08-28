@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import type { RowSelectionState } from "@tanstack/react-table";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ListData } from "@/components/services/list-data";
-import { GenomeShell } from "@/components/genome/genome-shell";
+import { ResourceWorkspace } from "@/components/views/resource-workspace";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
 import {
   SearchActionBar,
@@ -13,6 +13,12 @@ import {
 } from "@/components/search/search-action-bar";
 import { VerticalMenu } from "@/components/ui/vertical-menu";
 import { Button } from "@/components/ui/button";
+import {
+  searchHref,
+  searchTabsByType,
+  searchTypes as searchDescriptors,
+} from "@/constants/search-info";
+import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
 import {
   ChevronLeft,
   ChevronRight,
@@ -42,61 +48,19 @@ export interface TypeSearchProps {
   searchtype?: string | null;
 }
 
-// ---- Type for search types ----
-type SearchTypesMap = Record<string, Record<string, string>>;
-
-const searchTypes: SearchTypesMap = {
-  genome: {
-    genome: "Genomes",
-  },
-  genome_amr: {
-    genome_amr: "AMR Phenotypes",
-  },
-  genome_sequence: {
-    genome_sequence: "Sequences",
-  },
-  genome_feature: {
-    genome_feature: "Features",
-  },
-  epitope: {
-    epitope: "Epitopes",
-  },
-  experiment: {
-    experiment: "Experiments",
-    bioset: "Biosets",
-  },
-  protein_feature: {
-    protein_feature: "Domains and Motifs",
-  },
-  protein_structure: {
-    protein_structure: "Protein Structures",
-  },
-  serology: {
-    serology: "Serology",
-  },
-  strain: {
-    strain: "Strains",
-  },
-  surveillance: {
-    surveillance: "Surveillance",
-  },
-  taxonomy: {
-    taxonomy: "Taxa",
-  },
-};
-
 interface TabsRendererProps {
   activeTab: string;
   setActiveTab: (v: string) => void;
   urlType: string;
   urlQ: string;
-  tabsForType: Record<string, string>;
+  tabsForType: Readonly<Record<string, string>>;
   tablist: string[];
   rowSelection: RowSelectionState;
   setRowSelection: (selection: RowSelectionState) => void;
   pageIndex: number;
   setPageIndex: (page: number) => void;
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedGenomeId: (id: string | null) => void;
   selectedIds: string[];
   isAllPagesSelected: boolean;
   setIsAllPagesSelected: (selected: boolean) => void;
@@ -119,6 +83,7 @@ function TabsRenderer({
   pageIndex,
   setPageIndex,
   setSelectedIds,
+  setSelectedGenomeId,
   selectedIds,
   isAllPagesSelected,
   setIsAllPagesSelected,
@@ -146,6 +111,7 @@ function TabsRenderer({
     setActiveTab(newTab);
     setRowSelection({});
     setSelectedIds([]);
+    setSelectedGenomeId(null);
     setIsAllPagesSelected(false);
   };
 
@@ -219,6 +185,9 @@ function TabsRenderer({
 
                 return Array.from(next);
               });
+            }}
+            onSelectedRowChange={(row) => {
+              setSelectedGenomeId(genomeIdFromRow(row));
             }}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
@@ -307,10 +276,11 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
 
   // Determine which tab group to render based on urlType (thistype)
   const thistype = urlType || "genome";
-  const tabsForType = searchTypes[thistype] ?? searchTypes["genome"];
+  const tabsForType = searchTabsByType[thistype] ?? searchTabsByType["genome"];
   const tablist = Object.keys(tabsForType);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
@@ -322,6 +292,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setPrevUrlKey(urlKey);
     setRowSelection({});
     setSelectedIds([]);
+    setSelectedGenomeId(null);
     setPageIndex(0);
     setIsAllPagesSelected(false);
     setTotalItems(0);
@@ -367,7 +338,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     activeGroup =
       directGroup?.key ??
       searchTypeMenuItems.find((item) =>
-        Object.hasOwn(searchTypes[item.key] ?? {}, urlType),
+        Object.hasOwn(searchTabsByType[item.key] ?? {}, urlType),
       )?.key ??
       "genome";
   }
@@ -384,6 +355,13 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
           `/search${params.toString() ? `?${params.toString()}` : ""}`,
         );
       } else {
+        const descriptor = searchDescriptors.find(
+          (searchType) => searchType.id === item.key,
+        );
+        if (descriptor?.route.status === "canonical") {
+          router.push(searchHref(descriptor, urlQ));
+          return;
+        }
         params.set("type", item.key);
         if (urlQ) params.set("q", urlQ);
         router.push(`/search?${params.toString()}`);
@@ -427,7 +405,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
 
       {/* Main content */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <GenomeShell
+        <ResourceWorkspace
           hasSidePanel={!!activeGenomeId}
           actionBar={
             <SearchActionBar
@@ -439,6 +417,11 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
               // taxonOverview is enabled only in the taxon-view (which wires the
               // handler); /search has no handler yet, so keep it disabled here.
               disabledActions={{ taxonOverview: notReady }}
+              onAction={(actionId) => {
+                if (actionId === "genome" && selectedGenomeId) {
+                  router.push(genomeHref(selectedGenomeId));
+                }
+              }}
             />
           }
           sidePanel={
@@ -463,13 +446,14 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             pageIndex={pageIndex}
             setPageIndex={setPageIndex}
             setSelectedIds={setSelectedIds}
+            setSelectedGenomeId={setSelectedGenomeId}
             selectedIds={selectedIds}
             isAllPagesSelected={isAllPagesSelected}
             setIsAllPagesSelected={setIsAllPagesSelected}
             totalItems={totalItems}
             setTotalItems={setTotalItems}
           />
-        </GenomeShell>
+        </ResourceWorkspace>
       </div>
     </div>
   );

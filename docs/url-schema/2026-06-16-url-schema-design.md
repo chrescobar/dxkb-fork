@@ -1,8 +1,8 @@
 # URL Schema Expansion for All View Types — Design
 
 **Date:** 2026-06-16
-**Status:** Approved (design), pending implementation plan
-**Scope:** URL schema contract + Next.js App Router routing skeleton (no real data views)
+**Status:** Approved; amended 2026-08-27 for the shared view prerequisite and Genome Phase 1
+**Scope:** URL schema contract, routing skeleton, and production collection/member conventions
 
 ---
 
@@ -12,7 +12,7 @@ Define and scaffold a single, consistent URL schema for all DXKB view types, rep
 the legacy BV-BRC `/view/{ViewType}/...` hash-based scheme. This document is the routing
 contract every later view-implementation effort builds against.
 
-The legacy reference (what we are migrating *from*) is documented in
+The legacy reference (what we are migrating _from_) is documented in
 `docs/url-schema/bvbrc-view-types-url-parameters.md`.
 
 ### Deliverable
@@ -42,7 +42,7 @@ dxkb.org/{segment}[/{entityId}]?tab={tab}&{filters}
   URL identity of the type.
 - **Bare segment** (`/genome`) = **List view** (search/browse results).
 - **Segment + id** (`/genome/59201.7581`) = **Singular view** (one record).
-- **`?tab=`** — the active tab (the items in `landing-nav.tsx`). Applies to *both* list and
+- **`?tab=`** — the active tab (the items in `landing-nav.tsx`). Applies to _both_ list and
   singular views. The default tab is omitted from the URL.
 - **`{filters}`** — list-view query params (friendly named params and/or `?rql=`).
 
@@ -72,18 +72,18 @@ explicitly with `notFound()` instead (see §2.4).
 
 ### 2.4 The 10 segments
 
-| segment | singular route | list route | entity id | id kind | legacy singular / list |
-|---|---|---|---|---|---|
-| `taxonomy` | `/taxonomy/{taxonId}` | `/taxonomy` | NCBI taxon id | int | Taxonomy / TaxonList |
-| `genome` | `/genome/{genomeId}` | `/genome` | BV-BRC genome id (`59201.7581`) | string | Genome / GenomeList |
-| `feature` | `/feature/{featureId}` | `/feature` | PATRIC feature id | string | Feature / FeatureList |
-| `epitope` | `/epitope/{epitopeId}` | `/epitope` | epitope id | string | Epitope / EpitopeList |
-| `surveillance` | `/surveillance/{sampleId}` | `/surveillance` | sample identifier | string | Surveillance / SurveillanceList |
-| `serology` | `/serology/{sampleId}` | `/serology` | sample identifier | string | Serology / SerologyList |
-| `strain` | — (none) | `/strain` | — | — | — / StrainList |
-| `domains-and-motifs` | — (none) | `/domains-and-motifs` | — | — | — / DomainsAndMotifsList |
-| `protein-structure` | `/protein-structure?accession=…` | `/protein-structure` | accession or workspace path (no path id) | none | ProteinStructure / ProteinStructureList |
-| `experiment` | `/experiment/{experimentId}` | `/experiment` | experiment id | int | ExperimentComparison / ExperimentList |
+| segment              | singular route                   | list route            | entity id                                | id kind | legacy singular / list                  |
+| -------------------- | -------------------------------- | --------------------- | ---------------------------------------- | ------- | --------------------------------------- |
+| `taxonomy`           | `/taxonomy/{taxonId}`            | `/taxonomy`           | NCBI taxon id                            | int     | Taxonomy / TaxonList                    |
+| `genome`             | `/genome/{genomeId}`             | `/genome`             | BV-BRC genome id (`59201.7581`)          | string  | Genome / GenomeList                     |
+| `feature`            | `/feature/{featureId}`           | `/feature`            | PATRIC feature id                        | string  | Feature / FeatureList                   |
+| `epitope`            | `/epitope/{epitopeId}`           | `/epitope`            | epitope id                               | string  | Epitope / EpitopeList                   |
+| `surveillance`       | `/surveillance/{sampleId}`       | `/surveillance`       | sample identifier                        | string  | Surveillance / SurveillanceList         |
+| `serology`           | `/serology/{sampleId}`           | `/serology`           | sample identifier                        | string  | Serology / SerologyList                 |
+| `strain`             | — (none)                         | `/strain`             | —                                        | —       | — / StrainList                          |
+| `domains-and-motifs` | — (none)                         | `/domains-and-motifs` | —                                        | —       | — / DomainsAndMotifsList                |
+| `protein-structure`  | `/protein-structure?accession=…` | `/protein-structure`  | accession or workspace path (no path id) | none    | ProteinStructure / ProteinStructureList |
+| `experiment`         | `/experiment/{experimentId}`     | `/experiment`         | experiment id                            | int     | ExperimentComparison / ExperimentList   |
 
 \* Legacy singular uses `ExperimentComparison` as the URL segment (not `Experiment`). The bare `Experiment` viewer is workspace-only with no public URL. Both singular and list routes are scaffolded.
 
@@ -117,13 +117,30 @@ dxkb.org/genome/59201.7581?tab=features                                # genome 
 dxkb.org/feature/PATRIC.83332.707.NC_000962.CDS.1.1524.fwd            # feature singular, default tab (overview); dotted PATRIC id in path
 dxkb.org/surveillance/ISDN123456?pathogen_test_type=Influenza%20A      # surveillance singular; named query param carried verbatim
 dxkb.org/experiment/2000000                                            # experiment singular (legacy: ExperimentComparison), default tab
-dxkb.org/genome?keyword=influenza                                      # genome LIST, friendly keyword search → keyword(influenza)
-dxkb.org/genome?taxon_id=1763                                          # genome LIST, friendly filter → eq(taxon_id,1763)
+dxkb.org/genome?keyword=influenza                                      # genome LIST, debounced token-prefix search → keyword(influenza*)
+dxkb.org/genome?taxon_id=1763                                          # genome LIST, friendly filter → eq(taxon_lineage_ids,1763)
+dxkb.org/genome?genome_status=Complete&genome_status=WGS               # repeated facet values → or(eq(genome_status,Complete),eq(genome_status,WGS))
 dxkb.org/genome?rql=and(eq(taxon_lineage_ids,1763),gt(genomes,0))      # genome LIST, raw RQL escape hatch
 dxkb.org/protein-structure?accession=6VXX,7BZ5                        # protein-structure id-less singular; comma-separated PDB accessions
 dxkb.org/protein-structure?path=/user@bvbrc/home/mystructure.pdb       # protein-structure id-less singular; workspace file path
 dxkb.org/strain?keyword=H1N1                                           # strain LIST (list-only type — no singular route)
 ```
+
+### 2.8 Collection position and local state
+
+- Collection position uses one-based `?page=` and `?sort=field:asc|desc`.
+- Page 1 and the resource's default sort are omitted from canonical URLs.
+- Page size is fixed at 200 and is not URL state.
+- Selection and column visibility/order are transient local UI state, not URL state.
+- Explicit row selections persist across pages and sorting. They clear when keyword, facets,
+  structural scope, or resource changes. "All matching" is symbolic query state and follows the
+  same reset rule.
+- Keywords are tokenized, prefix-matched, committed after a short debounce, and URL-backed.
+- Facets are URL-backed and multi-value. Repeated values for one field are ORed; separate fields
+  are ANDed. Facet counts remain constrained by the active query, including that facet's values.
+- Changing keyword, structural filters, facets, or sort resets the page to 1. URL updates
+  preserve unrelated parameters. Collection parameters are unprefixed; changing resource tabs
+  removes parameters invalid for the destination resource.
 
 ---
 
@@ -152,22 +169,23 @@ avoids a speculative discriminated-union dispatcher over the ~5 physical shapes.
 
 ```ts
 interface ViewTypeEntry {
-  segment: string;             // "genome" — route folder + URL identity
-  label: string;               // "Genome"
-  legacySingular?: string;     // "Genome"      — legacy redirect source (reverse-mapped)
-  legacyList?: string;         // "GenomeList"   — legacy redirect source
-  searchType?: string;         // "genome" from constants/searchInfo.ts — for search repoint (deferred)
+  segment: string; // "genome" — route folder + URL identity
+  label: string; // "Genome"
+  legacySingular?: string; // "Genome"      — legacy redirect source (reverse-mapped)
+  legacyList?: string; // "GenomeList"   — legacy redirect source
+  searchType?: string; // "genome" from constants/searchInfo.ts — for search repoint (deferred)
 
-  singular?: {                 // omitted ⇒ list-only type (strain, domains-and-motifs)
-    idParam: string;           // "genomeId" — the [genomeId] folder name
-    idKind: "int" | "string" | "none";  // validation; "none" ⇒ id-less (protein-structure)
-    defaultTab: string;        // "overview"
+  singular?: {
+    // omitted ⇒ list-only type (strain, domains-and-motifs)
+    idParam: string; // "genomeId" — the [genomeId] folder name
+    idKind: "int" | "string" | "none"; // validation; "none" ⇒ id-less (protein-structure)
+    defaultTab: string; // "overview"
   };
 
   list: {
-    endpoint: string;          // BV-BRC data endpoint, e.g. "genome"
-    defaultTab: string;        // "genomes" | "taxons" | "overview" | ...
-    friendlyParams: string[];  // ["keyword","taxon_id"] — translated to RQL
+    endpoint: string; // BV-BRC data endpoint, e.g. "genome"
+    defaultTab: string; // "genomes" | "taxons" | "overview" | ...
+    friendlyParams: string[]; // ["keyword","taxon_id"] — translated to RQL
   };
 }
 ```
@@ -196,15 +214,48 @@ Each is a single loop over `viewRegistry`:
 
 `src/lib/views/rql.ts` converts list-view query strings into the backend RQL dialect.
 
-- **Friendly named params** → RQL: `?taxon_id=1763` → `eq(taxon_id,1763)`;
-  `?keyword=influenza` → `keyword(influenza)`. Allowed param names per type come from the
-  registry `list.friendlyParams`.
-- **Raw escape hatch**: `?rql=` is passed through (after validation/sanitization).
-- **Precedence**: an explicit `?rql=` wins; otherwise friendly params are composed with
-  `and(...)` when more than one is present.
+- **Friendly named params** → typed RQL: `?taxon_id=1763` maps to the resource's lineage
+  field; `?keyword=influenza` becomes `keyword(influenza*)`. Multiple keyword tokens are
+  ANDed.
+- **Multi-value facets** use repeated parameters. Values for one field are ORed and separate
+  fields are ANDed.
+- **Raw escape hatch**: `?rql=` is accepted after validation/sanitization.
+- **Precedence**: an explicit `?rql=` wins over friendly structural facets; keyword remains
+  independently combinable with either form.
 - **Named special params** (carried verbatim/mapped per legacy doc): `pathogen_test_type`
   (surveillance), `test_type` (serology), `accession`/`path` (protein-structure),
   `filter` (feature list grid default).
+
+### 4.1 Shared Data API contract
+
+Production views use `src/lib/data-api/` through the same-origin
+`/api/data/[resource]` gateway. Supported resources are `genome`, `genome_feature`,
+`epitope`, `epitope_assay`, `surveillance`, `serology`, `strain`, `protein_feature`,
+`protein_structure`, `experiment`, `bioset`, `genome_sequence`, and `ppi`.
+
+The resource registry owns each stable ID and any permitted alternate member identifiers:
+`genome_id`, `feature_id` (alternate `patric_id`), `epitope_id`, `assay_id`, `id`, `id`,
+`id`, `id`, `pdb_id`, `exp_id`, `bioset_id`, `sequence_id`, and `id`, respectively.
+Surveillance additionally permits `sample_identifier` and multivalued
+`pathogen_test_type`; Serology permits `sample_identifier` and scalar `test_type` for
+compound member lookup. An `eq()` clause is a backend match predicate and does not imply
+scalar cardinality. Public identifiers remain strings even when digit-only.
+
+Each registered field declares its type, allowed RQL operators, and whether it may be
+selected, sorted, or faceted, plus its RQL quoting policy. String and boolean fields allow
+`eq`, `ne`, and `in`; number and date fields additionally allow `lt`, `le`, `gt`, and `ge`.
+The gateway rejects unknown resources, identifiers, fields, field/operator combinations,
+sorts, facets, operations, and unbounded requests before contacting the upstream service.
+It normalizes collection, member, selected-row, and bounded-export results; collection sorts
+append the stable ID as a deterministic tie-break. Exports are limited to 10,000 total rows,
+and backend projections always include the resource ID required for response validation.
+
+Upstream item ranges have an exclusive end: `items=0-200` yields 200 rows. Thus page `p`
+uses `start = (p - 1) * 200` and `end = start + 200`. Anonymous public member responses may
+be shared for five minutes (`s-maxage=300`); authenticated/private responses, collections,
+selected rows, and exports are `no-store`. The gateway preserves client-safe upstream
+`401`, `403`, `404`, and `429` statuses and maps other upstream failures to `502` while
+retaining a concise meaningful message.
 
 ---
 
@@ -293,6 +344,27 @@ parse/validate/resolve logic lives once in the shells.
 - `protein-structure/page.tsx` — branches on `?accession=` / `?path=` (id-less singular)
   vs no params (list). Own body; calls shells as appropriate.
 - `strain`, `domains-and-motifs` — list `page.tsx` only, no `[id]` folder.
+
+### 5.6 Production views after the scaffold
+
+The registry remains enumerable, data-only route metadata, but the scaffold factories are
+not the production architecture for every route. Implemented views own explicit route
+composition under `src/app/(views)/<segment>/`, use shared collection/entity mechanics from
+`src/components/views/` and `src/hooks/views/`, and keep domain schemas, queries, columns,
+and tabs close to the route.
+
+Genome Phase 1 replaces both scaffold handlers with explicit routes:
+
+- `/genome` is a focused Genome collection backed by the `genome` resource. It supports
+  `keyword`, `taxon_id` (mapped to `taxon_lineage_ids`), `rql`, `page`, and validated `sort`;
+  it is not the legacy multi-resource GenomeList tab strip.
+- `/genome/{genomeId}` validates and fetches the exact `genome_id`, renders the member
+  overview, and owns explicit member-tab composition.
+- Genome member tabs are Overview, Genome Browser, Sequences, Features, Proteins, Protein
+  Structures, Domains and Motifs, Experiments, and Interactions. Tabs ship only when backed
+  by a current component and exact `genome_id` query contract; unavailable dependency-phase
+  tabs are capability-gated rather than rendered as placeholders. The default Overview tab
+  is omitted from the URL.
 
 ---
 
@@ -416,32 +488,32 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 
 ## 10. Risks & Problems
 
-| # | Risk / problem | Likelihood | Impact | Mitigation |
-|---|---|---|---|---|
-| R1 | **Genome/feature ids contain dots/special chars** (`59201.7581`, PATRIC ids). | High (normal data) | Routing breakage | Next dynamic `[genomeId]` segments accept dots; explicitly unit/E2E test a dotted id and a PATRIC id end-to-end. |
-| R2 | **Middleware `/view/*` matcher over-matches** or collides with the auth matcher. | Medium | Wrong redirects / auth regressions | Scope the matcher precisely; unit-test that non-`/view` and auth paths are untouched; verify the existing auth redirects still fire. |
-| R3 | **Hash → `?tab=` Stage-2 flash.** Deep-linked legacy hash links briefly render the default tab before the client rewrite. | Medium | Minor visual flash on legacy links only | Use `history.replaceState` (no reload); accept minor flash; document. New `?tab=` links are unaffected (server-rendered). |
-| R4 | **Legacy name → segment reverse-map is incomplete** (a legacy name maps to nothing). | Low | 404 on inbound legacy link | Derive the table from the registry; unit-test totality (every `legacySingular`/`legacyList` resolves). |
-| R5 | **`?view=` rename breaks day-old links / tests.** | High (it will) until migrated | Broken tab nav / red CI | Do the rename + the `view`→`tab` redirect together (§6.1); update tests in the same change. |
-| R6 | **Coverage floor trips** on the skeleton PR. | Low | Red CI | New pure `rql.ts` + registry tests *raise* measured coverage; do not lower floors. |
-| R7 | **React Compiler + `LegacyHashAdapter`** (a client hook-bearing component) gets mis-memoized. | Low | Subtle client bug | Follow `AGENTS.md` rules; add `"use no memo"` if it uses an incompatible hook; let the `react-hooks/incompatible-library` lint be the signal. |
-| R8 | **`protein-structure` dual-mode page** (list vs id-less singular) is an inconsistent shape vs the other 9. | Medium | Confusing/edge bugs | Keep its own explicit `page.tsx` body (no forced registry dispatch); cover both `?accession=` and `?path=` branches with tests. |
-| R9 | **Premature registry abstraction** if the 10 types diverge more than expected. | Low | Rework | Registry is **data-only**; render stays per-page, so divergence is absorbed in page bodies, not the table. The table only holds genuinely shared metadata. |
-| R10 | **`force-dynamic` everywhere** forgoes caching for high-traffic singulars. | Medium (perf, later) | Slower pages at scale | Acceptable for the skeleton; revisit with SSG/ISR in 8.4. |
-| R11 | **Taxonomy name-as-id** legacy form (`/view/Taxonomy/Brucella`). | Low | A legacy *name* deep link 404s | The shipped `taxonomy/[taxonId]/page.tsx` is **int-only** (`notFound()` on non-integers), so `idKind: "int"` matches reality. Stage-1 still rewrites `/view/Taxonomy/Brucella` → `/taxonomy/Brucella`, which then 404s. Name→id resolution is **not** built in this effort; if inbound name links prove common, add a name-resolution branch later (the legacy `TaxonList` name-resolution query is documented in the legacy doc). Numeric ids (the overwhelmingly common form) work. |
+| #   | Risk / problem                                                                                                            | Likelihood                    | Impact                                  | Mitigation                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | **Genome/feature ids contain dots/special chars** (`59201.7581`, PATRIC ids).                                             | High (normal data)            | Routing breakage                        | Next dynamic `[genomeId]` segments accept dots; explicitly unit/E2E test a dotted id and a PATRIC id end-to-end.                                                                                                                                                                                                                                                                                                                                                                      |
+| R2  | **Middleware `/view/*` matcher over-matches** or collides with the auth matcher.                                          | Medium                        | Wrong redirects / auth regressions      | Scope the matcher precisely; unit-test that non-`/view` and auth paths are untouched; verify the existing auth redirects still fire.                                                                                                                                                                                                                                                                                                                                                  |
+| R3  | **Hash → `?tab=` Stage-2 flash.** Deep-linked legacy hash links briefly render the default tab before the client rewrite. | Medium                        | Minor visual flash on legacy links only | Use `history.replaceState` (no reload); accept minor flash; document. New `?tab=` links are unaffected (server-rendered).                                                                                                                                                                                                                                                                                                                                                             |
+| R4  | **Legacy name → segment reverse-map is incomplete** (a legacy name maps to nothing).                                      | Low                           | 404 on inbound legacy link              | Derive the table from the registry; unit-test totality (every `legacySingular`/`legacyList` resolves).                                                                                                                                                                                                                                                                                                                                                                                |
+| R5  | **`?view=` rename breaks day-old links / tests.**                                                                         | High (it will) until migrated | Broken tab nav / red CI                 | Do the rename + the `view`→`tab` redirect together (§6.1); update tests in the same change.                                                                                                                                                                                                                                                                                                                                                                                           |
+| R6  | **Coverage floor trips** on the skeleton PR.                                                                              | Low                           | Red CI                                  | New pure `rql.ts` + registry tests _raise_ measured coverage; do not lower floors.                                                                                                                                                                                                                                                                                                                                                                                                    |
+| R7  | **React Compiler + `LegacyHashAdapter`** (a client hook-bearing component) gets mis-memoized.                             | Low                           | Subtle client bug                       | Follow `AGENTS.md` rules; add `"use no memo"` if it uses an incompatible hook; let the `react-hooks/incompatible-library` lint be the signal.                                                                                                                                                                                                                                                                                                                                         |
+| R8  | **`protein-structure` dual-mode page** (list vs id-less singular) is an inconsistent shape vs the other 9.                | Medium                        | Confusing/edge bugs                     | Keep its own explicit `page.tsx` body (no forced registry dispatch); cover both `?accession=` and `?path=` branches with tests.                                                                                                                                                                                                                                                                                                                                                       |
+| R9  | **Premature registry abstraction** if the 10 types diverge more than expected.                                            | Low                           | Rework                                  | Registry is **data-only**; render stays per-page, so divergence is absorbed in page bodies, not the table. The table only holds genuinely shared metadata.                                                                                                                                                                                                                                                                                                                            |
+| R10 | **`force-dynamic` everywhere** forgoes caching for high-traffic singulars.                                                | Medium (perf, later)          | Slower pages at scale                   | Acceptable for the skeleton; revisit with SSG/ISR in 8.4.                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| R11 | **Taxonomy name-as-id** legacy form (`/view/Taxonomy/Brucella`).                                                          | Low                           | A legacy _name_ deep link 404s          | The shipped `taxonomy/[taxonId]/page.tsx` is **int-only** (`notFound()` on non-integers), so `idKind: "int"` matches reality. Stage-1 still rewrites `/view/Taxonomy/Brucella` → `/taxonomy/Brucella`, which then 404s. Name→id resolution is **not** built in this effort; if inbound name links prove common, add a name-resolution branch later (the legacy `TaxonList` name-resolution query is documented in the legacy doc). Numeric ids (the overwhelmingly common form) work. |
 
 ---
 
 ## 11. Summary of Locked Decisions
 
-| Decision | Choice |
-|---|---|
-| Deliverable | Schema + routing skeleton (no real data views) |
-| List ↔ singular | Combined: bare segment = list, `+id` = singular → **10 segments** |
-| Segment casing | lowercase kebab-case |
-| Tab param | `?tab=` (query, server-readable), migrated from `?view=` |
-| Architecture | Data-driven view **registry** (data-only, render stays per-page) |
-| List query format | Friendly named params **+** `?rql=` escape hatch |
-| Oddballs | All 10 documented; scaffold the real ones; list-only → `notFound()` on `[id]`; protein-structure id-less; experiment singular uses legacy name `ExperimentComparison` |
-| Redirects (build now) | Internal `view`→`tab` + legacy `/view/*` two-stage (server path/query + client hash) |
-| Deferred | Real list/singular data, search repoint, sitemap/JSON-LD/ISR |
+| Decision              | Choice                                                                                                                                                                |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deliverable           | Schema + routing skeleton for all view types, plus the implemented Genome Phase 1 collection and member views                                                       |
+| List ↔ singular       | Combined: bare segment = list, `+id` = singular → **10 segments**                                                                                                     |
+| Segment casing        | lowercase kebab-case                                                                                                                                                  |
+| Tab param             | `?tab=` (query, server-readable), migrated from `?view=`                                                                                                              |
+| Architecture          | Data-driven view **registry** (data-only, render stays per-page)                                                                                                      |
+| List query format     | Friendly named params **+** `?rql=` escape hatch                                                                                                                      |
+| Oddballs              | All 10 documented; scaffold the real ones; list-only → `notFound()` on `[id]`; protein-structure id-less; experiment singular uses legacy name `ExperimentComparison` |
+| Redirects (build now) | Internal `view`→`tab` + legacy `/view/*` two-stage (server path/query + client hash)                                                                                  |
+| Deferred              | Real list/singular data for the remaining scaffolded types, search repoint, sitemap/JSON-LD/ISR                                                                       |

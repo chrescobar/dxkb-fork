@@ -15,21 +15,23 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-interface LandingNavProps {
-  items: readonly OrganismLandingNavItem[];
-  activeView: OrganismViewKey;
+interface LandingNavProps<Key extends string = OrganismViewKey> {
+  items: readonly OrganismLandingNavItem<Key>[];
+  activeView: Key;
+  ariaLabel?: string;
   collapsed: boolean;
-  onChange: (view: OrganismViewKey) => void;
+  onChange: (view: Key) => void;
   onCollapseToggle: () => void;
 }
 
-export function LandingNav({
+export function LandingNav<Key extends string>({
   items,
   activeView,
+  ariaLabel = "Organism views",
   collapsed,
   onChange,
   onCollapseToggle,
-}: LandingNavProps) {
+}: LandingNavProps<Key>) {
   const [isMac] = useState(
     () =>
       typeof navigator !== "undefined" &&
@@ -40,7 +42,7 @@ export function LandingNav({
 
   return (
     <nav
-      aria-label="Organism views"
+      aria-label={ariaLabel}
       className={cn(
         "sticky top-4 h-fit shrink-0 rounded-lg border bg-card text-card-foreground shadow-sm transition-[width] duration-150 ease-out",
         collapsed ? "w-14" : "w-56",
@@ -61,8 +63,8 @@ export function LandingNav({
                 size="icon-sm"
                 aria-label={
                   collapsed
-                    ? "Expand organism navigation"
-                    : "Collapse organism navigation"
+                    ? "Expand view navigation"
+                    : "Collapse view navigation"
                 }
                 onClick={onCollapseToggle}
                 className={collapsed ? "mx-auto" : "ml-auto"}
@@ -95,7 +97,11 @@ export function LandingNav({
               <span
                 key={item.key}
                 tabIndex={0}
-                aria-label={item.disabledReason ? `${item.label}: ${item.disabledReason}` : item.label}
+                aria-label={
+                  item.disabledReason
+                    ? `${item.label}: ${item.disabledReason}`
+                    : item.label
+                }
               >
                 <Button
                   type="button"
@@ -123,7 +129,9 @@ export function LandingNav({
             return (
               <Tooltip key={item.key}>
                 <TooltipTrigger render={disabledButton} />
-                <TooltipContent side="right">{item.disabledReason}</TooltipContent>
+                <TooltipContent side="right">
+                  {item.disabledReason}
+                </TooltipContent>
               </Tooltip>
             );
           }
@@ -135,7 +143,9 @@ export function LandingNav({
               variant={isActive ? "secondary" : "ghost"}
               aria-current={isActive ? "page" : undefined}
               title={collapsed ? item.label : undefined}
-              onClick={() => { onChange(item.key); }}
+              onClick={() => {
+                onChange(item.key);
+              }}
               className={cn("justify-start px-2", isActive && "font-semibold")}
             >
               {buttonContent}

@@ -2,11 +2,13 @@
 
 import { Suspense, useRef, useState } from "react";
 import type { RowSelectionState } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 
-import { GenomeShell } from "@/components/genome/genome-shell";
+import { ResourceWorkspace } from "@/components/views/resource-workspace";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
 import { ListData } from "@/components/services/list-data";
 import { SearchActionBar } from "@/components/search/search-action-bar";
+import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
 
 interface TaxonDataPanelProps {
   resource: string;
@@ -26,12 +28,14 @@ export function TaxonDataPanel({
   keywordValue,
   onKeywordChange,
 }: TaxonDataPanelProps) {
+  const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
   // Debounce empty-selection by 120ms so the panel doesn't flicker when
   // clicking rapidly between rows (mirrors TypeSearch.activeGenomeId logic).
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,18 +47,25 @@ export function TaxonDataPanel({
       setActiveId(ids[ids.length - 1] ?? null);
     } else {
       if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => { setActiveId(null); }, 120);
+      debounceRef.current = setTimeout(() => {
+        setActiveId(null);
+      }, 120);
     }
   }
 
   return (
-    <GenomeShell
+    <ResourceWorkspace
       hasSidePanel={!!activeId}
       actionBar={
         <SearchActionBar
           selectedCount={isAllPagesSelected ? totalItems : selectedIds.length}
           searchType={resource}
           guideUrl={guideUrl}
+          onAction={(actionId) => {
+            if (actionId === "genome" && selectedGenomeId) {
+              router.push(genomeHref(selectedGenomeId));
+            }
+          }}
         />
       }
       sidePanel={
@@ -67,12 +78,19 @@ export function TaxonDataPanel({
         />
       }
     >
-      <Suspense fallback={<div className="size-full animate-pulse rounded-lg bg-muted" />}>
+      <Suspense
+        fallback={
+          <div className="size-full animate-pulse rounded-lg bg-muted" />
+        }
+      >
         <ListData
           resource={resource}
           q={q}
           selectedIds={selectedIds}
           onSelectionChange={handleSelectionChange}
+          onSelectedRowChange={(row) => {
+            setSelectedGenomeId(genomeIdFromRow(row));
+          }}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           pageIndex={pageIndex}
@@ -85,6 +103,6 @@ export function TaxonDataPanel({
           onKeywordChange={onKeywordChange}
         />
       </Suspense>
-    </GenomeShell>
+    </ResourceWorkspace>
   );
 }

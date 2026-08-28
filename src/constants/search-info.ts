@@ -1,79 +1,175 @@
+import { viewRegistry } from "@/lib/views/view-registry";
+
+export type SearchRoute =
+  { status: "legacy" } | { status: "canonical"; segment: string };
+
 export interface SearchType {
   id: string;
   typeTitle: string;
+  route: SearchRoute;
+  tabs?: Readonly<Record<string, string>>;
+  pickerOrder?: number;
+  allTermOrder?: number;
 }
 
-export const searchTypes: readonly SearchType[] = [
+export function searchHref(searchType: SearchType, query: string): string {
+  if (searchType.route.status === "canonical") {
+    return `/${searchType.route.segment}?keyword=${encodeURIComponent(query)}`;
+  }
+  return `/search?type=${searchType.id}&q=${encodeURIComponent(query)}`;
+}
+
+export const searchDescriptors: readonly SearchType[] = [
   {
     id: "everything",
     typeTitle: "All Data Types",
-  },
-  {
-    id: "genome",
-    typeTitle: "Genomes",
-  },
-  {
-    id: "strain",
-    typeTitle: "Strains",
-  },
-  {
-    id: "genome_feature",
-    typeTitle: "Features",
-  },
-  /*
-  {
-    id: "protein",
-    typeTitle: "Proteins",
-  },
-  */
-  /*
-  {
-    id: "sp_gene",
-    typeTitle: "Specialty Genes",
-  },
-  */
-  {
-    id: "protein_feature",
-    typeTitle: "Domains and Motifs",
-  },
-  {
-    id: "epitope",
-    typeTitle: "Epitopes",
-  },
-  {
-    id: "protein_structure",
-    typeTitle: "Protein Structures",
-  },
-  /*
-  {
-    id: "pathway",
-    typeTitle: "Pathways",
-  },
-  {
-    id: "subsystem",
-    typeTitle: "Subsystems",
-  },
-  */
-  {
-    id: "surveillance",
-    typeTitle: "Surveillance",
-  },
-  {
-    id: "serology",
-    typeTitle: "Serology",
+    route: { status: "legacy" },
+    pickerOrder: 0,
   },
   {
     id: "taxonomy",
     typeTitle: "Taxa",
+    route: { status: "legacy" },
+    tabs: { taxonomy: "Taxa" },
+    pickerOrder: 9,
+    allTermOrder: 0,
+  },
+  {
+    id: "genome",
+    typeTitle: "Genomes",
+    route: { status: "canonical", segment: viewRegistry.genome.segment },
+    tabs: { genome: "Genomes" },
+    pickerOrder: 1,
+    allTermOrder: 1,
+  },
+  {
+    id: "genome_amr",
+    typeTitle: "AMR Phenotypes",
+    route: { status: "legacy" },
+    tabs: { genome_amr: "AMR Phenotypes" },
+  },
+  {
+    id: "genome_sequence",
+    typeTitle: "Genomic Sequences",
+    route: { status: "legacy" },
+    tabs: { genome_sequence: "Sequences" },
+    allTermOrder: 14,
+  },
+  {
+    id: "strain",
+    typeTitle: "Strains",
+    route: { status: "legacy" },
+    tabs: { strain: "Strains" },
+    pickerOrder: 2,
+    allTermOrder: 2,
+  },
+  {
+    id: "genome_feature",
+    typeTitle: "Features",
+    route: { status: "legacy" },
+    tabs: { genome_feature: "Features" },
+    pickerOrder: 3,
+    allTermOrder: 3,
+  },
+  {
+    id: "protein",
+    typeTitle: "Proteins",
+    route: { status: "legacy" },
+  },
+  {
+    id: "sp_gene",
+    typeTitle: "Specialty Genes",
+    route: { status: "legacy" },
+    allTermOrder: 4,
+  },
+  {
+    id: "protein_feature",
+    typeTitle: "Domains and Motifs",
+    route: { status: "legacy" },
+    tabs: { protein_feature: "Domains and Motifs" },
+    pickerOrder: 4,
+    allTermOrder: 5,
+  },
+  {
+    id: "epitope",
+    typeTitle: "Epitopes",
+    route: { status: "legacy" },
+    tabs: { epitope: "Epitopes" },
+    pickerOrder: 5,
+    allTermOrder: 6,
+  },
+  {
+    id: "protein_structure",
+    typeTitle: "Protein Structures",
+    route: { status: "legacy" },
+    tabs: { protein_structure: "Protein Structures" },
+    pickerOrder: 6,
+    allTermOrder: 7,
+  },
+  {
+    id: "pathway",
+    typeTitle: "Pathways",
+    route: { status: "legacy" },
+    allTermOrder: 8,
+  },
+  {
+    id: "subsystem",
+    typeTitle: "Subsystems",
+    route: { status: "legacy" },
+    allTermOrder: 9,
+  },
+  {
+    id: "surveillance",
+    typeTitle: "Surveillance",
+    route: { status: "legacy" },
+    tabs: { surveillance: "Surveillance" },
+    pickerOrder: 7,
+    allTermOrder: 10,
+  },
+  {
+    id: "serology",
+    typeTitle: "Serology",
+    route: { status: "legacy" },
+    tabs: { serology: "Serology" },
+    pickerOrder: 8,
+    allTermOrder: 11,
   },
   {
     id: "experiment",
     typeTitle: "Experiments",
+    route: { status: "legacy" },
+    tabs: { experiment: "Experiments", bioset: "Biosets" },
+    pickerOrder: 10,
+    allTermOrder: 12,
   },
-  /*
   {
-    id: "antibiotic",
-    typeTitle: "Antibiotic",
+    id: "antibiotics",
+    typeTitle: "Antibiotics",
+    route: { status: "legacy" },
+    allTermOrder: 13,
   },
-  */
 ];
+
+export const searchTypes = searchDescriptors
+  .filter((descriptor) => descriptor.pickerOrder !== undefined)
+  .toSorted((a, b) => (a.pickerOrder ?? 0) - (b.pickerOrder ?? 0));
+
+export const searchTabsByType: Readonly<
+  Record<string, Readonly<Record<string, string>>>
+> = Object.fromEntries(
+  searchDescriptors.flatMap((descriptor) =>
+    descriptor.tabs ? [[descriptor.id, descriptor.tabs]] : [],
+  ),
+);
+
+export const allTermSearchTypes = searchDescriptors
+  .filter((descriptor) => descriptor.allTermOrder !== undefined)
+  .toSorted((a, b) => (a.allTermOrder ?? 0) - (b.allTermOrder ?? 0));
+
+export const labelsBySearchType: Readonly<Record<string, string>> =
+  Object.fromEntries(
+    allTermSearchTypes.map((descriptor) => [
+      descriptor.id,
+      descriptor.typeTitle,
+    ]),
+  );

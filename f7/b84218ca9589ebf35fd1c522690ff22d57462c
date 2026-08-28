@@ -1,0 +1,22 @@
+e2e/tests/organisms/archaeopteryx.spec.ts
+  s_310157b08a70b5::t_c94e4ea55abad7 422
+  s_310157b08a70b5::t_c310ede61db7c2 421
+  s_310157b08a70b5::t_9efcf11903255b 419-420
+  s_310157b08a70b5::t_e61c03eae04031 415-418
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "f7b84218ca9589ebf35fd1c522690ff22d57462c",
+  "prompts": {},
+  "sessions": {
+    "s_310157b08a70b5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb741a929ffeogXXUkePRqtvZj",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

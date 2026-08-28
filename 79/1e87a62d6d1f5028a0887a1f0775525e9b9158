@@ -1,0 +1,19 @@
+e2e/tests/genome-view.spec.ts
+  s_d886babf1b1189::t_d5528245df1abd 106-114,116,121-122,129,131-132,134,137-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "791e87a62d6d1f5028a0887a1f0775525e9b9158",
+  "prompts": {},
+  "sessions": {
+    "s_d886babf1b1189": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb5d0739bffeiU6u4hQBfcdN6L",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DataApiError } from "@/lib/data-api/repository";
 
 const mocks = vi.hoisted(() => ({
@@ -15,13 +14,20 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 vi.mock("@/lib/feature-view/server", () => ({ getFeature: mocks.getFeature }));
+
+interface ResourceCollectionProps {
+  profile: { label: string; basePredicate?: string };
+}
+
+function ResourceCollection({ profile }: ResourceCollectionProps) {
+  return <div data-testid="resource-collection" data-rql={profile.basePredicate}>{profile.label}</div>;
+}
+
 vi.mock("@/components/views", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/components/views")>();
   return {
     ...original,
-    ResourceCollection: ({ profile }: { profile: { label: string; basePredicate?: string } }) => (
-      <div data-testid="resource-collection" data-rql={profile.basePredicate}>{profile.label}</div>
-    ),
+    ResourceCollection,
   };
 });
 

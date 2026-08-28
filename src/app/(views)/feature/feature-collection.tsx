@@ -4,11 +4,13 @@ import { Blocks } from "lucide-react";
 import type { CollectionState } from "@/lib/views/collection-state";
 import { EntityViewShell, FeatureResourceCollection } from "@/components/views";
 
+interface FeatureCollectionProps {
+  initialState: CollectionState;
+}
+
 export function FeatureCollection({
   initialState: _initialState,
-}: {
-  initialState: CollectionState;
-}) {
+}: FeatureCollectionProps) {
   return (
     <EntityViewShell
       viewLabel="Feature View"
@@ -18,7 +20,7 @@ export function FeatureCollection({
       defaultTab="features"
       layout="fill"
     >
-      <FeatureResourceCollection />
+      <FeatureResourceCollection initialState={_initialState} />
     </EntityViewShell>
   );
 }

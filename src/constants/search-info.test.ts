@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import { searchDescriptors, searchHref } from "./search-info";
 
 describe("search descriptors", () => {

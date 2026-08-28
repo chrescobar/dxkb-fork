@@ -3,6 +3,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { FeatureViewRecord } from "@/lib/feature-view";
 import { genomeHref, taxonomyHref } from "@/lib/views/hrefs";
 
+interface FieldProps {
+  label: string;
+  value: unknown;
+}
+
+interface LinkFieldProps extends FieldProps {
+  href?: string;
+}
+
+interface MetadataCardProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+interface FeatureOverviewProps {
+  feature: FeatureViewRecord;
+}
+
 function display(value: unknown): string {
   if (Array.isArray(value)) return value.map(String).join(", ");
   if (value == null || value === "") return "Not available";
@@ -14,10 +32,11 @@ function display(value: unknown): string {
   ) {
     return String(value);
   }
-  return JSON.stringify(value);
+  const stringify: (input: unknown) => string | undefined = JSON.stringify;
+  return stringify(value) ?? "Not available";
 }
 
-function Field({ label, value }: { label: string; value: unknown }) {
+function Field({ label, value }: FieldProps) {
   if (value == null || value === "") return null;
   return (
     <div>
@@ -27,7 +46,7 @@ function Field({ label, value }: { label: string; value: unknown }) {
   );
 }
 
-function LinkField({ label, value, href }: { label: string; value: unknown; href?: string }) {
+function LinkField({ label, value, href }: LinkFieldProps) {
   if (value == null || value === "") return null;
   return (
     <div>
@@ -39,7 +58,7 @@ function LinkField({ label, value, href }: { label: string; value: unknown; href
   );
 }
 
-function MetadataCard({ title, children }: { title: string; children: React.ReactNode }) {
+function MetadataCard({ title, children }: MetadataCardProps) {
   return (
     <Card>
       <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
@@ -48,7 +67,7 @@ function MetadataCard({ title, children }: { title: string; children: React.Reac
   );
 }
 
-export function FeatureOverview({ feature }: { feature: FeatureViewRecord }) {
+export function FeatureOverview({ feature }: FeatureOverviewProps) {
   return (
     <div className="grid gap-4 pb-6 xl:grid-cols-2">
       <MetadataCard title="Genome and source">

@@ -6,6 +6,7 @@ import {
   featureCollectionProfile,
   type FeatureViewRecord,
 } from "@/lib/feature-view";
+import type { CollectionState } from "@/lib/views/collection-state";
 import { useCollectionUrlState } from "@/hooks/views/use-collection-url-state";
 import { ResourceCollection } from "./resource-collection";
 
@@ -15,14 +16,17 @@ interface FeatureResourceCollectionProps {
   baseRql?: string;
   enableFacets?: boolean;
   enableRowLinks?: boolean;
+  initialState?: CollectionState;
 }
 
 export function FeatureResourceCollection({
   baseRql,
   enableFacets = true,
   enableRowLinks = true,
+  initialState,
 }: FeatureResourceCollectionProps) {
-  const [state, setState] = useCollectionUrlState(featureCollectionOptions);
+  const [urlState, setState] = useCollectionUrlState(featureCollectionOptions);
+  const state = initialState ?? urlState;
   return (
     <ResourceCollection<FeatureViewRecord>
       profile={

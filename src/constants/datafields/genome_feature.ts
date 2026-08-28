@@ -189,7 +189,7 @@ export const genomeFeatureFields = {
         },
     codon_start: { 
         label: 'Codon Start', 
-        field: 'codon_start',
+        field: "codon_start",
         hidden: true,
         group: 'Location',
         facet: false, 

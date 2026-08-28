@@ -4,13 +4,15 @@ import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { FeatureTab } from "@/lib/feature-view";
 
+interface FeatureTabCanonicalizerProps {
+  requestedTab: string | string[] | undefined;
+  activeTab: FeatureTab;
+}
+
 export function FeatureTabCanonicalizer({
   requestedTab,
   activeTab,
-}: {
-  requestedTab: string | string[] | undefined;
-  activeTab: FeatureTab;
-}) {
+}: FeatureTabCanonicalizerProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();

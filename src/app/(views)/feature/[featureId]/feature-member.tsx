@@ -30,7 +30,12 @@ function breadcrumbs(feature: FeatureViewRecord) {
   );
 }
 
-export function FeatureMember({ feature, activeTab }: { feature: FeatureViewRecord; activeTab: FeatureTab }) {
+interface FeatureMemberProps {
+  feature: FeatureViewRecord;
+  activeTab: FeatureTab;
+}
+
+export function FeatureMember({ feature, activeTab }: FeatureMemberProps) {
   const content = activeTab === "interactions" ? (
     <GenomeChildCollection
       resource="ppi"

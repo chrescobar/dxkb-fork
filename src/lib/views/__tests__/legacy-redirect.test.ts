@@ -34,7 +34,7 @@ describe("mapLegacyViewPath", () => {
     });
     expect(mapLegacyViewPath("/view/ProteinList/", "keyword=kinase")).toEqual({
       pathname: "/feature",
-      search: "keyword=kinase",
+      search: "keyword=kinase&filter=protein",
     });
   });
 

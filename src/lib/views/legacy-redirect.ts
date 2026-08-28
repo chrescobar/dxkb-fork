@@ -26,7 +26,9 @@ export function mapLegacyViewPath(pathname: string, rawSearch: string): MappedPa
     // List view: the legacy raw query string may be raw RQL, named params, or a mix
     // (e.g. "eq(genome_id,83332.12)&filter=%22CDS%22"). Split on & and classify each
     // segment individually so named params like filter= are not swallowed into rql=.
-    if (!rawSearch) return { pathname: `/${segment}`, search: "" };
+    if (!rawSearch && !target.defaultParams) {
+      return { pathname: `/${segment}`, search: "" };
+    }
     const rqlParts: string[] = [];
     const namedParts: string[] = [];
     for (const seg of rawSearch.split("&")) {
@@ -43,9 +45,11 @@ export function mapLegacyViewPath(pathname: string, rawSearch: string): MappedPa
       // which round-trips cleanly and stays readable.
       searchParts.push(`rql=${encodeURIComponent(rqlParts.join("&"))}`);
     }
-    if (namedParts.length > 0) {
-      searchParts.push(new URLSearchParams(namedParts.join("&")).toString());
+    const namedParams = new URLSearchParams(namedParts.join("&"));
+    for (const [name, value] of Object.entries(target.defaultParams ?? {})) {
+      if (!namedParams.has(name)) namedParams.set(name, value);
     }
+    if (namedParams.size > 0) searchParts.push(namedParams.toString());
     return { pathname: `/${segment}`, search: searchParts.join("&") };
   }
 

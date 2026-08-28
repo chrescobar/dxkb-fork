@@ -18,13 +18,21 @@ vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
     <div>{`${resource}:${q}`}</div>
   ),
 }));
+interface CollectionProps {
+  baseRql: string;
+}
+
+function FeatureResourceCollection({ baseRql }: CollectionProps) {
+  return <div>{`genome_feature:${baseRql}`}</div>;
+}
+
+function GenomeResourceCollection({ baseRql }: CollectionProps) {
+  return <div>{`genome:${baseRql}`}</div>;
+}
+
 vi.mock("@/components/views", () => ({
-  FeatureResourceCollection: ({ baseRql }: { baseRql: string }) => (
-    <div>{`genome_feature:${baseRql}`}</div>
-  ),
-  GenomeResourceCollection: ({ baseRql }: { baseRql: string }) => (
-    <div>{`genome:${baseRql}`}</div>
-  ),
+  FeatureResourceCollection,
+  GenomeResourceCollection,
 }));
 vi.mock("@/components/taxonomy/taxonomy-tree-panel", () => ({
   TaxonomyTreePanel: ({ taxa }: { taxa: { taxonName: string }[] }) => (

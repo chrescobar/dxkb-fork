@@ -196,6 +196,7 @@ describe("proxy", () => {
       expect(list.status).toBe(308);
       expect(getRedirectLocation(list).pathname).toBe("/feature");
       expect(getRedirectLocation(list).searchParams.get("keyword")).toBe("kinase");
+      expect(getRedirectLocation(list).searchParams.get("filter")).toBe("protein");
     });
 
     it("passes through an unknown legacy view name (no redirect)", () => {

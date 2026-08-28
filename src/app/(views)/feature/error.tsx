@@ -2,13 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 
+interface FeatureErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
 export default function FeatureError({
   error,
   reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+}: FeatureErrorProps) {
   return (
     <div
       className="m-4 rounded-lg border border-destructive/40 bg-destructive/5 p-6"

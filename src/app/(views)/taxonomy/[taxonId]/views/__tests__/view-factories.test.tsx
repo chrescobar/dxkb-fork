@@ -34,10 +34,22 @@ vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
   ),
 }));
 
-vi.mock("@/components/views", () => ({
-  FeatureResourceCollection: ({ baseRql, enableRowLinks }: { baseRql: string; enableRowLinks: boolean }) => (
+interface FeatureResourceCollectionProps {
+  baseRql: string;
+  enableRowLinks: boolean;
+}
+
+function FeatureResourceCollection({
+  baseRql,
+  enableRowLinks,
+}: FeatureResourceCollectionProps) {
+  return (
     <div data-testid="feature-resource-collection" data-q={baseRql} data-row-links={String(enableRowLinks)} />
-  ),
+  );
+}
+
+vi.mock("@/components/views", () => ({
+  FeatureResourceCollection,
   GenomeResourceCollection: ({
     baseRql,
     enableRowLinks,

@@ -30,6 +30,8 @@ export interface ViewTypeEntry {
   legacyList?: string;
   /** Additional confirmed legacy list names for the same canonical route. */
   legacyListAliases?: readonly string[];
+  /** Query parameters added when redirecting a specific legacy list alias. */
+  legacyListAliasParams?: Readonly<Record<string, Readonly<Record<string, string>>>>;
   /** searchtype id from constants/searchInfo.ts (for the deferred search repoint). */
   searchType?: string;
   /** Omitted ⇒ list-only type (strain, domains-and-motifs, experiment). */

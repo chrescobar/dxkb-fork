@@ -1,0 +1,53 @@
+src/constants/datafields/genome_feature.ts
+  s_a874e4b4cbed32::t_86084d316001b2 192
+src/lib/views/view-types.ts
+  s_a874e4b4cbed32::t_66ddbfe6a30530 33-34
+src/__tests__/proxy.test.ts
+  s_a874e4b4cbed32::t_ec626690582347 199
+src/lib/views/legacy-redirect.ts
+  s_a874e4b4cbed32::t_f48082a01c49f4 29-31,48-50,52
+src/app/(views)/feature/error.tsx
+  s_a874e4b4cbed32::t_7c4989ff22e6eb 5-9,13
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_a874e4b4cbed32::t_cb105763fabc22 21-32,34-35
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_a874e4b4cbed32::t_6e58ca4b4fff42 37-46,48-52
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_a874e4b4cbed32::t_4a6a92c663b790 33-38
+src/lib/views/view-registry.ts
+  s_a874e4b4cbed32::t_9d98ddeb7eed2f 109,119-123
+  s_a874e4b4cbed32::t_3e902f6487dfa5 37
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_a874e4b4cbed32::t_a113328e10eff0 17-25,30
+src/app/(views)/feature/[featureId]/feature-overview.tsx
+  s_a874e4b4cbed32::t_21421c7b7d0771 61,70
+  s_a874e4b4cbed32::t_7292c3d1a257a9 6-23,39
+  s_a874e4b4cbed32::t_779e6359e7eede 49
+  s_a874e4b4cbed32::t_8cb469fb63bdfd 35-36
+src/app/(views)/feature/[featureId]/feature-tab-canonicalizer.tsx
+  s_a874e4b4cbed32::t_447ed24b990080 7-11,15
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_a874e4b4cbed32::t_bfdd0cd0bde5d2 37
+src/app/(views)/feature/feature-collection.tsx
+  s_a874e4b4cbed32::t_08a04a537ed187 7-10,13
+  s_a874e4b4cbed32::t_45a3312c319606 23
+src/components/views/feature-resource-collection.tsx
+  s_a874e4b4cbed32::t_e472c2f102175c 9
+  s_a874e4b4cbed32::t_de07a03bac6e79 19,26,28-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "62d3da5e9b8a1fa59db41694687e8352df2b9ba1",
+  "prompts": {},
+  "sessions": {
+    "s_a874e4b4cbed32": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb5e89982ffeTJRxLA0QYdfphS",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -20,7 +20,7 @@ export function FeatureCollection({
       defaultTab="features"
       layout="fill"
     >
-      <FeatureResourceCollection initialState={initialState} />
+      <FeatureResourceCollection initialState={initialState} keywordMode="loaded" />
     </EntityViewShell>
   );
 }

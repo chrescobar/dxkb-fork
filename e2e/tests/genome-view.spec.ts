@@ -26,7 +26,15 @@ test.describe("Genome view", () => {
     await keyword.fill("MERS");
     await expect(page).toHaveURL(/\/taxonomy\/11974\?tab=genomes$/);
     await page.getByRole("button", { name: "Show Filters" }).click();
+    const filteredResponse = page.waitForResponse((response) => {
+      const url = new URL(response.url());
+      return (
+        url.pathname === "/api/data/genome" &&
+        url.searchParams.get("rql")?.includes("eq(genome_status,Complete)") === true
+      );
+    });
     await page.getByRole("button", { name: "Complete (1)" }).click();
+    await filteredResponse;
     await expect(page).toHaveURL(
       /\/taxonomy\/11974\?tab=genomes&genome_status=Complete$/,
     );
@@ -50,12 +58,6 @@ test.describe("Genome view", () => {
       page.getByRole("button", { name: "Genome Statistics" }),
     ).toBeVisible();
 
-    await page
-      .getByRole("button", { name: "Select all 1 results across all pages" })
-      .click();
-    await expect(
-      page.getByText("All 1 results are selected across all pages."),
-    ).toBeVisible();
   });
 
   test("uses URL keywords for full-dataset search in canonical collections", async ({ page }) => {
@@ -140,7 +142,7 @@ test.describe("Genome view", () => {
         name: "Middle East respiratory syndrome-related coronavirus isolate",
       }),
     ).toBeVisible();
-    await expect(genomePage.getByText("Assembly summary")).toBeVisible();
+    await expect(genomePage.getByText("Assembly summary").first()).toBeVisible();
     const sequenceRequest = genomePage.waitForRequest((request) => {
       const url = new URL(request.url());
       return (

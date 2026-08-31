@@ -455,10 +455,10 @@ function useListData({
         facetFields={facetFields}
         resource={resource}
         query={cleanQ}
-         keywordValue={keywordMode === "loaded" ? loadedKeyword : keywordValue}
-         onKeywordChange={keywordMode === "loaded" ? setLoadedKeyword : onKeywordChange}
-         keywordMode={keywordMode}
-         keywordPlaceholder={
+        keywordValue={keywordMode === "loaded" ? loadedKeyword : keywordValue}
+        onKeywordChange={keywordMode === "loaded" ? setLoadedKeyword : onKeywordChange}
+        keywordMode={keywordMode}
+        keywordPlaceholder={
           resource === "ppi" ? "Search interaction results..." : undefined
         }
         onFilterChange={(rql) => {

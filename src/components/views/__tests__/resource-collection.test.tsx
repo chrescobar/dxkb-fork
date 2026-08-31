@@ -524,7 +524,7 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
     const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(initialHookOptions?.state.keyword).toBeUndefined();
+    expect(initialHookOptions?.state.keyword).toBe("coli");
 
     await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
 
@@ -537,7 +537,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.pageIndex).toBe(0);
     expect(onStateChange).not.toHaveBeenCalled();
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBeUndefined();
+    expect(hookOptions?.state.keyword).toBe("coli");
 
     await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
 
@@ -621,7 +621,7 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     expect(exportAll).toHaveBeenCalledWith("genome", {
       rql: "eq(genome_status,Complete)",
-      keyword: undefined,
+      keyword: "coli",
       fields: genomeCollectionProfile.columns.map((column) => column.id),
       sort: { field: "genome_length", direction: "desc" },
     });
@@ -679,7 +679,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.totalItems).toBe(0);
   });
 
-  it("removes an accidental server keyword in explicitly loaded mode", () => {
+  it("keeps the server keyword separate from the loaded-row filter", () => {
     render(
       <ResourceCollection
         profile={genomeCollectionProfile}
@@ -692,7 +692,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
 
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBeUndefined();
+    expect(hookOptions?.state.keyword).toBe("coli");
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
   });
 

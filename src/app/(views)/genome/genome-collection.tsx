@@ -18,7 +18,7 @@ export function GenomeCollection({
       defaultTab="genomes"
       layout="fill"
     >
-      <GenomeResourceCollection initialState={initialState} />
+      <GenomeResourceCollection initialState={initialState} keywordMode="loaded" />
     </EntityViewShell>
   );
 }

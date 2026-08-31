@@ -110,14 +110,11 @@ export function ResourceCollection<Row extends DataTableRow>({
       profile.columns.map((column) => [column.id, column.visible !== false]),
     ),
   );
-  const collectionState = keywordMode === "loaded"
-    ? { ...state, keyword: undefined }
-    : state;
   const structuralRql = combinePredicates(
     baseRql,
-    profile.buildStructuralRql?.(collectionState) ?? profile.basePredicate,
+    profile.buildStructuralRql?.(state) ?? profile.basePredicate,
   );
-  const effectiveRql = combinePredicates(structuralRql, collectionState.rql);
+  const effectiveRql = combinePredicates(structuralRql, state.rql);
   const collection = useResourceCollection({
     repository,
     resource: profile.resource,
@@ -126,7 +123,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     detailFields: profile.detailFields,
     facetFields: profile.facets?.map((facet) => facet.field),
     structuralRql,
-    state: collectionState,
+    state,
     onStateChange,
   });
   const columns = profile.columns.map((column) =>
@@ -204,7 +201,7 @@ export function ResourceCollection<Row extends DataTableRow>({
           })
         : await repository.exportAll(profile.resource, {
             rql: effectiveRql,
-            keyword: collectionState.keyword,
+            keyword: state.keyword,
             fields: hasLoadedKeyword ? allFields : selectedFields,
             sort: {
               field: state.sort.split(":")[0],

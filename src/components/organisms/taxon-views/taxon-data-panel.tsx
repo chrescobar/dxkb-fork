@@ -116,10 +116,10 @@ export function TaxonDataPanel({
           onAllPagesSelectionChange={setIsAllPagesSelected}
           onTotalItemsChange={setTotalItems}
           onFilterChange={onFilterChange}
-           keywordValue={keywordValue}
-           onKeywordChange={onKeywordChange}
-           keywordMode={keywordMode}
-         />
+          keywordValue={keywordValue}
+          onKeywordChange={onKeywordChange}
+          keywordMode={keywordMode}
+        />
       </Suspense>
     </ResourceWorkspace>
   );

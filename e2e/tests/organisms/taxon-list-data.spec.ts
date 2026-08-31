@@ -68,6 +68,7 @@ function buildProteinFeatureRows(count: number) {
 // protein_feature fetches (count, rows, download POST) go through the loopback, not bv-brc.org.
 const pfLoopback = /\/api\/e2e-mock\/data\/protein_feature\//;
 const pfLoopbackCount = /\/api\/e2e-mock\/data\/protein_feature\/.*limit\(1\)/;
+const genomeFeatureBackend = /\/data_api\/genome_feature\//;
 
 test.describe("taxon data table: checkbox-column selection", () => {
   test("clicking the cell edge toggles rows additively and keeps checkboxes in sync", async ({ page }) => {
@@ -280,20 +281,17 @@ test.describe("taxon collection tabs: local keyword filtering", () => {
       await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
       const collectionRequests: string[] = [];
       page.on("request", (request) => {
-        if (requestPattern.test(request.url())) collectionRequests.push(request.url());
+        const pattern = rows ? genomeFeatureBackend : requestPattern;
+        if (pattern.test(request.url())) collectionRequests.push(request.url());
       });
       if (rows) {
-        await page.route(requestPattern, async (route) => {
+        await page.route(genomeFeatureBackend, async (route) => {
           await route.fulfill({
             status: 200,
             contentType: "application/json",
-            body: JSON.stringify({
-              rows,
-              total: rows.length,
-              facets: {},
-              page: 1,
-              pageSize: 200,
-            }),
+            body: route.request().headers().accept === "application/solr+json"
+              ? JSON.stringify({ response: { numFound: rows.length } })
+              : JSON.stringify(rows),
           });
         });
       }

@@ -7,6 +7,7 @@ export function makeGenomesView({ scope }: { scope: TaxonViewScope }) {
       <GenomeResourceCollection
         baseRql={taxonLineageClause(scope)}
         enableRowLinks={false}
+        keywordMode="loaded"
       />
     );
   }

@@ -9,7 +9,7 @@ interface FeatureCollectionProps {
 }
 
 export function FeatureCollection({
-  initialState: _initialState,
+  initialState,
 }: FeatureCollectionProps) {
   return (
     <EntityViewShell
@@ -20,7 +20,7 @@ export function FeatureCollection({
       defaultTab="features"
       layout="fill"
     >
-      <FeatureResourceCollection initialState={_initialState} />
+      <FeatureResourceCollection initialState={initialState} />
     </EntityViewShell>
   );
 }

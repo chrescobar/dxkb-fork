@@ -277,6 +277,40 @@ describe("ListData controlled filter", () => {
     expect(capturedDataUrls[0]).toContain("eq(foo,bar)");
   });
 
+  it("filters loaded rows without issuing another request in loaded keyword mode", async () => {
+    const rows = [
+      { sequence_id: "row-1", genome_id: "g1", genome_name: "DNA-3-methyladenine glycosylase" },
+      { sequence_id: "row-2", genome_id: "g2", genome_name: "Flagellar protein" },
+    ];
+    let dataRequestCount = 0;
+
+    server.use(
+      http.get(`${dataApi}/genome_sequence/`, ({ request }) => {
+        if (request.url.includes("limit(1)")) {
+          return HttpResponse.json({ response: { numFound: rows.length } });
+        }
+        dataRequestCount += 1;
+        return HttpResponse.json(rows);
+      }),
+    );
+
+    const { Wrapper } = makeWrapper();
+    render(
+      <Wrapper>
+        <ListData resource="genome_sequence" q="eq(genome_id,*)" keywordMode="loaded" />
+      </Wrapper>,
+    );
+
+    await screen.findByText(/Showing 1-2 of 2 results/);
+    const initialRequestCount = dataRequestCount;
+    fireEvent.change(screen.getByPlaceholderText("Search keywords..."), {
+      target: { value: "DNA-3-methyl" },
+    });
+
+    await screen.findByText(/Showing 1-1 of 1 results/);
+    expect(dataRequestCount).toBe(initialRequestCount);
+  });
+
   it("calls onFilterChange instead of applying the new filter itself when controlled", async () => {
     const capturedDataUrls: string[] = [];
 

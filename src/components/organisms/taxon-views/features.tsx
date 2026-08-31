@@ -8,6 +8,7 @@ export function makeFeaturesView({ scope }: { scope: TaxonViewScope }) {
         resource="genome_feature"
         q={`and(eq(genome_id,*),genome(and(${taxonLineageClause(scope)},ne(genome_status,Deprecated))),eq(annotation,PATRIC))`}
         guideUrl="https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html"
+        keywordMode="loaded"
       />
     );
   }

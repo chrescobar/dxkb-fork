@@ -34,19 +34,22 @@ function extractKeywordQuery(raw: string): string {
 function SearchBarWithParams(props: SearchBarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const rawQuery =
-    searchParams.get("keyword") ||
-    searchParams.get("q") ||
-    props.initialValue ||
-    "";
-  const requestedType =
+  const canonicalType =
     pathname === "/genome"
       ? "genome"
       : pathname === "/feature"
         ? searchParams.get("filter") === "protein"
           ? "protein"
           : "genome_feature"
-        : searchParams.get("type") || "everything";
+        : pathname === "/epitope"
+          ? "epitope"
+          : undefined;
+  const rawQuery =
+    (canonicalType ? searchParams.get("keyword") : searchParams.get("q")) ||
+    props.initialValue ||
+    "";
+  const requestedType =
+    canonicalType ?? searchParams.get("type") ?? "everything";
   const initialType = searchTypes.some((type) => type.id === requestedType)
     ? requestedType
     : "everything";

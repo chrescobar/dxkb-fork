@@ -1,12 +1,18 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
-const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
+const { mockPush, navigation } = vi.hoisted(() => ({
+  mockPush: vi.fn(),
+  navigation: {
+    pathname: "/genome",
+    searchParams: new URLSearchParams({ keyword: "E. coli" }),
+  },
+}));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/genome",
+  usePathname: () => navigation.pathname,
   useRouter: () => ({ push: mockPush }),
-  useSearchParams: () => new URLSearchParams({ keyword: "E. coli" }),
+  useSearchParams: () => navigation.searchParams,
 }));
 
 vi.mock("@/lib/auth/provider", () => ({
@@ -28,7 +34,35 @@ vi.mock("@/components/jobs/job-status-pill", () => ({
 import Navbar from "../navbar";
 
 describe("Navbar", () => {
-  it("preserves the canonical Genome search in its search bar", () => {
+  beforeEach(() => {
+    navigation.pathname = "/genome";
+    navigation.searchParams = new URLSearchParams({ keyword: "E. coli" });
+  });
+
+  it.each([
+    ["/genome", "Genomes"],
+    ["/feature", "Features"],
+    ["/epitope", "Epitopes"],
+  ])(
+    "hydrates the navbar from a canonical %s search",
+    (pathname, searchType) => {
+      navigation.pathname = pathname;
+      const queryClient = new QueryClient();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <Navbar />
+        </QueryClientProvider>,
+      );
+
+      expect(screen.getByRole("textbox")).toHaveValue("E. coli");
+      expect(
+        screen.getByRole("combobox", { name: /search type/i }),
+      ).toHaveTextContent(searchType);
+    },
+  );
+
+  it("does not treat a Taxonomy collection keyword as a navbar search", () => {
+    navigation.pathname = "/taxonomy/234";
     const queryClient = new QueryClient();
     render(
       <QueryClientProvider client={queryClient}>
@@ -36,14 +70,9 @@ describe("Navbar", () => {
       </QueryClientProvider>,
     );
 
-    expect(screen.getByRole("textbox")).toHaveValue("E. coli");
+    expect(screen.getByRole("textbox")).toHaveValue("");
     expect(
       screen.getByRole("combobox", { name: /search type/i }),
-    ).toHaveTextContent("Genomes");
-
-    const form = screen.getByRole("textbox").closest("form");
-    expect(form).not.toBeNull();
-    fireEvent.submit(form as HTMLFormElement);
-    expect(mockPush).toHaveBeenCalledWith("/genome?keyword=E.%20coli");
+    ).toHaveTextContent("All Data Types");
   });
 });

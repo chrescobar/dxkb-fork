@@ -22,6 +22,7 @@ interface TaxonDataPanelProps {
   onFilterChange?: (rql: string) => void;
   keywordValue?: string;
   onKeywordChange?: (value: string) => void;
+  keywordMode?: "server" | "loaded";
 }
 
 export function TaxonDataPanel({
@@ -31,6 +32,7 @@ export function TaxonDataPanel({
   onFilterChange,
   keywordValue,
   onKeywordChange,
+  keywordMode = "server",
 }: TaxonDataPanelProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -114,9 +116,10 @@ export function TaxonDataPanel({
           onAllPagesSelectionChange={setIsAllPagesSelected}
           onTotalItemsChange={setTotalItems}
           onFilterChange={onFilterChange}
-          keywordValue={keywordValue}
-          onKeywordChange={onKeywordChange}
-        />
+           keywordValue={keywordValue}
+           onKeywordChange={onKeywordChange}
+           keywordMode={keywordMode}
+         />
       </Suspense>
     </ResourceWorkspace>
   );

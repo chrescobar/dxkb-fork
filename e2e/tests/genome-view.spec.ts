@@ -24,14 +24,11 @@ test.describe("Genome view", () => {
     ).toHaveCount(0);
 
     await keyword.fill("MERS");
-    await expect(page).toHaveURL(
-      /\/taxonomy\/11974\?tab=genomes&keyword=MERS$/,
-      { timeout: 2_000 },
-    );
+    await expect(page).toHaveURL(/\/taxonomy\/11974\?tab=genomes$/);
     await page.getByRole("button", { name: "Show Filters" }).click();
     await page.getByRole("button", { name: "Complete (1)" }).click();
     await expect(page).toHaveURL(
-      /\/taxonomy\/11974\?tab=genomes&keyword=MERS&genome_status=Complete$/,
+      /\/taxonomy\/11974\?tab=genomes&genome_status=Complete$/,
     );
 
     const row = page.getByRole("row", { name: /Select row 1282460\.2049/ });
@@ -61,6 +58,30 @@ test.describe("Genome view", () => {
     ).toBeVisible();
   });
 
+  test("uses URL keywords for full-dataset search in canonical collections", async ({ page }) => {
+    const genomeRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return url.pathname === "/api/data/genome" && url.searchParams.get("keyword") === "MERS";
+    });
+    await page.goto("/genome?keyword=MERS");
+    await genomeRequest;
+    await expect(page.getByRole("banner").getByRole("combobox", { name: "Search type" })).toContainText("Genomes");
+    await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue("MERS");
+    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
+    await expect(page.getByRole("row", { name: /Select row 1282460\.2049/ })).toBeVisible();
+
+    const featureRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return url.pathname === "/api/data/genome_feature" && url.searchParams.get("keyword") === "replicase";
+    });
+    await page.goto("/feature?keyword=replicase");
+    await featureRequest;
+    await expect(page.getByRole("banner").getByRole("combobox", { name: "Search type" })).toContainText("Features");
+    await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue("replicase");
+    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
+    await expect(page.getByRole("row", { name: /replicase polyprotein/ })).toBeVisible();
+  });
+
   test("canonicalizes invalid collection position without rendering an error", async ({
     page,
   }) => {
@@ -87,9 +108,10 @@ test.describe("Genome view", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: "Genomes" }),
     ).toBeVisible();
-    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue(
+    await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue(
       "MERS",
     );
+    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
 
     const row = page.getByRole("row", { name: /Select row 1282460\.2049/ });
     await row.click();
@@ -138,8 +160,9 @@ test.describe("Genome view", () => {
     await expect(genomePage).toHaveURL(/\/genome\/1282460\.2049$/);
     await genomePage.close();
     await expect(page).toHaveURL(/\/genome\?keyword=MERS$/);
-    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue(
+    await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue(
       "MERS",
     );
+    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
   });
 });

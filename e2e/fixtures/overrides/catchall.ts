@@ -33,6 +33,32 @@ const genomeFeatureRows = [
   },
 ];
 
+const epitopeRows = [
+  {
+    epitope_id: "15780",
+    epitope_type: "Discontinuous peptide",
+    epitope_sequence: "A1, C4, D8",
+    organism: "Influenza A virus",
+    taxon_id: 11520,
+    taxon_lineage_ids: [10239, 11520],
+    protein_name: "Hemagglutinin",
+    protein_accession: "P03452",
+    host_name: ["Homo sapiens, human"],
+    total_assays: 2,
+    assay_results: ["Positive", "Negative"],
+    bcell_assays: 2,
+    tcell_assays: 0,
+    mhc_assays: 0,
+    comments: "Discontinuous residues",
+    date_inserted: "2024-01-01",
+  },
+];
+
+const epitopeAssayRows = [
+  { assay_id: "A-1", epitope_id: "15780", assay_type: "B cell", assay_method: "ELISA", assay_group: "Antibody", assay_result: "Positive", host_name: "Human", pmid: "123456", title: "Influenza epitope assay", protein_name: "Hemagglutinin", epitope_type: "Discontinuous peptide" },
+  { assay_id: "A-2", epitope_id: "15780", assay_type: "B cell", assay_method: "Neutralization", assay_group: "Antibody", assay_result: "Negative", host_name: "Human", pmid: "123456", title: "Influenza epitope assay", protein_name: "Hemagglutinin", epitope_type: "Discontinuous peptide" },
+];
+
 const genomeRows = [
   {
     genome_id: "1282460.2049",
@@ -70,6 +96,37 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/data\/epitope_assay(?:\?|$)/,
+    method: "GET",
+    body: { rows: epitopeAssayRows, total: 2, facets: {}, page: 1, pageSize: 200 },
+  },
+  {
+    url: /\/api\/data\/epitope_assay(?:\?|$)/,
+    method: "POST",
+    body: { rows: epitopeAssayRows },
+  },
+  {
+    url: /\/api\/data\/epitope(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: epitopeRows,
+      total: 1,
+      facets: {
+        epitope_type: [{ value: "Discontinuous peptide", count: 1 }],
+        protein_name: [{ value: "Hemagglutinin", count: 1 }],
+        host_name: [{ value: "Human", count: 1 }],
+        assay_results: [{ value: "Positive", count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/epitope(?:\?|$)/,
+    method: "POST",
+    body: { rows: epitopeRows },
+  },
   {
     url: /\/api\/data\/genome_feature(?:\?|$)/,
     method: "GET",

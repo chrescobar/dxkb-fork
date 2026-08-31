@@ -1,5 +1,7 @@
 export * from "./entity-view-shell";
+export * from "./epitope-resource-collection";
 export * from "./feature-resource-collection";
 export * from "./genome-resource-collection";
+export * from "./resource-child-collection";
 export * from "./resource-collection";
 export * from "./resource-workspace";

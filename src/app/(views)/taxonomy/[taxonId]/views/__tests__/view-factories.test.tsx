@@ -20,16 +20,19 @@ vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
     resource,
     q,
     guideUrl,
+    keywordMode,
   }: {
     resource: string;
     q: string;
     guideUrl?: string;
+    keywordMode?: "server" | "loaded";
   }) => (
     <div
       data-testid="taxon-data-panel"
       data-resource={resource}
       data-q={q}
       data-guide={guideUrl}
+      data-keyword-mode={keywordMode}
     />
   ),
 }));
@@ -37,30 +40,51 @@ vi.mock("@/components/organisms/taxon-views/taxon-data-panel", () => ({
 interface FeatureResourceCollectionProps {
   baseRql: string;
   enableRowLinks: boolean;
+  keywordMode?: "server" | "loaded";
 }
 
 function FeatureResourceCollection({
   baseRql,
   enableRowLinks,
+  keywordMode,
 }: FeatureResourceCollectionProps) {
   return (
-    <div data-testid="feature-resource-collection" data-q={baseRql} data-row-links={String(enableRowLinks)} />
+    <div data-testid="feature-resource-collection" data-q={baseRql} data-row-links={String(enableRowLinks)} data-keyword-mode={keywordMode ?? "loaded"} />
   );
 }
 
 vi.mock("@/components/views", () => ({
+  EpitopeResourceCollection: ({
+    baseRql,
+    enableRowLinks,
+    keywordMode,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
+  }) => (
+    <div
+      data-testid="epitope-resource-collection"
+      data-q={baseRql}
+      data-row-links={String(enableRowLinks)}
+      data-keyword-mode={keywordMode ?? "loaded"}
+    />
+  ),
   FeatureResourceCollection,
   GenomeResourceCollection: ({
     baseRql,
     enableRowLinks,
+    keywordMode,
   }: {
     baseRql: string;
     enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
   }) => (
     <div
       data-testid="genome-resource-collection"
       data-q={baseRql}
       data-row-links={String(enableRowLinks)}
+      data-keyword-mode={keywordMode ?? "loaded"}
     />
   ),
 }));
@@ -138,6 +162,7 @@ describe("makeGenomesView", () => {
     const collection = getByTestId("genome-resource-collection");
     expect(collection).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
     expect(collection).toHaveAttribute("data-row-links", "false");
+    expect(collection).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
@@ -210,7 +235,7 @@ describe("makeDomainsAndMotifsView", () => {
 });
 
 describe("makeFeaturesView", () => {
-  it("renders TaxonDataPanel with the genome_feature descendant-taxon query", () => {
+  it("renders TaxonDataPanel with the genome_feature descendant-taxon query and local keyword filtering", () => {
     const FeaturesView = makeFeaturesView({ scope });
     const { getByTestId } = render(<FeaturesView />);
     const panel = getByTestId("taxon-data-panel");
@@ -220,24 +245,18 @@ describe("makeFeaturesView", () => {
       "and(eq(genome_id,*),genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated))),eq(annotation,PATRIC))",
     );
     expect(panel.getAttribute("data-guide")).toContain("features.html");
+    expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
 describe("makeEpitopesView", () => {
-  it("renders TaxonDataPanel with epitope resource and taxon query", () => {
+  it("renders the shared Epitope collection with taxon scope", () => {
     const EpitopesView = makeEpitopesView({ scope });
     const { getByTestId } = render(<EpitopesView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "epitope");
+    const panel = getByTestId("epitope-resource-collection");
     expect(panel.getAttribute("data-q")).toContain("1234");
-  });
-
-  it("passes the epitopes guide URL", () => {
-    const EpitopesView = makeEpitopesView({ scope });
-    const { getByTestId } = render(<EpitopesView />);
-    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/epitopes.html",
-    );
+    expect(panel).toHaveAttribute("data-row-links", "false");
+    expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
@@ -299,8 +318,8 @@ describe("composite scope queries", () => {
     const View = makeView({ scope: compositeScope });
     render(<View />);
 
-    if (resource === "genome") {
-      expect(screen.getByTestId("genome-resource-collection")).toHaveAttribute(
+    if (resource === "genome" || resource === "epitope") {
+      expect(screen.getByTestId(`${resource}-resource-collection`)).toHaveAttribute(
         "data-q",
         expectedQuery,
       );

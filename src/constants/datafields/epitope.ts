@@ -50,6 +50,18 @@ export const epitopeFields = {
         search: true  
         },
         
+    taxon_lineage_ids: {
+        label: 'Taxon Lineage IDs',
+        field: 'taxon_lineage_ids',
+        hidden: true,
+        group: 'Epitope Info',
+        facet: false,
+        facet_hidden: true,
+        search: false,
+        show_in_table: false,
+        sortable: false
+        },
+
     protein_name: { 
         label: 'Protein Name', 
         field: 'protein_name', 
@@ -121,7 +133,8 @@ export const epitopeFields = {
         group: 'Epitope Info',
         facet: true, 
         facet_hidden: false, 
-        search: true  
+        search: true,
+        sortable: false
         },
         
     bcell_assays: { 
@@ -159,7 +172,8 @@ export const epitopeFields = {
         group: 'Additional Info',
         facet: false, 
         facet_hidden: true, 
-        search: true  
+        search: true,
+        sortable: false
         },
     date_added: { 
         label: 'Date Added', 

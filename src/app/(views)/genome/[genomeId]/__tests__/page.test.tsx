@@ -19,15 +19,15 @@ vi.mock("@/components/views", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/components/views")>();
   return {
     ...original,
-    ResourceCollection: ({
-      profile,
-      showHeader,
+    ResourceChildCollection: ({
+      label,
+      rql,
     }: {
-      profile: { label: string };
-      showHeader?: boolean;
+      label: string;
+      rql: string;
     }) => (
-      <div data-testid="resource-collection" data-show-header={showHeader}>
-        {profile.label}
+      <div data-testid="resource-collection" data-rql={rql} data-show-header="false">
+        {label}
       </div>
     ),
   };

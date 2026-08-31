@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/shared/data-table";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
@@ -38,6 +38,7 @@ interface ListDataProps {
   onFilterChange?: (rql: string) => void;
   keywordValue?: string;
   onKeywordChange?: (value: string) => void;
+  keywordMode?: "server" | "loaded";
 }
 
 function useListData({
@@ -57,6 +58,7 @@ function useListData({
   onFilterChange,
   keywordValue,
   onKeywordChange,
+  keywordMode = "server",
 }: ListDataProps) {
   const fields = deriveTableFields(resource);
   const queryClient = useQueryClient();
@@ -73,6 +75,8 @@ function useListData({
   // `filter` is controlled only when the parent passes it. `onFilterChange`
   // alone is notify-only: ListData applies its filter locally and reports it.
   const [internalFilter, setInternalFilter] = useState("");
+  const [loadedKeyword, setLoadedKeyword] = useState("");
+  const deferredLoadedKeyword = useDeferredValue(loadedKeyword.trim().toLowerCase());
   const filter =
     controlledFilter !== undefined ? controlledFilter : internalFilter;
   const setFilter = (rql: string) => {
@@ -332,6 +336,20 @@ function useListData({
     pageSize,
   ]);
 
+  const loadedRows = pageData ?? emptyRows;
+  const displayedRows = keywordMode === "loaded" && deferredLoadedKeyword
+    ? loadedRows.filter((row) =>
+        Object.values(row).some((value) => {
+          const values = Array.isArray(value) ? value : [value];
+          return values.some((item) =>
+            String(item ?? "").toLowerCase().includes(deferredLoadedKeyword),
+          );
+        }),
+      )
+    : loadedRows;
+  const displayedTotal = keywordMode === "loaded" && deferredLoadedKeyword
+    ? displayedRows.length
+    : totalItems;
   const errorMessage =
     (metaError ?? dataError)
       ? `Error: ${(metaError ?? dataError)?.message ?? "Unknown error"} — Query: ${JSON.stringify(q)}`
@@ -424,9 +442,10 @@ function useListData({
         facetFields={facetFields}
         resource={resource}
         query={cleanQ}
-        keywordValue={keywordValue}
-        onKeywordChange={onKeywordChange}
-        keywordPlaceholder={
+         keywordValue={keywordMode === "loaded" ? loadedKeyword : keywordValue}
+         onKeywordChange={keywordMode === "loaded" ? setLoadedKeyword : onKeywordChange}
+         keywordMode={keywordMode}
+         keywordPlaceholder={
           resource === "ppi" ? "Search interaction results..." : undefined
         }
         onFilterChange={(rql) => {
@@ -441,16 +460,16 @@ function useListData({
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <DataTable
           id={widget.id}
-          data={totalItems === 0 ? emptyRows : (pageData ?? emptyRows)}
+          data={displayedTotal === 0 ? emptyRows : displayedRows}
           columns={widget.columns}
           resource={resource}
           errorMessage={errorMessage}
           rowSelection={rowSelection}
           onRowSelectionChange={handleRowSelectionChange}
           onSelectionChange={noop}
-          pageIndex={pageIndex}
+          pageIndex={keywordMode === "loaded" && deferredLoadedKeyword ? 0 : pageIndex}
           pageSize={pageSize}
-          totalItems={totalItems}
+          totalItems={displayedTotal}
           onPageChange={handlePageChange}
           sorting={sorting}
           onSortingChange={setSortingAndResetPage}

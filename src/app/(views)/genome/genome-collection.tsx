@@ -5,7 +5,7 @@ import type { CollectionState } from "@/lib/views/collection-state";
 import { EntityViewShell, GenomeResourceCollection } from "@/components/views";
 
 export function GenomeCollection({
-  initialState: _initialState,
+  initialState,
 }: {
   initialState: CollectionState;
 }) {
@@ -18,7 +18,7 @@ export function GenomeCollection({
       defaultTab="genomes"
       layout="fill"
     >
-      <GenomeResourceCollection />
+      <GenomeResourceCollection initialState={initialState} />
     </EntityViewShell>
   );
 }

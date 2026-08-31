@@ -22,6 +22,13 @@ it("rewrites #view_tab= to ?tab= via router.replace", () => {
   expect(url).not.toContain("view_tab");
 });
 
+it("promotes the Epitope assays tab", () => {
+  window.history.replaceState(null, "", "/epitope/15780");
+  window.location.hash = "#view_tab=assays";
+  render(<LegacyHashAdapter />);
+  expect(mockReplace).toHaveBeenCalledWith("/epitope/15780?tab=assays");
+});
+
 it("does nothing when there is no legacy hash", () => {
   window.location.hash = "";
   render(<LegacyHashAdapter />);

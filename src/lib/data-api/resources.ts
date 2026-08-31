@@ -1,6 +1,7 @@
 import type { DataFieldMap } from "@/constants/datafields/types";
 import { biosetFields } from "@/constants/datafields/bioset";
 import { epitopeFields } from "@/constants/datafields/epitope";
+import { epitopeAssayFields } from "@/constants/datafields/epitope_assay";
 import { experimentFields } from "@/constants/datafields/experiment";
 import { genomeFields } from "@/constants/datafields/genome";
 import { genomeFeatureFields } from "@/constants/datafields/genome_feature";
@@ -60,6 +61,7 @@ const sourceFields: Partial<Record<DataResource, DataFieldMap>> = {
   genome: genomeFields,
   genome_feature: genomeFeatureFields,
   epitope: epitopeFields,
+  epitope_assay: epitopeAssayFields,
   surveillance: surveillanceFields,
   serology: serologyFields,
   strain: strainFields,
@@ -70,20 +72,6 @@ const sourceFields: Partial<Record<DataResource, DataFieldMap>> = {
   genome_sequence: genomeSequenceFields,
   ppi: ppiFields,
 };
-
-const epitopeAssayFieldNames = [
-  "assay_id",
-  "epitope_id",
-  "assay_type",
-  "assay_method",
-  "assay_group",
-  "assay_result",
-  "host_name",
-  "pmid",
-  "title",
-  "protein_name",
-  "epitope_type",
-] as const;
 
 const numericFields = new Set([
   "taxon_id",
@@ -108,6 +96,10 @@ const numericFields = new Set([
   "collection_longitude",
   "host_age",
   "sequencing_depth",
+  "total_assays",
+  "bcell_assays",
+  "tcell_assays",
+  "mhc_assays",
 ]);
 const booleanFields = new Set(["public", "reference_genome"]);
 const dateFields = new Set([
@@ -125,6 +117,7 @@ const dateFields = new Set([
 ]);
 const phraseFields = new Set(["strain", "pathogen_test_type"]);
 const multipleFields: Partial<Record<DataResource, ReadonlySet<string>>> = {
+  epitope: new Set(["assay_results", "host_name", "taxon_lineage_ids"]),
   surveillance: new Set(["pathogen_test_type"]),
   strain: new Set(["genome_ids"]),
 };
@@ -162,9 +155,7 @@ function inferType(name: string): FieldType {
 
 function buildFields(resource: DataResource): Record<string, ResourceField> {
   const source = sourceFields[resource];
-  const names = source
-    ? Object.values(source).map((field) => field.field)
-    : [...epitopeAssayFieldNames];
+  const names = Object.values(source ?? {}).map((field) => field.field);
   names.push(ids[resource]);
 
   return Object.fromEntries(
@@ -172,16 +163,6 @@ function buildFields(resource: DataResource): Record<string, ResourceField> {
       const metadata = source
         ? Object.values(source).find((field) => field.field === name)
         : undefined;
-      const assayFacet =
-        resource === "epitope_assay" &&
-        [
-          "assay_type",
-          "assay_method",
-          "assay_group",
-          "assay_result",
-          "host_name",
-          "epitope_type",
-        ].includes(name);
       return [
         name,
         {
@@ -191,7 +172,7 @@ function buildFields(resource: DataResource): Record<string, ResourceField> {
             : "scalar",
           selectable: true,
           sortable: metadata?.sortable !== false,
-          facet: metadata?.facet === true || assayFacet,
+          facet: metadata?.facet === true,
           quote:
             resource === "serology" && name === "test_type"
               ? "never"

@@ -1,11 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Blocks, ChartNoAxesCombined, GitCompareArrows, LayoutDashboard, Network, ScanLine, Shapes } from "lucide-react";
-import { EntityViewShell } from "@/components/views";
+import { EntityViewShell, ResourceChildCollection } from "@/components/views";
 import { buildFeatureTabs, type FeatureTab, type FeatureViewRecord } from "@/lib/feature-view";
 import { featureInteractionsRql, interactionColumns } from "@/lib/views/child-resources";
 import { genomeHref, taxonomyHref } from "@/lib/views/hrefs";
-import { GenomeChildCollection } from "../../genome/[genomeId]/genome-child-collection";
 import { FeatureOverview } from "./feature-overview";
 
 const featureTabIcons: Record<FeatureTab, ReactNode> = {
@@ -37,7 +36,7 @@ interface FeatureMemberProps {
 
 export function FeatureMember({ feature, activeTab }: FeatureMemberProps) {
   const content = activeTab === "interactions" ? (
-    <GenomeChildCollection
+    <ResourceChildCollection
       resource="ppi"
       label="Interactions"
       idField="id"

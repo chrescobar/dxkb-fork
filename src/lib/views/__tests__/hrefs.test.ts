@@ -1,4 +1,7 @@
 import {
+  epitopeHref,
+  epitopeIdFromRow,
+  epitopeListHref,
   featureHref,
   featureIdFromRow,
   featureListHref,
@@ -15,6 +18,17 @@ describe("taxonomyHref", () => {
   });
   it("accepts a string id", () => {
     expect(taxonomyHref("2697049")).toBe("/taxonomy/2697049");
+  });
+});
+
+describe("Epitope hrefs", () => {
+  it("builds encoded member and collection routes", () => {
+    expect(epitopeHref("15/780")).toBe("/epitope/15%2F780");
+    expect(epitopeIdFromRow({ epitope_id: 15780 })).toBe("15780");
+    expect(epitopeIdFromRow(null)).toBeNull();
+    expect(epitopeListHref()).toBe("/epitope");
+    expect(epitopeListHref({ keyword: "linear peptide", taxonId: 11520 })).toBe("/epitope?keyword=linear%20peptide&taxon_id=11520");
+    expect(epitopeListHref({ keyword: "ignored", rql: "eq(epitope_type,B-cell)" })).toBe("/epitope?rql=eq(epitope_type%2CB-cell)");
   });
 });
 

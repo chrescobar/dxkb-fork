@@ -106,6 +106,7 @@ describe("Genome view contracts", () => {
       "/genome/83332.12",
     );
     expect(genomeCollectionProfile.rowLinkField).toBe("genome_name");
+    expect(genomeCollectionProfile.basePredicate).toBe("eq(genome_id,*)");
     expect(
       genomeCollectionProfile.columns
         .filter((column) => column.visible)

@@ -175,7 +175,7 @@ const actionConfig: ActionConfig[] = [
     letter: "E",
     validSearchTypes: ["epitope"],
     requiresSelection: true,
-    disabledWithTooltip: notReady,
+    maxSelection: 1,
   },
   {
     id: "structure",

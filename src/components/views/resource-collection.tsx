@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useDeferredValue, useState, type ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { InfoPanel } from "@/components/detail-panel/info-panel";
@@ -22,6 +22,8 @@ import {
   type DataResource,
 } from "@/lib/data-api";
 import {
+  epitopeHref,
+  epitopeIdFromRow,
   featureHref,
   featureIdFromRow,
   genomeHref,
@@ -74,6 +76,7 @@ export interface ResourceCollectionProps<Row extends DataTableRow> {
   enableRowLinks?: boolean;
   renderDetail?: (row: Row) => ReactNode;
   showHeader?: boolean;
+  keywordMode?: "server" | "loaded";
   onExport?: (request: ResourceCollectionExportRequest) => void | Promise<void>;
 }
 
@@ -86,19 +89,25 @@ export function ResourceCollection<Row extends DataTableRow>({
   enableRowLinks = true,
   renderDetail,
   showHeader = true,
+  keywordMode = "server",
   onExport,
 }: ResourceCollectionProps<Row>) {
   const [exportError, setExportError] = useState<string | null>(null);
+  const [loadedKeyword, setLoadedKeyword] = useState("");
+  const deferredLoadedKeyword = useDeferredValue(loadedKeyword.trim().toLowerCase());
   const [columnVisibility, setColumnVisibility] = useState(() =>
     Object.fromEntries(
       profile.columns.map((column) => [column.id, column.visible !== false]),
     ),
   );
+  const collectionState = keywordMode === "loaded"
+    ? { ...state, keyword: undefined }
+    : state;
   const structuralRql = combinePredicates(
     baseRql,
-    profile.buildStructuralRql?.(state) ?? profile.basePredicate,
+    profile.buildStructuralRql?.(collectionState) ?? profile.basePredicate,
   );
-  const effectiveRql = combinePredicates(structuralRql, state.rql);
+  const effectiveRql = combinePredicates(structuralRql, collectionState.rql);
   const collection = useResourceCollection({
     repository,
     resource: profile.resource,
@@ -107,7 +116,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     detailFields: profile.detailFields,
     facetFields: profile.facets?.map((facet) => facet.field),
     structuralRql,
-    state,
+    state: collectionState,
     onStateChange,
   });
   const columns = profile.columns.map((column) =>
@@ -126,6 +135,20 @@ export function ResourceCollection<Row extends DataTableRow>({
       ? collection.activeId
       : genomeIdFromRow(detail);
   const selectedFeatureId = featureIdFromRow(detail);
+  const selectedEpitopeId = epitopeIdFromRow(detail);
+  const displayedRows = deferredLoadedKeyword
+    ? collection.rows.filter((row) =>
+        Object.values(row).some((value) => {
+          const values = Array.isArray(value) ? value : [value];
+          return values.some((item) =>
+            String(item ?? "").toLowerCase().includes(deferredLoadedKeyword),
+          );
+        }),
+      )
+    : collection.rows;
+  const displayedTotal = deferredLoadedKeyword
+    ? displayedRows.length
+    : collection.total;
 
   const exportRows = async (
     format: "csv" | "txt",
@@ -158,7 +181,7 @@ export function ResourceCollection<Row extends DataTableRow>({
           })
         : await repository.exportAll(profile.resource, {
             rql: effectiveRql,
-            keyword: state.keyword,
+            keyword: collectionState.keyword,
             fields: selectedFields,
             sort: {
               field: state.sort.split(":")[0],
@@ -241,15 +264,16 @@ export function ResourceCollection<Row extends DataTableRow>({
       )}
 
       <ResourceFilterBar
-        keyword={state.keyword}
+        keyword={loadedKeyword}
         filters={state.filters}
         facets={collection.facets}
         definitions={profile.facets ?? []}
         hasExplicitRql={Boolean(state.rql)}
         onChange={({ keyword, filters, clearRql }) => {
+          setLoadedKeyword(keyword ?? "");
+          if (filters === state.filters && !clearRql) return;
           onStateChange({
             ...state,
-            keyword,
             rql: clearRql ? undefined : state.rql,
             filters: state.rql && !clearRql ? state.filters : filters,
             page: 1,
@@ -259,7 +283,7 @@ export function ResourceCollection<Row extends DataTableRow>({
       <span className="sr-only" aria-live="polite">
         {collection.isRefreshing
           ? "Refreshing results..."
-          : `${String(collection.total)} results`}
+          : `${String(displayedTotal)} results`}
       </span>
 
       {exportError && (
@@ -318,6 +342,12 @@ export function ResourceCollection<Row extends DataTableRow>({
                     "_blank",
                     "noopener,noreferrer",
                   );
+                } else if (actionId === "epitope" && selectedEpitopeId) {
+                  window.open(
+                    epitopeHref(selectedEpitopeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />
@@ -328,10 +358,10 @@ export function ResourceCollection<Row extends DataTableRow>({
             id={`${profile.resource}-collection`}
             resource={profile.resource}
             idField={profile.idField}
-            data={collection.rows}
+            data={displayedRows}
             columns={columns}
-            totalItems={collection.total}
-            pageIndex={state.page - 1}
+            totalItems={displayedTotal}
+            pageIndex={deferredLoadedKeyword ? 0 : state.page - 1}
             pageSize={resourceCollectionPageSize}
             sorting={collection.sorting}
             columnVisibility={columnVisibility}

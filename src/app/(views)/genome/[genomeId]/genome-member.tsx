@@ -11,7 +11,7 @@ import {
   Shapes,
   Waypoints,
 } from "lucide-react";
-import { EntityViewShell } from "@/components/views";
+import { EntityViewShell, ResourceChildCollection } from "@/components/views";
 import {
   buildGenomeTabs,
   genomeInteractionsRql,
@@ -26,7 +26,6 @@ import {
   genomeSequenceColumns,
   interactionColumns,
 } from "@/lib/views/child-resources";
-import { GenomeChildCollection } from "./genome-child-collection";
 import { GenomeOverview } from "./genome-overview";
 
 function lineage(genome: GenomeViewRecord) {
@@ -92,7 +91,7 @@ export function GenomeMember({
   let content = <GenomeOverview genome={genome} />;
   if (activeTab === "sequences") {
     content = (
-      <GenomeChildCollection
+      <ResourceChildCollection
         resource="genome_sequence"
         label="Sequences"
         idField="sequence_id"
@@ -103,7 +102,7 @@ export function GenomeMember({
     );
   } else if (activeTab === "interactions") {
     content = (
-      <GenomeChildCollection
+      <ResourceChildCollection
         resource="ppi"
         label="Interactions"
         idField="id"
@@ -114,7 +113,7 @@ export function GenomeMember({
     );
   } else if (activeTab === "features" || activeTab === "proteins") {
     content = (
-      <GenomeChildCollection
+      <ResourceChildCollection
         resource="genome_feature"
         label={activeTab === "proteins" ? "Proteins" : "Features"}
         idField="feature_id"

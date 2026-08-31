@@ -22,6 +22,7 @@ interface FilterBarProps {
   keywordValue?: string;
   onKeywordChange?: (value: string) => void;
   keywordPlaceholder?: string;
+  keywordMode?: "server" | "loaded";
 }
 
 export function FilterBar({
@@ -32,6 +33,7 @@ export function FilterBar({
   keywordValue,
   onKeywordChange,
   keywordPlaceholder,
+  keywordMode = "server",
 }: FilterBarProps) {
   const [internalKeywords, setInternalKeywords] = useState<string[]>([]);
   const keywords =
@@ -72,7 +74,10 @@ export function FilterBar({
     setSelected(nextSelected);
     setKeywords(nextKeywords);
     onFilterChange(
-      buildRql({ selected: nextSelected, keywords: nextKeywords }),
+      buildRql({
+        selected: nextSelected,
+        keywords: keywordMode === "loaded" ? [] : nextKeywords,
+      }),
     );
   };
   const clearAll = () => {
@@ -123,6 +128,10 @@ export function FilterBar({
           <KeywordSearch
             value={keywords.join(" ")}
             onChange={(val) => {
+              if (keywordMode === "loaded") {
+                setKeywords(val.split(" ").filter(Boolean));
+                return;
+              }
               updateFilters(selected, val.split(" ").filter(Boolean));
             }}
             placeholder={keywordPlaceholder}

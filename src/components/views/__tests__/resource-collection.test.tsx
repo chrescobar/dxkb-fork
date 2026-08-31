@@ -28,7 +28,20 @@ vi.mock("../resource-filter-bar", () => ({
     <div
       data-testid="filter-bar"
       data-definitions={JSON.stringify(props.definitions)}
-    />
+      data-keyword={typeof props.keyword === "string" ? props.keyword : ""}
+    >
+      <button
+        onClick={() => {
+          const onChange = props.onChange as (update: { keyword?: string; filters: CollectionState["filters"] }) => void;
+          onChange({
+            keyword: "dna gy",
+            filters: props.filters as CollectionState["filters"],
+          });
+        }}
+      >
+        Filter loaded rows
+      </button>
+    </div>
   ),
 }));
 vi.mock("@/components/search/search-action-bar", () => ({
@@ -302,6 +315,7 @@ describe("ResourceCollection Genome integration contracts", () => {
         onStateChange={vi.fn()}
         baseRql="eq(taxon_lineage_ids,561)"
         showHeader={false}
+        keywordMode="server"
       />,
     );
 
@@ -447,6 +461,46 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.queryByTestId("detail")).not.toBeInTheDocument();
   });
 
+  it("filters loaded rows without changing the server query or collection state", async () => {
+    const onStateChange = vi.fn();
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        row,
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ],
+      selection: {},
+      selectedIds: [],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={onStateChange}
+        showHeader={false}
+      />,
+    );
+
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
+    const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    expect(initialHookOptions?.state.keyword).toBe("coli");
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ]);
+    });
+    expect(dataTableProps.totalItems).toBe(1);
+    expect(onStateChange).not.toHaveBeenCalled();
+    const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    expect(hookOptions?.state.keyword).toBe("coli");
+  });
+
   it("keeps the data table mounted when no rows are available", () => {
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
@@ -499,7 +553,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       format: "csv",
       selectedIds: undefined,
       fields: null,
-      rql: "and(eq(taxon_lineage_ids,561),eq(genome_id,83332.12))",
+      rql: "and(and(eq(taxon_lineage_ids,561),eq(genome_id,*)),eq(genome_id,83332.12))",
     });
   });
 

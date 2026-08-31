@@ -295,6 +295,7 @@ export const routes: RouteEntry[] = [
     name: "epitope-list",
     path: "/epitope",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
     },
@@ -370,6 +371,7 @@ export const routes: RouteEntry[] = [
     name: "epitope",
     path: "/epitope/15780",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
     },

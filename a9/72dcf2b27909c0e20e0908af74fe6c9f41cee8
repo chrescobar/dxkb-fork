@@ -1,0 +1,142 @@
+src/components/filterbar/filter-bar.tsx
+  s_9835589a55c172::t_4c0abf808e7b3a 119-122
+src/app/(views)/epitope/[epitopeId]/epitope-member.tsx
+  s_cd126734f76c36::t_e4f13209d9c906 22-27
+src/app/(views)/epitope/page.tsx
+  s_cd126734f76c36::t_926a8674d00fd0 8-11,14
+src/components/services/__tests__/list-data-integration.test.tsx
+  s_fb5356e08c1f0a::t_69fa9aeaa5d964 280
+  s_fb5356e08c1f0a::t_1fff1f86f4c330 323-325
+  s_fb5356e08c1f0a::t_db84f22eb1dcab 311-322,326-328
+e2e/pages/index.ts
+  s_25af39b3b4c66d::t_d3f6f18b33f307 11
+src/app/(views)/epitope/epitope-collection.tsx
+  s_cd126734f76c36::t_76aef2a613dc5c 7-11
+src/components/views/__tests__/resource-collection.test.tsx
+  s_bd7c714e13bc00::t_aa4b642fdc5ee5 613
+  s_bd7c714e13bc00::t_c0f2e0d9692e61 556
+  s_3dbf009aa077a0::t_04d2ccc14d6b13 521
+  s_bd7c714e13bc00::t_9811bf7dc3bf3b 552-555,557-592,595,597,599-612,614-615
+  s_3dbf009aa077a0::t_02b914d879bce0 540
+  s_3dbf009aa077a0::t_131be0200450a6 635
+  s_bd7c714e13bc00::t_59621a935b0fdd 593-594,596,598
+  s_3dbf009aa077a0::t_8d41f327d569f8 473-500
+  s_3dbf009aa077a0::t_23f5f8ac196a70 527
+e2e/pages/epitope-page.ts
+  s_25af39b3b4c66d::t_da718ebc4b8fcd 23-33,38-40,82-84
+  s_25af39b3b4c66d::t_8092bfa0b29c38 1-22,34-37,41-81,85-105
+e2e/tests/epitope-view.spec.ts
+  s_25af39b3b4c66d::t_1dd5b3e80f4f80 2-3,24-25,28-29,37,39-40,43-45,47,50-51,62,68-70,79,81,87,101-103,114
+  s_25af39b3b4c66d::t_da718ebc4b8fcd 9-11,14-16,19-22,74-77,84-86,92-98
+src/components/views/resource-collection.tsx
+  s_bd7c714e13bc00::t_0557101bd54822 404
+  s_bd7c714e13bc00::t_a51c449af54875 133,138,143,146,396
+  s_bd7c714e13bc00::t_09a82f7eff93f5 154
+  s_bd7c714e13bc00::t_421fc3bcb257cd 3
+  s_bd7c714e13bc00::t_7aed5c2aa6a5a6 349-351
+  s_bd7c714e13bc00::t_5eec8cad6995fd 357
+  s_bd7c714e13bc00::t_fc86abbdd99244 239,241-245
+  s_bd7c714e13bc00::t_0730823d3accb8 401-402
+  s_bd7c714e13bc00::t_abd6f660bb10f2 240
+  s_bd7c714e13bc00::t_29b9cc710102e6 149-153,155
+  s_bd7c714e13bc00::t_9860a69f7bd659 156-168
+  s_bd7c714e13bc00::t_88f771e0f37cb3 176-177
+  s_bd7c714e13bc00::t_cde81967aed823 358-360
+  s_bd7c714e13bc00::t_ea370454616eac 301
+  s_bd7c714e13bc00::t_d3f7df972eaa97 356
+  s_bd7c714e13bc00::t_dabaef42944aa8 147-148
+  s_bd7c714e13bc00::t_f547fbfeb0cd89 403,405
+  s_bd7c714e13bc00::t_444fa2a7af0082 412
+  s_bd7c714e13bc00::t_72e02b18410add 421
+  s_bd7c714e13bc00::t_009e9f9866e4ee 97-98
+  s_bd7c714e13bc00::t_777c1eec4a2dc5 413-415
+  s_bd7c714e13bc00::t_16e3512b228aa4 411
+  s_3dbf009aa077a0::t_340d8127c90380 287,293-300,304
+  s_bd7c714e13bc00::t_c90a003f6e388e 233-234
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_62a10716ae4556::t_e0dacdc4384d8a 272
+  s_62a10716ae4556::t_69e3cb44e64e72 290-296
+src/app/(views)/epitope/[epitopeId]/page.tsx
+  s_cd126734f76c36::t_9fef59648a7b4e 37
+  s_cd126734f76c36::t_970b2a210dc86e 12,16-17
+  s_cd126734f76c36::t_073ae00f8c331f 11,13-15
+  s_cd126734f76c36::t_cb1836938f4330 46
+  s_cd126734f76c36::t_65d2993e903c77 18
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_cd126734f76c36::t_c5983971fb535f 32,37,41
+  s_cd126734f76c36::t_645060247c7eb8 6-19
+src/app/(views)/epitope/[epitopeId]/__tests__/page.test.tsx
+  s_cd126734f76c36::t_ed23dd1dd302d7 18-23
+  s_cd126734f76c36::t_35d78c0a59a7f8 28
+src/components/services/list-data.tsx
+  s_fb5356e08c1f0a::t_73e6193b588093 14
+  s_fb5356e08c1f0a::t_9606360876f8c7 409-412,416,418,420,426-435
+src/app/(views)/epitope/error.tsx
+  s_cd126734f76c36::t_dd0cd5871f5e45 5-10
+src/components/services/list-data-utils.ts
+  s_fb5356e08c1f0a::t_413d7bbf55b622 111-143,188-194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "a972dcf2b27909c0e20e0908af74fe6c9f41cee8",
+  "prompts": {},
+  "sessions": {
+    "s_25af39b3b4c66d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa72506f4ffeYMMZhD6CV5HkoS",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3dbf009aa077a0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa713aaf6ffeTGEa8ujyj0GWNu",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_62a10716ae4556": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa722a65affe5cU7j4mI0bzQO9",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9835589a55c172": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa71a8481ffe2Z0DHDbt1t59LJ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bd7c714e13bc00": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa739adddffeiAJ646g9aRIt4u",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_cd126734f76c36": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa71e5093ffe4eHaBb4mmzi4E4",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_fb5356e08c1f0a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa71965baffeKRFVQAWnxkWXFF",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

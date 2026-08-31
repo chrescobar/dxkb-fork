@@ -30,17 +30,26 @@ vi.mock("../resource-filter-bar", () => ({
       data-definitions={JSON.stringify(props.definitions)}
       data-keyword={typeof props.keyword === "string" ? props.keyword : ""}
     >
-      <button
-        onClick={() => {
-          const onChange = props.onChange as (update: { keyword?: string; filters: CollectionState["filters"] }) => void;
-          onChange({
-            keyword: "dna gy",
-            filters: props.filters as CollectionState["filters"],
-          });
-        }}
-      >
-        Filter loaded rows
-      </button>
+      {["dna gy", "HUMAN", "absent", undefined].map((keyword) => (
+        <button
+          key={keyword ?? "clear"}
+          onClick={() => {
+            const onChange = props.onChange as (update: { keyword?: string; filters: CollectionState["filters"] }) => void;
+            onChange({
+              keyword,
+              filters: props.filters as CollectionState["filters"],
+            });
+          }}
+        >
+          {keyword === "dna gy"
+            ? "Filter loaded rows"
+            : keyword === "HUMAN"
+              ? "Filter array value"
+              : keyword
+                ? "Filter no matches"
+                : "Clear loaded filter"}
+        </button>
+      ))}
     </div>
   ),
 }));
@@ -496,9 +505,72 @@ describe("ResourceCollection Genome integration contracts", () => {
       ]);
     });
     expect(dataTableProps.totalItems).toBe(1);
+    expect(dataTableProps.pageIndex).toBe(0);
     expect(onStateChange).not.toHaveBeenCalled();
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
     expect(hookOptions?.state.keyword).toBe("coli");
+
+    await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
+
+    await waitFor(() => {
+      expect(dataTableProps.data).toHaveLength(2);
+    });
+    expect(dataTableProps.totalItems).toBe(2);
+    expect(dataTableProps.pageIndex).toBe(2);
+    expect(onStateChange).not.toHaveBeenCalled();
+  });
+
+  it("matches array values case-insensitively and handles no local matches", async () => {
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        { ...row, host_name: ["Homo sapiens", "Human"] },
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ],
+      selection: {},
+      selectedIds: [],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter array value" }));
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([
+        { ...row, host_name: ["Homo sapiens", "Human"] },
+      ]);
+    });
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter no matches" }));
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([]);
+    });
+    expect(dataTableProps.totalItems).toBe(0);
+  });
+
+  it("removes an accidental server keyword in explicitly loaded mode", () => {
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+        keywordMode="loaded"
+      />,
+    );
+
+    const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    expect(hookOptions?.state.keyword).toBeUndefined();
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
   });
 
   it("keeps the data table mounted when no rows are available", () => {

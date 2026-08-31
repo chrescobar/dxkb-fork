@@ -35,14 +35,38 @@ test.describe("Epitope view", () => {
         collectionRequests.push(request.url());
       }
     });
-    await page.getByPlaceholder("Search keywords...").fill("hemagglutinin");
+    const localKeyword = page.getByPlaceholder("Search keywords...");
+    await localKeyword.fill("hemagglutinin");
     await page.waitForTimeout(400);
     await expect(page.getByRole("link", { name: "15780" })).toBeVisible();
+    await expect(page).toHaveURL(/\/epitope\?keyword=Brucella$/);
+    expect(collectionRequests).toEqual([]);
+
+    await localKeyword.fill("not in returned rows");
+    await expect(page.getByRole("link", { name: "15780" })).toHaveCount(0);
+    await expect(page.getByText("No results")).toBeVisible();
+    await page.waitForTimeout(400);
+    await expect(page).toHaveURL(/\/epitope\?keyword=Brucella$/);
+    expect(collectionRequests).toEqual([]);
+
+    await localKeyword.clear();
+    await expect(page.getByRole("link", { name: "15780" })).toBeVisible();
+    await page.waitForTimeout(400);
     expect(collectionRequests).toEqual([]);
 
     await page.getByRole("button", { name: "Show Filters" }).click();
+    const facetRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname === "/api/data/epitope" &&
+        url.searchParams.get("keyword") === "Brucella"
+      );
+    });
     await page.getByRole("button", { name: "Discontinuous peptide (1)" }).click();
-    await expect(page).toHaveURL(/epitope_type=Discontinuous\+peptide/);
+    await facetRequest;
+    await expect(page).toHaveURL(
+      /\/epitope\?keyword=Brucella&epitope_type=Discontinuous\+peptide$/,
+    );
 
     await page.getByRole("link", { name: "15780" }).click();
     await expect(page).toHaveURL(/\/epitope\/15780$/);

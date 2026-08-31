@@ -1,0 +1,46 @@
+src/app/(views)/genome/genome-collection.tsx
+  s_e8c1440010a2af::t_402ed25f6fc00b 21
+src/components/views/__tests__/resource-collection.test.tsx
+  s_e8c1440010a2af::t_8e768ac174d3de 527
+  s_e8c1440010a2af::t_a514a79fb64f56 682,695
+  s_e8c1440010a2af::t_5d9aefafe2d84a 624
+  s_e8c1440010a2af::t_6d5d01914a835e 540
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_e8c1440010a2af::t_97cd2ed3813c2e 285
+  s_e8c1440010a2af::t_5de4203d008497 292
+  s_e8c1440010a2af::t_a902ba32f8cbb1 71
+  s_e8c1440010a2af::t_6f6904d3f3fcef 293-294
+  s_e8c1440010a2af::t_d5089dd3fc0de6 284,288
+src/app/(views)/feature/feature-collection.tsx
+  s_e8c1440010a2af::t_5732a6aa7c6cff 23
+src/components/services/list-data.tsx
+  s_e8c1440010a2af::t_95bd50a2552264 458-461
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_e8c1440010a2af::t_2d3baa375c96d2 119-122
+e2e/tests/genome-view.spec.ts
+  s_e8c1440010a2af::t_6d3f2365dc5707 33
+  s_e8c1440010a2af::t_5349f0e7465655 29-32,34-35,37
+  s_e8c1440010a2af::t_a034e10f27b370 145
+src/components/views/resource-collection.tsx
+  s_e8c1440010a2af::t_9446da1bbc3cbf 115,117
+  s_e8c1440010a2af::t_78047638ac6bd0 126
+  s_e8c1440010a2af::t_8ba9ab953afd17 204
+src/app/(views)/epitope/epitope-collection.tsx
+  s_e8c1440010a2af::t_ed51fa7a1ef814 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "15e8ade763a2802ad345ee69a2e67bf9fe3bdb01",
+  "prompts": {},
+  "sessions": {
+    "s_e8c1440010a2af": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa6d3304dffebXsVB5AB2p4bFb",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

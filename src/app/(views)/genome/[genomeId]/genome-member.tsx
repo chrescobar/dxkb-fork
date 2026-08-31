@@ -20,6 +20,9 @@ import {
   type GenomeViewRecord,
 } from "@/lib/genome-view";
 import {
+  featureColumns,
+  genomeFeatureRql,
+  genomeProteinRql,
   genomeSequenceColumns,
   interactionColumns,
 } from "@/lib/views/child-resources";
@@ -46,7 +49,7 @@ function lineage(genome: GenomeViewRecord) {
       </Link>
       <span className="text-muted-foreground/50 select-none">»</span>
       {names.map((name, index) => (
-        <span key={`${name}-${String(index)}`} className="contents">
+        <span key={ids[index] ?? name} className="contents">
           {ids[index] ? (
             <Link
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -109,6 +112,21 @@ export function GenomeMember({
         defaultSort="id:asc"
       />
     );
+  } else if (activeTab === "features" || activeTab === "proteins") {
+    content = (
+      <GenomeChildCollection
+        resource="genome_feature"
+        label={activeTab === "proteins" ? "Proteins" : "Features"}
+        idField="feature_id"
+        rql={
+          activeTab === "proteins"
+            ? genomeProteinRql(genome.genome_id)
+            : genomeFeatureRql(genome.genome_id)
+        }
+        columns={featureColumns}
+        defaultSort="patric_id:asc"
+      />
+    );
   }
   const tabs = buildGenomeTabs(genome).map((tab) => ({
     ...tab,
@@ -125,15 +143,13 @@ export function GenomeMember({
         activeTab === "overview" ? (
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
             <span>
-              <strong>Length:</strong>{" "}
-              {genome.genome_length ?? "Not available"}
+              <strong>Length:</strong> {genome.genome_length ?? "Not available"}
             </span>
             <span>
               <strong>Contigs:</strong> {genome.contigs ?? "Not available"}
             </span>
             <span>
-              <strong>Status:</strong>{" "}
-              {genome.genome_status ?? "Not available"}
+              <strong>Status:</strong> {genome.genome_status ?? "Not available"}
             </span>
           </div>
         ) : undefined

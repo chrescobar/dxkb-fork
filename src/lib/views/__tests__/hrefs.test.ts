@@ -1,4 +1,6 @@
 import {
+  featureHref,
+  featureIdFromRow,
   featureListHref,
   genomeHref,
   genomeIdFromRow,
@@ -16,13 +18,26 @@ describe("taxonomyHref", () => {
   });
 });
 
-describe("featureListHref", () => {
+describe("Feature hrefs", () => {
+  it("encodes member IDs and prefers the canonical row field", () => {
+    expect(featureHref("fig|83332.12/peg 1")).toBe("/feature/fig%7C83332.12%2Fpeg%201");
+    expect(featureIdFromRow({ feature_id: "canonical", patric_id: "alternate" })).toBe("canonical");
+    expect(featureIdFromRow({ patric_id: "alternate" })).toBe("alternate");
+    expect(featureIdFromRow(null)).toBeNull();
+  });
+
   it("builds a canonical URL with encoded explicit RQL", () => {
     expect(
-      featureListHref("and(eq(genome_id,83332.12),eq(feature_type,CDS))"),
+      featureListHref({ rql: "and(eq(genome_id,83332.12),eq(feature_type,CDS))" }),
     ).toBe(
       "/feature?rql=and(eq(genome_id%2C83332.12)%2Ceq(feature_type%2CCDS))",
     );
+  });
+
+  it("builds bare, keyword, and protein-filtered list routes", () => {
+    expect(featureListHref()).toBe("/feature");
+    expect(featureListHref({ keyword: "DNA kinase" })).toBe("/feature?keyword=DNA%20kinase");
+    expect(featureListHref({ keyword: "kinase", filter: "protein" })).toBe("/feature?keyword=kinase&filter=protein");
   });
 });
 

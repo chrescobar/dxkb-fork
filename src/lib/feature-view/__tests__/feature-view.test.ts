@@ -1,0 +1,58 @@
+import {
+  buildFeatureTabs,
+  canonicalFeatureTab,
+  featureCollectionProfile,
+  featureStructuralRql,
+  featureViewRecordSchema,
+  isFeatureId,
+  isPatricFeatureId,
+  parseFeatureCollectionState,
+} from "@/lib/feature-view";
+import { featureInteractionsRql, genomeProteinRql } from "@/lib/views/child-resources";
+
+describe("Feature view contracts", () => {
+  it("accepts canonical and alternate complex identifiers", () => {
+    expect(isFeatureId("PATRIC.83332.12.NC_000962.CDS.1.1524.fwd")).toBe(true);
+    expect(isFeatureId("fig|83332.12.peg.1")).toBe(true);
+    expect(isPatricFeatureId("fig|83332.12.peg.1")).toBe(true);
+    expect(isPatricFeatureId("PATRIC.83332.12.peg.1")).toBe(false);
+  });
+
+  it("validates member fields and corrected codon_start metadata", () => {
+    expect(
+      featureViewRecordSchema.parse({
+        feature_id: "PATRIC.1",
+        codon_start: 1,
+        gene_id: 0,
+      }),
+    ).toMatchObject({ feature_id: "PATRIC.1", codon_start: 1, gene_id: 0 });
+    expect(featureCollectionProfile.detailFields).toContain("codon_start");
+    expect(featureCollectionProfile.detailFields).not.toContain("Codon Start");
+  });
+
+  it("parses collection state without silently adding annotation", () => {
+    const state = parseFeatureCollectionState({ genome_id: "83332.12", feature_type: ["CDS", "tRNA"] });
+    expect(state.filters).toEqual({ genome_id: ["83332.12"], feature_type: ["CDS", "tRNA"] });
+    expect(featureStructuralRql(state)).toBe("and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,tRNA)))");
+  });
+
+  it("keeps Feature filter separate from explicit structural RQL", () => {
+    const state = parseFeatureCollectionState({ rql: "eq(genome_id,83332.12)", filter: "protein" });
+    expect(state.rql).toBe("eq(genome_id,83332.12)");
+    expect(state.filters).toEqual({ filter: ["protein"] });
+    expect(featureStructuralRql(state)).toContain("eq(annotation,PATRIC)");
+  });
+
+  it("builds exact protein and interaction predicates", () => {
+    expect(genomeProteinRql("83332.12")).toBe("and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,mat_peptide)),eq(annotation,PATRIC))");
+    expect(featureInteractionsRql("PATRIC.1")).toBe("and(or(eq(feature_id_a,PATRIC.1),eq(feature_id_b,PATRIC.1)),eq(evidence,experimental))");
+  });
+
+  it("enables only established member tabs", () => {
+    const feature = featureViewRecordSchema.parse({ feature_id: "PATRIC.1" });
+    expect(buildFeatureTabs(feature).find((tab) => tab.key === "interactions")?.enabled).not.toBe(false);
+    expect(canonicalFeatureTab("interactions", feature)).toBe("interactions");
+    expect(canonicalFeatureTab("genome-browser", feature)).toBe("overview");
+    expect(canonicalFeatureTab("unknown", feature)).toBe("overview");
+  });
+});

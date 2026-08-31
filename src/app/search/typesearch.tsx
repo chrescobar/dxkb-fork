@@ -18,7 +18,12 @@ import {
   searchTabsByType,
   searchTypes as searchDescriptors,
 } from "@/constants/search-info";
-import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
+import {
+  featureHref,
+  featureIdFromRow,
+  genomeHref,
+  genomeIdFromRow,
+} from "@/lib/views/hrefs";
 import {
   ChevronLeft,
   ChevronRight,
@@ -61,6 +66,7 @@ interface TabsRendererProps {
   setPageIndex: (page: number) => void;
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedGenomeId: (id: string | null) => void;
+  setSelectedFeatureId: (id: string | null) => void;
   selectedIds: string[];
   isAllPagesSelected: boolean;
   setIsAllPagesSelected: (selected: boolean) => void;
@@ -84,6 +90,7 @@ function TabsRenderer({
   setPageIndex,
   setSelectedIds,
   setSelectedGenomeId,
+  setSelectedFeatureId,
   selectedIds,
   isAllPagesSelected,
   setIsAllPagesSelected,
@@ -112,6 +119,7 @@ function TabsRenderer({
     setRowSelection({});
     setSelectedIds([]);
     setSelectedGenomeId(null);
+    setSelectedFeatureId(null);
     setIsAllPagesSelected(false);
   };
 
@@ -188,6 +196,7 @@ function TabsRenderer({
             }}
             onSelectedRowChange={(row) => {
               setSelectedGenomeId(genomeIdFromRow(row));
+              setSelectedFeatureId(featureIdFromRow(row));
             }}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
@@ -281,6 +290,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
+  const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
@@ -293,6 +303,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setRowSelection({});
     setSelectedIds([]);
     setSelectedGenomeId(null);
+    setSelectedFeatureId(null);
     setPageIndex(0);
     setIsAllPagesSelected(false);
     setTotalItems(0);
@@ -419,7 +430,17 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
               disabledActions={{ taxonOverview: notReady }}
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
-                  router.push(genomeHref(selectedGenomeId));
+                  window.open(
+                    genomeHref(selectedGenomeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (actionId === "feature" && selectedFeatureId) {
+                  window.open(
+                    featureHref(selectedFeatureId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />
@@ -447,6 +468,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             setPageIndex={setPageIndex}
             setSelectedIds={setSelectedIds}
             setSelectedGenomeId={setSelectedGenomeId}
+            setSelectedFeatureId={setSelectedFeatureId}
             selectedIds={selectedIds}
             isAllPagesSelected={isAllPagesSelected}
             setIsAllPagesSelected={setIsAllPagesSelected}

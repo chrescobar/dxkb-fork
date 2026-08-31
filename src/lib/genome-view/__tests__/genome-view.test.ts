@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   genomeFeatureRql,
+  genomeProteinRql,
   taxonomyInteractionsRql,
   taxonomySequenceRql,
 } from "@/lib/views/child-resources";
@@ -89,6 +90,9 @@ describe("Genome view contracts", () => {
     expect(genomeFeatureRql("83332.12", "CDS")).toBe(
       "and(eq(genome_id,83332.12),eq(feature_type,CDS))",
     );
+    expect(genomeProteinRql("83332.12")).toBe(
+      "and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,mat_peptide)),eq(annotation,PATRIC))",
+    );
     expect(taxonomySequenceRql("eq(taxon_lineage_ids,561)")).toBe(
       "and(eq(genome_id,*),genome(and(eq(taxon_lineage_ids,561),ne(genome_status,Deprecated))))",
     );
@@ -134,7 +138,8 @@ describe("Genome view contracts", () => {
     expect(
       buildGenomeTabs(viral).find((tab) => tab.key === "interactions")?.enabled,
     ).toBe(false);
-    expect(canonicalGenomeTab("features", bacterial)).toBe("overview");
+    expect(canonicalGenomeTab("features", bacterial)).toBe("features");
+    expect(canonicalGenomeTab("proteins", bacterial)).toBe("proteins");
     expect(canonicalGenomeTab("sequences", bacterial)).toBe("sequences");
     expect(canonicalGenomeTab("nonsense", bacterial)).toBe("overview");
   });

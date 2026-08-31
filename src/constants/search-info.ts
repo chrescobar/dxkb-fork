@@ -1,7 +1,12 @@
 import { viewRegistry } from "@/lib/views/view-registry";
 
 export type SearchRoute =
-  { status: "legacy" } | { status: "canonical"; segment: string };
+  | { status: "legacy" }
+  | {
+      status: "canonical";
+      segment: string;
+      params?: Readonly<Record<string, string>>;
+    };
 
 export interface SearchType {
   id: string;
@@ -14,7 +19,13 @@ export interface SearchType {
 
 export function searchHref(searchType: SearchType, query: string): string {
   if (searchType.route.status === "canonical") {
-    return `/${searchType.route.segment}?keyword=${encodeURIComponent(query)}`;
+    const params = [
+      `keyword=${encodeURIComponent(query)}`,
+      ...Object.entries(searchType.route.params ?? {}).map(
+        ([name, value]) => `${name}=${encodeURIComponent(value)}`,
+      ),
+    ];
+    return `/${searchType.route.segment}?${params.join("&")}`;
   }
   return `/search?type=${searchType.id}&q=${encodeURIComponent(query)}`;
 }
@@ -66,7 +77,7 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "genome_feature",
     typeTitle: "Features",
-    route: { status: "legacy" },
+    route: { status: "canonical", segment: viewRegistry.feature.segment },
     tabs: { genome_feature: "Features" },
     pickerOrder: 3,
     allTermOrder: 3,
@@ -74,7 +85,11 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "protein",
     typeTitle: "Proteins",
-    route: { status: "legacy" },
+    route: {
+      status: "canonical",
+      segment: viewRegistry.feature.segment,
+      params: { filter: "protein" },
+    },
   },
   {
     id: "sp_gene",

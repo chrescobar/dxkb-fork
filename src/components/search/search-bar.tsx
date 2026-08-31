@@ -42,7 +42,11 @@ function SearchBarWithParams(props: SearchBarProps) {
   const requestedType =
     pathname === "/genome"
       ? "genome"
-      : searchParams.get("type") || "everything";
+      : pathname === "/feature"
+        ? searchParams.get("filter") === "protein"
+          ? "protein"
+          : "genome_feature"
+        : searchParams.get("type") || "everything";
   const initialType = searchTypes.some((type) => type.id === requestedType)
     ? requestedType
     : "everything";

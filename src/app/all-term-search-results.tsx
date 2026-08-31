@@ -19,7 +19,13 @@ import {
   allTermSearchTypes,
   labelsBySearchType,
 } from "@/constants/search-info";
-import { genomeHref, genomeListHref } from "@/lib/views/hrefs";
+import {
+  featureHref,
+  featureIdFromRow,
+  featureListHref,
+  genomeHref,
+  genomeListHref,
+} from "@/lib/views/hrefs";
 
 const bvbrcAPI = "https://p3.theseed.org/services/data_api/";
 
@@ -446,8 +452,8 @@ function SearchResultsContent({ query }: { query: string }) {
                     <div className="flex items-center gap-2">
                       {getDataTypeIcon(dataType)}
                       <CardTitle className="text-xl font-semibold capitalize">
-                        {dataType === "genome" ? (
-                          <Link href={genomeListHref({ keyword: query })}>
+                        {dataType === "genome" || dataType === "genome_feature" ? (
+                          <Link href={dataType === "genome" ? genomeListHref({ keyword: query }) : featureListHref({ keyword: query })}>
                             {labelsBySearchType[dataType]}
                           </Link>
                         ) : (
@@ -477,11 +483,18 @@ function SearchResultsContent({ query }: { query: string }) {
                         typeof doc.genome_id === "number"
                           ? doc.genome_id
                           : null;
+                      const featureId = featureIdFromRow(doc);
                       const content = getFormattedContent(doc, dataType);
+                      const href =
+                        dataType === "genome" && genomeId != null
+                          ? genomeHref(genomeId)
+                          : dataType === "genome_feature" && featureId
+                            ? featureHref(featureId)
+                            : null;
                       return (
                         <div key={documentKey} className="py-6">
-                          {dataType === "genome" && genomeId != null ? (
-                            <Link href={genomeHref(genomeId)} className="block">
+                          {href ? (
+                            <Link href={href} className="block">
                               {content}
                             </Link>
                           ) : (

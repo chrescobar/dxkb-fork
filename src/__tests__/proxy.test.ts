@@ -187,6 +187,18 @@ describe("proxy", () => {
       expect(loc.pathname).toBe("/genome");
       expect(loc.searchParams.get("rql")).toBe("eq(taxon_id,1763)");
     });
+    it("redirects Protein aliases to Feature routes", () => {
+      const member = proxy(buildRequest("/view/Protein/fig%7C83332.12.peg.1"));
+      expect(member.status).toBe(308);
+      expect(getRedirectLocation(member).pathname).toBe("/feature/fig%7C83332.12.peg.1");
+
+      const list = proxy(buildRequest("/view/ProteinList/?keyword=kinase"));
+      expect(list.status).toBe(308);
+      expect(getRedirectLocation(list).pathname).toBe("/feature");
+      expect(getRedirectLocation(list).searchParams.get("keyword")).toBe("kinase");
+      expect(getRedirectLocation(list).searchParams.get("filter")).toBe("protein");
+    });
+
     it("passes through an unknown legacy view name (no redirect)", () => {
       const request = buildRequest("/view/Nonsense/1");
       const response = proxy(request);

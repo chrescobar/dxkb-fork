@@ -31,7 +31,10 @@ export const viewRegistry = {
     segment: "feature",
     label: "Feature",
     legacySingular: "Feature",
+    legacySingularAliases: ["Protein"],
     legacyList: "FeatureList",
+    legacyListAliases: ["ProteinList"],
+    legacyListAliasParams: { ProteinList: { filter: "protein" } },
     searchType: "genome_feature",
     singular: { idParam: "featureId", idKind: "string", defaultTab: "overview" },
     list: { endpoint: "genome_feature", defaultTab: "overview", friendlyParams: ["keyword", "genome_id"] },
@@ -100,10 +103,29 @@ export const viewRegistry = {
 export const viewSegments = Object.keys(viewRegistry);
 
 /** Legacy BV-BRC view name → new segment. Derived so it cannot drift from routes. */
-export const legacyToSegment: Record<string, string> = Object.fromEntries(
-  (Object.values(viewRegistry) as ViewTypeEntry[]).flatMap((entry) =>
-    [entry.legacySingular, entry.legacyList]
+export interface LegacyViewTarget {
+  segment: string;
+  kind: "singular" | "list";
+  defaultParams?: Readonly<Record<string, string>>;
+}
+
+export const legacyViewTargets = Object.fromEntries(
+  (Object.values(viewRegistry) as ViewTypeEntry[]).flatMap((entry) => [
+    ...[entry.legacySingular, ...(entry.legacySingularAliases ?? [])]
       .filter((name): name is string => Boolean(name))
-      .map((name) => [name, entry.segment]),
+      .map((name) => [name, { segment: entry.segment, kind: "singular" as const }]),
+    ...[entry.legacyList, ...(entry.legacyListAliases ?? [])]
+      .filter((name): name is string => Boolean(name))
+      .map((name) => [name, {
+        segment: entry.segment,
+        kind: "list" as const,
+        defaultParams: entry.legacyListAliasParams?.[name],
+      }]),
+  ]),
+) as Record<string, LegacyViewTarget | undefined>;
+
+export const legacyToSegment: Record<string, string> = Object.fromEntries(
+  Object.entries(legacyViewTargets).flatMap(([name, target]) =>
+    target ? [[name, target.segment]] : [],
   ),
 );

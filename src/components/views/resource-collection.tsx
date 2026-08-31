@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { InfoPanel } from "@/components/detail-panel/info-panel";
@@ -22,7 +21,12 @@ import {
   type DataRepository,
   type DataResource,
 } from "@/lib/data-api";
-import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
+import {
+  featureHref,
+  featureIdFromRow,
+  genomeHref,
+  genomeIdFromRow,
+} from "@/lib/views/hrefs";
 
 export interface ResourceCollectionFacet {
   field: string;
@@ -84,7 +88,6 @@ export function ResourceCollection<Row extends DataTableRow>({
   showHeader = true,
   onExport,
 }: ResourceCollectionProps<Row>) {
-  const router = useRouter();
   const [exportError, setExportError] = useState<string | null>(null);
   const [columnVisibility, setColumnVisibility] = useState(() =>
     Object.fromEntries(
@@ -122,6 +125,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     profile.resource === "genome"
       ? collection.activeId
       : genomeIdFromRow(detail);
+  const selectedFeatureId = featureIdFromRow(detail);
 
   const exportRows = async (
     format: "csv" | "txt",
@@ -287,22 +291,6 @@ export function ResourceCollection<Row extends DataTableRow>({
             </Button>
           </AlertDescription>
         </Alert>
-      ) : !collection.isInitialLoading && collection.total === 0 ? (
-        <div
-          className="rounded-lg border border-dashed p-8 text-center"
-          role="status"
-        >
-          <h2 className="font-medium">
-            {state.keyword || state.rql || Object.keys(state.filters).length
-              ? "No matching results"
-              : `No ${profile.label.toLowerCase()} available`}
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {state.keyword || state.rql || Object.keys(state.filters).length
-              ? "Try changing or clearing the current filters."
-              : "Records will appear here when they become available."}
-          </p>
-        </div>
       ) : (
         <ResourceWorkspace
           hasSidePanel={
@@ -319,7 +307,17 @@ export function ResourceCollection<Row extends DataTableRow>({
               guideUrl={profile.guideUrl}
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
-                  router.push(genomeHref(selectedGenomeId));
+                  window.open(
+                    genomeHref(selectedGenomeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (actionId === "feature" && selectedFeatureId) {
+                  window.open(
+                    featureHref(selectedFeatureId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />

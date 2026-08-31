@@ -103,33 +103,40 @@ test.describe("Genome view", () => {
       page.getByRole("button", { name: "Genome Statistics" }),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: /^G\s*GENOME$/i }).click();
-    await expect(page).toHaveURL(/\/genome\/1282460\.2049$/);
+    const genomePage = await Promise.all([
+      page.context().waitForEvent("page"),
+      page.getByRole("button", { name: /^G\s*GENOME$/i }).click(),
+    ]).then(([opened]) => opened);
+    await applyBackendMocks(genomePage, {
+      overrides: [...permissiveBackendOverrides],
+    });
+
+    await expect(genomePage).toHaveURL(/\/genome\/1282460\.2049$/);
     await expect(
-      page.getByRole("heading", {
+      genomePage.getByRole("heading", {
         level: 1,
         name: "Middle East respiratory syndrome-related coronavirus isolate",
       }),
     ).toBeVisible();
-    await expect(page.getByText("Assembly summary")).toBeVisible();
-    const sequenceRequest = page.waitForRequest((request) => {
+    await expect(genomePage.getByText("Assembly summary")).toBeVisible();
+    const sequenceRequest = genomePage.waitForRequest((request) => {
       const url = new URL(request.url());
       return (
         url.pathname === "/api/data/genome_sequence" &&
         url.searchParams.get("rql") === "eq(genome_id,1282460.2049)"
       );
     });
-    await page.getByRole("button", { name: "Sequences" }).click();
+    await genomePage.getByRole("button", { name: "Sequences" }).click();
     await sequenceRequest;
-    await expect(page).toHaveURL(/\?tab=sequences$/);
-    await expect(page.getByText("JX869059")).toBeVisible();
+    await expect(genomePage).toHaveURL(/\?tab=sequences$/);
+    await expect(genomePage.getByText("JX869059")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Genome Browser" }),
+      genomePage.getByRole("button", { name: "Genome Browser" }),
     ).toHaveAttribute("aria-disabled", "true");
 
-    await page.goBack();
-    await expect(page).toHaveURL(/\/genome\/1282460\.2049$/);
-    await page.goBack();
+    await genomePage.goBack();
+    await expect(genomePage).toHaveURL(/\/genome\/1282460\.2049$/);
+    await genomePage.close();
     await expect(page).toHaveURL(/\/genome\?keyword=MERS$/);
     await expect(page.getByPlaceholder("Search keywords...")).toHaveValue(
       "MERS",

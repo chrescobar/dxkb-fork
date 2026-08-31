@@ -2,13 +2,17 @@
 
 import { Suspense, useRef, useState } from "react";
 import type { RowSelectionState } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
 
 import { ResourceWorkspace } from "@/components/views/resource-workspace";
 import { GenomeDetailPanel } from "@/components/genome/genome-detail-panel";
 import { ListData } from "@/components/services/list-data";
 import { SearchActionBar } from "@/components/search/search-action-bar";
-import { genomeHref, genomeIdFromRow } from "@/lib/views/hrefs";
+import {
+  featureHref,
+  featureIdFromRow,
+  genomeHref,
+  genomeIdFromRow,
+} from "@/lib/views/hrefs";
 
 interface TaxonDataPanelProps {
   resource: string;
@@ -28,14 +32,14 @@ export function TaxonDataPanel({
   keywordValue,
   onKeywordChange,
 }: TaxonDataPanelProps) {
-  const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
+  const selectedGenomeIdRef = useRef<string | null>(null);
+  const selectedFeatureIdRef = useRef<string | null>(null);
   // Debounce empty-selection by 120ms so the panel doesn't flicker when
   // clicking rapidly between rows (mirrors TypeSearch.activeGenomeId logic).
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -62,8 +66,18 @@ export function TaxonDataPanel({
           searchType={resource}
           guideUrl={guideUrl}
           onAction={(actionId) => {
-            if (actionId === "genome" && selectedGenomeId) {
-              router.push(genomeHref(selectedGenomeId));
+            if (actionId === "genome" && selectedGenomeIdRef.current) {
+              window.open(
+                genomeHref(selectedGenomeIdRef.current),
+                "_blank",
+                "noopener,noreferrer",
+              );
+            } else if (actionId === "feature" && selectedFeatureIdRef.current) {
+              window.open(
+                featureHref(selectedFeatureIdRef.current),
+                "_blank",
+                "noopener,noreferrer",
+              );
             }
           }}
         />
@@ -89,7 +103,8 @@ export function TaxonDataPanel({
           selectedIds={selectedIds}
           onSelectionChange={handleSelectionChange}
           onSelectedRowChange={(row) => {
-            setSelectedGenomeId(genomeIdFromRow(row));
+            selectedGenomeIdRef.current = genomeIdFromRow(row);
+            selectedFeatureIdRef.current = featureIdFromRow(row);
           }}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}

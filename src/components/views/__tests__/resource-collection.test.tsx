@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { DataRepository } from "@/lib/data-api";
+import { featureCollectionProfile } from "@/lib/feature-view/profile";
 import { genomeCollectionProfile } from "@/lib/genome-view/profile";
 import type { CollectionState } from "@/lib/views/collection-state";
 import type { useResourceCollection as useResourceCollectionHook } from "@/hooks/views/use-resource-collection";
@@ -34,19 +35,30 @@ vi.mock("@/components/search/search-action-bar", () => ({
   SearchActionBar: (props: Record<string, unknown>) => {
     actionBarProps = props;
     return (
-      <button
-        onClick={() =>
-          (props.onAction as ((action: string) => void) | undefined)?.("genome")
-        }
-      >
-        Genome action
-      </button>
+      <div>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.("genome")
+          }
+        >
+          Genome action
+        </button>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.("feature")
+          }
+        >
+          Feature action
+        </button>
+      </div>
     );
   },
 }));
 vi.mock("@/components/detail-panel/info-panel", () => ({
-  InfoPanel: ({ selectedRow }: { selectedRow: Record<string, unknown> }) => (
-    <div data-testid="detail">{String(selectedRow.genome_name)}</div>
+  InfoPanel: ({ selectedRow }: { selectedRow: Record<string, unknown> | null }) => (
+    <div data-testid="detail">
+      {selectedRow ? String(selectedRow.genome_name) : null}
+    </div>
   ),
 }));
 vi.mock("../resource-workspace", () => ({
@@ -73,12 +85,12 @@ vi.mock("@/components/shared/data-table", () => ({
       id: string;
       href?: (row: Record<string, unknown>) => string | undefined;
     }[];
-    const row = (props.data as Record<string, unknown>[])[0];
+    const rows = props.data as Record<string, unknown>[];
     const linkColumn = columns.find((column) => column.href);
     return (
       <div data-testid="data-table">
-        {linkColumn?.href ? (
-          <a href={linkColumn.href(row)}>{String(row.genome_name)}</a>
+        {linkColumn?.href && rows.length > 0 ? (
+          <a href={linkColumn.href(rows[0])}>{String(rows[0].genome_name)}</a>
         ) : null}
         <button
           onClick={() =>
@@ -211,8 +223,10 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.getByTestId("detail")).toHaveTextContent("E. coli fixture");
   });
 
-  it("projects row links to members and navigates the Genome action", async () => {
+  it("projects row links and opens the Genome action in a new tab", async () => {
     const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
     render(
       <ResourceCollection
         profile={genomeCollectionProfile}
@@ -227,7 +241,54 @@ describe("ResourceCollection Genome integration contracts", () => {
       screen.getByRole("link", { name: "E. coli fixture" }),
     ).toHaveAttribute("href", "/genome/83332.12");
     await user.click(screen.getByRole("button", { name: "Genome action" }));
-    expect(push).toHaveBeenCalledWith("/genome/83332.12");
+    expect(open).toHaveBeenCalledWith(
+      "/genome/83332.12",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("opens the selected feature member in a new tab", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "canonical-feature",
+      detail: {
+        feature_id: "canonical-feature",
+        patric_id: "fig|83332.12.peg.1",
+        genome_id: "83332.12",
+      },
+      rows: [
+        {
+          feature_id: "canonical-feature",
+          patric_id: "fig|83332.12.peg.1",
+          genome_id: "83332.12",
+        },
+      ],
+      selection: { "canonical-feature": true },
+      selectedIds: ["canonical-feature"],
+    });
+
+    render(
+      <ResourceCollection
+        profile={featureCollectionProfile}
+        repository={repository()}
+        state={{ ...state, sort: "patric_id:asc" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Feature action" }));
+    expect(open).toHaveBeenCalledWith(
+      "/feature/canonical-feature",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("requests all matching rows using the active scope, sort, and columns", async () => {
@@ -384,6 +445,31 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.getByText("Could not load record details")).toBeVisible();
     expect(screen.getByText("Genome detail service unavailable")).toBeVisible();
     expect(screen.queryByTestId("detail")).not.toBeInTheDocument();
+  });
+
+  it("keeps the data table mounted when no rows are available", () => {
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: null,
+      detail: null,
+      rows: [],
+      selection: {},
+      selectedIds: [],
+      total: 0,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={{ ...state, keyword: "", filters: {}, page: 1 }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(screen.getByTestId("data-table")).toBeInTheDocument();
+    expect(dataTableProps).toMatchObject({ data: [], totalItems: 0 });
   });
 
   it("passes the effective RQL to delegated exports", async () => {

@@ -549,9 +549,22 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(onStateChange).not.toHaveBeenCalled();
   });
 
-  it("clears hidden selections and exports only rows matching a loaded keyword", async () => {
+  it("clears hidden selections and exports loaded-keyword matches from every page", async () => {
     const user = userEvent.setup();
-    const data = repository();
+    const laterMatch = {
+      genome_id: "83332.14",
+      genome_name: "DNA gyrase from a later page",
+      genome_length: 9012,
+    };
+    const data = repository(
+      Promise.resolve({
+        rows: [
+          row,
+          { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+          laterMatch,
+        ],
+      }),
+    );
     const selected = vi.spyOn(data, "selected");
     const exportAll = vi.spyOn(data, "exportAll");
     const setSelection = vi.fn();
@@ -564,7 +577,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       ],
       selection: { "83332.12": true, "83332.13": true },
       selectedIds: ["83332.12", "83332.13"],
-      total: 2,
+      total: 401,
       setSelection,
       setIsAllPagesSelected,
     });
@@ -606,11 +619,27 @@ describe("ResourceCollection Genome integration contracts", () => {
       )("csv", null);
     });
 
-    expect(selected).toHaveBeenCalledWith("genome", {
-      ids: ["83332.13"],
+    expect(exportAll).toHaveBeenCalledWith("genome", {
+      rql: "eq(genome_status,Complete)",
+      keyword: undefined,
       fields: genomeCollectionProfile.columns.map((column) => column.id),
+      sort: { field: "genome_length", direction: "desc" },
     });
-    expect(exportAll).not.toHaveBeenCalled();
+    expect(selected).not.toHaveBeenCalled();
+    expect(downloadResourceExport).toHaveBeenCalledWith(
+      "genome",
+      [
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
+        laterMatch,
+      ],
+      genomeCollectionProfile.columns,
+      genomeCollectionProfile.columns.map((column) => column.id),
+      "csv",
+    );
   });
 
   it("matches array values case-insensitively and handles no local matches", async () => {

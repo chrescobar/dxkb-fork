@@ -60,6 +60,15 @@ function combinePredicates(...predicates: (string | undefined)[]) {
   return `and(${active.join(",")})`;
 }
 
+function matchesLoadedKeyword(row: DataTableRow, keyword: string) {
+  return Object.values(row).some((value) => {
+    const values = Array.isArray(value) ? value : [value];
+    return values.some((item) =>
+      String(item ?? "").toLowerCase().includes(keyword),
+    );
+  });
+}
+
 export interface ResourceCollectionExportRequest {
   format: "csv" | "txt";
   selectedIds?: readonly string[];
@@ -132,12 +141,7 @@ export function ResourceCollection<Row extends DataTableRow>({
   );
   const displayedRows = normalizedLoadedKeyword
     ? collection.rows.filter((row) =>
-        Object.values(row).some((value) => {
-          const values = Array.isArray(value) ? value : [value];
-          return values.some((item) =>
-            String(item ?? "").toLowerCase().includes(normalizedLoadedKeyword),
-          );
-        }),
+        matchesLoadedKeyword(row, normalizedLoadedKeyword),
       )
     : collection.rows;
   const displayedTotal = normalizedLoadedKeyword
@@ -192,6 +196,7 @@ export function ResourceCollection<Row extends DataTableRow>({
       const selectedFields = fields
         ? [...fields]
         : profile.columns.map((column) => column.id);
+      const allFields = profile.columns.map((column) => column.id);
       const result = selectedIds?.length
         ? await repository.selected(profile.resource, {
             ids: [...selectedIds],
@@ -200,15 +205,20 @@ export function ResourceCollection<Row extends DataTableRow>({
         : await repository.exportAll(profile.resource, {
             rql: effectiveRql,
             keyword: collectionState.keyword,
-            fields: selectedFields,
+            fields: hasLoadedKeyword ? allFields : selectedFields,
             sort: {
               field: state.sort.split(":")[0],
               direction: state.sort.endsWith(":desc") ? "desc" : "asc",
             },
           });
+      const exportedRows = hasLoadedKeyword && !selectedIds
+        ? result.rows.filter((row) =>
+            matchesLoadedKeyword(row, normalizedLoadedKeyword),
+          )
+        : result.rows;
       downloadResourceExport(
         profile.resource,
-        result.rows,
+        exportedRows,
         profile.columns,
         selectedFields,
         format,
@@ -418,7 +428,7 @@ export function ResourceCollection<Row extends DataTableRow>({
             onSortingChange={collection.setSorting}
             onRowSelectionChange={collection.setSelection}
             onDownloadAll={(format, fields) =>
-              exportRows(format, displayedIds, fields)
+              exportRows(format, undefined, fields)
             }
             onDownloadSelected={(format, ids, fields) =>
               exportRows(format, ids, fields)

@@ -49,7 +49,12 @@ function FeatureResourceCollection({
   keywordMode,
 }: FeatureResourceCollectionProps) {
   return (
-    <div data-testid="feature-resource-collection" data-q={baseRql} data-row-links={String(enableRowLinks)} data-keyword-mode={keywordMode ?? "loaded"} />
+    <div
+      data-testid="feature-resource-collection"
+      data-q={baseRql}
+      data-row-links={String(enableRowLinks)}
+      data-keyword-mode={keywordMode ?? "loaded"}
+    />
   );
 }
 
@@ -65,6 +70,22 @@ vi.mock("@/components/views", () => ({
   }) => (
     <div
       data-testid="epitope-resource-collection"
+      data-q={baseRql}
+      data-row-links={String(enableRowLinks)}
+      data-keyword-mode={keywordMode ?? "loaded"}
+    />
+  ),
+  SurveillanceResourceCollection: ({
+    baseRql,
+    enableRowLinks,
+    keywordMode,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
+  }) => (
+    <div
+      data-testid="surveillance-resource-collection"
       data-q={baseRql}
       data-row-links={String(enableRowLinks)}
       data-keyword-mode={keywordMode ?? "loaded"}
@@ -133,24 +154,6 @@ describe("makeSerologyView", () => {
     const { getByTestId } = render(<SerologyView />);
     expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
       "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
-    );
-  });
-});
-
-describe("makeSurveillanceView", () => {
-  it("renders TaxonDataPanel with surveillance resource and taxon query", () => {
-    const SurveillanceView = makeSurveillanceView({ scope });
-    const { getByTestId } = render(<SurveillanceView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "surveillance");
-    expect(panel.getAttribute("data-q")).toContain("1234");
-  });
-
-  it("passes the surveillance guide URL", () => {
-    const SurveillanceView = makeSurveillanceView({ scope });
-    const { getByTestId } = render(<SurveillanceView />);
-    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/surveillance_data.html",
     );
   });
 });
@@ -260,6 +263,17 @@ describe("makeEpitopesView", () => {
   });
 });
 
+describe("makeSurveillanceView", () => {
+  it("renders the shared Surveillance collection with taxon scope", () => {
+    const SurveillanceView = makeSurveillanceView({ scope });
+    render(<SurveillanceView />);
+    const panel = screen.getByTestId("surveillance-resource-collection");
+    expect(panel).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
+    expect(panel).toHaveAttribute("data-row-links", "false");
+    expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
+  });
+});
+
 describe("makeExperimentsView", () => {
   it("renders the experiment panel by default", () => {
     const ExperimentsView = makeExperimentsView({ scope });
@@ -318,11 +332,14 @@ describe("composite scope queries", () => {
     const View = makeView({ scope: compositeScope });
     render(<View />);
 
-    if (resource === "genome" || resource === "epitope") {
-      expect(screen.getByTestId(`${resource}-resource-collection`)).toHaveAttribute(
-        "data-q",
-        expectedQuery,
-      );
+    if (
+      resource === "genome" ||
+      resource === "epitope" ||
+      resource === "surveillance"
+    ) {
+      expect(
+        screen.getByTestId(`${resource}-resource-collection`),
+      ).toHaveAttribute("data-q", expectedQuery);
       return;
     }
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(

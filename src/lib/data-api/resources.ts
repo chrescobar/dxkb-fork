@@ -118,7 +118,7 @@ const dateFields = new Set([
 const phraseFields = new Set(["strain", "pathogen_test_type"]);
 const multipleFields: Partial<Record<DataResource, ReadonlySet<string>>> = {
   epitope: new Set(["assay_results", "host_name", "taxon_lineage_ids"]),
-  surveillance: new Set(["pathogen_test_type"]),
+  surveillance: new Set(["pathogen_test_type", "taxon_lineage_ids"]),
   strain: new Set(["genome_ids"]),
 };
 const equalityOperators = ["eq", "ne", "in"] as const;

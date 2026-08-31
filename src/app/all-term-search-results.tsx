@@ -28,6 +28,9 @@ import {
   featureListHref,
   genomeHref,
   genomeListHref,
+  surveillanceHref,
+  surveillanceIdFromRow,
+  surveillanceListHref,
 } from "@/lib/views/hrefs";
 
 const bvbrcAPI = "https://p3.theseed.org/services/data_api/";
@@ -455,8 +458,21 @@ function SearchResultsContent({ query }: { query: string }) {
                     <div className="flex items-center gap-2">
                       {getDataTypeIcon(dataType)}
                       <CardTitle className="text-xl font-semibold capitalize">
-                        {dataType === "genome" || dataType === "genome_feature" || dataType === "epitope" ? (
-                          <Link href={dataType === "genome" ? genomeListHref({ keyword: query }) : dataType === "genome_feature" ? featureListHref({ keyword: query }) : epitopeListHref({ keyword: query })}>
+                        {dataType === "genome" ||
+                        dataType === "genome_feature" ||
+                        dataType === "epitope" ||
+                        dataType === "surveillance" ? (
+                          <Link
+                            href={
+                              dataType === "genome"
+                                ? genomeListHref({ keyword: query })
+                                : dataType === "genome_feature"
+                                  ? featureListHref({ keyword: query })
+                                  : dataType === "epitope"
+                                    ? epitopeListHref({ keyword: query })
+                                    : surveillanceListHref({ keyword: query })
+                            }
+                          >
                             {labelsBySearchType[dataType]}
                           </Link>
                         ) : (
@@ -476,6 +492,7 @@ function SearchResultsContent({ query }: { query: string }) {
                         doc.genome_id ??
                         doc.patric_id ??
                         doc.epitope_id ??
+                        doc.sample_identifier ??
                         doc.taxon_id;
                       const documentKey =
                         typeof rawDocumentKey === "string" ||
@@ -489,6 +506,17 @@ function SearchResultsContent({ query }: { query: string }) {
                           : null;
                       const featureId = featureIdFromRow(doc);
                       const epitopeId = epitopeIdFromRow(doc);
+                      const surveillanceId = surveillanceIdFromRow(doc);
+                      const pathogenTestTypes = Array.isArray(
+                        doc.pathogen_test_type,
+                      )
+                        ? doc.pathogen_test_type.filter(
+                            (value): value is string =>
+                              typeof value === "string",
+                          )
+                        : typeof doc.pathogen_test_type === "string"
+                          ? [doc.pathogen_test_type]
+                          : [];
                       const content = getFormattedContent(doc, dataType);
                       const href =
                         dataType === "genome" && genomeId != null
@@ -497,7 +525,14 @@ function SearchResultsContent({ query }: { query: string }) {
                             ? featureHref(featureId)
                             : dataType === "epitope" && epitopeId
                               ? epitopeHref(epitopeId)
-                              : null;
+                              : dataType === "surveillance" && surveillanceId
+                                ? surveillanceHref(
+                                    surveillanceId,
+                                    pathogenTestTypes.length === 1
+                                      ? pathogenTestTypes[0]
+                                      : undefined,
+                                  )
+                                : null;
                       return (
                         <div key={documentKey} className="py-6">
                           {href ? (

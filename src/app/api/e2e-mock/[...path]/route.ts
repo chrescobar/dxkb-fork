@@ -64,6 +64,38 @@ const epitopeRecordFixture = {
   date_inserted: "2024-01-01",
 };
 
+const surveillanceRecordFixture = {
+  id: "surveillance-backend-901",
+  sample_identifier: "sample/1",
+  contributing_institution: "Sentinel Health Laboratory",
+  sample_material: "Nasal swab",
+  collection_date: "2024-07",
+  collection_year: 2024,
+  collection_country: "Australia",
+  collection_state_province: "New South Wales",
+  collection_latitude: "-33.45",
+  collection_longitude: "151.2",
+  pathogen_test_type: ["RAT/antigen"],
+  pathogen_test_result: ["Positive"],
+  pathogen_test_interpretation: ["Detected"],
+  pathogen_type: "SARS-CoV-2",
+  host_identifier: "host-42",
+  host_common_name: "Human",
+};
+
+const ambiguousSurveillanceFixtures = [
+  {
+    id: "surveillance-backend-902",
+    sample_identifier: "ambiguous-sample",
+    pathogen_test_type: ["PCR"],
+  },
+  {
+    id: "surveillance-backend-903",
+    sample_identifier: "ambiguous-sample",
+    pathogen_test_type: ["RAT/antigen"],
+  },
+];
+
 const genomeRecordFixture = {
   genome_id: "1282460.2049",
   genome_name: "Middle East respiratory syndrome-related coronavirus isolate",
@@ -90,15 +122,40 @@ function maybeSolrCount(
   path: string,
   request: NextRequest,
 ):
-  | { response: { numFound: number; docs: (typeof genomeRecordFixture | typeof epitopeRecordFixture)[] } }
-  | (typeof genomeRecordFixture | typeof epitopeRecordFixture)[]
+  | {
+      response: {
+        numFound: number;
+        docs: Record<string, unknown>[];
+      };
+      facet_counts?: { facet_fields: Record<string, unknown[]> };
+    }
+  | Record<string, unknown>[]
   | null {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "data" || segments.length < 2) return null;
   const core = segments[1];
+  const query = decodeURIComponent(new URL(request.url).search);
+  if (core === "surveillance") {
+    const ambiguous = query.includes("eq(sample_identifier,ambiguous-sample)");
+    const docs = ambiguous
+      ? ambiguousSurveillanceFixtures
+      : query.includes("eq(sample_identifier,sample/1)")
+        ? [surveillanceRecordFixture]
+        : [];
+    if (request.headers.get("accept") === "application/json") return docs;
+    return {
+      response: { numFound: docs.length, docs },
+      facet_counts: {
+        facet_fields: {
+          pathogen_test_type: ambiguous
+            ? ["PCR", 1, "RAT/antigen", 1]
+            : ["RAT/antigen", 1],
+        },
+      },
+    };
+  }
   const numFound = e2eDeterministicCounts[core];
   if (typeof numFound !== "number") return null;
-  const query = decodeURIComponent(new URL(request.url).search);
   const isGenomeFixtureQuery =
     core === "genome" &&
     (query.includes("eq(genome_id,1282460.2049)") ||

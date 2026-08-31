@@ -302,8 +302,9 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "surveillance-list",
-    path: "/surveillance",
+    path: "/surveillance?keyword=sentinel",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
     },
@@ -378,8 +379,9 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "surveillance",
-    path: "/surveillance/example-sample-1",
+    path: "/surveillance/sample%2F1?pathogen_test_type=RAT%2Fantigen",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
     },

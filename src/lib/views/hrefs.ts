@@ -94,3 +94,47 @@ export function epitopeListHref(opts?: {
   }
   return params.length ? `/epitope?${params.join("&")}` : "/epitope";
 }
+
+/** Return a public Surveillance sample identifier from an API row, if present. */
+export function surveillanceIdFromRow(
+  row: Record<string, unknown> | null,
+): string | null {
+  const sampleIdentifier = row?.sample_identifier;
+  return typeof sampleIdentifier === "string" ||
+    typeof sampleIdentifier === "number"
+    ? String(sampleIdentifier)
+    : null;
+}
+
+/** Internal Surveillance member route with an optional compound discriminator. */
+export function surveillanceHref(
+  sampleIdentifier: number | string,
+  pathogenTestType?: string,
+): string {
+  const path = `/surveillance/${encodeURIComponent(String(sampleIdentifier))}`;
+  return pathogenTestType
+    ? `${path}?pathogen_test_type=${encodeURIComponent(pathogenTestType)}`
+    : path;
+}
+
+/** Canonical Surveillance collection route. Explicit RQL takes precedence over keyword. */
+export function surveillanceListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  pathogenTestType?: string | readonly string[];
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  const discriminator = opts?.pathogenTestType;
+  const testTypes: readonly string[] = Array.isArray(discriminator)
+    ? discriminator
+    : typeof discriminator === "string"
+      ? [discriminator]
+      : [];
+  for (const testType of testTypes) {
+    params.push(`pathogen_test_type=${encodeURIComponent(testType)}`);
+  }
+  return params.length ? `/surveillance?${params.join("&")}` : "/surveillance";
+}

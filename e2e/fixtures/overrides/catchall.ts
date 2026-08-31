@@ -55,8 +55,63 @@ const epitopeRows = [
 ];
 
 const epitopeAssayRows = [
-  { assay_id: "A-1", epitope_id: "15780", assay_type: "B cell", assay_method: "ELISA", assay_group: "Antibody", assay_result: "Positive", host_name: "Human", pmid: "123456", title: "Influenza epitope assay", protein_name: "Hemagglutinin", epitope_type: "Discontinuous peptide" },
-  { assay_id: "A-2", epitope_id: "15780", assay_type: "B cell", assay_method: "Neutralization", assay_group: "Antibody", assay_result: "Negative", host_name: "Human", pmid: "123456", title: "Influenza epitope assay", protein_name: "Hemagglutinin", epitope_type: "Discontinuous peptide" },
+  {
+    assay_id: "A-1",
+    epitope_id: "15780",
+    assay_type: "B cell",
+    assay_method: "ELISA",
+    assay_group: "Antibody",
+    assay_result: "Positive",
+    host_name: "Human",
+    pmid: "123456",
+    title: "Influenza epitope assay",
+    protein_name: "Hemagglutinin",
+    epitope_type: "Discontinuous peptide",
+  },
+  {
+    assay_id: "A-2",
+    epitope_id: "15780",
+    assay_type: "B cell",
+    assay_method: "Neutralization",
+    assay_group: "Antibody",
+    assay_result: "Negative",
+    host_name: "Human",
+    pmid: "123456",
+    title: "Influenza epitope assay",
+    protein_name: "Hemagglutinin",
+    epitope_type: "Discontinuous peptide",
+  },
+];
+
+const surveillanceRows = [
+  {
+    id: "surveillance-backend-901",
+    sample_identifier: "sample/1",
+    contributing_institution: "Sentinel Health Laboratory",
+    sample_material: "Nasal swab",
+    collection_date: "2024-07",
+    collection_year: 2024,
+    collection_country: "Australia",
+    collection_state_province: "New South Wales",
+    collection_latitude: "-33.45",
+    collection_longitude: "151.2",
+    pathogen_test_type: ["RAT/antigen"],
+    pathogen_test_result: ["Positive"],
+    pathogen_test_interpretation: ["Detected"],
+    pathogen_type: "SARS-CoV-2",
+    host_identifier: "host-42",
+    host_common_name: "Human",
+  },
+  {
+    id: "surveillance-backend-902",
+    sample_identifier: "ambiguous-sample",
+    pathogen_test_type: ["PCR"],
+  },
+  {
+    id: "surveillance-backend-903",
+    sample_identifier: "ambiguous-sample",
+    pathogen_test_type: ["RAT/antigen"],
+  },
 ];
 
 const genomeRows = [
@@ -97,9 +152,51 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 
 export const apiCatchallOverrides: JsonOverride[] = [
   {
+    url: /\/api\/e2e-mock\/data\/surveillance\/(?:\?|$)/,
+    method: "GET",
+    body: {
+      response: { numFound: 1, docs: surveillanceRows },
+      facet_counts: {
+        facet_fields: {
+          collection_year: [2024, 1],
+          collection_country: ["Australia", 1],
+          pathogen_test_type: ["RAT/antigen", 1],
+          pathogen_test_result: ["Positive", 1],
+        },
+      },
+    },
+  },
+  {
+    url: /\/api\/data\/surveillance(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: surveillanceRows.slice(0, 1),
+      total: 1,
+      facets: {
+        collection_year: [{ value: 2024, count: 1 }],
+        collection_country: [{ value: "Australia", count: 1 }],
+        pathogen_test_type: [{ value: "RAT/antigen", count: 1 }],
+        pathogen_test_result: [{ value: "Positive", count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/surveillance(?:\?|$)/,
+    method: "POST",
+    body: { rows: surveillanceRows.slice(0, 1) },
+  },
+  {
     url: /\/api\/data\/epitope_assay(?:\?|$)/,
     method: "GET",
-    body: { rows: epitopeAssayRows, total: 2, facets: {}, page: 1, pageSize: 200 },
+    body: {
+      rows: epitopeAssayRows,
+      total: 2,
+      facets: {},
+      page: 1,
+      pageSize: 200,
+    },
   },
   {
     url: /\/api\/data\/epitope_assay(?:\?|$)/,

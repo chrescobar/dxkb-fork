@@ -68,7 +68,7 @@ function buildProteinFeatureRows(count: number) {
 // protein_feature fetches (count, rows, download POST) go through the loopback, not bv-brc.org.
 const pfLoopback = /\/api\/e2e-mock\/data\/protein_feature\//;
 const pfLoopbackCount = /\/api\/e2e-mock\/data\/protein_feature\/.*limit\(1\)/;
-const genomeFeatureBackend = /\/data_api\/genome_feature\//;
+const genomeFeatureBackend = /\/(?:data_api|api\/e2e-mock\/data)\/genome_feature\//;
 
 test.describe("taxon data table: checkbox-column selection", () => {
   test("clicking the cell edge toggles rows additively and keeps checkboxes in sync", async ({ page }) => {

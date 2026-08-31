@@ -269,7 +269,7 @@ test.describe("taxon collection tabs: local keyword filtering", () => {
       tab: "features",
       keyword: "replicase",
       rowText: "replicase polyprotein",
-      requestPattern: /\/genome_feature\//,
+      requestPattern: /\/api\/data\/genome_feature(?:\?|$)/,
       rows: [
         { feature_id: "feature-1", patric_id: "fig|1.1.peg.1", genome_id: "1.1", genome_name: "Fixture genome", feature_type: "CDS", product: "replicase polyprotein" },
         { feature_id: "feature-2", patric_id: "fig|1.1.peg.2", genome_id: "1.1", genome_name: "Fixture genome", feature_type: "CDS", product: "capsid protein" },
@@ -284,11 +284,16 @@ test.describe("taxon collection tabs: local keyword filtering", () => {
       });
       if (rows) {
         await page.route(requestPattern, async (route) => {
-          const decoded = decodeURIComponent(route.request().url());
           await route.fulfill({
             status: 200,
             contentType: "application/json",
-            body: JSON.stringify(decoded.includes("limit(1)") ? { response: { numFound: rows.length } } : rows),
+            body: JSON.stringify({
+              rows,
+              total: rows.length,
+              facets: {},
+              page: 1,
+              pageSize: 200,
+            }),
           });
         });
       }

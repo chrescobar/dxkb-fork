@@ -116,7 +116,10 @@ export function FilterBar({
     };
   }, []);
 
-  const filterRql = buildRql({ selected, keywords });
+  const filterRql = buildRql({
+    selected,
+    keywords: keywordMode === "loaded" ? [] : keywords,
+  });
   const facetQuery = [query, filterRql].filter(Boolean).join("&");
 
   return (

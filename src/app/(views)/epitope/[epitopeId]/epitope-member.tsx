@@ -19,7 +19,12 @@ const icons: Record<EpitopeTab, ReactNode> = {
   assays: <FlaskConical />,
 };
 
-export function EpitopeMember({ epitope, activeTab }: { epitope: EpitopeViewRecord; activeTab: EpitopeTab }) {
+interface EpitopeMemberProps {
+  epitope: EpitopeViewRecord;
+  activeTab: EpitopeTab;
+}
+
+export function EpitopeMember({ epitope, activeTab }: EpitopeMemberProps) {
   const content = activeTab === "assays"
     ? <ResourceChildCollection resource="epitope_assay" label="Assays" idField="assay_id" rql={epitopeAssayRql(epitope.epitope_id)} columns={epitopeAssayColumns} defaultSort="assay_id:asc" />
     : <EpitopeOverview epitope={epitope} />;

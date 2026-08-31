@@ -4,7 +4,11 @@ import { Activity } from "lucide-react";
 import { EntityViewShell, EpitopeResourceCollection } from "@/components/views";
 import type { CollectionState } from "@/lib/views/collection-state";
 
-export function EpitopeCollection({ initialState }: { initialState: CollectionState }) {
+interface EpitopeCollectionProps {
+  initialState: CollectionState;
+}
+
+export function EpitopeCollection({ initialState }: EpitopeCollectionProps) {
   return (
     <EntityViewShell
       viewLabel="Epitope View"

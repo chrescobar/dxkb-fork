@@ -8,6 +8,14 @@ import { EpitopeMember } from "./epitope-member";
 
 type Query = Record<string, string | string[] | undefined>;
 
+interface EpitopeMetadataProps {
+  params: Promise<{ epitopeId: string }>;
+}
+
+interface EpitopePageProps extends EpitopeMetadataProps {
+  searchParams: Promise<Query>;
+}
+
 async function loadEpitope(rawEpitopeId: string) {
   let epitopeId: string;
   try {
@@ -26,7 +34,7 @@ async function loadEpitope(rawEpitopeId: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ epitopeId: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: EpitopeMetadataProps): Promise<Metadata> {
   const { epitopeId } = await params;
   const epitope = await loadEpitope(epitopeId);
   return {
@@ -35,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ epitopeId
   };
 }
 
-export default async function EpitopePage({ params, searchParams }: { params: Promise<{ epitopeId: string }>; searchParams: Promise<Query> }) {
+export default async function EpitopePage({ params, searchParams }: EpitopePageProps) {
   const [{ epitopeId }, query] = await Promise.all([params, searchParams]);
   const epitope = await loadEpitope(epitopeId);
   const activeTab = parseEpitopeTab(query.tab);

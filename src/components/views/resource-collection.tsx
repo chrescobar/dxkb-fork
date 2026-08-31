@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { InfoPanel } from "@/components/detail-panel/info-panel";
@@ -94,7 +94,8 @@ export function ResourceCollection<Row extends DataTableRow>({
 }: ResourceCollectionProps<Row>) {
   const [exportError, setExportError] = useState<string | null>(null);
   const [loadedKeyword, setLoadedKeyword] = useState("");
-  const deferredLoadedKeyword = useDeferredValue(loadedKeyword.trim().toLowerCase());
+  const normalizedLoadedKeyword = loadedKeyword.trim().toLowerCase();
+  const hasLoadedKeyword = Boolean(normalizedLoadedKeyword);
   const [columnVisibility, setColumnVisibility] = useState(() =>
     Object.fromEntries(
       profile.columns.map((column) => [column.id, column.visible !== false]),
@@ -129,26 +130,42 @@ export function ResourceCollection<Row extends DataTableRow>({
         }
       : column,
   );
-  const detail = collection.detail as Row | null;
-  const selectedGenomeId =
-    profile.resource === "genome"
-      ? collection.activeId
-      : genomeIdFromRow(detail);
-  const selectedFeatureId = featureIdFromRow(detail);
-  const selectedEpitopeId = epitopeIdFromRow(detail);
-  const displayedRows = deferredLoadedKeyword
+  const displayedRows = normalizedLoadedKeyword
     ? collection.rows.filter((row) =>
         Object.values(row).some((value) => {
           const values = Array.isArray(value) ? value : [value];
           return values.some((item) =>
-            String(item ?? "").toLowerCase().includes(deferredLoadedKeyword),
+            String(item ?? "").toLowerCase().includes(normalizedLoadedKeyword),
           );
         }),
       )
     : collection.rows;
-  const displayedTotal = deferredLoadedKeyword
+  const displayedTotal = normalizedLoadedKeyword
     ? displayedRows.length
     : collection.total;
+  const displayedIds = normalizedLoadedKeyword
+    ? displayedRows.map((row) => String(row[profile.idField]))
+    : undefined;
+  const displayedIdSet = new Set(displayedIds);
+  const displayedSelectedIds = hasLoadedKeyword
+    ? collection.selectedIds.filter((id) => displayedIdSet.has(id))
+    : collection.selectedIds;
+  const displayedSelection = hasLoadedKeyword
+    ? Object.fromEntries(displayedSelectedIds.map((id) => [id, true as const]))
+    : collection.selection;
+  const detail = collection.detail as Row | null;
+  const isDetailDisplayed =
+    !hasLoadedKeyword ||
+    (collection.activeId !== null && displayedIdSet.has(collection.activeId));
+  const displayedDetail = isDetailDisplayed ? detail : null;
+  const selectedGenomeId =
+    profile.resource === "genome"
+      ? isDetailDisplayed
+        ? collection.activeId
+        : null
+      : genomeIdFromRow(displayedDetail);
+  const selectedFeatureId = featureIdFromRow(displayedDetail);
+  const selectedEpitopeId = epitopeIdFromRow(displayedDetail);
 
   const exportRows = async (
     format: "csv" | "txt",
@@ -156,7 +173,8 @@ export function ResourceCollection<Row extends DataTableRow>({
     fields: readonly string[] | null = null,
   ) => {
     setExportError(null);
-    if (!selectedIds?.length && collection.isRefreshing) {
+    if (selectedIds && selectedIds.length === 0) return;
+    if (!selectedIds && collection.isRefreshing) {
       setExportError("Wait for the current results to finish loading before exporting.");
       return;
     }
@@ -212,17 +230,19 @@ export function ResourceCollection<Row extends DataTableRow>({
                 : String(collection.detailError)}
             </AlertDescription>
           </Alert>
-        ) : renderDetail && detail ? (
-          renderDetail(detail)
+        ) : renderDetail && displayedDetail ? (
+          renderDetail(displayedDetail)
         ) : (
           <InfoPanel
             variant="search"
             activeTab={profile.resource}
-            selectedIds={collection.selectedIds}
-            selectedRow={detail}
-            isLoading={collection.isDetailLoading}
-            isAllPagesSelected={collection.isAllPagesSelected}
-            totalItems={collection.total}
+            selectedIds={displayedSelectedIds}
+            selectedRow={displayedDetail}
+            isLoading={collection.isDetailLoading && isDetailDisplayed}
+            isAllPagesSelected={
+              hasLoadedKeyword ? false : collection.isAllPagesSelected
+            }
+            totalItems={displayedTotal}
           />
         )}
       </div>
@@ -264,16 +284,24 @@ export function ResourceCollection<Row extends DataTableRow>({
       )}
 
       <ResourceFilterBar
-        keyword={loadedKeyword}
+        keyword={keywordMode === "loaded" ? loadedKeyword : state.keyword}
         filters={state.filters}
         facets={collection.facets}
         definitions={profile.facets ?? []}
         hasExplicitRql={Boolean(state.rql)}
         onChange={({ keyword, filters, clearRql }) => {
-          setLoadedKeyword(keyword ?? "");
-          if (filters === state.filters && !clearRql) return;
+          if (keywordMode === "loaded") {
+            const nextLoadedKeyword = keyword ?? "";
+            if (nextLoadedKeyword !== loadedKeyword) {
+              collection.setSelection({});
+              collection.setIsAllPagesSelected(false);
+            }
+            setLoadedKeyword(nextLoadedKeyword);
+            if (filters === state.filters && !clearRql) return;
+          }
           onStateChange({
             ...state,
+            keyword: keywordMode === "server" ? keyword : state.keyword,
             rql: clearRql ? undefined : state.rql,
             filters: state.rql && !clearRql ? state.filters : filters,
             page: 1,
@@ -318,14 +346,18 @@ export function ResourceCollection<Row extends DataTableRow>({
       ) : (
         <ResourceWorkspace
           hasSidePanel={
-            collection.isAllPagesSelected || collection.selectedIds.length > 0
+            hasLoadedKeyword
+              ? displayedSelectedIds.length > 0
+              : collection.isAllPagesSelected || collection.selectedIds.length > 0
           }
           actionBar={
             <SearchActionBar
               selectedCount={
-                collection.isAllPagesSelected
-                  ? collection.total
-                  : collection.selectedIds.length
+                hasLoadedKeyword
+                  ? displayedSelectedIds.length
+                  : collection.isAllPagesSelected
+                    ? collection.total
+                    : collection.selectedIds.length
               }
               searchType={profile.resource}
               guideUrl={profile.guideUrl}
@@ -361,28 +393,32 @@ export function ResourceCollection<Row extends DataTableRow>({
             data={displayedRows}
             columns={columns}
             totalItems={displayedTotal}
-            pageIndex={deferredLoadedKeyword ? 0 : state.page - 1}
+            pageIndex={normalizedLoadedKeyword ? 0 : state.page - 1}
             pageSize={resourceCollectionPageSize}
             sorting={collection.sorting}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
-            rowSelection={collection.selection}
-            selectedIds={collection.selectedIds}
-            isAllPagesSelected={collection.isAllPagesSelected}
+            rowSelection={displayedSelection}
+            selectedIds={displayedSelectedIds}
+            isAllPagesSelected={
+              hasLoadedKeyword ? false : collection.isAllPagesSelected
+            }
             onAllPagesSelectionChange={(selected) => {
               collection.setIsAllPagesSelected(selected);
               if (selected) collection.setSelection({});
             }}
             totalSelectedCount={
-              collection.isAllPagesSelected
-                ? collection.total
-                : collection.selectedIds.length
+              hasLoadedKeyword
+                ? displayedSelectedIds.length
+                : collection.isAllPagesSelected
+                  ? collection.total
+                  : collection.selectedIds.length
             }
             onPageChange={collection.setPageIndex}
             onSortingChange={collection.setSorting}
             onRowSelectionChange={collection.setSelection}
             onDownloadAll={(format, fields) =>
-              exportRows(format, undefined, fields)
+              exportRows(format, displayedIds, fields)
             }
             onDownloadSelected={(format, ids, fields) =>
               exportRows(format, ids, fields)

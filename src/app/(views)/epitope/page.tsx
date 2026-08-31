@@ -5,11 +5,13 @@ import type { SearchParamsRecord } from "@/lib/views/rql";
 import { EpitopeCollection } from "./epitope-collection";
 import EpitopeLoading from "./loading";
 
+interface EpitopeCollectionPageProps {
+  searchParams: Promise<SearchParamsRecord>;
+}
+
 export default async function EpitopeCollectionPage({
   searchParams,
-}: {
-  searchParams: Promise<SearchParamsRecord>;
-}) {
+}: EpitopeCollectionPageProps) {
   const state = parseEpitopeCollectionState(await searchParams);
   const stateKey = serializeCollectionState(state, epitopeCollectionOptions).toString();
   return (

@@ -108,6 +108,39 @@ function exportValue(value: unknown, format: "csv" | "txt"): string {
   return `"${safe.replace(/"/g, "\"\"")}"`;
 }
 
+export function downloadLoadedResourceRows({
+  resource,
+  rows,
+  format,
+  visibleColumns,
+  fields,
+}: {
+  resource: string;
+  rows: readonly Record<string, unknown>[];
+  format: "csv" | "txt";
+  visibleColumns: string[] | null;
+  fields: ColumnInfo[];
+}): void {
+  const requestedColumns =
+    visibleColumns !== null ? visibleColumns : fields.map((field) => field.id);
+  const columns = requestedColumns.filter((id) => id !== "__select__");
+  const separator = format === "csv" ? "," : "\t";
+  const headers = columns.map(
+    (id) => fields.find((field) => field.id === id)?.label ?? id,
+  );
+  const contentRows = rows.map((row) =>
+    columns.map((columnId) => exportValue(row[columnId], format)).join(separator),
+  );
+  const content = [headers.join(separator), ...contentRows].join("\n");
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = `${resource}-all.${format}`;
+  link.click();
+  URL.revokeObjectURL(objectUrl);
+}
+
 export async function downloadResourceRows({
   dataApi,
   resource,
@@ -152,23 +185,12 @@ export async function downloadResourceRows({
     : ((payloadObject.items ??
         payloadObject.response ??
         payloadObject.rows ??
-        []) as unknown[]);
-  const separator = format === "csv" ? "," : "\t";
-  const headers = columns.map(
-    (id) => fields.find((field) => field.id === id)?.label ?? id,
-  );
-  const contentRows = rows.map((row) => {
-    const values = row as Record<string, unknown>;
-    return columns
-      .map((columnId) => exportValue(values[columnId], format))
-      .join(separator);
+        []) as Record<string, unknown>[]);
+  downloadLoadedResourceRows({
+    resource,
+    rows,
+    format,
+    visibleColumns,
+    fields,
   });
-  const content = [headers.join(separator), ...contentRows].join("\n");
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-  const objectUrl = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = objectUrl;
-  link.download = `${resource}-all.${format}`;
-  link.click();
-  URL.revokeObjectURL(objectUrl);
 }

@@ -277,7 +277,7 @@ describe("ListData controlled filter", () => {
     expect(capturedDataUrls[0]).toContain("eq(foo,bar)");
   });
 
-  it("filters loaded rows without issuing another request in loaded keyword mode", async () => {
+  it("filters and exports loaded rows without issuing another request", async () => {
     const rows = [
       { sequence_id: "row-1", genome_id: "g1", genome_name: "DNA-3-methyladenine glycosylase" },
       { sequence_id: "row-2", genome_id: "g2", genome_name: "Flagellar protein" },
@@ -308,6 +308,24 @@ describe("ListData controlled filter", () => {
     });
 
     await screen.findByText(/Showing 1-1 of 1 results/);
+
+    let exportedBlob: Blob | undefined;
+    vi.spyOn(URL, "createObjectURL").mockImplementation((blob) => {
+      exportedBlob = blob as Blob;
+      return "blob:download";
+    });
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Download (CSV)" }));
+
+    await waitFor(() => {
+      expect(exportedBlob).toBeDefined();
+    });
+    const exportedText = await exportedBlob?.text();
+    expect(exportedText).toContain("DNA-3-methyladenine glycosylase");
+    expect(exportedText).not.toContain("Flagellar protein");
     expect(dataRequestCount).toBe(initialRequestCount);
   });
 

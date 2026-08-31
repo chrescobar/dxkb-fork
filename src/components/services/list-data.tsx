@@ -11,6 +11,7 @@ import { detailPanelQueryKey } from "@/components/genome/genome-detail-panel-uti
 import { FilterBar } from "@/components/filterbar/filter-bar";
 import {
   deriveTableFields,
+  downloadLoadedResourceRows,
   downloadResourceRows,
   findPageRow,
   isSameResourceQuery,
@@ -405,21 +406,33 @@ function useListData({
     format: "csv" | "txt",
     visibleColumns: string[] | null,
   ): Promise<void> {
-    if (!totalItems) {
-      console.warn("No totalItems available for download");
+    const hasLoadedKeyword = keywordMode === "loaded" && Boolean(deferredLoadedKeyword);
+    const exportTotal = hasLoadedKeyword ? displayedRows.length : totalItems;
+    if (!exportTotal) {
+      console.warn("No results available for download");
       return;
     }
 
-    // Check if totalItems exceeds the download limit
+    // Check if the exported result set exceeds the download limit
     const DOWNLOAD_LIMIT = 50000;
-    if (totalItems > DOWNLOAD_LIMIT) {
+    if (exportTotal > DOWNLOAD_LIMIT) {
       alert(
-        `The download limit is ${DOWNLOAD_LIMIT.toLocaleString()} rows. Your query returned ${String(totalItems)} rows. Please refine your search to download fewer results.`,
+        `The download limit is ${DOWNLOAD_LIMIT.toLocaleString()} rows. Your query returned ${String(exportTotal)} rows. Please refine your search to download fewer results.`,
       );
       return;
     }
 
     try {
+      if (hasLoadedKeyword) {
+        downloadLoadedResourceRows({
+          resource,
+          rows: displayedRows,
+          format,
+          visibleColumns,
+          fields,
+        });
+        return;
+      }
       await downloadResourceRows({
         dataApi: DataAPI ?? "",
         resource,

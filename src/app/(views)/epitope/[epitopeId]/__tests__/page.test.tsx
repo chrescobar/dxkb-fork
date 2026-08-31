@@ -15,11 +15,17 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 vi.mock("@/lib/epitope-view/server", () => ({ getEpitope: mocks.getEpitope }));
+
+interface ResourceChildCollectionProps {
+  resource: string;
+  rql: string;
+}
+
 vi.mock("@/components/views", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/components/views")>();
   return {
     ...original,
-    ResourceChildCollection: ({ resource, rql }: { resource: string; rql: string }) => <div data-testid="resource-child" data-resource={resource} data-rql={rql} />,
+    ResourceChildCollection: ({ resource, rql }: ResourceChildCollectionProps) => <div data-testid="resource-child" data-resource={resource} data-rql={rql} />,
   };
 });
 

@@ -470,6 +470,34 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.queryByTestId("detail")).not.toBeInTheDocument();
   });
 
+  it("updates collection state when the server keyword changes", async () => {
+    const onStateChange = vi.fn();
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={onStateChange}
+        showHeader={false}
+        keywordMode="server"
+      />,
+    );
+
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute(
+      "data-keyword",
+      "coli",
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+
+    expect(onStateChange).toHaveBeenCalledWith({
+      ...state,
+      keyword: "dna gy",
+      page: 1,
+    });
+  });
+
   it("filters loaded rows without changing the server query or collection state", async () => {
     const onStateChange = vi.fn();
     useResourceCollection.mockReturnValue({
@@ -490,12 +518,13 @@ describe("ResourceCollection Genome integration contracts", () => {
         state={state}
         onStateChange={onStateChange}
         showHeader={false}
+        keywordMode="loaded"
       />,
     );
 
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
     const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(initialHookOptions?.state.keyword).toBe("coli");
+    expect(initialHookOptions?.state.keyword).toBeUndefined();
 
     await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
 
@@ -508,7 +537,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.pageIndex).toBe(0);
     expect(onStateChange).not.toHaveBeenCalled();
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBe("coli");
+    expect(hookOptions?.state.keyword).toBeUndefined();
 
     await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
 
@@ -518,6 +547,70 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.totalItems).toBe(2);
     expect(dataTableProps.pageIndex).toBe(2);
     expect(onStateChange).not.toHaveBeenCalled();
+  });
+
+  it("clears hidden selections and exports only rows matching a loaded keyword", async () => {
+    const user = userEvent.setup();
+    const data = repository();
+    const selected = vi.spyOn(data, "selected");
+    const exportAll = vi.spyOn(data, "exportAll");
+    const setSelection = vi.fn();
+    const setIsAllPagesSelected = vi.fn();
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        row,
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ],
+      selection: { "83332.12": true, "83332.13": true },
+      selectedIds: ["83332.12", "83332.13"],
+      total: 2,
+      setSelection,
+      setIsAllPagesSelected,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={data}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+        keywordMode="loaded"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ]);
+    });
+    expect(setSelection).toHaveBeenCalledWith({});
+    expect(setIsAllPagesSelected).toHaveBeenCalledWith(false);
+    expect(dataTableProps).toMatchObject({
+      rowSelection: { "83332.13": true },
+      selectedIds: ["83332.13"],
+      isAllPagesSelected: false,
+      totalSelectedCount: 1,
+    });
+    expect(actionBarProps.selectedCount).toBe(1);
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadAll as (
+          format: "csv",
+          fields: null,
+        ) => Promise<void>
+      )("csv", null);
+    });
+
+    expect(selected).toHaveBeenCalledWith("genome", {
+      ids: ["83332.13"],
+      fields: genomeCollectionProfile.columns.map((column) => column.id),
+    });
+    expect(exportAll).not.toHaveBeenCalled();
   });
 
   it("matches array values case-insensitively and handles no local matches", async () => {
@@ -539,6 +632,7 @@ describe("ResourceCollection Genome integration contracts", () => {
         state={state}
         onStateChange={vi.fn()}
         showHeader={false}
+        keywordMode="loaded"
       />,
     );
 

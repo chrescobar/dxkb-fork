@@ -1,33 +1,32 @@
-import { applyBackendMocks, expect, test } from "../mocks/backends";
 import { permissiveBackendOverrides } from "../fixtures/overrides";
+import { applyBackendMocks, expect, test } from "../mocks/backends";
+import { EpitopePage } from "../pages";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe("Epitope view", () => {
   test.beforeEach(async ({ page }) => {
-    await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
+    await applyBackendMocks(page, {
+      overrides: [...permissiveBackendOverrides],
+    });
   });
 
-  test("searches the full collection and opens the canonical member and assays", async ({ page }) => {
-    await page.goto("/");
-    const welcomeSearch = page.locator(".welcome-search-card form");
-    await welcomeSearch.getByRole("combobox", { name: "Search type" }).click();
-    await page.getByRole("option", { name: "Epitopes" }).click();
-    await welcomeSearch.getByRole("textbox").fill("Brucella");
-
+  test("searches the full collection and opens the canonical member and assays", async ({
+    page,
+  }) => {
     const keywordRequest = page.waitForRequest((request) => {
       const url = new URL(request.url());
-      return url.pathname === "/api/data/epitope" && url.searchParams.get("keyword") === "Brucella";
+      return (
+        url.pathname === "/api/data/epitope" &&
+        url.searchParams.get("keyword") === "Brucella"
+      );
     });
-    await welcomeSearch.getByRole("textbox").press("Enter");
+    const epitopePage = new EpitopePage(page);
+    await epitopePage.searchFromWelcome("Brucella");
     await keywordRequest;
 
-    await expect(page).toHaveURL(/\/epitope\?keyword=Brucella$/);
-    await expect(page.getByRole("heading", { level: 1, name: "Epitopes" })).toBeVisible();
-    await expect(page.getByRole("banner").getByRole("combobox", { name: "Search type" })).toContainText("Epitopes");
-    await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue("Brucella");
-    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
-    await expect(page.getByRole("link", { name: "15780" })).toHaveAttribute("href", "/epitope/15780");
+    await epitopePage.expectCollection("Brucella");
+    await epitopePage.expectMemberVisible("15780");
 
     const collectionRequests: string[] = [];
     page.on("request", (request) => {
@@ -35,26 +34,24 @@ test.describe("Epitope view", () => {
         collectionRequests.push(request.url());
       }
     });
-    const localKeyword = page.getByPlaceholder("Search keywords...");
-    await localKeyword.fill("hemagglutinin");
+    await epitopePage.filterCollection("hemagglutinin");
     await page.waitForTimeout(400);
-    await expect(page.getByRole("link", { name: "15780" })).toBeVisible();
-    await expect(page).toHaveURL(/\/epitope\?keyword=Brucella$/);
+    await epitopePage.expectMemberVisible("15780");
+    await epitopePage.expectCollectionUrl("Brucella");
     expect(collectionRequests).toEqual([]);
 
-    await localKeyword.fill("not in returned rows");
-    await expect(page.getByRole("link", { name: "15780" })).toHaveCount(0);
-    await expect(page.getByText("No results")).toBeVisible();
+    await epitopePage.filterCollection("not in returned rows");
+    await epitopePage.expectMemberAbsent("15780");
+    await epitopePage.expectNoResults();
     await page.waitForTimeout(400);
-    await expect(page).toHaveURL(/\/epitope\?keyword=Brucella$/);
+    await epitopePage.expectCollectionUrl("Brucella");
     expect(collectionRequests).toEqual([]);
 
-    await localKeyword.clear();
-    await expect(page.getByRole("link", { name: "15780" })).toBeVisible();
+    await epitopePage.clearCollectionFilter();
+    await epitopePage.expectMemberVisible("15780");
     await page.waitForTimeout(400);
     expect(collectionRequests).toEqual([]);
 
-    await page.getByRole("button", { name: "Show Filters" }).click();
     const facetRequest = page.waitForRequest((request) => {
       const url = new URL(request.url());
       return (
@@ -62,39 +59,48 @@ test.describe("Epitope view", () => {
         url.searchParams.get("keyword") === "Brucella"
       );
     });
-    await page.getByRole("button", { name: "Discontinuous peptide (1)" }).click();
+    await epitopePage.selectFacet("Discontinuous peptide (1)");
     await facetRequest;
     await expect(page).toHaveURL(
       /\/epitope\?keyword=Brucella&epitope_type=Discontinuous\+peptide$/,
     );
 
-    await page.getByRole("link", { name: "15780" }).click();
-    await expect(page).toHaveURL(/\/epitope\/15780$/);
-    await expect(page.getByText("A1, C4, D8").first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /View in IEDB/ })).toHaveAttribute("href", "https://www.iedb.org/epitope/15780");
+    await epitopePage.openMember("15780");
+    await epitopePage.expectStructure("A1, C4, D8");
+    await epitopePage.expectMemberShell("15780");
 
     const assayRequest = page.waitForRequest((request) => {
       const url = new URL(request.url());
-      return url.pathname === "/api/data/epitope_assay" && url.searchParams.get("rql") === "eq(epitope_id,15780)";
+      return (
+        url.pathname === "/api/data/epitope_assay" &&
+        url.searchParams.get("rql") === "eq(epitope_id,15780)"
+      );
     });
-    await page.getByRole("button", { name: "Assays" }).click();
+    await epitopePage.openAssays();
     await assayRequest;
-    await expect(page).toHaveURL(/\?tab=assays$/);
-    await expect(page.getByText("ELISA")).toBeVisible();
-    await expect(page.getByText("Neutralization")).toBeVisible();
+    await epitopePage.expectAssays("ELISA", "Neutralization");
   });
 
-  test("shows empty and failed assay states without losing the member shell", async ({ page }) => {
+  test("shows empty and failed assay states without losing the member shell", async ({
+    page,
+  }) => {
+    const epitopePage = new EpitopePage(page);
     await page.route(/\/api\/data\/epitope_assay(?:\?|$)/, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ rows: [], total: 0, facets: {}, page: 1, pageSize: 200 }),
+        body: JSON.stringify({
+          rows: [],
+          total: 0,
+          facets: {},
+          page: 1,
+          pageSize: 200,
+        }),
       });
     });
-    await page.goto("/epitope/15780?tab=assays");
-    await expect(page.getByText("No results")).toBeVisible();
-    await expect(page.getByRole("link", { name: /View in IEDB/ })).toBeVisible();
+    await epitopePage.gotoMemberAssays("15780");
+    await epitopePage.expectNoResults();
+    await epitopePage.expectMemberShell("15780");
 
     await page.unroute(/\/api\/data\/epitope_assay(?:\?|$)/);
     await page.route(/\/api\/data\/epitope_assay(?:\?|$)/, async (route) => {
@@ -105,6 +111,6 @@ test.describe("Epitope view", () => {
       });
     });
     await page.reload();
-    await expect(page.getByText(/Epitope assay backend unavailable/)).toBeVisible();
+    await epitopePage.expectError(/Epitope assay backend unavailable/);
   });
 });

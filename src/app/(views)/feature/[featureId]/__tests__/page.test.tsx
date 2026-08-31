@@ -23,14 +23,15 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@/lib/feature-view/server", () => ({ getFeature: mocks.getFeature }));
 
-interface ResourceCollectionProps {
-  profile: { label: string; basePredicate?: string };
+interface ResourceChildCollectionProps {
+  label: string;
+  rql: string;
 }
 
-function ResourceCollection({ profile }: ResourceCollectionProps) {
+function ResourceChildCollection({ label, rql }: ResourceChildCollectionProps) {
   return (
-    <div data-testid="resource-collection" data-rql={profile.basePredicate}>
-      {profile.label}
+    <div data-testid="resource-collection" data-rql={rql}>
+      {label}
     </div>
   );
 }
@@ -39,7 +40,7 @@ vi.mock("@/components/views", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/components/views")>();
   return {
     ...original,
-    ResourceCollection,
+    ResourceChildCollection,
   };
 });
 

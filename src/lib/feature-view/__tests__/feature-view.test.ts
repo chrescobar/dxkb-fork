@@ -26,6 +26,7 @@ describe("Feature view contracts", () => {
         gene_id: 0,
       }),
     ).toMatchObject({ feature_id: "PATRIC.1", codon_start: 1, gene_id: 0 });
+    expect(featureCollectionProfile.basePredicate).toBe("eq(feature_id,*)");
     expect(featureCollectionProfile.detailFields).toContain("codon_start");
     expect(featureCollectionProfile.detailFields).not.toContain("Codon Start");
   });

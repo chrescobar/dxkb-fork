@@ -277,6 +277,58 @@ describe("ListData controlled filter", () => {
     expect(capturedDataUrls[0]).toContain("eq(foo,bar)");
   });
 
+  it("filters and exports loaded rows without issuing another request", async () => {
+    const rows = [
+      { sequence_id: "row-1", genome_id: "g1", genome_name: "DNA-3-methyladenine glycosylase" },
+      { sequence_id: "row-2", genome_id: "g2", genome_name: "Flagellar protein" },
+    ];
+    let dataRequestCount = 0;
+
+    server.use(
+      http.get(`${dataApi}/genome_sequence/`, ({ request }) => {
+        if (request.url.includes("limit(1)")) {
+          return HttpResponse.json({ response: { numFound: rows.length } });
+        }
+        dataRequestCount += 1;
+        return HttpResponse.json(rows);
+      }),
+    );
+
+    const { Wrapper } = makeWrapper();
+    render(
+      <Wrapper>
+        <ListData resource="genome_sequence" q="eq(genome_id,*)" keywordMode="loaded" />
+      </Wrapper>,
+    );
+
+    await screen.findByText(/Showing 1-2 of 2 results/);
+    const initialRequestCount = dataRequestCount;
+    fireEvent.change(screen.getByPlaceholderText("Search keywords..."), {
+      target: { value: "DNA-3-methyl" },
+    });
+
+    await screen.findByText(/Showing 1-1 of 1 results/);
+
+    let exportedBlob: Blob | undefined;
+    vi.spyOn(URL, "createObjectURL").mockImplementation((blob) => {
+      exportedBlob = blob as Blob;
+      return "blob:download";
+    });
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
+      () => undefined,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Download (CSV)" }));
+
+    await waitFor(() => {
+      expect(exportedBlob).toBeDefined();
+    });
+    const exportedText = await exportedBlob?.text();
+    expect(exportedText).toContain("DNA-3-methyladenine glycosylase");
+    expect(exportedText).not.toContain("Flagellar protein");
+    expect(dataRequestCount).toBe(initialRequestCount);
+  });
+
   it("calls onFilterChange instead of applying the new filter itself when controlled", async () => {
     const capturedDataUrls: string[] = [];
 

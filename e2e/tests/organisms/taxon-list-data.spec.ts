@@ -68,6 +68,7 @@ function buildProteinFeatureRows(count: number) {
 // protein_feature fetches (count, rows, download POST) go through the loopback, not bv-brc.org.
 const pfLoopback = /\/api\/e2e-mock\/data\/protein_feature\//;
 const pfLoopbackCount = /\/api\/e2e-mock\/data\/protein_feature\/.*limit\(1\)/;
+const genomeFeatureBackend = /\/(?:data_api|api\/e2e-mock\/data)\/genome_feature\//;
 
 test.describe("taxon data table: checkbox-column selection", () => {
   test("clicking the cell edge toggles rows additively and keeps checkboxes in sync", async ({ page }) => {
@@ -243,11 +244,11 @@ test.describe("taxon domains-and-motifs: 'Downloading...' indicator on Download 
 // values. buildRql() is shared by every resource's FilterBar (genome, strain,
 // epitope, surveillance, ...), so this one test on the epitope tab exercises
 // the fix for all views — the bug and the fix live in one shared function.
-const epitopeLoopback = /\/api\/e2e-mock\/data\/epitope\//;
+const epitopeGateway = /\/api\/data\/epitope(?:\?|$)/;
 
 function buildEpitopeRows(count: number, epitopeType: string) {
   return Array.from({ length: count }, (_, i) => ({
-    epitope_id: 100000 + i,
+    epitope_id: String(100000 + i),
     epitope_type: epitopeType,
     epitope_sequence: `SEQ${String(i)}`,
     organism: "Influenza A virus",
@@ -257,58 +258,109 @@ function buildEpitopeRows(count: number, epitopeType: string) {
   }));
 }
 
-test.describe("taxon epitopes tab: facet click with a multi-word value", () => {
+test.describe("taxon collection tabs: local keyword filtering", () => {
+  for (const { tab, keyword, rowText, requestPattern, rows } of [
+    {
+      tab: "genomes",
+      keyword: "Middle East",
+      rowText: "Middle East respiratory syndrome-related coronavirus isolate",
+      requestPattern: /\/api\/data\/genome(?:\?|$)/,
+    },
+    {
+      tab: "features",
+      keyword: "replicase",
+      rowText: "replicase polyprotein",
+      requestPattern: /\/api\/data\/genome_feature(?:\?|$)/,
+      rows: [
+        { feature_id: "feature-1", patric_id: "fig|1.1.peg.1", genome_id: "1.1", genome_name: "Fixture genome", feature_type: "CDS", product: "replicase polyprotein" },
+        { feature_id: "feature-2", patric_id: "fig|1.1.peg.2", genome_id: "1.1", genome_name: "Fixture genome", feature_type: "CDS", product: "capsid protein" },
+      ],
+    },
+  ]) {
+    test(`filters loaded ${tab} rows without changing navbar, URL, or requests`, async ({ page }) => {
+      await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
+      const collectionRequests: string[] = [];
+      page.on("request", (request) => {
+        const pattern = rows ? genomeFeatureBackend : requestPattern;
+        if (pattern.test(request.url())) collectionRequests.push(request.url());
+      });
+      if (rows) {
+        await page.route(genomeFeatureBackend, async (route) => {
+          await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: route.request().headers().accept === "application/solr+json"
+              ? JSON.stringify({ response: { numFound: rows.length } })
+              : JSON.stringify(rows),
+          });
+        });
+      }
+
+      await page.goto(`/taxonomy/${INFLUENZA_TAXON_ID}?tab=${tab}`);
+      await expect(page.getByText(rowText).first()).toBeVisible({ timeout: 10_000 });
+      const requestCount = collectionRequests.length;
+
+      await page.getByPlaceholder("Search keywords...").fill(keyword);
+      await expect(page.getByText(/Showing 1-1 of 1 results/)).toBeVisible();
+      await expect(page.getByRole("textbox", { name: "Search by virus name, protein, gene, or taxonomy..." })).toHaveValue("");
+      await expect(page).toHaveURL(`/taxonomy/${INFLUENZA_TAXON_ID}?tab=${tab}`);
+      expect(collectionRequests).toHaveLength(requestCount);
+    });
+  }
+});
+
+test.describe("taxon epitopes tab: local filtering and facets", () => {
+  test("filters loaded rows without changing the navbar search or URL", async ({ page }) => {
+    await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
+    const collectionRequests: string[] = [];
+    page.on("request", (request) => {
+      if (epitopeGateway.test(request.url())) collectionRequests.push(request.url());
+    });
+
+    await page.goto(`/taxonomy/${INFLUENZA_TAXON_ID}?tab=epitopes`);
+    await expect(page.getByText("Hemagglutinin").first()).toBeVisible({ timeout: 10_000 });
+    const requestCount = collectionRequests.length;
+
+    await page.getByPlaceholder("Search keywords...").fill("hemag");
+    await expect(page.getByText(/Showing 1-1 of 1 results/)).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Search by virus name, protein, gene, or taxonomy..." })).toHaveValue("");
+    await expect(page).toHaveURL(`/taxonomy/${INFLUENZA_TAXON_ID}?tab=epitopes`);
+    expect(collectionRequests).toHaveLength(requestCount);
+  });
+
   test("clicking a multi-word Epitope Type facet value returns matching rows, not an empty table", async ({ page }) => {
     await applyBackendMocks(page, { overrides: [...permissiveBackendOverrides] });
 
-    // Fakes a minimal Solr backend for the epitope resource, distinguishing the
-    // three request shapes ListData + FacetPanel issue: facet query (has
-    // "facet("), count query (bare "limit(1)"), and page-data query (has
-    // "select("). Only a correctly quoted phrase match
-    // (`eq(epitope_type,"Linear peptide")`) is treated as a hit — an unquoted
-    // value (the regression) must NOT match, which is what makes this test
-    // catch the bug coming back.
-    await page.route(epitopeLoopback, async (route) => {
+    // The gateway exposes one combined rows/count/facets response. Only a
+    // correctly quoted phrase predicate is treated as a hit so this remains a
+    // regression test for typed RQL serialization.
+    await page.route(epitopeGateway, async (route) => {
       if (route.request().method() !== "GET") return route.fallback();
       const decoded = decodeURIComponent(route.request().url());
-
       const hasEpitopeTypeEq = decoded.includes("eq(epitope_type,");
-      const hasQuotedPhrase = decoded.includes('eq(epitope_type,"Linear peptide")');
+      const hasQuotedPhrase = decoded.includes('eq(epitope_type,"Linear%20peptide")');
       const matches = !hasEpitopeTypeEq || hasQuotedPhrase;
-      const numFound = matches ? (hasEpitopeTypeEq ? 3 : 10) : 0;
-
-      if (decoded.includes("facet(")) {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            response: { numFound },
-            facet_counts: {
-              facet_fields: {
-                epitope_type: matches ? ["Linear peptide", 10, "Discontinuous peptide", 2] : [],
-                protein_name: [],
-                host_name: [],
-                assay_results: [],
-              },
-            },
-          }),
-        });
-        return;
-      }
-
-      if (decoded.includes("limit(1)")) {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ response: { numFound } }),
-        });
-        return;
-      }
-
+      const total = matches ? (hasEpitopeTypeEq ? 3 : 10) : 0;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(matches ? buildEpitopeRows(numFound, "Linear peptide") : []),
+        body: JSON.stringify({
+          rows: matches ? buildEpitopeRows(total, "Linear peptide") : [],
+          total,
+          facets: {
+            epitope_type: matches
+              ? [
+                  { value: "Linear peptide", count: 10 },
+                  { value: "Discontinuous peptide", count: 2 },
+                ]
+              : [],
+            protein_name: [],
+            host_name: [],
+            assay_results: [],
+          },
+          page: 1,
+          pageSize: 200,
+        }),
       });
     });
 

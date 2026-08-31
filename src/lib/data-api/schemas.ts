@@ -29,13 +29,37 @@ export const genomeFeatureRecordSchema = z.looseObject({
 export const epitopeRecordSchema = z.looseObject({
   epitope_id: identifier,
   epitope_type: z.string().optional(),
+  epitope_sequence: z.string().optional(),
+  organism: z.string().optional(),
   ...optionalTaxonomy,
+  taxon_lineage_names: z.union([z.string(), z.array(z.string())]).optional(),
+  protein_name: z.string().optional(),
+  protein_id: z.string().optional(),
+  protein_accession: z.string().optional(),
+  start: stringOrNumber.optional(),
+  end: stringOrNumber.optional(),
+  host_name: z.union([z.string(), z.array(z.string())]).optional(),
+  total_assays: stringOrNumber.optional(),
+  assay_results: z.union([z.string(), z.array(z.string())]).optional(),
+  bcell_assays: stringOrNumber.optional(),
+  tcell_assays: stringOrNumber.optional(),
+  mhc_assays: stringOrNumber.optional(),
+  comments: z.union([z.string(), z.array(z.string())]).optional(),
+  date_inserted: z.string().optional(),
 });
 
 export const epitopeAssayRecordSchema = z.looseObject({
   assay_id: identifier,
   epitope_id: z.string().optional(),
   assay_type: z.string().optional(),
+  assay_method: z.string().optional(),
+  assay_group: z.string().optional(),
+  assay_result: z.string().optional(),
+  host_name: z.string().optional(),
+  pmid: stringOrNumber.optional(),
+  title: z.string().optional(),
+  protein_name: z.string().optional(),
+  epitope_type: z.string().optional(),
 });
 
 export const surveillanceRecordSchema = z.looseObject({

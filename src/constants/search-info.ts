@@ -108,7 +108,10 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "epitope",
     typeTitle: "Epitopes",
-    route: { status: "legacy" },
+    route: {
+      status: "canonical",
+      segment: viewRegistry.epitope.segment,
+    },
     tabs: { epitope: "Epitopes" },
     pickerOrder: 5,
     allTermOrder: 6,

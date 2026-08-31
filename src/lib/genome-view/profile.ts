@@ -38,6 +38,7 @@ export const genomeCollectionProfile: ResourceCollectionProfile<GenomeViewRecord
     columns: genomeColumns,
     detailFields: genomeDetailFields,
     defaultSort: "genome_name:asc",
+    basePredicate: "eq(genome_id,*)",
     guideUrl:
       "https://www.bv-brc.org/docs/quick_references/organisms_taxon/genomes.html",
     buildStructuralRql: genomeStructuralRql,

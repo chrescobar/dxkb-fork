@@ -20,6 +20,9 @@ import {
   labelsBySearchType,
 } from "@/constants/search-info";
 import {
+  epitopeHref,
+  epitopeIdFromRow,
+  epitopeListHref,
   featureHref,
   featureIdFromRow,
   featureListHref,
@@ -452,8 +455,8 @@ function SearchResultsContent({ query }: { query: string }) {
                     <div className="flex items-center gap-2">
                       {getDataTypeIcon(dataType)}
                       <CardTitle className="text-xl font-semibold capitalize">
-                        {dataType === "genome" || dataType === "genome_feature" ? (
-                          <Link href={dataType === "genome" ? genomeListHref({ keyword: query }) : featureListHref({ keyword: query })}>
+                        {dataType === "genome" || dataType === "genome_feature" || dataType === "epitope" ? (
+                          <Link href={dataType === "genome" ? genomeListHref({ keyword: query }) : dataType === "genome_feature" ? featureListHref({ keyword: query }) : epitopeListHref({ keyword: query })}>
                             {labelsBySearchType[dataType]}
                           </Link>
                         ) : (
@@ -472,6 +475,7 @@ function SearchResultsContent({ query }: { query: string }) {
                         doc.id ??
                         doc.genome_id ??
                         doc.patric_id ??
+                        doc.epitope_id ??
                         doc.taxon_id;
                       const documentKey =
                         typeof rawDocumentKey === "string" ||
@@ -484,13 +488,16 @@ function SearchResultsContent({ query }: { query: string }) {
                           ? doc.genome_id
                           : null;
                       const featureId = featureIdFromRow(doc);
+                      const epitopeId = epitopeIdFromRow(doc);
                       const content = getFormattedContent(doc, dataType);
                       const href =
                         dataType === "genome" && genomeId != null
                           ? genomeHref(genomeId)
                           : dataType === "genome_feature" && featureId
                             ? featureHref(featureId)
-                            : null;
+                            : dataType === "epitope" && epitopeId
+                              ? epitopeHref(epitopeId)
+                              : null;
                       return (
                         <div key={documentKey} className="py-6">
                           {href ? (

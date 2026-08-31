@@ -28,7 +28,29 @@ vi.mock("../resource-filter-bar", () => ({
     <div
       data-testid="filter-bar"
       data-definitions={JSON.stringify(props.definitions)}
-    />
+      data-keyword={typeof props.keyword === "string" ? props.keyword : ""}
+    >
+      {["dna gy", "HUMAN", "absent", undefined].map((keyword) => (
+        <button
+          key={keyword ?? "clear"}
+          onClick={() => {
+            const onChange = props.onChange as (update: { keyword?: string; filters: CollectionState["filters"] }) => void;
+            onChange({
+              keyword,
+              filters: props.filters as CollectionState["filters"],
+            });
+          }}
+        >
+          {keyword === "dna gy"
+            ? "Filter loaded rows"
+            : keyword === "HUMAN"
+              ? "Filter array value"
+              : keyword
+                ? "Filter no matches"
+                : "Clear loaded filter"}
+        </button>
+      ))}
+    </div>
   ),
 }));
 vi.mock("@/components/search/search-action-bar", () => ({
@@ -302,6 +324,7 @@ describe("ResourceCollection Genome integration contracts", () => {
         onStateChange={vi.fn()}
         baseRql="eq(taxon_lineage_ids,561)"
         showHeader={false}
+        keywordMode="server"
       />,
     );
 
@@ -447,6 +470,232 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.queryByTestId("detail")).not.toBeInTheDocument();
   });
 
+  it("updates collection state when the server keyword changes", async () => {
+    const onStateChange = vi.fn();
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={onStateChange}
+        showHeader={false}
+        keywordMode="server"
+      />,
+    );
+
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute(
+      "data-keyword",
+      "coli",
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+
+    expect(onStateChange).toHaveBeenCalledWith({
+      ...state,
+      keyword: "dna gy",
+      page: 1,
+    });
+  });
+
+  it("filters loaded rows without changing the server query or collection state", async () => {
+    const onStateChange = vi.fn();
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        row,
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ],
+      selection: {},
+      selectedIds: [],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={onStateChange}
+        showHeader={false}
+        keywordMode="loaded"
+      />,
+    );
+
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
+    const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    expect(initialHookOptions?.state.keyword).toBe("coli");
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ]);
+    });
+    expect(dataTableProps.totalItems).toBe(1);
+    expect(dataTableProps.pageIndex).toBe(0);
+    expect(onStateChange).not.toHaveBeenCalled();
+    const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    expect(hookOptions?.state.keyword).toBe("coli");
+
+    await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
+
+    await waitFor(() => {
+      expect(dataTableProps.data).toHaveLength(2);
+    });
+    expect(dataTableProps.totalItems).toBe(2);
+    expect(dataTableProps.pageIndex).toBe(2);
+    expect(onStateChange).not.toHaveBeenCalled();
+  });
+
+  it("clears hidden selections and exports loaded-keyword matches from every page", async () => {
+    const user = userEvent.setup();
+    const laterMatch = {
+      genome_id: "83332.14",
+      genome_name: "DNA gyrase from a later page",
+      genome_length: 9012,
+    };
+    const data = repository(
+      Promise.resolve({
+        rows: [
+          row,
+          { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+          laterMatch,
+        ],
+      }),
+    );
+    const selected = vi.spyOn(data, "selected");
+    const exportAll = vi.spyOn(data, "exportAll");
+    const setSelection = vi.fn();
+    const setIsAllPagesSelected = vi.fn();
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        row,
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ],
+      selection: { "83332.12": true, "83332.13": true },
+      selectedIds: ["83332.12", "83332.13"],
+      total: 401,
+      setSelection,
+      setIsAllPagesSelected,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={data}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+        keywordMode="loaded"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ]);
+    });
+    expect(setSelection).toHaveBeenCalledWith({});
+    expect(setIsAllPagesSelected).toHaveBeenCalledWith(false);
+    expect(dataTableProps).toMatchObject({
+      rowSelection: { "83332.13": true },
+      selectedIds: ["83332.13"],
+      isAllPagesSelected: false,
+      totalSelectedCount: 1,
+    });
+    expect(actionBarProps.selectedCount).toBe(1);
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadAll as (
+          format: "csv",
+          fields: null,
+        ) => Promise<void>
+      )("csv", null);
+    });
+
+    expect(exportAll).toHaveBeenCalledWith("genome", {
+      rql: "eq(genome_status,Complete)",
+      keyword: "coli",
+      fields: genomeCollectionProfile.columns.map((column) => column.id),
+      sort: { field: "genome_length", direction: "desc" },
+    });
+    expect(selected).not.toHaveBeenCalled();
+    expect(downloadResourceExport).toHaveBeenCalledWith(
+      "genome",
+      [
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
+        laterMatch,
+      ],
+      genomeCollectionProfile.columns,
+      genomeCollectionProfile.columns.map((column) => column.id),
+      "csv",
+    );
+  });
+
+  it("matches array values case-insensitively and handles no local matches", async () => {
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        { ...row, host_name: ["Homo sapiens", "Human"] },
+        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+      ],
+      selection: {},
+      selectedIds: [],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+        keywordMode="loaded"
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter array value" }));
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([
+        { ...row, host_name: ["Homo sapiens", "Human"] },
+      ]);
+    });
+
+    await userEvent.click(screen.getByRole("button", { name: "Filter no matches" }));
+    await waitFor(() => {
+      expect(dataTableProps.data).toEqual([]);
+    });
+    expect(dataTableProps.totalItems).toBe(0);
+  });
+
+  it("keeps the server keyword separate from the loaded-row filter", () => {
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+        keywordMode="loaded"
+      />,
+    );
+
+    const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
+    expect(hookOptions?.state.keyword).toBe("coli");
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
+  });
+
   it("keeps the data table mounted when no rows are available", () => {
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
@@ -499,7 +748,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       format: "csv",
       selectedIds: undefined,
       fields: null,
-      rql: "and(eq(taxon_lineage_ids,561),eq(genome_id,83332.12))",
+      rql: "and(and(eq(taxon_lineage_ids,561),eq(genome_id,*)),eq(genome_id,83332.12))",
     });
   });
 

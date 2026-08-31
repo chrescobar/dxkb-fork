@@ -8,3 +8,4 @@ export { JobsListPage } from "./jobs-list-page";
 export { SettingsPage } from "./settings-page";
 export { TaxonInteractionsPage } from "./taxon-interactions-page";
 export { TaxonPage } from "./taxon-page";
+export { EpitopePage } from "./epitope-page";

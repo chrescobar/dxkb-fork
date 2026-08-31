@@ -27,6 +27,17 @@ describe("mapLegacyViewPath", () => {
       search: "pathogen_test_type=Influenza+A",
     });
   });
+  it("maps Epitope member and list routes", () => {
+    expect(mapLegacyViewPath("/view/Epitope/15780", "")).toEqual({
+      pathname: "/epitope/15780",
+      search: "",
+    });
+    expect(mapLegacyViewPath("/view/EpitopeList/", "eq(taxon_id,11520)")).toEqual({
+      pathname: "/epitope",
+      search: "rql=eq(taxon_id%2C11520)",
+    });
+  });
+
   it("maps Protein aliases to Feature member and list routes", () => {
     expect(mapLegacyViewPath("/view/Protein/fig%7C83332.12.peg.1", "")).toEqual({
       pathname: "/feature/fig%7C83332.12.peg.1",

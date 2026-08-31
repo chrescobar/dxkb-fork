@@ -3,6 +3,8 @@ import { dataResources } from "../types";
 import { dataQueryKeys } from "../query-options";
 import { resourceRegistry } from "../resources";
 import {
+  epitopeAssayRecordSchema,
+  epitopeRecordSchema,
   genomeRecordSchema,
   serologyRecordSchema,
   surveillanceRecordSchema,
@@ -32,6 +34,18 @@ describe("data API contracts", () => {
     expect(resourceRegistry.serology.fields.test_type.cardinality).toBe(
       "scalar",
     );
+  });
+
+  it("registers the Epitope and assay contracts", () => {
+    expect(resourceRegistry.epitope.idField).toBe("epitope_id");
+    expect(resourceRegistry.epitope_assay.idField).toBe("assay_id");
+    expect(resourceRegistry.epitope.fields.taxon_lineage_ids.cardinality).toBe("multiple");
+    expect(resourceRegistry.epitope.fields.host_name.cardinality).toBe("multiple");
+    expect(resourceRegistry.epitope.fields.total_assays.type).toBe("number");
+    expect(resourceRegistry.epitope.fields.assay_results.sortable).toBe(false);
+    expect(resourceRegistry.epitope_assay.fields.assay_result.facet).toBe(true);
+    expect(epitopeRecordSchema.parse({ epitope_id: "15780", total_assays: 2, host_name: ["Mus musculus BALB/c", "Ovis aries, domestic sheep"] })).toMatchObject({ epitope_id: "15780" });
+    expect(epitopeAssayRecordSchema.parse({ assay_id: "A1", epitope_id: "15780", assay_result: "Positive" })).toMatchObject({ assay_id: "A1" });
   });
 
   it("allows a valid collection and rejects disallowed fields and sorts", () => {

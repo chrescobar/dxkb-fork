@@ -40,6 +40,7 @@ export const featureCollectionProfile: ResourceCollectionProfile<FeatureViewReco
   columns: featureColumns,
   detailFields: featureDetailFields,
   defaultSort: "patric_id:asc",
+  basePredicate: "eq(feature_id,*)",
   guideUrl: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/features.html",
   buildStructuralRql: featureStructuralRql,
   facets: featureFacets,

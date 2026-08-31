@@ -22,6 +22,8 @@ import {
   type DataResource,
 } from "@/lib/data-api";
 import {
+  epitopeHref,
+  epitopeIdFromRow,
   featureHref,
   featureIdFromRow,
   genomeHref,
@@ -58,6 +60,15 @@ function combinePredicates(...predicates: (string | undefined)[]) {
   return `and(${active.join(",")})`;
 }
 
+function matchesLoadedKeyword(row: DataTableRow, keyword: string) {
+  return Object.values(row).some((value) => {
+    const values = Array.isArray(value) ? value : [value];
+    return values.some((item) =>
+      String(item ?? "").toLowerCase().includes(keyword),
+    );
+  });
+}
+
 export interface ResourceCollectionExportRequest {
   format: "csv" | "txt";
   selectedIds?: readonly string[];
@@ -74,6 +85,7 @@ export interface ResourceCollectionProps<Row extends DataTableRow> {
   enableRowLinks?: boolean;
   renderDetail?: (row: Row) => ReactNode;
   showHeader?: boolean;
+  keywordMode?: "server" | "loaded";
   onExport?: (request: ResourceCollectionExportRequest) => void | Promise<void>;
 }
 
@@ -86,9 +98,13 @@ export function ResourceCollection<Row extends DataTableRow>({
   enableRowLinks = true,
   renderDetail,
   showHeader = true,
+  keywordMode = "server",
   onExport,
 }: ResourceCollectionProps<Row>) {
   const [exportError, setExportError] = useState<string | null>(null);
+  const [loadedKeyword, setLoadedKeyword] = useState("");
+  const normalizedLoadedKeyword = loadedKeyword.trim().toLowerCase();
+  const hasLoadedKeyword = Boolean(normalizedLoadedKeyword);
   const [columnVisibility, setColumnVisibility] = useState(() =>
     Object.fromEntries(
       profile.columns.map((column) => [column.id, column.visible !== false]),
@@ -120,12 +136,37 @@ export function ResourceCollection<Row extends DataTableRow>({
         }
       : column,
   );
+  const displayedRows = normalizedLoadedKeyword
+    ? collection.rows.filter((row) =>
+        matchesLoadedKeyword(row, normalizedLoadedKeyword),
+      )
+    : collection.rows;
+  const displayedTotal = normalizedLoadedKeyword
+    ? displayedRows.length
+    : collection.total;
+  const displayedIds = normalizedLoadedKeyword
+    ? displayedRows.map((row) => String(row[profile.idField]))
+    : undefined;
+  const displayedIdSet = new Set(displayedIds);
+  const displayedSelectedIds = hasLoadedKeyword
+    ? collection.selectedIds.filter((id) => displayedIdSet.has(id))
+    : collection.selectedIds;
+  const displayedSelection = hasLoadedKeyword
+    ? Object.fromEntries(displayedSelectedIds.map((id) => [id, true as const]))
+    : collection.selection;
   const detail = collection.detail as Row | null;
+  const isDetailDisplayed =
+    !hasLoadedKeyword ||
+    (collection.activeId !== null && displayedIdSet.has(collection.activeId));
+  const displayedDetail = isDetailDisplayed ? detail : null;
   const selectedGenomeId =
     profile.resource === "genome"
-      ? collection.activeId
-      : genomeIdFromRow(detail);
-  const selectedFeatureId = featureIdFromRow(detail);
+      ? isDetailDisplayed
+        ? collection.activeId
+        : null
+      : genomeIdFromRow(displayedDetail);
+  const selectedFeatureId = featureIdFromRow(displayedDetail);
+  const selectedEpitopeId = epitopeIdFromRow(displayedDetail);
 
   const exportRows = async (
     format: "csv" | "txt",
@@ -133,7 +174,8 @@ export function ResourceCollection<Row extends DataTableRow>({
     fields: readonly string[] | null = null,
   ) => {
     setExportError(null);
-    if (!selectedIds?.length && collection.isRefreshing) {
+    if (selectedIds && selectedIds.length === 0) return;
+    if (!selectedIds && collection.isRefreshing) {
       setExportError("Wait for the current results to finish loading before exporting.");
       return;
     }
@@ -151,6 +193,7 @@ export function ResourceCollection<Row extends DataTableRow>({
       const selectedFields = fields
         ? [...fields]
         : profile.columns.map((column) => column.id);
+      const allFields = profile.columns.map((column) => column.id);
       const result = selectedIds?.length
         ? await repository.selected(profile.resource, {
             ids: [...selectedIds],
@@ -159,15 +202,20 @@ export function ResourceCollection<Row extends DataTableRow>({
         : await repository.exportAll(profile.resource, {
             rql: effectiveRql,
             keyword: state.keyword,
-            fields: selectedFields,
+            fields: hasLoadedKeyword ? allFields : selectedFields,
             sort: {
               field: state.sort.split(":")[0],
               direction: state.sort.endsWith(":desc") ? "desc" : "asc",
             },
           });
+      const exportedRows = hasLoadedKeyword && !selectedIds
+        ? result.rows.filter((row) =>
+            matchesLoadedKeyword(row, normalizedLoadedKeyword),
+          )
+        : result.rows;
       downloadResourceExport(
         profile.resource,
-        result.rows,
+        exportedRows,
         profile.columns,
         selectedFields,
         format,
@@ -189,17 +237,19 @@ export function ResourceCollection<Row extends DataTableRow>({
                 : String(collection.detailError)}
             </AlertDescription>
           </Alert>
-        ) : renderDetail && detail ? (
-          renderDetail(detail)
+        ) : renderDetail && displayedDetail ? (
+          renderDetail(displayedDetail)
         ) : (
           <InfoPanel
             variant="search"
             activeTab={profile.resource}
-            selectedIds={collection.selectedIds}
-            selectedRow={detail}
-            isLoading={collection.isDetailLoading}
-            isAllPagesSelected={collection.isAllPagesSelected}
-            totalItems={collection.total}
+            selectedIds={displayedSelectedIds}
+            selectedRow={displayedDetail}
+            isLoading={collection.isDetailLoading && isDetailDisplayed}
+            isAllPagesSelected={
+              hasLoadedKeyword ? false : collection.isAllPagesSelected
+            }
+            totalItems={displayedTotal}
           />
         )}
       </div>
@@ -241,15 +291,24 @@ export function ResourceCollection<Row extends DataTableRow>({
       )}
 
       <ResourceFilterBar
-        keyword={state.keyword}
+        keyword={keywordMode === "loaded" ? loadedKeyword : state.keyword}
         filters={state.filters}
         facets={collection.facets}
         definitions={profile.facets ?? []}
         hasExplicitRql={Boolean(state.rql)}
         onChange={({ keyword, filters, clearRql }) => {
+          if (keywordMode === "loaded") {
+            const nextLoadedKeyword = keyword ?? "";
+            if (nextLoadedKeyword !== loadedKeyword) {
+              collection.setSelection({});
+              collection.setIsAllPagesSelected(false);
+            }
+            setLoadedKeyword(nextLoadedKeyword);
+            if (filters === state.filters && !clearRql) return;
+          }
           onStateChange({
             ...state,
-            keyword,
+            keyword: keywordMode === "server" ? keyword : state.keyword,
             rql: clearRql ? undefined : state.rql,
             filters: state.rql && !clearRql ? state.filters : filters,
             page: 1,
@@ -259,7 +318,7 @@ export function ResourceCollection<Row extends DataTableRow>({
       <span className="sr-only" aria-live="polite">
         {collection.isRefreshing
           ? "Refreshing results..."
-          : `${String(collection.total)} results`}
+          : `${String(displayedTotal)} results`}
       </span>
 
       {exportError && (
@@ -294,14 +353,18 @@ export function ResourceCollection<Row extends DataTableRow>({
       ) : (
         <ResourceWorkspace
           hasSidePanel={
-            collection.isAllPagesSelected || collection.selectedIds.length > 0
+            hasLoadedKeyword
+              ? displayedSelectedIds.length > 0
+              : collection.isAllPagesSelected || collection.selectedIds.length > 0
           }
           actionBar={
             <SearchActionBar
               selectedCount={
-                collection.isAllPagesSelected
-                  ? collection.total
-                  : collection.selectedIds.length
+                hasLoadedKeyword
+                  ? displayedSelectedIds.length
+                  : collection.isAllPagesSelected
+                    ? collection.total
+                    : collection.selectedIds.length
               }
               searchType={profile.resource}
               guideUrl={profile.guideUrl}
@@ -318,6 +381,12 @@ export function ResourceCollection<Row extends DataTableRow>({
                     "_blank",
                     "noopener,noreferrer",
                   );
+                } else if (actionId === "epitope" && selectedEpitopeId) {
+                  window.open(
+                    epitopeHref(selectedEpitopeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />
@@ -328,25 +397,29 @@ export function ResourceCollection<Row extends DataTableRow>({
             id={`${profile.resource}-collection`}
             resource={profile.resource}
             idField={profile.idField}
-            data={collection.rows}
+            data={displayedRows}
             columns={columns}
-            totalItems={collection.total}
-            pageIndex={state.page - 1}
+            totalItems={displayedTotal}
+            pageIndex={normalizedLoadedKeyword ? 0 : state.page - 1}
             pageSize={resourceCollectionPageSize}
             sorting={collection.sorting}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
-            rowSelection={collection.selection}
-            selectedIds={collection.selectedIds}
-            isAllPagesSelected={collection.isAllPagesSelected}
+            rowSelection={displayedSelection}
+            selectedIds={displayedSelectedIds}
+            isAllPagesSelected={
+              hasLoadedKeyword ? false : collection.isAllPagesSelected
+            }
             onAllPagesSelectionChange={(selected) => {
               collection.setIsAllPagesSelected(selected);
               if (selected) collection.setSelection({});
             }}
             totalSelectedCount={
-              collection.isAllPagesSelected
-                ? collection.total
-                : collection.selectedIds.length
+              hasLoadedKeyword
+                ? displayedSelectedIds.length
+                : collection.isAllPagesSelected
+                  ? collection.total
+                  : collection.selectedIds.length
             }
             onPageChange={collection.setPageIndex}
             onSortingChange={collection.setSorting}

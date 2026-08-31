@@ -45,6 +45,25 @@ const e2eDeterministicCounts: Record<string, number> = {
   ppi: 4358,
 };
 
+const epitopeRecordFixture = {
+  epitope_id: "15780",
+  epitope_type: "Discontinuous peptide",
+  epitope_sequence: "A1, C4, D8",
+  organism: "Influenza A virus",
+  taxon_id: 11520,
+  taxon_lineage_ids: [10239, 11520],
+  protein_name: "Hemagglutinin",
+  protein_accession: "P03452",
+  host_name: "Human",
+  total_assays: 2,
+  assay_results: ["Positive", "Negative"],
+  bcell_assays: 2,
+  tcell_assays: 0,
+  mhc_assays: 0,
+  comments: "Discontinuous residues",
+  date_inserted: "2024-01-01",
+};
+
 const genomeRecordFixture = {
   genome_id: "1282460.2049",
   genome_name: "Middle East respiratory syndrome-related coronavirus isolate",
@@ -71,8 +90,8 @@ function maybeSolrCount(
   path: string,
   request: NextRequest,
 ):
-  | { response: { numFound: number; docs: (typeof genomeRecordFixture)[] } }
-  | (typeof genomeRecordFixture)[]
+  | { response: { numFound: number; docs: (typeof genomeRecordFixture | typeof epitopeRecordFixture)[] } }
+  | (typeof genomeRecordFixture | typeof epitopeRecordFixture)[]
   | null {
   const segments = path.split("/").filter(Boolean);
   if (segments[0] !== "data" || segments.length < 2) return null;
@@ -90,8 +109,15 @@ function maybeSolrCount(
   )?.match(/^items=(\d+)-(\d+)$/i);
   const includesFixtureRow =
     !itemRange || (Number(itemRange[1]) <= 0 && Number(itemRange[2]) >= 0);
-  const docs =
-    isGenomeFixtureQuery && includesFixtureRow ? [genomeRecordFixture] : [];
+  const isEpitopeFixtureQuery =
+    core === "epitope" && query.includes("eq(epitope_id,15780)");
+  const docs = includesFixtureRow
+    ? isGenomeFixtureQuery
+      ? [genomeRecordFixture]
+      : isEpitopeFixtureQuery
+        ? [epitopeRecordFixture]
+        : []
+    : [];
   if (request.headers.get("accept") === "application/json") return docs;
   return { response: { numFound, docs } };
 }

@@ -17,6 +17,7 @@ interface FeatureResourceCollectionProps {
   enableFacets?: boolean;
   enableRowLinks?: boolean;
   initialState?: CollectionState;
+  keywordMode?: "server" | "loaded";
 }
 
 export function FeatureResourceCollection({
@@ -24,6 +25,7 @@ export function FeatureResourceCollection({
   enableFacets = true,
   enableRowLinks = true,
   initialState,
+  keywordMode = "server",
 }: FeatureResourceCollectionProps) {
   const [urlState, setState] = useCollectionUrlState(featureCollectionOptions);
   const state = initialState ?? urlState;
@@ -40,6 +42,7 @@ export function FeatureResourceCollection({
       baseRql={baseRql}
       enableRowLinks={enableRowLinks}
       showHeader={false}
+      keywordMode={keywordMode}
     />
   );
 }

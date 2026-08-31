@@ -10,7 +10,7 @@ export function KeywordSearch({ value, onChange, placeholder = "Search keywords.
   return (
             <Input
               type="search"
-              className="text-primary-background w-80 border border-primary px-2 py-1"
+              className="w-80 border border-primary bg-card px-2 py-1 text-card-foreground dark:bg-card"
               placeholder={placeholder}
               value={value}
               onChange={(e) => { onChange(e.target.value); }}

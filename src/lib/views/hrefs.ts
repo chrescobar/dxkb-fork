@@ -64,3 +64,33 @@ export function featureListHref(opts?: {
   if (opts?.filter) params.push(`filter=${encodeURIComponent(opts.filter)}`);
   return params.length ? `/feature?${params.join("&")}` : "/feature";
 }
+
+/** Return a navigable Epitope ID from an API row, if present. */
+export function epitopeIdFromRow(
+  row: Record<string, unknown> | null,
+): string | null {
+  const epitopeId = row?.epitope_id;
+  return typeof epitopeId === "string" || typeof epitopeId === "number"
+    ? String(epitopeId)
+    : null;
+}
+
+/** Internal Epitope member route. */
+export function epitopeHref(epitopeId: number | string): string {
+  return `/epitope/${encodeURIComponent(String(epitopeId))}`;
+}
+
+/** Canonical Epitope collection route. Explicit RQL takes precedence over keyword. */
+export function epitopeListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  taxonId?: number | string;
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else if (opts?.keyword) params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  if (opts?.taxonId != null) {
+    params.push(`taxon_id=${encodeURIComponent(String(opts.taxonId))}`);
+  }
+  return params.length ? `/epitope?${params.join("&")}` : "/epitope";
+}

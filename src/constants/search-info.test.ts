@@ -7,4 +7,9 @@ describe("search descriptors", () => {
     expect(feature && searchHref(feature, "DNA kinase")).toBe("/feature?keyword=DNA%20kinase");
     expect(protein && searchHref(protein, "DNA kinase")).toBe("/feature?keyword=DNA%20kinase&filter=protein");
   });
+
+  it("routes Epitope searches to the canonical collection", () => {
+    const epitope = searchDescriptors.find((item) => item.id === "epitope");
+    expect(epitope && searchHref(epitope, "linear peptide")).toBe("/epitope?keyword=linear%20peptide");
+  });
 });

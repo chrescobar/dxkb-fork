@@ -1,0 +1,249 @@
+src/components/views/resource-child-collection.tsx
+  s_be0e1e9a419f18::t_97756511b1921b 1-90
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_be0e1e9a419f18::t_4b8b7d248557cf 273-276
+  s_be0e1e9a419f18::t_0676b542848bc4 278-284,296-298,300-306
+  s_be0e1e9a419f18::t_a9e1331fc641e0 272
+  s_be0e1e9a419f18::t_aa7b4fe1383970 323
+  s_be0e1e9a419f18::t_fc3353836ce165 260,262-271,277,295,299,307-308
+  s_be0e1e9a419f18::t_dace37342bdb7d 285-294
+  s_be0e1e9a419f18::t_eb295c598c449d 246,250,331-334,340,344-360
+  s_be0e1e9a419f18::t_dd9e0c1cf53676 338
+  s_be0e1e9a419f18::t_d65ca378f83d76 261
+  s_be0e1e9a419f18::t_f40ffbb1a44584 309-322,324-327
+src/app/(views)/feature/feature-collection.tsx
+  s_be0e1e9a419f18::t_ab2570a9feb733 12,23
+e2e/a11y/routes.ts
+  s_be0e1e9a419f18::t_afe7ae9e0e018d 298,374
+src/components/organisms/taxon-views/features.tsx
+  s_be0e1e9a419f18::t_1869eb6b65622d 11
+src/components/search/search-bar.tsx
+  s_be0e1e9a419f18::t_57046dbd3c44b5 37,44-52
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_be0e1e9a419f18::t_a6f5d367bae1d4 4,39
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_be0e1e9a419f18::t_74885f32967b7b 9-15
+  s_be0e1e9a419f18::t_2f68dc736cff59 1-8,16-58
+src/components/navbars/__tests__/navbar.test.tsx
+  s_be0e1e9a419f18::t_6d534913c8f3b4 49-55,58-59,61-62
+  s_be0e1e9a419f18::t_2e12b2d90d0aaf 6-9,15
+  s_be0e1e9a419f18::t_ea63e7a8dd20ec 4-5,10,13
+  s_be0e1e9a419f18::t_ce25d1eadae5d9 2
+  s_be0e1e9a419f18::t_a56cd1c6a6f3ff 39,45,47,57,63-65,73,76
+  s_be0e1e9a419f18::t_e1ffb808f4a6e6 37-38,40-41
+  s_be0e1e9a419f18::t_eefad9de73d907 42-44,46,48,60
+  s_be0e1e9a419f18::t_7b69ae05809845 56
+src/lib/genome-view/profile.ts
+  s_be0e1e9a419f18::t_71014a96ce3e4d 41
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_be0e1e9a419f18::t_24c73f2fdd7b41 29
+  s_be0e1e9a419f18::t_713dff108442df 22-24,26-27,30
+e2e/tests/genome-view.spec.ts
+  s_be0e1e9a419f18::t_bea8e1ec4aa94b 163,166
+  s_be0e1e9a419f18::t_5b51026d1c61b3 27,31
+  s_be0e1e9a419f18::t_3c0291a0601ec2 63,65-66,71-72,77,82-84
+  s_be0e1e9a419f18::t_03e6a85f32c1fa 111,114
+  s_be0e1e9a419f18::t_a40af979fa2bb5 61-62,64,67,73-76,78
+  s_be0e1e9a419f18::t_5537391a8fa70c 68-70
+  s_be0e1e9a419f18::t_95b7126fca8e82 79-81
+src/components/services/list-data.tsx
+  s_be0e1e9a419f18::t_28b6b829992c92 470,472
+  s_be0e1e9a419f18::t_ba5c07b376b6a5 445-448
+  s_be0e1e9a419f18::t_ad1d6484e36853 463
+  s_be0e1e9a419f18::t_c5f4752bdc73fa 3
+  s_be0e1e9a419f18::t_9a60cbc03baf9b 41
+  s_be0e1e9a419f18::t_84f32ae7c71d3e 339-352
+  s_be0e1e9a419f18::t_10533148373d23 61
+  s_be0e1e9a419f18::t_1e132aec7660b7 78-79
+src/components/views/index.ts
+  s_be0e1e9a419f18::t_d3cecd427e9823 2
+  s_be0e1e9a419f18::t_a81d9b9156ceb5 5
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_be0e1e9a419f18::t_7f62d5b3048ab0 14
+e2e/fixtures/overrides/catchall.ts
+  s_be0e1e9a419f18::t_e2da3b39ef22da 36-45,47-61,99-129
+  s_be0e1e9a419f18::t_72e13832eb8ae2 46
+src/constants/resources.ts
+  s_be0e1e9a419f18::t_649d1b9666fefa 9
+e2e/tests/epitope-view.spec.ts
+  s_be0e1e9a419f18::t_e9723d5abd2e97 19,21
+  s_be0e1e9a419f18::t_663964a033518a 11,18,23
+  s_be0e1e9a419f18::t_6a69f3b3f8bd66 49
+  s_be0e1e9a419f18::t_4a083fb64b5c01 62-85
+  s_be0e1e9a419f18::t_21ba629f646b90 13
+  s_be0e1e9a419f18::t_a5f4b6f654fd68 27,29,31-42
+  s_be0e1e9a419f18::t_6997c48b8f171e 1-10,26,30,43-48,50-61,86
+  s_be0e1e9a419f18::t_1b3f568b8c00df 12,14-17,20,22,24-25,28
+src/app/(views)/epitope/not-found.tsx
+  s_be0e1e9a419f18::t_bd476e491dd5b5 1-11
+src/app/(views)/genome/genome-collection.tsx
+  s_be0e1e9a419f18::t_bb7f43ef169dce 8,21
+src/app/(views)/epitope/epitope-collection.tsx
+  s_be0e1e9a419f18::t_a1c3a235720f4f 1-16,18-20
+  s_be0e1e9a419f18::t_394adaad684bcf 17
+src/lib/epitope-view/index.ts
+  s_be0e1e9a419f18::t_6e2b369f0a0220 1-4
+src/components/organisms/taxon-views/genomes.tsx
+  s_be0e1e9a419f18::t_f3881328d193f7 10
+src/lib/epitope-view/query.ts
+  s_be0e1e9a419f18::t_b9606ef6d72037 1-50
+src/components/views/epitope-resource-collection.tsx
+  s_be0e1e9a419f18::t_15e93b401e3a16 28
+  s_be0e1e9a419f18::t_ab8326cd647b20 20
+  s_be0e1e9a419f18::t_da93942d96bc23 1-19,21-27,29-40,42-44
+  s_be0e1e9a419f18::t_4391692c300bed 41
+src/app/(views)/epitope/[epitopeId]/page.tsx
+  s_be0e1e9a419f18::t_74a9a10464f3d4 1-7,9-54
+src/lib/epitope-view/server.ts
+  s_be0e1e9a419f18::t_f138c10757bb60 1-22
+src/components/views/feature-resource-collection.tsx
+  s_be0e1e9a419f18::t_37d813ae3f3f16 28
+  s_be0e1e9a419f18::t_e3b0a86b4654ac 45
+  s_be0e1e9a419f18::t_e622f31a5af472 20
+src/app/(views)/epitope/error.tsx
+  s_be0e1e9a419f18::t_23caac686d30ff 1-13
+src/components/filterbar/filter-bar.tsx
+  s_be0e1e9a419f18::t_0ebc687ca907bd 36
+  s_be0e1e9a419f18::t_4d5772d5d348d6 131-134
+  s_be0e1e9a419f18::t_7e8db3f530df4a 77-80
+  s_be0e1e9a419f18::t_a0ae504a81d5ba 25
+src/lib/data-api/schemas.ts
+  s_be0e1e9a419f18::t_53ad0dc95a7b24 41
+  s_be0e1e9a419f18::t_1eac4446936bfd 32-33,35-40,42-48,55-62
+src/app/(views)/epitope/[epitopeId]/__tests__/page.test.tsx
+  s_be0e1e9a419f18::t_0b3c1d221ef44e 1-77
+src/lib/feature-view/profile.ts
+  s_be0e1e9a419f18::t_9dff275c294607 43
+src/lib/epitope-view/profile.ts
+  s_be0e1e9a419f18::t_fafb31f2e9c605 39
+  s_be0e1e9a419f18::t_b95ac13efd0b88 1-38,40-45
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_be0e1e9a419f18::t_2ebfe516884479 109
+src/components/views/resource-collection.tsx
+  s_be0e1e9a419f18::t_5868520a499f60 97
+  s_be0e1e9a419f18::t_789a305ecdc8bc 139-148,150-151
+  s_be0e1e9a419f18::t_9bd89576fac98f 364
+  s_be0e1e9a419f18::t_664764dc0d0b52 286
+  s_be0e1e9a419f18::t_2ef61dde9b3705 3
+  s_be0e1e9a419f18::t_c4daf110652451 92,96
+  s_be0e1e9a419f18::t_41c9b6aa402b9c 149
+  s_be0e1e9a419f18::t_963519b9cf3a0a 25-26,138,345-347
+  s_be0e1e9a419f18::t_cbe6a4494549aa 119
+  s_be0e1e9a419f18::t_51a0cfdf582482 103-105,108,110
+  s_be0e1e9a419f18::t_55b6fc93fae074 267
+  s_be0e1e9a419f18::t_b26ffc987db080 273-274
+  s_be0e1e9a419f18::t_6b50e8e3d793da 184
+  s_be0e1e9a419f18::t_42304122a40a9c 361,363
+  s_be0e1e9a419f18::t_87b2285a198a70 79
+  s_be0e1e9a419f18::t_214f5320e78792 348-350
+src/lib/epitope-view/__tests__/epitope-view.test.ts
+  s_be0e1e9a419f18::t_51c25cf5769a04 15
+  s_be0e1e9a419f18::t_dc2cf7ff13273b 1-14,16-44
+src/components/views/__tests__/resource-collection.test.tsx
+  s_be0e1e9a419f18::t_9f5466c1e9532a 32-33,37-38,41-44
+  s_be0e1e9a419f18::t_dd6725224a7f2d 318
+  s_be0e1e9a419f18::t_098f075bfa2d39 500
+  s_be0e1e9a419f18::t_4c9a5ce680e223 31
+  s_be0e1e9a419f18::t_369cdf48bc9ad4 466
+  s_be0e1e9a419f18::t_a73affabb3f465 465,467-480,482-486,491-499,502-503
+  s_be0e1e9a419f18::t_71c9264f7d12f9 34-36,39-40
+  s_be0e1e9a419f18::t_0608fc6da9ff5f 464,481,487-490,501
+  s_be0e1e9a419f18::t_9e79856d8ac657 556
+src/app/(views)/epitope/loading.tsx
+  s_be0e1e9a419f18::t_19b7f641f4bb14 1-11
+src/lib/epitope-view/schema.ts
+  s_be0e1e9a419f18::t_a22c40fff9ce3f 19
+  s_be0e1e9a419f18::t_3631a8be4d3284 1-18,20-33
+src/app/(views)/epitope/[epitopeId]/epitope-member.tsx
+  s_be0e1e9a419f18::t_27067187705b07 1-43
+src/app/all-term-search-results.tsx
+  s_be0e1e9a419f18::t_1cf9415cbf5d15 458-459,478,491,498-500
+  s_be0e1e9a419f18::t_132790bee5684d 23-25
+src/components/search/search-action-bar.tsx
+  s_be0e1e9a419f18::t_5ea121c312905a 178
+src/lib/data-api/resources.ts
+  s_be0e1e9a419f18::t_34e74bdba1dd6e 120
+  s_be0e1e9a419f18::t_54741a0dcbd944 99-102,158,175
+  s_be0e1e9a419f18::t_5d08f1143336b8 64
+  s_be0e1e9a419f18::t_28d68e895a111f 4
+src/app/api/e2e-mock/[...path]/route.ts
+  s_be0e1e9a419f18::t_375dcf34af06e4 48-66,93-94,112-120
+src/components/organisms/taxon-views/epitopes.tsx
+  s_be0e1e9a419f18::t_c3668b42980367 10
+  s_be0e1e9a419f18::t_88ef188b7c54f9 1,7-9
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_be0e1e9a419f18::t_a4b571f9db8638 23,28,35
+  s_be0e1e9a419f18::t_0a7d6d9b57065a 165
+  s_be0e1e9a419f18::t_f63d7bc180c22c 321-322
+  s_be0e1e9a419f18::t_3506c43cbf2e2d 70,77,81,87,248
+  s_be0e1e9a419f18::t_980b97750d562d 60,64
+  s_be0e1e9a419f18::t_0fad6576b2b8a5 238
+  s_be0e1e9a419f18::t_369702fd78df1e 57-59,61-63,65-69,71-72,253,256,258
+  s_be0e1e9a419f18::t_32d9261c781c2c 259
+  s_be0e1e9a419f18::t_ccf66233432439 43,49,52
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_be0e1e9a419f18::t_652300f061f6cc 25-31
+src/components/views/genome-resource-collection.tsx
+  s_be0e1e9a419f18::t_e894f2af66a111 19
+  s_be0e1e9a419f18::t_bd16d8a421eeed 26
+  s_be0e1e9a419f18::t_c8436d3c23bb4e 40
+  s_be0e1e9a419f18::t_745789bb8c866f 9
+  s_be0e1e9a419f18::t_bf4e9b0382fe1a 18,25,28-29
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_be0e1e9a419f18::t_cb20461b7004c9 26-28,31,33-34,43
+docs/architecture.md
+  s_be0e1e9a419f18::t_12f844e7b29f9b 81
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_be0e1e9a419f18::t_8021790dcfc97f 29
+src/constants/datafields/epitope_assay.ts
+  s_be0e1e9a419f18::t_5ecc256c58c79e 1-15
+src/lib/views/hrefs.ts
+  s_be0e1e9a419f18::t_9c4666c6390340 67-96
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_be0e1e9a419f18::t_8f451d46ff2762 30-40
+src/components/organisms/taxon-views/taxon-data-panel.tsx
+  s_be0e1e9a419f18::t_3d1bab97395c27 35
+  s_be0e1e9a419f18::t_808827f4d81a7f 119-122
+  s_be0e1e9a419f18::t_45f965959e6432 25
+src/lib/epitope-view/tabs.ts
+  s_be0e1e9a419f18::t_3654a514d5760c 1-16
+src/components/services/__tests__/list-data-integration.test.tsx
+  s_be0e1e9a419f18::t_3dece01b7f877f 280-281,284-303,305-309,311-313
+  s_be0e1e9a419f18::t_82de18bbf9a1d6 304
+  s_be0e1e9a419f18::t_ef827e6d2383c6 282-283
+  s_be0e1e9a419f18::t_56b82f66c549bf 310
+src/constants/search-info.test.ts
+  s_be0e1e9a419f18::t_0dc78b2f8f7343 10-14
+src/components/filterbar/keyword-search.tsx
+  s_be0e1e9a419f18::t_e343ad86151fb8 13
+src/constants/datafields/epitope.ts
+  s_be0e1e9a419f18::t_5a265ce7eaa631 64
+  s_be0e1e9a419f18::t_79657d15f39a51 53-63,136-137,175-176
+src/lib/data-api/__tests__/validation.test.ts
+  s_be0e1e9a419f18::t_5878511fa3fd3c 43,47
+  s_be0e1e9a419f18::t_2ce352a5636050 6-7,39-42,44-46,48
+  s_be0e1e9a419f18::t_1878f862fb2691 49-50
+src/constants/search-info.ts
+  s_be0e1e9a419f18::t_91f4bdda32d3ad 111-114
+src/app/(views)/epitope/page.tsx
+  s_be0e1e9a419f18::t_ed9b8cd94484e4 1-6,8-20
+src/lib/views/__tests__/hrefs.test.ts
+  s_be0e1e9a419f18::t_ab0cd72250146d 2-4,24-31
+  s_be0e1e9a419f18::t_e5eaa736f90de6 32-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "7f65d4315192eb3d00b343e2491ffe6f5970d77b",
+  "prompts": {},
+  "sessions": {
+    "s_be0e1e9a419f18": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa7f74777ffeAymTrs2g6XK82U",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

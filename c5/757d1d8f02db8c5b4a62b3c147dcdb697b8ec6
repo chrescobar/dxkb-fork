@@ -1,0 +1,159 @@
+src/constants/search-info.ts
+  s_6e92a136672ff1::t_b5bd330c4d41fe 153
+src/app/all-term-search-results.tsx
+  s_6e92a136672ff1::t_77c08eb49e0da2 31-33
+  s_6e92a136672ff1::t_255ae813e39d6a 467-468
+  s_6e92a136672ff1::t_16b7820d9b18cc 477-479
+  s_6e92a136672ff1::t_f1f512669c9e97 516-520,546-548
+src/lib/views/compound-sample.ts
+  s_6e92a136672ff1::t_d0a914dab66f72 24,26
+  s_6e92a136672ff1::t_f1f512669c9e97 15-17,32
+  s_6e92a136672ff1::t_779fe0c537b49c 10-11
+  s_6e92a136672ff1::t_0b93b1714eaf56 1-9,12-14,18-23,25,27-31,33-55
+src/lib/serology-view/profile.ts
+  s_6e92a136672ff1::t_5279e1f2ca1766 1-38,40-45
+  s_6e92a136672ff1::t_f584e6ec9adeba 39
+src/components/views/serology-resource-collection.tsx
+  s_6e92a136672ff1::t_027dd128bd38f8 1-50
+src/lib/data-api/__tests__/validation.test.ts
+  s_6e92a136672ff1::t_6a3ea58f0201ff 44-47
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_6e92a136672ff1::t_959966b66e5278 59-81
+src/components/views/__tests__/resource-collection.test.tsx
+  s_6e92a136672ff1::t_95a3455cc38916 412-439
+src/constants/datafields/serology.ts
+  s_6e92a136672ff1::t_f1f512669c9e97 4-235
+src/app/(views)/serology/[sampleId]/serology-member.tsx
+  s_6e92a136672ff1::t_298b63ca780c42 25,32
+  s_6e92a136672ff1::t_328d22a278907e 1-24,26-31,33-68
+src/lib/serology-view/tabs.ts
+  s_6e92a136672ff1::t_add8fbc7a65690 1-15
+src/lib/data-api/schemas.ts
+  s_6e92a136672ff1::t_8edd6da69c61fb 74
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_6e92a136672ff1::t_4b7bdb131bbbd0 164,166-170
+  s_6e92a136672ff1::t_be61cc889fd18f 351-352
+  s_6e92a136672ff1::t_8e198f1433066c 96-113
+e2e/pages/index.ts
+  s_6e92a136672ff1::t_182c1dd76a4ecb 12
+e2e/fixtures/overrides/catchall.ts
+  s_6e92a136672ff1::t_0845a70b77208e 117-146
+  s_6e92a136672ff1::t_a28182d31f70eb 184-219
+e2e/a11y/routes.ts
+  s_6e92a136672ff1::t_c43afa3a357a49 314,316,392,394
+src/lib/views/__tests__/hrefs.test.ts
+  s_6e92a136672ff1::t_3ec6efcbd96932 11-13
+  s_6e92a136672ff1::t_c9cf64fef6edc3 71-99
+src/app/(views)/serology/not-found.tsx
+  s_6e92a136672ff1::t_298b63ca780c42 7
+  s_6e92a136672ff1::t_a5996ec6363ce8 1-6,8-18
+e2e/pages/serology-page.ts
+  s_6e92a136672ff1::t_f1f512669c9e97 37-39,50-59,80-82
+  s_6e92a136672ff1::t_73d9fead436b27 1-36,40-49,60-79,83-91
+src/components/search/search-action-bar.tsx
+  s_6e92a136672ff1::t_2ee842b35bf107 212
+src/app/(views)/serology/[sampleId]/serology-ambiguity.tsx
+  s_6e92a136672ff1::t_d1379998e4e4e5 1-14,16-20,22-30,32-39,41-44,46-52
+  s_6e92a136672ff1::t_298b63ca780c42 15,21,31,40,45
+src/app/(views)/serology/[sampleId]/serology-overview.tsx
+  s_6e92a136672ff1::t_a26e53058d89bc 1-69,71-77,79-88
+  s_6e92a136672ff1::t_298b63ca780c42 70,78
+src/components/views/index.ts
+  s_6e92a136672ff1::t_3bd2548a2e7e2d 8
+src/components/views/resource-collection.tsx
+  s_6e92a136672ff1::t_3329b9c029cf6a 400
+  s_6e92a136672ff1::t_2bade6eef69156 212-218
+src/app/(views)/serology/[sampleId]/__tests__/page.test.tsx
+  s_6e92a136672ff1::t_cad4aaa3cae9f6 1-50,52-118
+  s_6e92a136672ff1::t_f1f512669c9e97 51
+e2e/tests/serology-view.spec.ts
+  s_6e92a136672ff1::t_68a1b4bfa95de9 1-48
+src/lib/serology-view/__tests__/serology-view.test.ts
+  s_6e92a136672ff1::t_668c448c5e976d 1-12,20-27,29-52,58-152,156-160,164-165
+  s_6e92a136672ff1::t_9f890ddf9788aa 28
+  s_6e92a136672ff1::t_7b0e6e5756fad0 13-19
+  s_6e92a136672ff1::t_f1f512669c9e97 53-57,153-155,161-163
+e2e/tests/organisms/serology.spec.ts
+  s_6e92a136672ff1::t_f1f512669c9e97 46-48
+  s_6e92a136672ff1::t_105b4f05a9b428 7
+  s_6e92a136672ff1::t_23ed9443446422 29-39
+docs/architecture.md
+  s_6e92a136672ff1::t_d52d011bda6aef 82
+  s_6e92a136672ff1::t_bd9b83d9e024e6 78
+src/lib/serology-view/index.ts
+  s_6e92a136672ff1::t_e72a4772fc0a04 1-4
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_6e92a136672ff1::t_dc1c7781e7d56e 30-41
+src/lib/surveillance-view/server.ts
+  s_6e92a136672ff1::t_e9395409dab593 4
+  s_6e92a136672ff1::t_1ce15b357699c1 25-30,32-34
+src/lib/data-api/resources.ts
+  s_6e92a136672ff1::t_284a43beb72501 122
+e2e/tests/resource-collection-pagination.spec.ts
+  s_6e92a136672ff1::t_c1640604e14781 64-80,136-139
+src/components/search/search-bar.tsx
+  s_6e92a136672ff1::t_22f6c87564e218 48-50
+src/lib/serology-view/query.ts
+  s_6e92a136672ff1::t_d1e81614a59e22 1-21,24-51
+  s_6e92a136672ff1::t_c109fa51580a13 22-23
+src/app/(views)/serology/loading.tsx
+  s_6e92a136672ff1::t_4e1a3a6cfc60d3 1-15
+src/components/organisms/taxon-views/serology.tsx
+  s_6e92a136672ff1::t_726d7b839518d4 1,7-10
+src/components/search/__tests__/search-action-bar.test.tsx
+  s_6e92a136672ff1::t_9ce93021a5a129 225-240
+src/app/api/e2e-mock/[...path]/route.ts
+  s_6e92a136672ff1::t_c2a4725797186f 99-129
+  s_6e92a136672ff1::t_cee0fde5e19ee2 169-200
+src/hooks/views/use-resource-collection.ts
+  s_6e92a136672ff1::t_ca37b5124cffe8 47,137-140
+src/constants/search-info.test.ts
+  s_6e92a136672ff1::t_67b0129c303998 24,28,32-33
+  s_6e92a136672ff1::t_58b21e167c54d0 34
+src/lib/serology-view/server.ts
+  s_6e92a136672ff1::t_17a69bc6f5a7de 19-24,26-28
+  s_6e92a136672ff1::t_e2f7b8ffbb47aa 1-3,5-18,25,29-50
+  s_6e92a136672ff1::t_3270389a003d11 4
+src/app/(views)/serology/page.tsx
+  s_6e92a136672ff1::t_a768cc00919969 1-5,7-26
+src/app/(views)/serology/serology-collection.tsx
+  s_6e92a136672ff1::t_dd373a62a5bddb 1-3,8-30
+  s_6e92a136672ff1::t_f1f512669c9e97 4-7
+src/app/search/typesearch.tsx
+  s_6e92a136672ff1::t_7cd7007980f2a8 535
+  s_6e92a136672ff1::t_f1f512669c9e97 226-236,330-332,336-338
+  s_6e92a136672ff1::t_270fef648db284 75
+  s_6e92a136672ff1::t_5fe1b7bbeb0173 500-505
+  s_6e92a136672ff1::t_16d3697e9ca901 101
+  s_6e92a136672ff1::t_5661a46a65afab 353
+  s_6e92a136672ff1::t_887c3b5a1e8c47 132
+  s_6e92a136672ff1::t_826419a3ead4d4 26-27
+src/app/(views)/serology/error.tsx
+  s_6e92a136672ff1::t_3db3ca13f625b5 1-12,14-15,20-25
+  s_6e92a136672ff1::t_f1f512669c9e97 16-18
+  s_6e92a136672ff1::t_298b63ca780c42 13,19
+src/app/(views)/serology/[sampleId]/page.tsx
+  s_6e92a136672ff1::t_b2991764a38a87 1-4,6-8,10-102
+  s_6e92a136672ff1::t_f1f512669c9e97 5
+src/lib/serology-view/schema.ts
+  s_6e92a136672ff1::t_895942b47e48d5 1-13,15-39
+  s_6e92a136672ff1::t_b282d10dbb4dad 14
+src/lib/views/hrefs.ts
+  s_6e92a136672ff1::t_003fc68dd16a48 141-182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "c5757d1d8f02db8c5b4a62b3c147dcdb697b8ec6",
+  "prompts": {},
+  "sessions": {
+    "s_6e92a136672ff1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa20b6ecbffeqWG5JbFlbpH9L2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

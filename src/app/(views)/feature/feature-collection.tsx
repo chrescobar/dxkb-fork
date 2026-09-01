@@ -1,8 +1,9 @@
 "use client";
 
 import { Blocks } from "lucide-react";
-import type { CollectionState } from "@/lib/views/collection-state";
 import { EntityViewShell, FeatureResourceCollection } from "@/components/views";
+import { recentGenomeFeatureRql } from "@/lib/feature-view";
+import type { CollectionState } from "@/lib/views/collection-state";
 
 interface FeatureCollectionProps {
   initialState: CollectionState;
@@ -20,7 +21,11 @@ export function FeatureCollection({
       defaultTab="features"
       layout="fill"
     >
-      <FeatureResourceCollection initialState={initialState} keywordMode="loaded" />
+      <FeatureResourceCollection
+        baseRql={recentGenomeFeatureRql}
+        initialState={initialState}
+        keywordMode="refine"
+      />
     </EntityViewShell>
   );
 }

@@ -23,7 +23,7 @@ export function SerologyCollection({ initialState }: SerologyCollectionProps) {
     >
       <SerologyResourceCollection
         initialState={initialState}
-        keywordMode="loaded"
+        keywordMode="refine"
       />
     </EntityViewShell>
   );

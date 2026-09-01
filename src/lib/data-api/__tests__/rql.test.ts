@@ -38,6 +38,19 @@ describe("typed RQL", () => {
     ).toBe('or(eq(epitope_type,"Linear%20peptide"),keyword(influenza))');
   });
 
+  it("validates Genome relationship predicates for features", () => {
+    const rql =
+      "genome(and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated)))";
+
+    expect(validateRql("genome_feature", rql)).toBe(rql);
+    expect(() => validateRql("epitope", rql)).toThrow(
+      /Unsupported RQL operator: genome/,
+    );
+    expect(() =>
+      validateRql("genome_feature", "genome(eq(secret,value))"),
+    ).toThrow(/Field secret is not allowed for genome/);
+  });
+
   it.each([
     "select(genome_id)",
     "sort(+genome_id)",

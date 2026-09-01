@@ -15,6 +15,7 @@ import {
 } from "@/components/shared/data-table";
 import { useResourceCollection } from "@/hooks/views/use-resource-collection";
 import type { CollectionState } from "@/lib/views/collection-state";
+import { rqlKeyword } from "@/lib/views/rql";
 import { resourceCollectionPageSize } from "@/hooks/views/collection-state";
 import {
   maxExportRows,
@@ -85,7 +86,7 @@ export interface ResourceCollectionProps<Row extends DataTableRow> {
   enableRowLinks?: boolean;
   renderDetail?: (row: Row) => ReactNode;
   showHeader?: boolean;
-  keywordMode?: "server" | "loaded";
+  keywordMode?: "server" | "loaded" | "refine";
   prefetchNextPage?: boolean;
   onExport?: (request: ResourceCollectionExportRequest) => void | Promise<void>;
 }
@@ -106,7 +107,12 @@ export function ResourceCollection<Row extends DataTableRow>({
   const [exportError, setExportError] = useState<string | null>(null);
   const [loadedKeyword, setLoadedKeyword] = useState("");
   const normalizedLoadedKeyword = loadedKeyword.trim().toLowerCase();
-  const hasLoadedKeyword = Boolean(normalizedLoadedKeyword);
+  const hasLoadedKeyword =
+    keywordMode === "loaded" && Boolean(normalizedLoadedKeyword);
+  const refinementRql =
+    keywordMode === "refine" && state.refine?.trim()
+      ? rqlKeyword(state.refine.trim())
+      : undefined;
   const [columnVisibility, setColumnVisibility] = useState(() =>
     Object.fromEntries(
       profile.columns.map((column) => [column.id, column.visible !== false]),
@@ -115,6 +121,7 @@ export function ResourceCollection<Row extends DataTableRow>({
   const structuralRql = combinePredicates(
     baseRql,
     profile.buildStructuralRql?.(state) ?? profile.basePredicate,
+    refinementRql,
   );
   const effectiveRql = combinePredicates(structuralRql, state.rql);
   const collection = useResourceCollection({
@@ -139,15 +146,13 @@ export function ResourceCollection<Row extends DataTableRow>({
         }
       : column,
   );
-  const displayedRows = normalizedLoadedKeyword
+  const displayedRows = hasLoadedKeyword
     ? collection.rows.filter((row) =>
         matchesLoadedKeyword(row, normalizedLoadedKeyword),
       )
     : collection.rows;
-  const displayedTotal = normalizedLoadedKeyword
-    ? displayedRows.length
-    : collection.total;
-  const displayedIds = normalizedLoadedKeyword
+  const displayedTotal = hasLoadedKeyword ? displayedRows.length : collection.total;
+  const displayedIds = hasLoadedKeyword
     ? displayedRows.map((row) => String(row[profile.idField]))
     : undefined;
   const displayedIdSet = new Set(displayedIds);
@@ -300,7 +305,13 @@ export function ResourceCollection<Row extends DataTableRow>({
       )}
 
       <ResourceFilterBar
-        keyword={keywordMode === "loaded" ? loadedKeyword : state.keyword}
+        keyword={
+          keywordMode === "server"
+            ? state.keyword
+            : keywordMode === "refine"
+              ? state.refine
+              : loadedKeyword
+        }
         filters={state.filters}
         facets={collection.facets}
         definitions={profile.facets ?? []}
@@ -318,8 +329,9 @@ export function ResourceCollection<Row extends DataTableRow>({
           onStateChange({
             ...state,
             keyword: keywordMode === "server" ? keyword : state.keyword,
-            rql: clearRql ? undefined : state.rql,
+            refine: keywordMode === "refine" ? keyword : state.refine,
             filters: state.rql && !clearRql ? state.filters : filters,
+            rql: clearRql ? undefined : state.rql,
             page: 1,
           });
         }}
@@ -418,7 +430,7 @@ export function ResourceCollection<Row extends DataTableRow>({
             data={displayedRows}
             columns={columns}
             totalItems={displayedTotal}
-            pageIndex={normalizedLoadedKeyword ? 0 : state.page - 1}
+            pageIndex={hasLoadedKeyword ? 0 : state.page - 1}
             pageSize={resourceCollectionPageSize}
             sorting={collection.sorting}
             columnVisibility={columnVisibility}

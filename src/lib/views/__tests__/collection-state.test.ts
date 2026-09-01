@@ -106,6 +106,18 @@ describe("collection URL state", () => {
     ]);
   });
 
+  it("serializes a refinement independently from the primary keyword", () => {
+    const state = parseCollectionState(
+      { keyword: "influenza", refine: "N034" },
+      options,
+    );
+
+    expect(state).toMatchObject({ keyword: "influenza", refine: "N034" });
+    expect(serializeCollectionState(state, options).toString()).toBe(
+      "keyword=influenza&refine=N034",
+    );
+  });
+
   it("omits page 1 and the default sort without exposing a tie-break", () => {
     const serialized = serializeCollectionState(
       {
@@ -140,6 +152,7 @@ describe("collection URL state", () => {
 
   it.each([
     ["keyword", { keyword: "new" }],
+    ["refinement", { refine: "N034" }],
     ["structural RQL", { rql: "eq(public,true)" }],
     ["facet", { filters: { host: ["human"] } }],
     ["sort", { sort: "date" as const }],

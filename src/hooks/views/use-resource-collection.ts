@@ -100,7 +100,7 @@ export function useResourceCollection<Row extends ResourceRow>({
   );
   const total = query.data?.total ?? 0;
   useEffect(() => {
-    if (!prefetchNextPage) return;
+    if (!prefetchNextPage || query.isPlaceholderData) return;
     if (state.page * resourceCollectionPageSize >= total) return;
     const nextRequest = { ...request, page: state.page + 1 };
     void queryClient
@@ -111,6 +111,7 @@ export function useResourceCollection<Row extends ResourceRow>({
       .catch(noop);
   }, [
     prefetchNextPage,
+    query.isPlaceholderData,
     queryClient,
     repository,
     request,

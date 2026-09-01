@@ -31,7 +31,7 @@ vi.mock("../resource-filter-bar", () => ({
       data-definitions={JSON.stringify(props.definitions)}
       data-keyword={typeof props.keyword === "string" ? props.keyword : ""}
     >
-      {["dna gy", "HUMAN", "absent", undefined].map((keyword) => (
+      {["dna gy", "HUMAN", "absent", "N034", undefined].map((keyword) => (
         <button
           key={keyword ?? "clear"}
           onClick={() => {
@@ -42,13 +42,15 @@ vi.mock("../resource-filter-bar", () => ({
             });
           }}
         >
-          {keyword === "dna gy"
-            ? "Filter loaded rows"
-            : keyword === "HUMAN"
-              ? "Filter array value"
-              : keyword
-                ? "Filter no matches"
-                : "Clear loaded filter"}
+            {keyword === "dna gy"
+              ? "Filter loaded rows"
+              : keyword === "HUMAN"
+                ? "Filter array value"
+                : keyword === "N034"
+                  ? "Refine server results"
+                  : keyword
+                    ? "Filter no matches"
+                    : "Clear loaded filter"}
         </button>
       ))}
     </div>
@@ -632,6 +634,56 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.totalItems).toBe(2);
     expect(dataTableProps.pageIndex).toBe(2);
     expect(onStateChange).not.toHaveBeenCalled();
+  });
+
+  it("refines the server query while preserving the primary keyword in URL state", async () => {
+    const onStateChange = vi.fn();
+    useResourceCollection.mockReturnValue({
+      ...collectionResult(),
+      rows: [
+        row,
+        { genome_id: "83332.13", genome_name: "Unmatched current-page row" },
+      ],
+      total: 160,
+    });
+
+    const refinedState = {
+      ...state,
+      keyword: "influenza",
+      refine: "existing refinement",
+    };
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={refinedState}
+        onStateChange={onStateChange}
+        showHeader={false}
+        keywordMode="refine"
+      />,
+    );
+
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute(
+      "data-keyword",
+      "existing refinement",
+    );
+    expect(useResourceCollection.mock.calls.at(-1)?.[0]).toMatchObject({
+      structuralRql:
+        "and(eq(genome_status,Complete),keyword(existing refinement))",
+      state: { keyword: "influenza" },
+    });
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Refine server results" }),
+    );
+
+    expect(onStateChange).toHaveBeenCalledWith({
+      ...refinedState,
+      refine: "N034",
+      page: 1,
+    });
+    expect(dataTableProps.data).toHaveLength(2);
+    expect(dataTableProps.totalItems).toBe(160);
   });
 
   it("clears hidden selections and exports loaded-keyword matches from every page", async () => {

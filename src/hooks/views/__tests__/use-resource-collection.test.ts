@@ -195,6 +195,60 @@ describe("useResourceCollection", () => {
     ).toHaveLength(2);
   });
 
+  it("does not prefetch from a previous query's placeholder total", async () => {
+    const data = repository();
+    const collection = vi.spyOn(data, "collection");
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const queryWrapper = ({ children }: { children: ReactNode }) =>
+      createElement(QueryClientProvider, { client }, children);
+    const { rerender } = renderHook(
+      ({ rql }: { rql?: string }) =>
+        useResourceCollection({
+          repository: data,
+          resource: "serology",
+          idField: "id",
+          fields: ["id", "sample_identifier"],
+          prefetchNextPage: true,
+          structuralRql: rql,
+          state: { filters: {}, page: 1, sort: "unsorted", keyword: "influenza" },
+          onStateChange: vi.fn(),
+        }),
+      {
+        wrapper: queryWrapper,
+        initialProps: { rql: undefined as string | undefined },
+      },
+    );
+    await waitFor(() => {
+      expect(collection).toHaveBeenCalledWith(
+        "serology",
+        expect.objectContaining({ keyword: "influenza", page: 1 }),
+        expect.any(AbortSignal),
+      );
+    });
+
+    collection.mockClear();
+    rerender({ rql: "keyword(N034)" });
+
+    await waitFor(() => {
+      expect(collection).toHaveBeenCalledWith(
+        "serology",
+        expect.objectContaining({
+          keyword: "influenza",
+          rql: "keyword(N034)",
+          page: 1,
+        }),
+        expect.any(AbortSignal),
+      );
+    });
+    expect(
+      collection.mock.calls.some(
+        ([, request]) => request.rql === "keyword(N034)" && request.page === 2,
+      ),
+    ).toBe(false);
+  });
+
   it("represents all-matching selection without requesting a member detail", async () => {
     const data = repository();
     const member = vi.spyOn(data, "member");

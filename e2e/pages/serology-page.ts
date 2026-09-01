@@ -18,6 +18,10 @@ export class SerologyPage {
     await search.getByRole("textbox").press("Enter");
   }
 
+  async refineCollection(query: string): Promise<void> {
+    await this.collectionKeyword.fill(query);
+  }
+
   async gotoMember(sampleIdentifier: string): Promise<void> {
     await this.page.goto(this.memberUrl(sampleIdentifier));
   }

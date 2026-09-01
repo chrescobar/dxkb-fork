@@ -15,9 +15,23 @@ import {
   genomeViewRecordSchema,
   isGenomeId,
   parseGenomeCollectionState,
+  recentGenomeRql,
 } from "@/lib/genome-view";
 
 describe("Genome view contracts", () => {
+  it("preserves backend relevance order by default", () => {
+    expect(parseGenomeCollectionState({}).sort).toBe("unsorted");
+    expect(parseGenomeCollectionState({ sort: "genome_name:asc" }).sort).toBe(
+      "genome_name:asc",
+    );
+  });
+
+  it("uses the legacy recent, non-deprecated scope for the global list", () => {
+    expect(recentGenomeRql).toBe(
+      "and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated))",
+    );
+  });
+
   it("accepts dotted numeric IDs only", () => {
     expect(isGenomeId("83332.12")).toBe(true);
     expect(isGenomeId("83332")).toBe(false);
@@ -45,6 +59,8 @@ describe("Genome view contracts", () => {
     });
     expect(state).toEqual({
       keyword: "coli",
+      refine: undefined,
+      rql: undefined,
       filters: { taxon_id: ["561"] },
       page: 3,
       sort: "genome_length:desc",
@@ -75,7 +91,7 @@ describe("Genome view contracts", () => {
   it("canonicalizes invalid pages and sorts while rejecting transport RQL", () => {
     expect(parseGenomeCollectionState({ page: "0" }).page).toBe(1);
     expect(parseGenomeCollectionState({ sort: "unknown:asc" }).sort).toBe(
-      "genome_name:asc",
+      "unsorted",
     );
     expect(() =>
       parseGenomeCollectionState({ rql: "sort(+genome_id)" }),

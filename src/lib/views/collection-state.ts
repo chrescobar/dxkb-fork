@@ -11,6 +11,7 @@ export interface CollectionStateOptions<Sort extends string = string> {
 
 export interface CollectionState<Sort extends string = string> {
   keyword?: string;
+  refine?: string;
   rql?: string;
   filters: Record<string, string[]>;
   page: number;
@@ -19,13 +20,14 @@ export interface CollectionState<Sort extends string = string> {
 
 export interface CollectionStateUpdate<Sort extends string = string> {
   keyword?: string | null;
+  refine?: string | null;
   rql?: string | null;
   filters?: Readonly<Record<string, readonly string[] | null | undefined>>;
   page?: number;
   sort?: Sort;
 }
 
-const managedParams = new Set(["keyword", "rql", "page", "sort"]);
+const managedParams = new Set(["keyword", "refine", "rql", "page", "sort"]);
 
 function optionalValue(
   params: SearchParamsRecord,
@@ -73,6 +75,7 @@ export function parseCollectionState<Sort extends string>(
   options: CollectionStateOptions<Sort>,
 ): CollectionState<Sort> {
   const keyword = optionalValue(params, "keyword");
+  const refine = optionalValue(params, "refine");
   const rql = optionalValue(params, "rql");
   const rawSort = optionalValue(params, "sort", true);
   const sort = parseSort(rawSort ?? options.defaultSort, options);
@@ -87,7 +90,7 @@ export function parseCollectionState<Sort extends string>(
     if (selected.length > 0) filters[name] = selected;
   }
 
-  return { keyword, rql, filters, page: parsePage(params), sort };
+  return { keyword, refine, rql, filters, page: parsePage(params), sort };
 }
 
 /** Validate a programmatic state and remove values omitted by the URL schema. */
@@ -103,6 +106,7 @@ export function canonicalizeCollectionState<Sort extends string>(
   }
   const sort = state.sort;
   const keyword = state.keyword || undefined;
+  const refine = state.refine || undefined;
   const rql = state.rql || undefined;
   const filters: Record<string, string[]> = {};
   const independentFilters = new Set(options.independentFilters);
@@ -113,7 +117,7 @@ export function canonicalizeCollectionState<Sort extends string>(
     if (selected.length > 0) filters[name] = selected;
   }
 
-  return { keyword, rql, filters, page: state.page, sort };
+  return { keyword, refine, rql, filters, page: state.page, sort };
 }
 
 /** Serialize only canonical collection parameters in stable schema order. */
@@ -124,6 +128,7 @@ export function serializeCollectionState<Sort extends string>(
   const canonical = canonicalizeCollectionState(state, options);
   const params = new URLSearchParams();
   if (canonical.keyword !== undefined) params.set("keyword", canonical.keyword);
+  if (canonical.refine !== undefined) params.set("refine", canonical.refine);
   if (canonical.rql !== undefined) params.set("rql", canonical.rql);
   for (const [name, selected] of Object.entries(canonical.filters)) {
     for (const value of selected) params.append(name, value);
@@ -184,6 +189,8 @@ export function updateCollectionSearchParams<Sort extends string>(
     ...current,
     keyword:
       update.keyword === null ? undefined : (update.keyword ?? current.keyword),
+    refine:
+      update.refine === null ? undefined : (update.refine ?? current.refine),
     rql: update.rql === null ? undefined : (update.rql ?? current.rql),
     filters,
     page: update.page ?? current.page,
@@ -192,6 +199,7 @@ export function updateCollectionSearchParams<Sort extends string>(
   const canonicalNext = canonicalizeCollectionState(next, options);
   const queryChanged =
     current.keyword !== canonicalNext.keyword ||
+    current.refine !== canonicalNext.refine ||
     current.rql !== canonicalNext.rql ||
     current.sort !== canonicalNext.sort ||
     !sameFilters(current.filters, canonicalNext.filters);

@@ -38,6 +38,7 @@ export function useCollectionUrlState<Sort extends string>(
     const merged = new URLSearchParams(searchParams.toString());
     for (const name of [
       "keyword",
+      "refine",
       "rql",
       "page",
       "sort",

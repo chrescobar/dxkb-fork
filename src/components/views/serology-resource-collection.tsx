@@ -17,7 +17,7 @@ interface SerologyResourceCollectionProps {
   enableFacets?: boolean;
   enableRowLinks?: boolean;
   initialState?: CollectionState;
-  keywordMode?: "server" | "loaded";
+  keywordMode?: "server" | "loaded" | "refine";
 }
 
 export function SerologyResourceCollection({

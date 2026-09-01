@@ -7,10 +7,24 @@ import {
   isFeatureId,
   isPatricFeatureId,
   parseFeatureCollectionState,
+  recentGenomeFeatureRql,
 } from "@/lib/feature-view";
 import { featureInteractionsRql, genomeProteinRql } from "@/lib/views/child-resources";
 
 describe("Feature view contracts", () => {
+  it("preserves backend relevance order by default", () => {
+    expect(parseFeatureCollectionState({}).sort).toBe("unsorted");
+    expect(parseFeatureCollectionState({ sort: "patric_id:asc" }).sort).toBe(
+      "patric_id:asc",
+    );
+  });
+
+  it("uses the legacy recent, non-deprecated Genome scope for the global list", () => {
+    expect(recentGenomeFeatureRql).toBe(
+      "and(eq(genome_id,*),genome(and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated))))",
+    );
+  });
+
   it("accepts canonical and alternate complex identifiers", () => {
     expect(isFeatureId("PATRIC.83332.12.NC_000962.CDS.1.1524.fwd")).toBe(true);
     expect(isFeatureId("fig|83332.12.peg.1")).toBe(true);

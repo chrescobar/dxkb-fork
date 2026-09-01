@@ -1,0 +1,109 @@
+src/components/navbars/__tests__/navbar.test.tsx
+  s_2db06e4dfbc5f8::t_f99d557963028c 46
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_27fad00cc36757::t_3704bf623a8e22 138
+  s_27fad00cc36757::t_de2f2eeee0568f 97-98
+  s_27fad00cc36757::t_42b70517e78ba7 139-140
+  s_27fad00cc36757::t_027eaac0faaf74 103-104
+  s_27fad00cc36757::t_0307eacf106d3b 94
+  s_27fad00cc36757::t_2c47f7bfb8b859 108
+  s_27fad00cc36757::t_a7a011c84cb939 91-93,95-96,99-102,105-107,109-137,141-142
+src/app/search/typesearch.tsx
+  s_2db06e4dfbc5f8::t_f536e74f35323c 313-315
+  s_2db06e4dfbc5f8::t_5fc0ee7cee36e0 329
+  s_2db06e4dfbc5f8::t_91054ab228a99d 467-475
+  s_2db06e4dfbc5f8::t_d6d5e900bcf90b 504
+  s_2db06e4dfbc5f8::t_d1b92d112dbd60 26-27,72,97,127
+  s_2db06e4dfbc5f8::t_d0084c1f9d7a14 205-218
+src/hooks/views/use-resource-collection.ts
+  s_27fad00cc36757::t_63dcf7eb63b317 3
+  s_27fad00cc36757::t_55eda17892d3a2 95-97
+  s_27fad00cc36757::t_6f448c3a3f7da3 98-100,109
+  s_27fad00cc36757::t_bdae66bf69c8b7 4
+  s_27fad00cc36757::t_22ec6a328df7ec 7-12
+  s_27fad00cc36757::t_f784daf5bc362e 82-93
+  s_27fad00cc36757::t_708ce349f5f2e6 13
+  s_27fad00cc36757::t_4cee0a685ab1b2 101-108
+  s_27fad00cc36757::t_f92977f222d116 151
+  s_27fad00cc36757::t_fb1447730350b2 64
+e2e/tests/resource-collection-pagination.spec.ts
+  s_27fad00cc36757::t_8f79c22a6c71ab 48
+  s_27fad00cc36757::t_aa26ab18641b01 52
+  s_27fad00cc36757::t_33fbf7bb084762 93-99,101-105
+  s_27fad00cc36757::t_3de1b1a3d71868 109
+  s_27fad00cc36757::t_ae14fc3ceb35b4 112
+  s_27fad00cc36757::t_696cfae19a1979 67
+  s_27fad00cc36757::t_d0fb59f0fe62d9 10
+  s_27fad00cc36757::t_70bb431982877f 26
+  s_27fad00cc36757::t_46fd7e3dbff522 14
+  s_27fad00cc36757::t_32edc8d6d12486 4
+  s_27fad00cc36757::t_4b75f7532f1865 1-3,5-9,11-13,15-21,24-25,27-38,40-42,44-47,49-51,53-66,68-92,100,106-108,110-111,113-123
+  s_27fad00cc36757::t_2241bb261dba45 22-23
+  s_27fad00cc36757::t_4ba35d3a7de14b 39
+  s_27fad00cc36757::t_794b853b144c1a 43
+src/components/views/resource-collection.tsx
+  s_2db06e4dfbc5f8::t_1b13cf09783816 170-172,393-398
+  s_2db06e4dfbc5f8::t_fdf83aeca786c8 399-401
+e2e/pages/surveillance-page.ts
+  s_2db06e4dfbc5f8::t_b2ab3b47b9e68e 26-33
+src/components/search/__tests__/search-action-bar.test.tsx
+  s_2db06e4dfbc5f8::t_a7f1df59bdcff0 213
+  s_2db06e4dfbc5f8::t_f031c949dca359 202-212,214-224
+src/lib/data-api/query-options.ts
+  s_27fad00cc36757::t_5c41a441d88868 17-19,26,28
+src/app/(views)/feature/page.tsx
+  s_27fad00cc36757::t_637bfeabcd4b34 2
+  s_27fad00cc36757::t_2f484407947c3f 17
+src/app/(views)/surveillance/page.tsx
+  s_27fad00cc36757::t_aa1aa5a5d8e1e9 2
+  s_27fad00cc36757::t_058be665a9b235 21
+src/app/(views)/epitope/page.tsx
+  s_27fad00cc36757::t_668061ea65173e 17
+  s_27fad00cc36757::t_18cd00f5009d7f 2
+e2e/pages/resource-collection-page.ts
+  s_27fad00cc36757::t_de932f6299f01a 1-5,7-8,10-12,14-24,26-32,40-44,46-53
+  s_27fad00cc36757::t_95004593364ab3 6
+  s_27fad00cc36757::t_306f1ed279a7ac 33-39
+  s_27fad00cc36757::t_3347615298fa39 9
+  s_27fad00cc36757::t_d1c5ba928cb86e 45
+  s_27fad00cc36757::t_a76f5fa8983f2c 13
+  s_27fad00cc36757::t_bb3f46b604ee83 25
+src/components/search/search-action-bar.tsx
+  s_2db06e4dfbc5f8::t_359c732bfc6e7f 195
+src/components/views/__tests__/resource-collection.test.tsx
+  s_2db06e4dfbc5f8::t_4d52076c23c691 353-358
+  s_2db06e4dfbc5f8::t_750fa207451a83 326-352,359-372
+  s_2db06e4dfbc5f8::t_a8ff62758a5ca3 7,76-83
+  s_2db06e4dfbc5f8::t_2f2869a6b858aa 84
+e2e/pages/index.ts
+  s_27fad00cc36757::t_61e8b06aa65460 13
+src/components/search/search-bar.tsx
+  s_2db06e4dfbc5f8::t_0495e8182342a3 46-48
+src/app/(views)/genome/page.tsx
+  s_27fad00cc36757::t_82bdcbf7c42e0c 4
+  s_27fad00cc36757::t_4ed22fc37e5ef6 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "7d5e3ab5dcfa44d9959b40bb8e434e570920be93",
+  "prompts": {},
+  "sessions": {
+    "s_27fad00cc36757": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa2b165f8ffeU0vz6fwZCvWGoG",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_2db06e4dfbc5f8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa672aa26ffepMHmOLUN3xFT76",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -36,7 +36,7 @@ export const surveillanceCollectionProfile: ResourceCollectionProfile<Surveillan
     idField: "id",
     columns: surveillanceColumns,
     detailFields: surveillanceDetailFields,
-    defaultSort: "sample_identifier:asc",
+    defaultSort: "unsorted",
     basePredicate: "eq(id,*)",
     buildStructuralRql: surveillanceStructuralRql,
     facets: surveillanceFacets,

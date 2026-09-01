@@ -1,8 +1,9 @@
 "use client";
 
 import { Dna } from "lucide-react";
-import type { CollectionState } from "@/lib/views/collection-state";
 import { EntityViewShell, GenomeResourceCollection } from "@/components/views";
+import { recentGenomeRql } from "@/lib/genome-view";
+import type { CollectionState } from "@/lib/views/collection-state";
 
 export function GenomeCollection({
   initialState,
@@ -18,7 +19,11 @@ export function GenomeCollection({
       defaultTab="genomes"
       layout="fill"
     >
-      <GenomeResourceCollection initialState={initialState} keywordMode="loaded" />
+      <GenomeResourceCollection
+        baseRql={recentGenomeRql}
+        initialState={initialState}
+        keywordMode="refine"
+      />
     </EntityViewShell>
   );
 }

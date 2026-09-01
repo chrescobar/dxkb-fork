@@ -28,6 +28,9 @@ import {
   featureListHref,
   genomeHref,
   genomeListHref,
+  serologyHref,
+  serologyIdFromRow,
+  serologyListHref,
   surveillanceHref,
   surveillanceIdFromRow,
   surveillanceListHref,
@@ -461,7 +464,8 @@ function SearchResultsContent({ query }: { query: string }) {
                         {dataType === "genome" ||
                         dataType === "genome_feature" ||
                         dataType === "epitope" ||
-                        dataType === "surveillance" ? (
+                        dataType === "surveillance" ||
+                        dataType === "serology" ? (
                           <Link
                             href={
                               dataType === "genome"
@@ -470,7 +474,9 @@ function SearchResultsContent({ query }: { query: string }) {
                                   ? featureListHref({ keyword: query })
                                   : dataType === "epitope"
                                     ? epitopeListHref({ keyword: query })
-                                    : surveillanceListHref({ keyword: query })
+                                    : dataType === "surveillance"
+                                      ? surveillanceListHref({ keyword: query })
+                                      : serologyListHref({ keyword: query })
                             }
                           >
                             {labelsBySearchType[dataType]}
@@ -507,6 +513,11 @@ function SearchResultsContent({ query }: { query: string }) {
                       const featureId = featureIdFromRow(doc);
                       const epitopeId = epitopeIdFromRow(doc);
                       const surveillanceId = surveillanceIdFromRow(doc);
+                      const serologyId = serologyIdFromRow(doc);
+                      const testType =
+                        typeof doc.test_type === "string"
+                          ? doc.test_type
+                          : undefined;
                       const pathogenTestTypes = Array.isArray(
                         doc.pathogen_test_type,
                       )
@@ -532,7 +543,9 @@ function SearchResultsContent({ query }: { query: string }) {
                                       ? pathogenTestTypes[0]
                                       : undefined,
                                   )
-                                : null;
+                                : dataType === "serology" && serologyId
+                                  ? serologyHref(serologyId, testType)
+                                  : null;
                       return (
                         <div key={documentKey} className="py-6">
                           {href ? (

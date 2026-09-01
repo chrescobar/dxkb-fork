@@ -96,6 +96,37 @@ const ambiguousSurveillanceFixtures = [
   },
 ];
 
+const serologyRecordFixture = {
+  id: "serology-backend-901",
+  sample_identifier: "000123",
+  contributing_institution: "Sentinel Serology Laboratory",
+  host_identifier: "host-42",
+  host_type: "Human",
+  host_species: "Homo sapiens",
+  host_common_name: "Human",
+  collection_date: "2024-07",
+  collection_year: 2024,
+  collection_country: "Australia",
+  collection_state: "New South Wales",
+  test_type: "ELISA/IgG test",
+  test_result: "Detected",
+  test_interpretation: "Evidence of prior exposure; confirm clinically",
+  serotype: "H1N1",
+};
+
+const ambiguousSerologyFixtures = [
+  {
+    id: "serology-backend-902",
+    sample_identifier: "ambiguous-serology",
+    test_type: "Western blot",
+  },
+  {
+    id: "serology-backend-903",
+    sample_identifier: "ambiguous-serology",
+    test_type: "ELISA/IgG test",
+  },
+];
+
 const genomeRecordFixture = {
   genome_id: "1282460.2049",
   genome_name: "Middle East respiratory syndrome-related coronavirus isolate",
@@ -135,6 +166,36 @@ function maybeSolrCount(
   if (segments[0] !== "data" || segments.length < 2) return null;
   const core = segments[1];
   const query = decodeURIComponent(new URL(request.url).search);
+  if (core === "serology") {
+    const isAmbiguous = query.includes("eq(sample_identifier,ambiguous-serology)");
+    const hasTestTypeFilter = query.includes("eq(test_type,");
+    const requestedTestType = ambiguousSerologyFixtures
+      .map((fixture) => fixture.test_type)
+      .find((testType) => query.includes(`eq(test_type,${testType})`));
+    const docs = isAmbiguous
+      ? requestedTestType
+        ? ambiguousSerologyFixtures.filter(
+            (fixture) => fixture.test_type === requestedTestType,
+          )
+        : hasTestTypeFilter
+          ? []
+          : ambiguousSerologyFixtures
+      : query.includes("eq(sample_identifier,000123)") ||
+          query.includes("keyword(antibody*)")
+        ? [serologyRecordFixture]
+        : [];
+    if (request.headers.get("accept") === "application/json") return docs;
+    return {
+      response: { numFound: docs.length, docs },
+      facet_counts: {
+        facet_fields: {
+          test_type: isAmbiguous
+            ? docs.flatMap((fixture) => [fixture.test_type, 1])
+            : ["ELISA/IgG test", 1],
+        },
+      },
+    };
+  }
   if (core === "surveillance") {
     const isAmbiguous = query.includes("eq(sample_identifier,ambiguous-sample)");
     const hasTestTypeFilter = query.includes("eq(pathogen_test_type,");

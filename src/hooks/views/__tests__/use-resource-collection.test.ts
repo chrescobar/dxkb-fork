@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { DataRepository } from "@/lib/data-api";
 import type { CollectionState } from "@/lib/views/collection-state";
+import { resourceCollectionPageSize } from "../collection-state";
 import {
   selectedIdsFromSelection,
   useResourceCollection,
@@ -56,6 +57,29 @@ describe("selectedIdsFromSelection", () => {
 });
 
 describe("useResourceCollection", () => {
+  it("omits repository and table sorting for the unsorted state", async () => {
+    const data = repository();
+    const collection = vi.spyOn(data, "collection");
+    const { result } = renderHook(
+      () =>
+        useResourceCollection({
+          repository: data,
+          resource: "serology",
+          idField: "id",
+          fields: ["id", "sample_identifier"],
+          state: { filters: {}, page: 1, sort: "unsorted" },
+          onStateChange: vi.fn(),
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.rows).toHaveLength(1);
+    });
+    expect(collection.mock.calls[0]?.[1].sort).toBeUndefined();
+    expect(result.current.sorting).toEqual([]);
+  });
+
   it("preserves selection across paging and sorting, then resets it for a new query", async () => {
     const data = repository();
     const onStateChange = vi.fn();
@@ -170,6 +194,82 @@ describe("useResourceCollection", () => {
     expect(
       collection.mock.calls.filter(([, request]) => request.page === 2),
     ).toHaveLength(2);
+  });
+
+  it("does not prefetch from a previous query's placeholder total", async () => {
+    const data = repository();
+    const replacementResponse = Promise.withResolvers<
+      Awaited<ReturnType<DataRepository["collection"]>>
+    >();
+    const collection = vi.spyOn(data, "collection").mockImplementation(
+      (_resource, request) =>
+        request.rql === "keyword(N034)"
+          ? replacementResponse.promise
+          : Promise.resolve({
+              rows: [{ id: "1", sample_identifier: "Initial result" }],
+              total: resourceCollectionPageSize + 1,
+              facets: {},
+              page: request.page ?? 1,
+              pageSize: request.pageSize ?? resourceCollectionPageSize,
+            }),
+    );
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const queryWrapper = ({ children }: { children: ReactNode }) =>
+      createElement(QueryClientProvider, { client }, children);
+    const { rerender } = renderHook(
+      ({ rql }: { rql?: string }) =>
+        useResourceCollection({
+          repository: data,
+          resource: "serology",
+          idField: "id",
+          fields: ["id", "sample_identifier"],
+          prefetchNextPage: true,
+          structuralRql: rql,
+          state: { filters: {}, page: 1, sort: "unsorted", keyword: "influenza" },
+          onStateChange: vi.fn(),
+        }),
+      {
+        wrapper: queryWrapper,
+        initialProps: { rql: undefined as string | undefined },
+      },
+    );
+    await waitFor(() => {
+      expect(collection).toHaveBeenCalledWith(
+        "serology",
+        expect.objectContaining({ keyword: "influenza", page: 2 }),
+        expect.any(AbortSignal),
+      );
+    });
+
+    collection.mockClear();
+    rerender({ rql: "keyword(N034)" });
+
+    await waitFor(() => {
+      expect(collection).toHaveBeenCalledWith(
+        "serology",
+        expect.objectContaining({
+          keyword: "influenza",
+          rql: "keyword(N034)",
+          page: 1,
+        }),
+        expect.any(AbortSignal),
+      );
+    });
+    expect(
+      collection.mock.calls.some(
+        ([, request]) => request.rql === "keyword(N034)" && request.page === 2,
+      ),
+    ).toBe(false);
+
+    replacementResponse.resolve({
+      rows: [],
+      total: 0,
+      facets: {},
+      page: 1,
+      pageSize: resourceCollectionPageSize,
+    });
   });
 
   it("represents all-matching selection without requesting a member detail", async () => {

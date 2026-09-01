@@ -9,6 +9,13 @@ import {
 } from "@/lib/epitope-view";
 
 describe("Epitope view contracts", () => {
+  it("preserves backend relevance order by default", () => {
+    expect(parseEpitopeCollectionState({}).sort).toBe("unsorted");
+    expect(parseEpitopeCollectionState({ sort: "epitope_id:asc" }).sort).toBe(
+      "epitope_id:asc",
+    );
+  });
+
   it("validates identifiers and overview fields", () => {
     expect(isEpitopeId("15780")).toBe(true);
     expect(isEpitopeId("")).toBe(false);

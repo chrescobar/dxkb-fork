@@ -11,6 +11,13 @@ import {
 import { resolveSurveillance } from "@/lib/surveillance-view/server";
 
 describe("Surveillance view contracts", () => {
+  it("preserves backend relevance order by default", () => {
+    expect(parseSurveillanceCollectionState({}).sort).toBe("unsorted");
+    expect(
+      parseSurveillanceCollectionState({ sort: "sample_identifier:asc" }).sort,
+    ).toBe("sample_identifier:asc");
+  });
+
   it("validates required control fields while retaining additional member fields", () => {
     expect(isSurveillanceSampleId("sample/1")).toBe(true);
     expect(isSurveillanceSampleId("")).toBe(false);

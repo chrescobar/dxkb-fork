@@ -41,6 +41,10 @@ describe("data API contracts", () => {
     expect(resourceRegistry.surveillance.fields.taxon_lineage_ids.sortable).toBe(
       false,
     );
+    expect(resourceRegistry.serology.fields.taxon_lineage_ids.cardinality).toBe(
+      "multiple",
+    );
+    expect(resourceRegistry.serology.fields.taxon_lineage_ids.sortable).toBe(false);
   });
 
   it("registers the Epitope and assay contracts", () => {

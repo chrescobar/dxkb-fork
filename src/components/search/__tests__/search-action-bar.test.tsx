@@ -222,5 +222,21 @@ describe("SearchActionBar (taxonomy)", () => {
         screen.queryByRole("button", { name: /^ssrvlnce$/i }),
       ).not.toBeInTheDocument();
     });
+
+    it("enables the Serology action for one selected record", async () => {
+      const onAction = vi.fn();
+      render(
+        <SearchActionBar
+          selectedCount={1}
+          searchType="serology"
+          onAction={onAction}
+        />,
+      );
+
+      const button = screen.getByRole("button", { name: /^sserology$/i });
+      expect(button).not.toBeDisabled();
+      await userEvent.click(button);
+      expect(onAction).toHaveBeenCalledWith("serology");
+    });
   });
 });

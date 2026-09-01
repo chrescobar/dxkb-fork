@@ -69,8 +69,21 @@ test.describe("Genome view", () => {
     await genomeRequest;
     await expect(page.getByRole("banner").getByRole("combobox", { name: "Search type" })).toContainText("Genomes");
     await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue("MERS");
-    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
+    const genomeFilter = page.getByPlaceholder("Search keywords...");
+    await expect(genomeFilter).toHaveValue("");
     await expect(page.getByRole("row", { name: /Select row 1282460\.2049/ })).toBeVisible();
+
+    const genomeRefinementRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname === "/api/data/genome" &&
+        url.searchParams.get("keyword") === "MERS" &&
+        url.searchParams.get("rql")?.includes("keyword(coronavirus)") === true
+      );
+    });
+    await genomeFilter.fill("coronavirus");
+    await genomeRefinementRequest;
+    await expect(page).toHaveURL("/genome?keyword=MERS&refine=coronavirus");
 
     const featureRequest = page.waitForRequest((request) => {
       const url = new URL(request.url());
@@ -80,8 +93,23 @@ test.describe("Genome view", () => {
     await featureRequest;
     await expect(page.getByRole("banner").getByRole("combobox", { name: "Search type" })).toContainText("Features");
     await expect(page.getByRole("banner").getByRole("textbox")).toHaveValue("replicase");
-    await expect(page.getByPlaceholder("Search keywords...")).toHaveValue("");
+    const featureFilter = page.getByPlaceholder("Search keywords...");
+    await expect(featureFilter).toHaveValue("");
     await expect(page.getByRole("row", { name: /replicase polyprotein/ })).toBeVisible();
+
+    const featureRefinementRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname === "/api/data/genome_feature" &&
+        url.searchParams.get("keyword") === "replicase" &&
+        url.searchParams.get("rql")?.includes("keyword(polyprotein)") === true
+      );
+    });
+    await featureFilter.fill("polyprotein");
+    await featureRefinementRequest;
+    await expect(page).toHaveURL(
+      "/feature?keyword=replicase&refine=polyprotein",
+    );
   });
 
   test("canonicalizes invalid collection position without rendering an error", async ({

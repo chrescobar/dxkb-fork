@@ -27,6 +27,18 @@ describe("mapLegacyViewPath", () => {
       search: "pathogen_test_type=Influenza+A",
     });
   });
+  it("preserves a named query param for a Serology member", () => {
+    expect(
+      mapLegacyViewPath(
+        "/view/Serology/000123",
+        "test_type=ELISA%2FIgG%20test",
+      ),
+    ).toEqual({
+      pathname: "/serology/000123",
+      search: "test_type=ELISA%2FIgG+test",
+    });
+  });
+
   it("maps Epitope member and list routes", () => {
     expect(mapLegacyViewPath("/view/Epitope/15780", "")).toEqual({
       pathname: "/epitope/15780",

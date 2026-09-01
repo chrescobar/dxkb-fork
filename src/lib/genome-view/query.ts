@@ -15,9 +15,12 @@ export const genomeSorts = (Object.values(genomeFields) as DataField[])
 
 export type GenomeSort = string;
 
+export const recentGenomeRql =
+  "and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated))";
+
 export const genomeCollectionOptions: CollectionStateOptions = {
-  defaultSort: "genome_name:asc",
-  sortAllowlist: genomeSorts,
+  defaultSort: "unsorted",
+  sortAllowlist: ["unsorted", ...genomeSorts],
   friendlyFilters: [
     "taxon_id",
     "genome_status",

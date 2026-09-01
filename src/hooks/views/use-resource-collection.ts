@@ -44,6 +44,7 @@ function combineRql(...parts: (string | undefined)[]) {
 }
 
 function dataSort(sort: string) {
+  if (sort === "unsorted") return undefined;
   const [field, direction] = sort.split(":");
   return {
     field,
@@ -99,7 +100,7 @@ export function useResourceCollection<Row extends ResourceRow>({
   );
   const total = query.data?.total ?? 0;
   useEffect(() => {
-    if (!prefetchNextPage) return;
+    if (!prefetchNextPage || query.isPlaceholderData) return;
     if (state.page * resourceCollectionPageSize >= total) return;
     const nextRequest = { ...request, page: state.page + 1 };
     void queryClient
@@ -110,6 +111,7 @@ export function useResourceCollection<Row extends ResourceRow>({
       .catch(noop);
   }, [
     prefetchNextPage,
+    query.isPlaceholderData,
     queryClient,
     repository,
     request,
@@ -133,12 +135,10 @@ export function useResourceCollection<Row extends ResourceRow>({
       ),
     enabled: activeId !== null,
   });
-  const sorting: SortingState = [
-    {
-      id: dataSort(state.sort).field,
-      desc: state.sort.endsWith(":desc"),
-    },
-  ];
+  const activeSort = dataSort(state.sort);
+  const sorting: SortingState = activeSort
+    ? [{ id: activeSort.field, desc: activeSort.direction === "desc" }]
+    : [];
 
   return {
     activeId,

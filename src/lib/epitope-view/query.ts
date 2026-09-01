@@ -17,8 +17,8 @@ const facetFields = (Object.values(epitopeFields) as DataField[])
   .map((field) => field.field);
 
 export const epitopeCollectionOptions: CollectionStateOptions = {
-  defaultSort: "epitope_id:asc",
-  sortAllowlist: epitopeSorts,
+  defaultSort: "unsorted",
+  sortAllowlist: ["unsorted", ...epitopeSorts],
   friendlyFilters: ["taxon_id", ...facetFields],
 };
 

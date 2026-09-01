@@ -122,6 +122,25 @@ describe("api/e2e-mock catch-all — enabled", () => {
     });
   });
 
+  it.each(["Western blot", "ELISA/IgG test"])(
+    "filters ambiguous serology fixtures by test type: %s",
+    async (testType) => {
+      const filteredResp = await GET(
+        mockNextRequest({
+          url: `http://localhost:3020/api/e2e-mock/data/serology/?and(eq(sample_identifier,ambiguous-serology),eq(test_type,${encodeURIComponent(testType)}))`,
+        }),
+        ctx(["data", "serology"]),
+      );
+
+      await expect(filteredResp.json()).resolves.toMatchObject({
+        response: {
+          numFound: 1,
+          docs: [{ test_type: testType }],
+        },
+      });
+    },
+  );
+
   it("returns the surveillance fixture for a wildcard keyword query", async () => {
     const resp = await GET(
       mockNextRequest({

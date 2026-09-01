@@ -4,13 +4,7 @@ import { TaxonPage } from "../../pages";
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-// In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data so all
-// serology fetches (count, rows) go through the loopback, not bv-brc.org.
-const seroLoopback = /\/api\/e2e-mock\/data\/serology\//;
-// Match `limit` only (not `limit(1)`): Chromium percent-encodes the parens in
-// the outbound URL, so a literal `\(1\)` never matches request.url(). The count
-// query is the only serology request carrying `limit`, so this stays unambiguous.
-const seroLoopbackCount = /\/api\/e2e-mock\/data\/serology\/.*limit/;
+const serologyData = /\/api\/data\/serology(?:\?|$)/;
 const SEROLOGY_TAXON_ID = "2955291"; // Alphainfluenzavirus influenzae — hasSerology = true
 
 function buildSerologyRows(count: number) {
@@ -32,15 +26,26 @@ test.describe("taxon serology tab", () => {
 
     await applyBackendMocks(page, {
       overrides: [
-        { url: seroLoopbackCount, method: "GET", body: { response: { numFound: 3 } } },
-        { url: seroLoopback, method: "GET", body: rows },
+        {
+          url: serologyData,
+          method: "GET",
+          body: {
+            rows,
+            total: 3,
+            facets: {},
+            page: 1,
+            pageSize: 200,
+          },
+        },
         ...permissiveBackendOverrides,
       ],
     });
 
     const taxon = new TaxonPage(page);
     await taxon.goto(SEROLOGY_TAXON_ID, "serology");
-    await expect(taxon.resultsSummary("Showing 1-3 of 3 results")).toBeVisible({ timeout: 10_000 });
+    await expect(taxon.resultsSummary("Showing 1-3 of 3 results")).toBeVisible({
+      timeout: 10_000,
+    });
     await expect(taxon.rowCell("sample-0")).toBeVisible();
     await expect(taxon.tabButton("Serology")).toBeVisible();
   });

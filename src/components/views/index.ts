@@ -5,4 +5,5 @@ export * from "./genome-resource-collection";
 export * from "./resource-child-collection";
 export * from "./resource-collection";
 export * from "./resource-workspace";
+export * from "./serology-resource-collection";
 export * from "./surveillance-resource-collection";

@@ -27,7 +27,7 @@ export function SurveillanceCollection({
     >
       <SurveillanceResourceCollection
         initialState={initialState}
-        keywordMode="loaded"
+        keywordMode="refine"
       />
     </EntityViewShell>
   );

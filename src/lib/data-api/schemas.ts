@@ -71,6 +71,7 @@ export const surveillanceRecordSchema = z.looseObject({
 
 export const serologyRecordSchema = z.looseObject({
   id: identifier,
+  ...optionalTaxonomy,
   sample_identifier: z.string().optional(),
   test_type: z.string().optional(),
 });

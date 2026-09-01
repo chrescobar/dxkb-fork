@@ -11,7 +11,7 @@ test.describe("Surveillance view", () => {
     });
   });
 
-  test("searches the collection, filters locally, and opens the compound member", async ({
+  test("searches the collection, refines via the API, and opens the compound member", async ({
     page,
   }) => {
     const keywordRequest = page.waitForRequest((request) => {
@@ -28,38 +28,33 @@ test.describe("Surveillance view", () => {
     await surveillancePage.expectCollection("sentinel");
     await surveillancePage.expectMemberVisible("sample/1");
 
-    const collectionRequests: string[] = [];
-    page.on("request", (request) => {
-      if (new URL(request.url()).pathname.includes("/data/surveillance")) {
-        collectionRequests.push(request.url());
-      }
+    const refinementRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname === "/api/data/surveillance" &&
+        url.searchParams.get("keyword") === "sentinel" &&
+        url.searchParams.get("rql")?.includes("keyword(Nasal swab)") === true
+      );
     });
     await surveillancePage.filterCollection("Nasal swab");
-    await page.waitForTimeout(400);
+    await refinementRequest;
     await surveillancePage.expectMemberVisible("sample/1");
-    await surveillancePage.expectCollectionUrl("sentinel");
-    expect(collectionRequests).toEqual([]);
-
-    await surveillancePage.filterCollection("not in returned rows");
-    await surveillancePage.expectMemberAbsent("sample/1");
-    await surveillancePage.expectNoResults();
-    await page.waitForTimeout(400);
-    expect(collectionRequests).toEqual([]);
-
-    await surveillancePage.clearCollectionFilter();
-    await surveillancePage.expectMemberVisible("sample/1");
+    await expect(page).toHaveURL(
+      "/surveillance?keyword=sentinel&refine=Nasal+swab",
+    );
 
     const facetRequest = page.waitForRequest((request) => {
       const url = new URL(request.url());
       return (
         url.pathname === "/api/data/surveillance" &&
-        url.searchParams.get("keyword") === "sentinel"
+        url.searchParams.get("keyword") === "sentinel" &&
+        url.searchParams.get("rql")?.includes("keyword(Nasal swab)") === true
       );
     });
     await surveillancePage.selectFacet("RAT/antigen (1)");
     await facetRequest;
     await expect(page).toHaveURL(
-      /\/surveillance\?keyword=sentinel&pathogen_test_type=RAT%2Fantigen$/,
+      /\/surveillance\?keyword=sentinel&refine=Nasal\+swab&pathogen_test_type=RAT%2Fantigen$/,
     );
 
     await surveillancePage.openMember("sample/1", "RAT/antigen");

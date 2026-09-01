@@ -21,12 +21,16 @@ describe("search descriptors", () => {
     );
   });
 
-  it("routes Surveillance searches to the canonical collection", () => {
+  it("routes Surveillance and Serology searches to canonical collections", () => {
     const surveillance = searchDescriptors.find(
       (item) => item.id === "surveillance",
     );
+    const serology = searchDescriptors.find((item) => item.id === "serology");
     expect(surveillance && searchHref(surveillance, "RAT/antigen")).toBe(
       "/surveillance?keyword=RAT%2Fantigen",
+    );
+    expect(serology && searchHref(serology, "neutralizing antibody")).toBe(
+      "/serology?keyword=neutralizing%20antibody",
     );
   });
 });

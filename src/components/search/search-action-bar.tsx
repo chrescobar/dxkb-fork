@@ -209,7 +209,7 @@ const actionConfig: ActionConfig[] = [
     letter: "S",
     validSearchTypes: ["serology"],
     requiresSelection: true,
-    disabledWithTooltip: notReady,
+    maxSelection: 1,
   },
   {
     id: "features",

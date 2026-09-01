@@ -12,9 +12,12 @@ export const featureSorts = (Object.values(genomeFeatureFields) as DataField[])
   .filter((field) => field.show_in_table !== false && field.sortable !== false)
   .flatMap((field) => [`${field.field}:asc`, `${field.field}:desc`]);
 
+export const recentGenomeFeatureRql =
+  "and(eq(genome_id,*),genome(and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated))))";
+
 export const featureCollectionOptions: CollectionStateOptions = {
-  defaultSort: "patric_id:asc",
-  sortAllowlist: featureSorts,
+  defaultSort: "unsorted",
+  sortAllowlist: ["unsorted", ...featureSorts],
   friendlyFilters: ["genome_id", "annotation", "feature_type", "filter"],
   independentFilters: ["filter"],
 };

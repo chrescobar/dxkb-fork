@@ -28,29 +28,24 @@ test.describe("Epitope view", () => {
     await epitopePage.expectCollection("Brucella");
     await epitopePage.expectMemberVisible("15780");
 
-    const collectionRequests: string[] = [];
-    page.on("request", (request) => {
-      if (new URL(request.url()).pathname === "/api/data/epitope") {
-        collectionRequests.push(request.url());
-      }
+    const refinementRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return (
+        url.pathname === "/api/data/epitope" &&
+        url.searchParams.get("keyword") === "Brucella" &&
+        url.searchParams.get("rql")?.includes("keyword(hemagglutinin)") === true
+      );
     });
     await epitopePage.filterCollection("hemagglutinin");
-    await page.waitForTimeout(400);
+    await refinementRequest;
     await epitopePage.expectMemberVisible("15780");
-    await epitopePage.expectCollectionUrl("Brucella");
-    expect(collectionRequests).toEqual([]);
-
-    await epitopePage.filterCollection("not in returned rows");
-    await epitopePage.expectMemberAbsent("15780");
-    await epitopePage.expectNoResults();
-    await page.waitForTimeout(400);
-    await epitopePage.expectCollectionUrl("Brucella");
-    expect(collectionRequests).toEqual([]);
+    await expect(page).toHaveURL(
+      "/epitope?keyword=Brucella&refine=hemagglutinin",
+    );
 
     await epitopePage.clearCollectionFilter();
     await epitopePage.expectMemberVisible("15780");
-    await page.waitForTimeout(400);
-    expect(collectionRequests).toEqual([]);
+    await epitopePage.expectCollectionUrl("Brucella");
 
     const facetRequest = page.waitForRequest((request) => {
       const url = new URL(request.url());

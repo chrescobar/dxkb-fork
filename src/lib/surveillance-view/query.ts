@@ -19,8 +19,8 @@ const facetFields = fields
   .map((field) => field.field);
 
 export const surveillanceCollectionOptions: CollectionStateOptions = {
-  defaultSort: "sample_identifier:asc",
-  sortAllowlist: surveillanceSorts,
+  defaultSort: "unsorted",
+  sortAllowlist: ["unsorted", ...surveillanceSorts],
   friendlyFilters: facetFields,
 };
 

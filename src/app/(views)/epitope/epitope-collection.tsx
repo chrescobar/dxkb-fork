@@ -18,7 +18,7 @@ export function EpitopeCollection({ initialState }: EpitopeCollectionProps) {
       defaultTab="epitopes"
       layout="fill"
     >
-      <EpitopeResourceCollection initialState={initialState} keywordMode="loaded" />
+      <EpitopeResourceCollection initialState={initialState} keywordMode="refine" />
     </EntityViewShell>
   );
 }

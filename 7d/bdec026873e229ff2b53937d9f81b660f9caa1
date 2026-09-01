@@ -1,0 +1,57 @@
+e2e/pages/surveillance-page.ts
+  s_e483bea62d02ab::t_3017814461270f 140-146
+  s_e483bea62d02ab::t_908543e3a9515f 85
+  s_e483bea62d02ab::t_b196e8f977aacb 119,129
+  s_e483bea62d02ab::t_37d8739612c3c5 22
+src/app/api/e2e-mock/[...path]/route.ts
+  s_d077f86c27c522::t_64986cc70f490c 156
+  s_04049a14c54a47::t_0f1fd41e81a021 140,151-153
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_69b28806cb7f63::t_8d977343ba5bb7 133-135
+src/components/views/entity-view-shell.tsx
+  s_69b28806cb7f63::t_19e2db04483eae 126-127
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_04049a14c54a47::t_3c0cd018d35cd9 104-109,120-121
+  s_d077f86c27c522::t_2c4b51ef21950f 122,125-138
+  s_d077f86c27c522::t_f54a346a77d5c0 123-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "7dbdec026873e229ff2b53937d9f81b660f9caa1",
+  "prompts": {},
+  "sessions": {
+    "s_04049a14c54a47": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa22cc7f3ffeuUhqdXpHT5wkUW",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_69b28806cb7f63": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa228e7dcffe0ez1abst6xX8c6",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d077f86c27c522": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa22facafffeJ5HZLe8CPQT7iT",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e483bea62d02ab": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa2308431ffetY1UdpjUiXAEzA",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

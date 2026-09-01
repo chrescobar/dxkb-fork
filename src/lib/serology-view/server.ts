@@ -2,43 +2,37 @@ import { cache } from "react";
 import { readSession } from "@/lib/auth/server/session";
 import { ServerDataRepository } from "@/lib/data-api/repository";
 import { resolveCompoundSample } from "@/lib/views/compound-sample";
-import {
-  surveillanceViewRecordSchema,
-  type SurveillanceViewRecord,
-} from "./schema";
+import { serologyViewRecordSchema, type SerologyViewRecord } from "./schema";
 
-export type SurveillanceLookup =
-  | { status: "unique"; record: SurveillanceViewRecord }
+export type SerologyLookup =
+  | { status: "unique"; record: SerologyViewRecord }
   | { status: "not-found" }
   | { status: "ambiguous"; testTypes: string[] };
 
-type SurveillanceCollectionRepository = Pick<
-  ServerDataRepository,
-  "collection"
->;
+type SerologyCollectionRepository = Pick<ServerDataRepository, "collection">;
 
-export async function resolveSurveillance(
-  repository: SurveillanceCollectionRepository,
+export async function resolveSerology(
+  repository: SerologyCollectionRepository,
   sampleIdentifier: string,
-  pathogenTestType?: string,
-): Promise<SurveillanceLookup> {
+  testType?: string,
+): Promise<SerologyLookup> {
   const result = await resolveCompoundSample(repository, {
-    resource: "surveillance",
+    resource: "serology",
     sampleIdentifier,
-    discriminatorField: "pathogen_test_type",
-    discriminator: pathogenTestType,
-    parseRecord: (row) => surveillanceViewRecordSchema.parse(row),
+    discriminatorField: "test_type",
+    discriminator: testType,
+    parseRecord: (row) => serologyViewRecordSchema.parse(row),
   });
   return result.status === "ambiguous"
     ? { status: "ambiguous", testTypes: result.discriminatorValues }
     : result;
 }
 
-export const getSurveillance = cache(
+export const getSerology = cache(
   async (
     sampleIdentifier: string,
-    pathogenTestType?: string,
-  ): Promise<SurveillanceLookup> => {
+    testType?: string,
+  ): Promise<SerologyLookup> => {
     const session = await readSession();
     const baseUrl =
       process.env.DATA_API_URL ?? process.env.NEXT_PUBLIC_DATA_API;
@@ -51,6 +45,6 @@ export const getSurveillance = cache(
       cache: bypassCache ? "no-store" : "force-cache",
       revalidate: bypassCache ? undefined : 300,
     });
-    return resolveSurveillance(repository, sampleIdentifier, pathogenTestType);
+    return resolveSerology(repository, sampleIdentifier, testType);
   },
 );

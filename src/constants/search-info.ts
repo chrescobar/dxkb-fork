@@ -150,7 +150,7 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "serology",
     typeTitle: "Serology",
-    route: { status: "legacy" },
+    route: { status: "canonical", segment: viewRegistry.serology.segment },
     tabs: { serology: "Serology" },
     pickerOrder: 8,
     allTermOrder: 11,

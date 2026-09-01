@@ -409,6 +409,34 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
   });
 
+  it("preserves backend order when exporting an unsorted collection", async () => {
+    const data = repository();
+    const exportAll = vi.spyOn(data, "exportAll");
+    render(
+      <ResourceCollection
+        profile={{ ...genomeCollectionProfile, defaultSort: "unsorted" }}
+        repository={data}
+        state={{ ...state, sort: "unsorted" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await act(async () => {
+      await (
+        dataTableProps.onDownloadAll as (
+          format: "csv",
+          fields: null,
+        ) => Promise<void>
+      )("csv", null);
+    });
+
+    expect(exportAll).toHaveBeenCalledWith(
+      "genome",
+      expect.objectContaining({ sort: undefined }),
+    );
+  });
+
   it("exports selected displayed columns without requiring the ID in the output", async () => {
     const data = repository();
     const selected = vi.spyOn(data, "selected");

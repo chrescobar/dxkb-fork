@@ -8,6 +8,9 @@ import {
   genomeHref,
   genomeIdFromRow,
   genomeListHref,
+  serologyHref,
+  serologyIdFromRow,
+  serologyListHref,
   surveillanceHref,
   surveillanceIdFromRow,
   surveillanceListHref,
@@ -62,6 +65,35 @@ describe("Surveillance hrefs", () => {
         rql: "eq(collection_country,US)",
       }),
     ).toBe("/surveillance?rql=eq(collection_country%2CUS)");
+  });
+});
+
+describe("Serology hrefs", () => {
+  it("preserves digit-only IDs and encodes scalar test types", () => {
+    expect(
+      serologyIdFromRow({ id: "backend-1", sample_identifier: "000123" }),
+    ).toBe("000123");
+    expect(serologyIdFromRow({ id: "backend-only" })).toBeNull();
+    expect(serologyHref("sample/1", "ELISA/IgG test")).toBe(
+      "/serology/sample%2F1?test_type=ELISA%2FIgG%20test",
+    );
+  });
+
+  it("builds collection links with repeated facets and RQL precedence", () => {
+    expect(
+      serologyListHref({
+        keyword: "antibody",
+        testType: ["ELISA", "Western blot"],
+      }),
+    ).toBe(
+      "/serology?keyword=antibody&test_type=ELISA&test_type=Western%20blot",
+    );
+    expect(
+      serologyListHref({
+        keyword: "ignored",
+        rql: "eq(collection_country,US)",
+      }),
+    ).toBe("/serology?rql=eq(collection_country%2CUS)");
   });
 });
 

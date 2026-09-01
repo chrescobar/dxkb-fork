@@ -45,7 +45,9 @@ function SearchBarWithParams(props: SearchBarProps) {
           ? "epitope"
           : pathname === "/surveillance"
             ? "surveillance"
-            : undefined;
+            : pathname === "/serology"
+              ? "serology"
+              : undefined;
   const rawQuery =
     (canonicalType ? searchParams.get("keyword") : searchParams.get("q")) ||
     props.initialValue ||

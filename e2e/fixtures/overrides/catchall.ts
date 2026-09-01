@@ -114,6 +114,36 @@ const surveillanceRows = [
   },
 ];
 
+const serologyRows = [
+  {
+    id: "serology-backend-901",
+    sample_identifier: "000123",
+    contributing_institution: "Sentinel Serology Laboratory",
+    host_identifier: "host-42",
+    host_type: "Human",
+    host_species: "Homo sapiens",
+    host_common_name: "Human",
+    collection_date: "2024-07",
+    collection_year: 2024,
+    collection_country: "Australia",
+    collection_state: "New South Wales",
+    test_type: "ELISA/IgG test",
+    test_result: "Detected",
+    test_interpretation: "Evidence of prior exposure; confirm clinically",
+    serotype: "H1N1",
+  },
+  {
+    id: "serology-backend-902",
+    sample_identifier: "ambiguous-serology",
+    test_type: "Western blot",
+  },
+  {
+    id: "serology-backend-903",
+    sample_identifier: "ambiguous-serology",
+    test_type: "ELISA/IgG test",
+  },
+];
+
 const genomeRows = [
   {
     genome_id: "1282460.2049",
@@ -151,6 +181,42 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/e2e-mock\/data\/serology\/(?:\?|$)/,
+    method: "GET",
+    body: {
+      response: { numFound: serologyRows.length, docs: serologyRows },
+      facet_counts: {
+        facet_fields: {
+          host_type: ["Human", 1],
+          collection_country: ["Australia", 1],
+          test_type: ["ELISA/IgG test", 1],
+          test_result: ["Detected", 1],
+        },
+      },
+    },
+  },
+  {
+    url: /\/api\/data\/serology(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: serologyRows.slice(0, 1),
+      total: 1,
+      facets: {
+        host_type: [{ value: "Human", count: 1 }],
+        collection_country: [{ value: "Australia", count: 1 }],
+        test_type: [{ value: "ELISA/IgG test", count: 1 }],
+        test_result: [{ value: "Detected", count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/serology(?:\?|$)/,
+    method: "POST",
+    body: { rows: serologyRows.slice(0, 1) },
+  },
   {
     url: /\/api\/e2e-mock\/data\/surveillance\/(?:\?|$)/,
     method: "GET",

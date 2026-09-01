@@ -56,6 +56,29 @@ describe("selectedIdsFromSelection", () => {
 });
 
 describe("useResourceCollection", () => {
+  it("omits repository and table sorting for the unsorted state", async () => {
+    const data = repository();
+    const collection = vi.spyOn(data, "collection");
+    const { result } = renderHook(
+      () =>
+        useResourceCollection({
+          repository: data,
+          resource: "serology",
+          idField: "id",
+          fields: ["id", "sample_identifier"],
+          state: { filters: {}, page: 1, sort: "unsorted" },
+          onStateChange: vi.fn(),
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.rows).toHaveLength(1);
+    });
+    expect(collection.mock.calls[0]?.[1].sort).toBeUndefined();
+    expect(result.current.sorting).toEqual([]);
+  });
+
   it("preserves selection across paging and sorting, then resets it for a new query", async () => {
     const data = repository();
     const onStateChange = vi.fn();

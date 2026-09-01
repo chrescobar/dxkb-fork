@@ -44,6 +44,7 @@ function combineRql(...parts: (string | undefined)[]) {
 }
 
 function dataSort(sort: string) {
+  if (sort === "unsorted") return undefined;
   const [field, direction] = sort.split(":");
   return {
     field,
@@ -133,12 +134,10 @@ export function useResourceCollection<Row extends ResourceRow>({
       ),
     enabled: activeId !== null,
   });
-  const sorting: SortingState = [
-    {
-      id: dataSort(state.sort).field,
-      desc: state.sort.endsWith(":desc"),
-    },
-  ];
+  const activeSort = dataSort(state.sort);
+  const sorting: SortingState = activeSort
+    ? [{ id: activeSort.field, desc: activeSort.direction === "desc" }]
+    : [];
 
   return {
     activeId,

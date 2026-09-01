@@ -61,6 +61,23 @@ const cases = [
       pathogen_test_type: ["PCR"],
     },
   },
+  {
+    route: "serology",
+    resource: "serology",
+    keyword: "influenza",
+    id: "serology-backend-901",
+    detailText: "selected-serology",
+    firstRow: {
+      id: "serology-backend-901",
+      sample_identifier: "selected-serology",
+      test_type: "ELISA",
+    },
+    secondRow: {
+      id: "serology-backend-902",
+      sample_identifier: "next-serology",
+      test_type: "ELISA",
+    },
+  },
 ] as const;
 
 for (const testCase of cases) {
@@ -116,7 +133,10 @@ for (const testCase of cases) {
     );
 
     await collectionPage.goto(testCase.keyword);
-    if (testCase.resource === "surveillance") {
+    if (
+      testCase.resource === "surveillance" ||
+      testCase.resource === "serology"
+    ) {
       await expect.poll(() => collectionRequests).toContain(2);
     } else {
       expect(collectionRequests).toEqual([1]);

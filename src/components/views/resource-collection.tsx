@@ -209,10 +209,13 @@ export function ResourceCollection<Row extends DataTableRow>({
             rql: effectiveRql,
             keyword: state.keyword,
             fields: hasLoadedKeyword ? allFields : selectedFields,
-            sort: {
-              field: state.sort.split(":")[0],
-              direction: state.sort.endsWith(":desc") ? "desc" : "asc",
-            },
+            sort:
+              state.sort === "unsorted"
+                ? undefined
+                : {
+                    field: state.sort.split(":")[0],
+                    direction: state.sort.endsWith(":desc") ? "desc" : "asc",
+                  },
           });
       const exportedRows = hasLoadedKeyword && !selectedIds
         ? result.rows.filter((row) =>
@@ -394,7 +397,7 @@ export function ResourceCollection<Row extends DataTableRow>({
                     "noopener,noreferrer",
                   );
                 } else if (
-                  actionId === "surveillance" &&
+                  (actionId === "surveillance" || actionId === "serology") &&
                   selectedMemberHref
                 ) {
                   window.open(

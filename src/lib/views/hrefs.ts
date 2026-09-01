@@ -138,3 +138,45 @@ export function surveillanceListHref(opts?: {
   }
   return params.length ? `/surveillance?${params.join("&")}` : "/surveillance";
 }
+
+/** Return a public Serology sample identifier from an API row, if present. */
+export function serologyIdFromRow(
+  row: Record<string, unknown> | null,
+): string | null {
+  const sampleIdentifier = row?.sample_identifier;
+  return typeof sampleIdentifier === "string" ||
+    typeof sampleIdentifier === "number"
+    ? String(sampleIdentifier)
+    : null;
+}
+
+/** Internal Serology member route with an optional scalar discriminator. */
+export function serologyHref(
+  sampleIdentifier: number | string,
+  testType?: string,
+): string {
+  const path = `/serology/${encodeURIComponent(String(sampleIdentifier))}`;
+  return testType ? `${path}?test_type=${encodeURIComponent(testType)}` : path;
+}
+
+/** Canonical Serology collection route. Explicit RQL takes precedence over keyword. */
+export function serologyListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  testType?: string | readonly string[];
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  const discriminator = opts?.testType;
+  const testTypes: readonly string[] = Array.isArray(discriminator)
+    ? discriminator
+    : typeof discriminator === "string"
+      ? [discriminator]
+      : [];
+  for (const testType of testTypes) {
+    params.push(`test_type=${encodeURIComponent(testType)}`);
+  }
+  return params.length ? `/serology?${params.join("&")}` : "/serology";
+}

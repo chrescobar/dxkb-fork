@@ -311,8 +311,9 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "serology-list",
-    path: "/serology",
+    path: "/serology?keyword=antibody",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
     },
@@ -388,8 +389,9 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "serology",
-    path: "/serology/example-sample-1",
+    path: "/serology/000123?test_type=ELISA%2FIgG%20test",
     unauthenticated: true,
+    mobile: true,
     prepare: async (page) => {
       await page.waitForLoadState("networkidle");
     },

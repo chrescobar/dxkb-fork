@@ -93,6 +93,24 @@ vi.mock("@/components/views", () => ({
       />
     );
   },
+  SerologyResourceCollection: function SerologyResourceCollection({
+    baseRql,
+    enableRowLinks,
+    keywordMode,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
+  }) {
+    return (
+      <div
+        data-testid="serology-resource-collection"
+        data-q={baseRql}
+        data-row-links={String(enableRowLinks)}
+        data-keyword-mode={keywordMode ?? "loaded"}
+      />
+    );
+  },
   FeatureResourceCollection,
   GenomeResourceCollection: ({
     baseRql,
@@ -143,20 +161,13 @@ describe("makeStrainsView", () => {
 });
 
 describe("makeSerologyView", () => {
-  it("renders TaxonDataPanel with serology resource and taxon query", () => {
+  it("renders the shared Serology collection with taxon scope", () => {
     const SerologyView = makeSerologyView({ scope });
-    const { getByTestId } = render(<SerologyView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "serology");
-    expect(panel.getAttribute("data-q")).toContain("1234");
-  });
-
-  it("passes the serology guide URL", () => {
-    const SerologyView = makeSerologyView({ scope });
-    const { getByTestId } = render(<SerologyView />);
-    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/serology_data.html",
-    );
+    render(<SerologyView />);
+    const panel = screen.getByTestId("serology-resource-collection");
+    expect(panel).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
+    expect(panel).toHaveAttribute("data-row-links", "false");
+    expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
@@ -337,7 +348,8 @@ describe("composite scope queries", () => {
     if (
       resource === "genome" ||
       resource === "epitope" ||
-      resource === "surveillance"
+      resource === "surveillance" ||
+      resource === "serology"
     ) {
       expect(
         screen.getByTestId(`${resource}-resource-collection`),

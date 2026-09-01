@@ -17,7 +17,11 @@ describe("displaySummary", () => {
     );
   });
 
-  it.each(["", null, undefined, {}, []])(
+  it("omits empty strings from arrays", () => {
+    expect(displaySummary(["", "positive", ""])).toBe("positive");
+  });
+
+  it.each(["", null, undefined, {}, [], ["", ""]])(
     "uses the fallback for unavailable value %s",
     (value) => {
       expect(displaySummary(value)).toBe("Not available");

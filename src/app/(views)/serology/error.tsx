@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 
 interface SerologyErrorProps {
@@ -8,7 +7,7 @@ interface SerologyErrorProps {
   reset: () => void;
 }
 
-function SerologyErrorContent({ error, reset }: SerologyErrorProps) {
+export default function SerologyError({ error, reset }: SerologyErrorProps) {
   return (
     <div
       className="m-4 rounded-lg border border-destructive/40 bg-destructive/5 p-6"
@@ -22,13 +21,5 @@ function SerologyErrorContent({ error, reset }: SerologyErrorProps) {
         Try again
       </Button>
     </div>
-  );
-}
-
-export default function SerologyError(props: SerologyErrorProps) {
-  return (
-    <Suspense fallback={<SerologyErrorContent {...props} />}>
-      <SerologyErrorContent {...props} />
-    </Suspense>
   );
 }

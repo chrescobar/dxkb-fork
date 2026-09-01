@@ -43,6 +43,7 @@ describe("Navbar", () => {
     ["/genome", "Genomes"],
     ["/feature", "Features"],
     ["/epitope", "Epitopes"],
+    ["/surveillance", "Surveillance"],
   ])(
     "hydrates the navbar from a canonical %s search",
     (pathname, searchType) => {

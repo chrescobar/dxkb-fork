@@ -192,7 +192,7 @@ const actionConfig: ActionConfig[] = [
     letter: "S",
     validSearchTypes: ["surveillance"],
     requiresSelection: true,
-    disabledWithTooltip: notReady,
+    maxSelection: 1,
   },
   {
     id: "map",

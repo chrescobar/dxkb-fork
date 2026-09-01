@@ -1,10 +1,16 @@
 "use client";
 
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import type { RowSelectionState, SortingState } from "@tanstack/react-table";
 import type { CollectionState } from "@/lib/views/collection-state";
-import type { DataRepository, DataResource, FacetBucket } from "@/lib/data-api";
+import {
+  collectionQueryOptions,
+  type DataRepository,
+  type DataResource,
+  type FacetBucket,
+} from "@/lib/data-api";
+import { noop } from "@/lib/utils";
 import { resourceCollectionPageSize } from "./collection-state";
 export type ResourceRow = Record<string, unknown>;
 export type ResourceFacets = Record<string, FacetBucket[]>;
@@ -55,6 +61,7 @@ export function useResourceCollection<Row extends ResourceRow>({
   state,
   onStateChange,
 }: UseResourceCollectionOptions) {
+  const queryClient = useQueryClient();
   const [selection, setSelection] = useState<RowSelectionState>({});
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
   const rql = combineRql(structuralRql, state.rql);
@@ -72,22 +79,34 @@ export function useResourceCollection<Row extends ResourceRow>({
     setSelection({});
     setIsAllPagesSelected(false);
   }
-  const request = {
-    rql,
-    keyword: state.keyword,
-    page: state.page,
-    pageSize: resourceCollectionPageSize,
-    sort: dataSort(state.sort),
-    fields: [...fields],
-    facets: [...facetFields],
-  };
+  const request = useMemo(
+    () => ({
+      rql,
+      keyword: state.keyword,
+      page: state.page,
+      pageSize: resourceCollectionPageSize,
+      sort: dataSort(state.sort),
+      fields: [...fields],
+      facets: [...facetFields],
+    }),
+    [facetFields, fields, rql, state.keyword, state.page, state.sort],
+  );
 
-  const query = useQuery({
-    queryKey: ["resource-collection", resource, request],
-    queryFn: ({ signal }) =>
-      repository.collection<Row>(resource, request, signal),
-    placeholderData: keepPreviousData,
-  });
+  const query = useQuery(
+    collectionQueryOptions<Row>(repository, resource, request),
+  );
+  const total = query.data?.total ?? 0;
+  useEffect(() => {
+    if (state.page * resourceCollectionPageSize >= total) return;
+    void queryClient
+      .query(
+        collectionQueryOptions(repository, resource, {
+          ...request,
+          page: state.page + 1,
+        }),
+      )
+      .catch(noop);
+  }, [queryClient, repository, request, resource, state.page, total]);
   const rows = query.data?.rows;
   const visibleRows = rows ?? [];
   const selectedIds = selectedIdsFromSelection(selection);
@@ -129,7 +148,7 @@ export function useResourceCollection<Row extends ResourceRow>({
     selection,
     selectedIds,
     sorting,
-    total: query.data?.total ?? 0,
+    total,
     setIsAllPagesSelected,
     setSelection,
     setPageIndex: (pageIndex: number) => {

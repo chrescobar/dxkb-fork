@@ -23,6 +23,14 @@ export class SurveillancePage {
     await expect(
       this.page.getByRole("heading", { level: 1, name: "Surveillance" }),
     ).toBeVisible();
+    await expect(
+      this.page
+        .getByRole("banner")
+        .getByRole("combobox", { name: "Search type" }),
+    ).toContainText("Surveillance");
+    await expect(
+      this.page.getByRole("banner").getByRole("textbox"),
+    ).toHaveValue(query);
     await expect(this.collectionKeyword).toHaveValue("");
   }
 

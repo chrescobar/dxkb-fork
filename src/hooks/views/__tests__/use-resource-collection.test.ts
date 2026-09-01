@@ -88,6 +88,58 @@ describe("useResourceCollection", () => {
     expect(result.current.selectedIds).toEqual([]);
   });
 
+  it("prefetches the next page and reuses it during pagination", async () => {
+    const data = repository();
+    const collection = vi.spyOn(data, "collection").mockImplementation(
+      (_resource, request) => Promise.resolve({
+        rows: [
+          {
+            genome_id: `100.${String(request.page ?? 1)}`,
+            genome_name: `Page ${String(request.page ?? 1)}`,
+          },
+        ],
+        total: 401,
+        facets: {},
+        page: request.page ?? 1,
+        pageSize: request.pageSize ?? 200,
+      }),
+    );
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const queryWrapper = ({ children }: { children: ReactNode }) =>
+      createElement(QueryClientProvider, { client }, children);
+    const { result, rerender } = renderHook(
+      ({ state }: { state: CollectionState }) =>
+        useResourceCollection({
+          repository: data,
+          resource: "genome",
+          idField: "genome_id",
+          fields: ["genome_id", "genome_name"],
+          state,
+          onStateChange: vi.fn(),
+        }),
+      { wrapper: queryWrapper, initialProps: { state: initialState } },
+    );
+
+    await waitFor(() => {
+      expect(collection).toHaveBeenCalledWith(
+        "genome",
+        expect.objectContaining({ page: 2 }),
+        expect.any(AbortSignal),
+      );
+    });
+    rerender({ state: { ...initialState, page: 2 } });
+    await waitFor(() => {
+      expect(result.current.rows).toEqual([
+        { genome_id: "100.2", genome_name: "Page 2" },
+      ]);
+    });
+    expect(
+      collection.mock.calls.some(([, request]) => request.page === 2),
+    ).toBe(true);
+  });
+
   it("represents all-matching selection without requesting a member detail", async () => {
     const data = repository();
     const member = vi.spyOn(data, "member");

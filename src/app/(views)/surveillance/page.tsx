@@ -1,9 +1,5 @@
 import { Suspense } from "react";
-import {
-  parseSurveillanceCollectionState,
-  surveillanceCollectionOptions,
-} from "@/lib/surveillance-view";
-import { serializeCollectionState } from "@/lib/views/collection-state";
+import { parseSurveillanceCollectionState } from "@/lib/surveillance-view";
 import type { SearchParamsRecord } from "@/lib/views/rql";
 import SurveillanceLoading from "./loading";
 import { SurveillanceCollection } from "./surveillance-collection";
@@ -19,14 +15,10 @@ export default async function SurveillanceCollectionPage({
   searchParams: Promise<SearchParamsRecord>;
 }) {
   const state = parseSurveillanceCollectionState(await searchParams);
-  const stateKey = serializeCollectionState(
-    state,
-    surveillanceCollectionOptions,
-  ).toString();
 
   return (
     <Suspense fallback={<SurveillanceLoading />}>
-      <SurveillanceCollection key={stateKey} initialState={state} />
+      <SurveillanceCollection initialState={state} />
     </Suspense>
   );
 }

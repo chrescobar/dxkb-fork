@@ -1,0 +1,23 @@
+src/app/(views)/serology/error.tsx
+  s_1c65a6af46e8a4::t_db0b37c856c75d 10
+src/lib/views/summary.ts
+  s_1c65a6af46e8a4::t_8d63cca49160e5 5
+src/lib/views/__tests__/summary.test.ts
+  s_1c65a6af46e8a4::t_454a23ed625d94 20-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "9d9ded3d3a705823f4752254d1cd013b1fa843a2",
+  "prompts": {},
+  "sessions": {
+    "s_1c65a6af46e8a4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa16a3600ffetITHE4aPNINT1P",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

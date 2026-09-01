@@ -199,5 +199,28 @@ describe("SearchActionBar (taxonomy)", () => {
         screen.queryByRole("button", { name: /^ffeature$/i }),
       ).not.toBeInTheDocument();
     });
+
+    it("enables the Surveillance action for one selected record", async () => {
+      const onAction = vi.fn();
+      render(
+        <SearchActionBar
+          selectedCount={1}
+          searchType="surveillance"
+          onAction={onAction}
+        />,
+      );
+
+      const button = screen.getByRole("button", { name: /^ssrvlnce$/i });
+      expect(button).not.toBeDisabled();
+      await userEvent.click(button);
+      expect(onAction).toHaveBeenCalledWith("surveillance");
+    });
+
+    it("hides the single-row Surveillance action for multiple selections", () => {
+      render(<SearchActionBar selectedCount={2} searchType="surveillance" />);
+      expect(
+        screen.queryByRole("button", { name: /^ssrvlnce$/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 });

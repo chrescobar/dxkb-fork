@@ -92,7 +92,7 @@ export interface FacetBucket {
 export interface CollectionResult<T extends Record<string, unknown>> {
   rows: T[];
   total: number;
-  facets: Record<string, FacetBucket[]>;
+  facets: Partial<Record<string, FacetBucket[]>>;
   page: number;
   pageSize: number;
 }

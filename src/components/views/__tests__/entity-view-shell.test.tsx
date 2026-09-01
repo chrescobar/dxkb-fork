@@ -130,6 +130,9 @@ it("supports scrolling and bounded fill content regions", () => {
   expect(screen.getByTestId("entity-view-scroll-region")).toHaveClass(
     "overflow-y-auto",
   );
+  expect(
+    screen.getByRole("region", { name: "Record View content" }),
+  ).toHaveAttribute("tabindex", "0");
 
   rerender(
     <EntityViewShell

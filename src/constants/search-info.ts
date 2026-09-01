@@ -139,7 +139,10 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "surveillance",
     typeTitle: "Surveillance",
-    route: { status: "legacy" },
+    route: {
+      status: "canonical",
+      segment: viewRegistry.surveillance.segment,
+    },
     tabs: { surveillance: "Surveillance" },
     pickerOrder: 7,
     allTermOrder: 10,

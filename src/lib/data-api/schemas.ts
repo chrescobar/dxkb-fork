@@ -64,6 +64,7 @@ export const epitopeAssayRecordSchema = z.looseObject({
 
 export const surveillanceRecordSchema = z.looseObject({
   id: identifier,
+  ...optionalTaxonomy,
   sample_identifier: z.string().optional(),
   pathogen_test_type: z.array(z.string()).optional(),
 });

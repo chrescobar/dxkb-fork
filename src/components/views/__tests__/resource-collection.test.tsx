@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import type { DataRepository } from "@/lib/data-api";
 import { featureCollectionProfile } from "@/lib/feature-view/profile";
 import { genomeCollectionProfile } from "@/lib/genome-view/profile";
+import { surveillanceCollectionProfile } from "@/lib/surveillance-view/profile";
 import type { CollectionState } from "@/lib/views/collection-state";
 import type { useResourceCollection as useResourceCollectionHook } from "@/hooks/views/use-resource-collection";
 import { ResourceCollection } from "../resource-collection";
@@ -71,6 +72,15 @@ vi.mock("@/components/search/search-action-bar", () => ({
           }
         >
           Feature action
+        </button>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "surveillance",
+            )
+          }
+        >
+          Surveillance action
         </button>
       </div>
     );
@@ -307,6 +317,53 @@ describe("ResourceCollection Genome integration contracts", () => {
     await user.click(screen.getByRole("button", { name: "Feature action" }));
     expect(open).toHaveBeenCalledWith(
       "/feature/canonical-feature",
+      "_blank",
+      "noopener,noreferrer",
+    );
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("opens the selected Surveillance member with its test type", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "surveillance-backend-901",
+      detail: {
+        id: "surveillance-backend-901",
+        sample_identifier: "sample/1",
+        pathogen_test_type: ["RAT/antigen"],
+      },
+      rows: [
+        {
+          id: "surveillance-backend-901",
+          sample_identifier: "sample/1",
+          pathogen_test_type: ["RAT/antigen"],
+        },
+      ],
+      selection: { "surveillance-backend-901": true },
+      selectedIds: ["surveillance-backend-901"],
+    });
+
+    render(
+      <ResourceCollection
+        profile={surveillanceCollectionProfile}
+        repository={repository()}
+        state={{
+          keyword: "",
+          filters: {},
+          page: 1,
+          sort: "sample_identifier:asc",
+        }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Surveillance action" }));
+    expect(open).toHaveBeenCalledWith(
+      "/surveillance/sample%2F1?pathogen_test_type=RAT%2Fantigen",
       "_blank",
       "noopener,noreferrer",
     );

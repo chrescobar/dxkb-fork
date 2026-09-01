@@ -23,6 +23,8 @@ import {
   featureIdFromRow,
   genomeHref,
   genomeIdFromRow,
+  surveillanceHref,
+  surveillanceIdFromRow,
 } from "@/lib/views/hrefs";
 import {
   ChevronLeft,
@@ -67,6 +69,7 @@ interface TabsRendererProps {
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedGenomeId: (id: string | null) => void;
   setSelectedFeatureId: (id: string | null) => void;
+  setSelectedSurveillanceHref: (href: string | null) => void;
   selectedIds: string[];
   isAllPagesSelected: boolean;
   setIsAllPagesSelected: (selected: boolean) => void;
@@ -91,6 +94,7 @@ function TabsRenderer({
   setSelectedIds,
   setSelectedGenomeId,
   setSelectedFeatureId,
+  setSelectedSurveillanceHref,
   selectedIds,
   isAllPagesSelected,
   setIsAllPagesSelected,
@@ -120,6 +124,7 @@ function TabsRenderer({
     setSelectedIds([]);
     setSelectedGenomeId(null);
     setSelectedFeatureId(null);
+    setSelectedSurveillanceHref(null);
     setIsAllPagesSelected(false);
   };
 
@@ -197,6 +202,22 @@ function TabsRenderer({
             onSelectedRowChange={(row) => {
               setSelectedGenomeId(genomeIdFromRow(row));
               setSelectedFeatureId(featureIdFromRow(row));
+              const surveillanceId = surveillanceIdFromRow(row);
+              const pathogenTestType = row?.pathogen_test_type;
+              setSelectedSurveillanceHref(
+                surveillanceId
+                  ? surveillanceHref(
+                      surveillanceId,
+                      typeof pathogenTestType === "string"
+                        ? pathogenTestType
+                        : Array.isArray(pathogenTestType) &&
+                            pathogenTestType.length === 1 &&
+                            typeof pathogenTestType[0] === "string"
+                          ? pathogenTestType[0]
+                          : undefined,
+                    )
+                  : null,
+              );
             }}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
@@ -291,6 +312,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedGenomeId, setSelectedGenomeId] = useState<string | null>(null);
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(null);
+  const [selectedSurveillanceHref, setSelectedSurveillanceHref] = useState<
+    string | null
+  >(null);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pageIndex, setPageIndex] = useState(0);
   const [isAllPagesSelected, setIsAllPagesSelected] = useState(false);
@@ -304,6 +328,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setSelectedIds([]);
     setSelectedGenomeId(null);
     setSelectedFeatureId(null);
+    setSelectedSurveillanceHref(null);
     setPageIndex(0);
     setIsAllPagesSelected(false);
     setTotalItems(0);
@@ -441,6 +466,15 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
                     "_blank",
                     "noopener,noreferrer",
                   );
+                } else if (
+                  actionId === "surveillance" &&
+                  selectedSurveillanceHref
+                ) {
+                  window.open(
+                    selectedSurveillanceHref,
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
                 }
               }}
             />
@@ -469,6 +503,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             setSelectedIds={setSelectedIds}
             setSelectedGenomeId={setSelectedGenomeId}
             setSelectedFeatureId={setSelectedFeatureId}
+            setSelectedSurveillanceHref={setSelectedSurveillanceHref}
             selectedIds={selectedIds}
             isAllPagesSelected={isAllPagesSelected}
             setIsAllPagesSelected={setIsAllPagesSelected}

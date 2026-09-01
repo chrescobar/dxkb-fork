@@ -8,6 +8,9 @@ import {
   genomeHref,
   genomeIdFromRow,
   genomeListHref,
+  surveillanceHref,
+  surveillanceIdFromRow,
+  surveillanceListHref,
   taxonomyHref,
 } from "../hrefs";
 import { rqlEq } from "../rql";
@@ -29,6 +32,36 @@ describe("Epitope hrefs", () => {
     expect(epitopeListHref()).toBe("/epitope");
     expect(epitopeListHref({ keyword: "linear peptide", taxonId: 11520 })).toBe("/epitope?keyword=linear%20peptide&taxon_id=11520");
     expect(epitopeListHref({ keyword: "ignored", rql: "eq(epitope_type,B-cell)" })).toBe("/epitope?rql=eq(epitope_type%2CB-cell)");
+  });
+});
+
+describe("Surveillance hrefs", () => {
+  it("uses the public sample identifier and encodes the optional discriminator", () => {
+    expect(
+      surveillanceIdFromRow({ id: "backend-1", sample_identifier: "sample/1" }),
+    ).toBe("sample/1");
+    expect(surveillanceIdFromRow({ id: "backend-only" })).toBeNull();
+    expect(surveillanceHref("sample/1", "RAT/antigen")).toBe(
+      "/surveillance/sample%2F1?pathogen_test_type=RAT%2Fantigen",
+    );
+  });
+
+  it("builds collection links with repeated friendly facets and RQL precedence", () => {
+    expect(surveillanceListHref()).toBe("/surveillance");
+    expect(
+      surveillanceListHref({
+        keyword: "avian flu",
+        pathogenTestType: ["PCR", "RAT/antigen"],
+      }),
+    ).toBe(
+      "/surveillance?keyword=avian%20flu&pathogen_test_type=PCR&pathogen_test_type=RAT%2Fantigen",
+    );
+    expect(
+      surveillanceListHref({
+        keyword: "ignored",
+        rql: "eq(collection_country,US)",
+      }),
+    ).toBe("/surveillance?rql=eq(collection_country%2CUS)");
   });
 });
 

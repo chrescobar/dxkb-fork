@@ -1,0 +1,52 @@
+import Link from "next/link";
+import { surveillanceHref } from "@/lib/views/hrefs";
+
+interface SurveillanceAmbiguityProps {
+  sampleId: string;
+  testTypes: readonly string[];
+}
+
+export function SurveillanceAmbiguity({
+  sampleId,
+  testTypes,
+}: SurveillanceAmbiguityProps) {
+  return (
+    <section
+      className="m-4 max-w-3xl rounded-lg border bg-card p-6"
+      aria-labelledby="surveillance-choice-title"
+    >
+      <h1 id="surveillance-choice-title" className="text-xl font-semibold">
+        Choose a pathogen test
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Sample <strong className="text-foreground">{sampleId}</strong> has
+        multiple surveillance records. Select a test type to open the intended
+        record.
+      </p>
+      {testTypes.length > 0 ? (
+        <ul className="mt-5 grid gap-2">
+          {testTypes.map((testType) => (
+            <li key={testType}>
+              <Link
+                className="block rounded-md border px-4 py-3 text-primary underline-offset-4 hover:bg-muted hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                href={surveillanceHref(sampleId, testType)}
+              >
+                {testType}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-5 rounded-md bg-muted p-4 text-sm">
+          No test-type labels are available for these records.
+        </p>
+      )}
+      <Link
+        className="mt-6 inline-block text-sm text-primary underline underline-offset-2"
+        href="/surveillance"
+      >
+        Browse surveillance records
+      </Link>
+    </section>
+  );
+}

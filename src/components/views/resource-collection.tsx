@@ -86,6 +86,7 @@ export interface ResourceCollectionProps<Row extends DataTableRow> {
   renderDetail?: (row: Row) => ReactNode;
   showHeader?: boolean;
   keywordMode?: "server" | "loaded";
+  prefetchNextPage?: boolean;
   onExport?: (request: ResourceCollectionExportRequest) => void | Promise<void>;
 }
 
@@ -99,6 +100,7 @@ export function ResourceCollection<Row extends DataTableRow>({
   renderDetail,
   showHeader = true,
   keywordMode = "server",
+  prefetchNextPage = false,
   onExport,
 }: ResourceCollectionProps<Row>) {
   const [exportError, setExportError] = useState<string | null>(null);
@@ -122,6 +124,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     fields: profile.columns.map((column) => column.id),
     detailFields: profile.detailFields,
     facetFields: profile.facets?.map((facet) => facet.field),
+    prefetchNextPage,
     structuralRql,
     state,
     onStateChange,
@@ -167,6 +170,9 @@ export function ResourceCollection<Row extends DataTableRow>({
       : genomeIdFromRow(displayedDetail);
   const selectedFeatureId = featureIdFromRow(displayedDetail);
   const selectedEpitopeId = epitopeIdFromRow(displayedDetail);
+  const selectedMemberHref = displayedDetail
+    ? profile.rowHref?.(displayedDetail)
+    : undefined;
 
   const exportRows = async (
     format: "csv" | "txt",
@@ -384,6 +390,15 @@ export function ResourceCollection<Row extends DataTableRow>({
                 } else if (actionId === "epitope" && selectedEpitopeId) {
                   window.open(
                     epitopeHref(selectedEpitopeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (
+                  actionId === "surveillance" &&
+                  selectedMemberHref
+                ) {
+                  window.open(
+                    selectedMemberHref,
                     "_blank",
                     "noopener,noreferrer",
                   );

@@ -14,15 +14,18 @@ export const dataQueryKeys = {
     [...dataQueryKeys.resource(resource), "member", request] as const,
 };
 
-export function collectionQueryOptions(
+export function collectionQueryOptions<
+  Row extends Record<string, unknown> = Record<string, unknown>,
+>(
   repository: DataRepository,
   resource: DataResource,
   request: Omit<CollectionRequest, "operation">,
 ) {
   return queryOptions({
     queryKey: dataQueryKeys.collection(resource, request),
-    queryFn: ({ signal }) => repository.collection(resource, request, signal),
+    queryFn: ({ signal }) => repository.collection<Row>(resource, request, signal),
     placeholderData: keepPreviousData,
+    staleTime: 0,
   });
 }
 

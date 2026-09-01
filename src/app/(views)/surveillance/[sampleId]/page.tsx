@@ -20,7 +20,10 @@ interface SurveillancePageProps {
 async function loadSurveillance(
   rawSampleId: string,
   pathogenTestType?: string,
-): Promise<Exclude<SurveillanceLookup, { status: "not-found" }>> {
+): Promise<{
+  sampleId: string;
+  result: Exclude<SurveillanceLookup, { status: "not-found" }>;
+}> {
   let sampleId: string;
 
   try {
@@ -33,7 +36,7 @@ async function loadSurveillance(
   try {
     const result = await getSurveillance(sampleId, pathogenTestType);
     if (result.status === "not-found") notFound();
-    return result;
+    return { sampleId, result };
   } catch (error) {
     if (error instanceof DataApiError && [401, 403, 404].includes(error.status))
       notFound();
@@ -50,11 +53,10 @@ export async function generateMetadata({
   searchParams,
 }: SurveillancePageProps): Promise<Metadata> {
   const [{ sampleId }, query] = await Promise.all([params, searchParams]);
-  const result = await loadSurveillance(
+  const { sampleId: decodedSampleId, result } = await loadSurveillance(
     sampleId,
     scalar(query.pathogen_test_type),
   );
-  const decodedSampleId = decodeURIComponent(sampleId);
   return {
     title: `${decodedSampleId} | Surveillance`,
     description:
@@ -70,8 +72,10 @@ export default async function SurveillancePage({
 }: SurveillancePageProps) {
   const [{ sampleId }, query] = await Promise.all([params, searchParams]);
   const pathogenTestType = scalar(query.pathogen_test_type);
-  const result = await loadSurveillance(sampleId, pathogenTestType);
-  const decodedSampleId = decodeURIComponent(sampleId);
+  const { sampleId: decodedSampleId, result } = await loadSurveillance(
+    sampleId,
+    pathogenTestType,
+  );
   const requestedTab = Array.isArray(query.tab) ? query.tab[0] : query.tab;
   if (
     requestedTab !== undefined ||

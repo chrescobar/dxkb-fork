@@ -2,10 +2,10 @@ import type { DataFieldMap } from "./types";
 
 export const surveillanceFields = {
     taxon_lineage_ids: {
-        label: 'Taxon Lineage IDs',
-        field: 'taxon_lineage_ids',
+        label: "Taxon Lineage IDs",
+        field: "taxon_lineage_ids",
         hidden: true,
-        group: 'Sample Tests',
+        group: "Sample Tests",
         facet: false,
         facet_hidden: true,
         search: false,

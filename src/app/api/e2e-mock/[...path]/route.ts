@@ -136,19 +136,30 @@ function maybeSolrCount(
   const core = segments[1];
   const query = decodeURIComponent(new URL(request.url).search);
   if (core === "surveillance") {
-    const ambiguous = query.includes("eq(sample_identifier,ambiguous-sample)");
-    const docs = ambiguous
-      ? ambiguousSurveillanceFixtures
+    const isAmbiguous = query.includes("eq(sample_identifier,ambiguous-sample)");
+    const requestedTestType = ambiguousSurveillanceFixtures
+      .flatMap((fixture) => fixture.pathogen_test_type)
+      .find((testType) =>
+        query.includes(`eq(pathogen_test_type,"${testType}")`),
+      );
+    const docs = isAmbiguous
+      ? requestedTestType
+        ? ambiguousSurveillanceFixtures.filter((fixture) =>
+            fixture.pathogen_test_type.includes(requestedTestType),
+          )
+        : ambiguousSurveillanceFixtures
       : query.includes("eq(sample_identifier,sample/1)")
         ? [surveillanceRecordFixture]
-        : [];
+        : query.includes("keyword(sentinel)")
+          ? [surveillanceRecordFixture]
+          : [];
     if (request.headers.get("accept") === "application/json") return docs;
     return {
       response: { numFound: docs.length, docs },
       facet_counts: {
         facet_fields: {
-          pathogen_test_type: ambiguous
-            ? ["PCR", 1, "RAT/antigen", 1]
+          pathogen_test_type: isAmbiguous
+            ? docs.flatMap((fixture) => [fixture.pathogen_test_type[0], 1])
             : ["RAT/antigen", 1],
         },
       },

@@ -7,11 +7,13 @@ import {
 } from "@/lib/surveillance-view";
 import { SurveillanceOverview } from "./surveillance-overview";
 
+interface SurveillanceMemberProps {
+  surveillance: SurveillanceViewRecord;
+}
+
 export function SurveillanceMember({
   surveillance,
-}: {
-  surveillance: SurveillanceViewRecord;
-}) {
+}: SurveillanceMemberProps) {
   return (
     <EntityViewShell
       viewLabel="Surveillance View"
@@ -31,7 +33,7 @@ export function SurveillanceMember({
         </div>
       }
       headerContent={
-        surveillance.pathogen_test_type?.join(", ") ??
+        surveillance.pathogen_test_type?.join(", ") ||
         "Pathogen surveillance sample"
       }
       metadataSummary={

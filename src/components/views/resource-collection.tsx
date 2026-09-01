@@ -86,6 +86,7 @@ export interface ResourceCollectionProps<Row extends DataTableRow> {
   renderDetail?: (row: Row) => ReactNode;
   showHeader?: boolean;
   keywordMode?: "server" | "loaded";
+  prefetchNextPage?: boolean;
   onExport?: (request: ResourceCollectionExportRequest) => void | Promise<void>;
 }
 
@@ -99,6 +100,7 @@ export function ResourceCollection<Row extends DataTableRow>({
   renderDetail,
   showHeader = true,
   keywordMode = "server",
+  prefetchNextPage = false,
   onExport,
 }: ResourceCollectionProps<Row>) {
   const [exportError, setExportError] = useState<string | null>(null);
@@ -122,6 +124,7 @@ export function ResourceCollection<Row extends DataTableRow>({
     fields: profile.columns.map((column) => column.id),
     detailFields: profile.detailFields,
     facetFields: profile.facets?.map((facet) => facet.field),
+    prefetchNextPage,
     structuralRql,
     state,
     onStateChange,

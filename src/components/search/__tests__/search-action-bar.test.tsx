@@ -219,7 +219,7 @@ describe("SearchActionBar (taxonomy)", () => {
     it("hides the single-row Surveillance action for multiple selections", () => {
       render(<SearchActionBar selectedCount={2} searchType="surveillance" />);
       expect(
-        screen.queryByRole("button", { name: /^ssurveillance$/i }),
+        screen.queryByRole("button", { name: /^ssrvlnce$/i }),
       ).not.toBeInTheDocument();
     });
   });

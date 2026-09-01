@@ -2,13 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 
+interface SurveillanceErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
 export default function SurveillanceError({
   error,
   reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
+}: SurveillanceErrorProps) {
   return (
     <div
       className="m-4 rounded-lg border border-destructive/40 bg-destructive/5 p-6"

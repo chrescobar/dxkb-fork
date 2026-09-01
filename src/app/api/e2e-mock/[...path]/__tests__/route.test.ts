@@ -88,6 +88,31 @@ describe("api/e2e-mock catch-all — enabled", () => {
     expect((await resp.json()) as unknown).toEqual({});
   });
 
+  it("filters ambiguous surveillance fixtures by pathogen test type", async () => {
+    const unfilteredResp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/surveillance/?eq(sample_identifier,ambiguous-sample)",
+      }),
+      ctx(["data", "surveillance"]),
+    );
+    const filteredResp = await GET(
+      mockNextRequest({
+        url: 'http://localhost:3020/api/e2e-mock/data/surveillance/?and(eq(sample_identifier,ambiguous-sample),eq(pathogen_test_type,"RAT%2Fantigen"))',
+      }),
+      ctx(["data", "surveillance"]),
+    );
+
+    await expect(unfilteredResp.json()).resolves.toMatchObject({
+      response: { numFound: 2 },
+    });
+    await expect(filteredResp.json()).resolves.toMatchObject({
+      response: {
+        numFound: 1,
+        docs: [{ pathogen_test_type: ["RAT/antigen"] }],
+      },
+    });
+  });
+
   it("GET returns bacteria summary fixtures for the BV-BRC website mock", async () => {
     const resp = await GET(
       mockNextRequest({

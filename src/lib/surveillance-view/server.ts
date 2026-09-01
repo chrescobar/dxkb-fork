@@ -44,7 +44,7 @@ export async function resolveSurveillance(
   if (result.total === 1 && records.length === 1) {
     return { status: "unique", record: records[0] };
   }
-  const testTypes = result.facets.pathogen_test_type
+  const testTypes = (result.facets.pathogen_test_type ?? [])
     .filter(({ count }) => count === 1)
     .map(({ value }) => String(value))
     .filter((value, index, values) => values.indexOf(value) === index)

@@ -25,7 +25,7 @@ export function collectionQueryOptions<
     queryKey: dataQueryKeys.collection(resource, request),
     queryFn: ({ signal }) => repository.collection<Row>(resource, request, signal),
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 }
 

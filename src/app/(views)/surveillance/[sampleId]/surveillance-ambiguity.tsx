@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { surveillanceHref } from "@/lib/views/hrefs";
 
+interface SurveillanceAmbiguityProps {
+  sampleId: string;
+  testTypes: readonly string[];
+}
+
 export function SurveillanceAmbiguity({
   sampleId,
   testTypes,
-}: {
-  sampleId: string;
-  testTypes: readonly string[];
-}) {
+}: SurveillanceAmbiguityProps) {
   return (
-    <main
+    <section
       className="m-4 max-w-3xl rounded-lg border bg-card p-6"
       aria-labelledby="surveillance-choice-title"
     >
@@ -45,6 +47,6 @@ export function SurveillanceAmbiguity({
       >
         Browse surveillance records
       </Link>
-    </main>
+    </section>
   );
 }

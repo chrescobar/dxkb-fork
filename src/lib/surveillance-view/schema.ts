@@ -47,16 +47,20 @@ export function formatCoordinates(
   latitude: string | number | null | undefined,
   longitude: string | number | null | undefined,
 ): string | null {
+  const normalizedLatitude =
+    typeof latitude === "string" ? latitude.trim() : latitude;
+  const normalizedLongitude =
+    typeof longitude === "string" ? longitude.trim() : longitude;
   if (
-    latitude == null ||
-    longitude == null ||
-    latitude === "" ||
-    longitude === ""
+    normalizedLatitude == null ||
+    normalizedLongitude == null ||
+    normalizedLatitude === "" ||
+    normalizedLongitude === ""
   ) {
     return null;
   }
-  const lat = Number(latitude);
-  const lon = Number(longitude);
+  const lat = Number(normalizedLatitude);
+  const lon = Number(normalizedLongitude);
   if (
     !Number.isFinite(lat) ||
     !Number.isFinite(lon) ||
@@ -67,14 +71,14 @@ export function formatCoordinates(
   ) {
     return null;
   }
-  const coordinate = (
+  function coordinate(
     source: string | number,
     value: number,
     positive: string,
     negative: string,
-  ) => {
+  ) {
     const precision = String(source).trim().replace(/^[+-]/, "");
     return `${precision}° ${value < 0 ? negative : positive}`;
-  };
-  return `${coordinate(latitude, lat, "N", "S")}, ${coordinate(longitude, lon, "E", "W")}`;
+  }
+  return `${coordinate(normalizedLatitude, lat, "N", "S")}, ${coordinate(normalizedLongitude, lon, "E", "W")}`;
 }

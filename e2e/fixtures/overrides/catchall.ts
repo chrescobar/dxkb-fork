@@ -155,7 +155,7 @@ export const apiCatchallOverrides: JsonOverride[] = [
     url: /\/api\/e2e-mock\/data\/surveillance\/(?:\?|$)/,
     method: "GET",
     body: {
-      response: { numFound: 1, docs: surveillanceRows },
+      response: { numFound: surveillanceRows.length, docs: surveillanceRows },
       facet_counts: {
         facet_fields: {
           collection_year: [2024, 1],

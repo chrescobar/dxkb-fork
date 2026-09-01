@@ -75,7 +75,7 @@ vi.mock("@/components/views", () => ({
       data-keyword-mode={keywordMode ?? "loaded"}
     />
   ),
-  SurveillanceResourceCollection: ({
+  SurveillanceResourceCollection: function SurveillanceResourceCollection({
     baseRql,
     enableRowLinks,
     keywordMode,
@@ -83,14 +83,16 @@ vi.mock("@/components/views", () => ({
     baseRql: string;
     enableRowLinks: boolean;
     keywordMode?: "server" | "loaded";
-  }) => (
-    <div
-      data-testid="surveillance-resource-collection"
-      data-q={baseRql}
-      data-row-links={String(enableRowLinks)}
-      data-keyword-mode={keywordMode ?? "loaded"}
-    />
-  ),
+  }) {
+    return (
+      <div
+        data-testid="surveillance-resource-collection"
+        data-q={baseRql}
+        data-row-links={String(enableRowLinks)}
+        data-keyword-mode={keywordMode ?? "loaded"}
+      />
+    );
+  },
   FeatureResourceCollection,
   GenomeResourceCollection: ({
     baseRql,

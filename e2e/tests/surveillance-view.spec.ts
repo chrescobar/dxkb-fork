@@ -70,13 +70,15 @@ test.describe("Surveillance view", () => {
     page,
   }) => {
     const surveillancePage = new SurveillancePage(page);
-    await page.goto("/surveillance/ambiguous-sample");
+    await surveillancePage.gotoMember("ambiguous-sample");
     await surveillancePage.expectAmbiguityChoices("PCR", "RAT/antigen");
-    await expect(
-      page.getByRole("link", { name: "RAT/antigen" }),
-    ).toHaveAttribute(
-      "href",
-      "/surveillance/ambiguous-sample?pathogen_test_type=RAT%2Fantigen",
+    await surveillancePage.expectAmbiguityChoiceLink(
+      "ambiguous-sample",
+      "RAT/antigen",
+    );
+    await surveillancePage.chooseAmbiguityChoice(
+      "ambiguous-sample",
+      "RAT/antigen",
     );
   });
 });

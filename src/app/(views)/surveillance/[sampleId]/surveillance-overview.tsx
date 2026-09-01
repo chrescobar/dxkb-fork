@@ -29,6 +29,10 @@ const dateFields = new Set([
   "date_updated",
 ]);
 
+interface SurveillanceOverviewProps {
+  surveillance: SurveillanceViewRecord;
+}
+
 function displayValue(field: string, value: unknown): string | null {
   if (value == null || value === "") return null;
   if (Array.isArray(value)) {
@@ -53,9 +57,7 @@ function displayValue(field: string, value: unknown): string | null {
 
 export function SurveillanceOverview({
   surveillance,
-}: {
-  surveillance: SurveillanceViewRecord;
-}) {
+}: SurveillanceOverviewProps) {
   const coordinates = formatCoordinates(
     surveillance.collection_latitude,
     surveillance.collection_longitude,

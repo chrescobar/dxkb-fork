@@ -208,11 +208,13 @@ function TabsRenderer({
                 surveillanceId
                   ? surveillanceHref(
                       surveillanceId,
-                      Array.isArray(pathogenTestType) &&
-                        pathogenTestType.length === 1 &&
-                        typeof pathogenTestType[0] === "string"
-                        ? pathogenTestType[0]
-                        : undefined,
+                      typeof pathogenTestType === "string"
+                        ? pathogenTestType
+                        : Array.isArray(pathogenTestType) &&
+                            pathogenTestType.length === 1 &&
+                            typeof pathogenTestType[0] === "string"
+                          ? pathogenTestType[0]
+                          : undefined,
                     )
                   : null,
               );

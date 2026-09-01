@@ -9,11 +9,13 @@ export const metadata = {
   description: "Browse public pathogen surveillance sample records.",
 };
 
+interface SurveillanceCollectionPageProps {
+  searchParams: Promise<SearchParamsRecord>;
+}
+
 export default async function SurveillanceCollectionPage({
   searchParams,
-}: {
-  searchParams: Promise<SearchParamsRecord>;
-}) {
+}: SurveillanceCollectionPageProps) {
   const state = parseSurveillanceCollectionState(await searchParams);
 
   return (

@@ -44,6 +44,8 @@ describe("Surveillance view contracts", () => {
     );
     expect(formatCoordinates(91, 0)).toBeNull();
     expect(formatCoordinates(undefined, 0)).toBeNull();
+    expect(formatCoordinates("   ", 0)).toBeNull();
+    expect(formatCoordinates(0, "   ")).toBeNull();
   });
 
   it("supports repeated friendly facets and explicit RQL precedence", () => {
@@ -157,6 +159,32 @@ describe("resolveSurveillance", () => {
     ).resolves.toEqual({
       status: "ambiguous",
       testTypes: ["RAT/antigen", "culture"],
+    });
+  });
+
+  it("returns no choices when an ambiguous sample has no test type facet", async () => {
+    const collection = vi.fn().mockResolvedValue({
+      rows: [
+        {
+          id: "1",
+          sample_identifier: "sample",
+        },
+        {
+          id: "2",
+          sample_identifier: "sample",
+        },
+      ],
+      total: 2,
+      facets: {},
+      page: 1,
+      pageSize: 2,
+    });
+
+    await expect(
+      resolveSurveillance({ collection }, "sample"),
+    ).resolves.toEqual({
+      status: "ambiguous",
+      testTypes: [],
     });
   });
 

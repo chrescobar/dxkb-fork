@@ -64,7 +64,7 @@ const cases = [
 ] as const;
 
 for (const testCase of cases) {
-  test(`${testCase.route} preserves selection and prefetches the next page`, async ({
+  test(`${testCase.route} preserves selection and scopes next-page prefetching`, async ({
     page,
   }) => {
     const collectionRequests: number[] = [];
@@ -77,19 +77,22 @@ for (const testCase of cases) {
         collectionRequests.push(Number(url.searchParams.get("page")));
       }
     });
-    const collectionOverride: JsonOverride = {
+    const collectionOverrides: JsonOverride[] = [
+      { page: 1, row: testCase.firstRow },
+      { page: 2, row: testCase.secondRow },
+    ].map(({ page: requestedPage, row }) => ({
       url: new RegExp(
-        `/api/data/${testCase.resource}\\?(?=.*operation=collection)`,
+        `/api/data/${testCase.resource}(?=[^#]*[?&]operation=collection(?:&|$))(?=[^#]*[?&]page=${String(requestedPage)}(?:&|$))`,
       ),
       method: "GET",
-      body: ({ callIndex }) => ({
-        rows: [callIndex === 0 ? testCase.firstRow : testCase.secondRow],
+      body: {
+        rows: [row],
         total: 401,
         facets: {},
-        page: callIndex === 0 ? 1 : 2,
+        page: requestedPage,
         pageSize: 200,
-      }),
-    };
+      },
+    }));
     const memberOverride: JsonOverride = {
       url: new RegExp(
         `/api/data/${testCase.resource}\\?(?=.*operation=member)`,
@@ -100,7 +103,7 @@ for (const testCase of cases) {
     await applyBackendMocks(page, {
       overrides: [
         memberOverride,
-        collectionOverride,
+        ...collectionOverrides,
         ...permissiveBackendOverrides,
       ],
     });
@@ -113,7 +116,11 @@ for (const testCase of cases) {
     );
 
     await collectionPage.goto(testCase.keyword);
-    await expect.poll(() => collectionRequests).toContain(2);
+    if (testCase.resource === "surveillance") {
+      await expect.poll(() => collectionRequests).toContain(2);
+    } else {
+      expect(collectionRequests).toEqual([1]);
+    }
     await collectionPage.selectRow();
     await collectionPage.goToPage(2);
     await collectionPage.expectSelectionPreserved();

@@ -18,6 +18,12 @@ export class SurveillancePage {
     await search.getByRole("textbox").press("Enter");
   }
 
+  async gotoMember(sampleIdentifier: string): Promise<void> {
+    await this.page.goto(
+      `/surveillance/${encodeURIComponent(sampleIdentifier)}`,
+    );
+  }
+
   async expectCollection(query: string): Promise<void> {
     await this.expectCollectionUrl(query);
     await expect(
@@ -102,6 +108,35 @@ export class SurveillancePage {
         this.page.getByRole("link", { name: testType, exact: true }),
       ).toBeVisible();
     }
+  }
+
+  async expectAmbiguityChoiceLink(
+    sampleIdentifier: string,
+    testType: string,
+  ): Promise<void> {
+    await expect(
+      this.page.getByRole("link", { name: testType, exact: true }),
+    ).toHaveAttribute(
+      "href",
+      `/surveillance/${encodeURIComponent(sampleIdentifier)}?pathogen_test_type=${encodeURIComponent(testType)}`,
+    );
+  }
+
+  async chooseAmbiguityChoice(
+    sampleIdentifier: string,
+    testType: string,
+  ): Promise<void> {
+    await this.page.getByRole("link", { name: testType, exact: true }).click();
+    await expect(this.page).toHaveURL(
+      `/surveillance/${encodeURIComponent(sampleIdentifier)}?pathogen_test_type=${encodeURIComponent(testType)}`,
+    );
+    await expect(
+      this.page.getByRole("heading", {
+        level: 1,
+        name: sampleIdentifier,
+        exact: true,
+      }),
+    ).toBeVisible();
   }
 
   private async expectSectionValue(

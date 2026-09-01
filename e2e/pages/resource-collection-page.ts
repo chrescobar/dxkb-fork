@@ -20,9 +20,7 @@ export class ResourceCollectionPage {
     await this.page
       .getByRole("checkbox", { name: `Select row ${this.selectedId}` })
       .check();
-    await expect(this.page.getByText("1 selected", { exact: true })).toBeVisible();
-    await expect(this.page.getByRole("button", { name: "Hide" })).toBeVisible();
-    await expect(this.page.getByText(this.detailText, { exact: true }).first()).toBeVisible();
+    await this.expectSelectionPreserved();
   }
 
   async goToPage(pageNumber: number) {

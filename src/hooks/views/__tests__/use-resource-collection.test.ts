@@ -88,7 +88,38 @@ describe("useResourceCollection", () => {
     expect(result.current.selectedIds).toEqual([]);
   });
 
-  it("prefetches the next page and reuses it during pagination", async () => {
+  it("does not prefetch the next page by default", async () => {
+    const data = repository();
+    const collection = vi.spyOn(data, "collection").mockResolvedValue({
+      rows: [{ genome_id: "100.1", genome_name: "Page 1" }],
+      total: 401,
+      facets: {},
+      page: 1,
+      pageSize: 200,
+    });
+    const { result } = renderHook(
+      () =>
+        useResourceCollection({
+          repository: data,
+          resource: "genome",
+          idField: "genome_id",
+          fields: ["genome_id", "genome_name"],
+          state: initialState,
+          onStateChange: vi.fn(),
+        }),
+      { wrapper },
+    );
+
+    await waitFor(() => {
+      expect(result.current.total).toBe(401);
+    });
+    expect(collection).toHaveBeenCalledTimes(1);
+    expect(collection.mock.calls[0]?.[1]).toEqual(
+      expect.objectContaining({ page: 1 }),
+    );
+  });
+
+  it("prefetches the next page when enabled but refreshes it during pagination", async () => {
     const data = repository();
     const collection = vi.spyOn(data, "collection").mockImplementation(
       (_resource, request) => Promise.resolve({
@@ -116,6 +147,7 @@ describe("useResourceCollection", () => {
           resource: "genome",
           idField: "genome_id",
           fields: ["genome_id", "genome_name"],
+          prefetchNextPage: true,
           state,
           onStateChange: vi.fn(),
         }),
@@ -136,8 +168,8 @@ describe("useResourceCollection", () => {
       ]);
     });
     expect(
-      collection.mock.calls.some(([, request]) => request.page === 2),
-    ).toBe(true);
+      collection.mock.calls.filter(([, request]) => request.page === 2),
+    ).toHaveLength(2);
   });
 
   it("represents all-matching selection without requesting a member detail", async () => {

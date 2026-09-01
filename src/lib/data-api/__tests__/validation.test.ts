@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { dataResources } from "../types";
-import { dataQueryKeys } from "../query-options";
+import { collectionQueryOptions, dataQueryKeys } from "../query-options";
+import { DataRepository } from "../client";
 import { resourceRegistry } from "../resources";
 import {
   epitopeAssayRecordSchema,
@@ -148,5 +149,15 @@ describe("data API contracts", () => {
       "collection",
       request,
     ]);
+  });
+
+  it("keeps cached collections stale so remounts refresh them", () => {
+    const options = collectionQueryOptions(
+      new DataRepository(),
+      "genome",
+      { fields: ["genome_id"] },
+    );
+
+    expect(options.staleTime).toBe(0);
   });
 });

@@ -13,7 +13,7 @@ import {
 import { noop } from "@/lib/utils";
 import { resourceCollectionPageSize } from "./collection-state";
 export type ResourceRow = Record<string, unknown>;
-export type ResourceFacets = Record<string, FacetBucket[]>;
+export type ResourceFacets = Partial<Record<string, FacetBucket[]>>;
 
 export interface UseResourceCollectionOptions {
   repository: DataRepository;
@@ -22,6 +22,7 @@ export interface UseResourceCollectionOptions {
   fields: readonly string[];
   detailFields?: readonly string[];
   facetFields?: readonly string[];
+  prefetchNextPage?: boolean;
   structuralRql?: string;
   state: CollectionState;
   onStateChange: (state: CollectionState) => void;
@@ -57,6 +58,7 @@ export function useResourceCollection<Row extends ResourceRow>({
   fields,
   detailFields = fields,
   facetFields = [],
+  prefetchNextPage = false,
   structuralRql,
   state,
   onStateChange,
@@ -97,16 +99,24 @@ export function useResourceCollection<Row extends ResourceRow>({
   );
   const total = query.data?.total ?? 0;
   useEffect(() => {
+    if (!prefetchNextPage) return;
     if (state.page * resourceCollectionPageSize >= total) return;
+    const nextRequest = { ...request, page: state.page + 1 };
     void queryClient
-      .query(
-        collectionQueryOptions(repository, resource, {
-          ...request,
-          page: state.page + 1,
-        }),
-      )
+      .query({
+        ...collectionQueryOptions(repository, resource, nextRequest),
+        staleTime: 5 * 60 * 1000,
+      })
       .catch(noop);
-  }, [queryClient, repository, request, resource, state.page, total]);
+  }, [
+    prefetchNextPage,
+    queryClient,
+    repository,
+    request,
+    resource,
+    state.page,
+    total,
+  ]);
   const rows = query.data?.rows;
   const visibleRows = rows ?? [];
   const selectedIds = selectedIdsFromSelection(selection);

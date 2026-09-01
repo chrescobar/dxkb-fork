@@ -46,6 +46,7 @@ export function SurveillanceResourceCollection({
       enableRowLinks={enableRowLinks}
       showHeader={false}
       keywordMode={keywordMode}
+      prefetchNextPage
     />
   );
 }

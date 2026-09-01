@@ -7,11 +7,13 @@ import {
 } from "@/components/views";
 import type { CollectionState } from "@/lib/views/collection-state";
 
+interface SurveillanceCollectionProps {
+  initialState: CollectionState;
+}
+
 export function SurveillanceCollection({
   initialState,
-}: {
-  initialState: CollectionState;
-}) {
+}: SurveillanceCollectionProps) {
   return (
     <EntityViewShell
       viewLabel="Surveillance View"

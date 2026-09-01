@@ -91,6 +91,17 @@ describe("Surveillance member page", () => {
     );
   });
 
+  it("uses the generic header when pathogen test types are empty", async () => {
+    mocks.getSurveillance.mockResolvedValue({
+      status: "unique",
+      record: { ...record, pathogen_test_type: [] },
+    });
+
+    render(await SurveillancePage(props()));
+
+    expect(screen.getByText("Pathogen surveillance sample")).toBeInTheDocument();
+  });
+
   it("canonicalizes repeated discriminator and tab parameters", async () => {
     await expect(
       SurveillancePage(

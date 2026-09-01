@@ -19,9 +19,7 @@ export class SurveillancePage {
   }
 
   async gotoMember(sampleIdentifier: string): Promise<void> {
-    await this.page.goto(
-      `/surveillance/${encodeURIComponent(sampleIdentifier)}`,
-    );
+    await this.page.goto(this.memberUrl(sampleIdentifier));
   }
 
   async expectCollection(query: string): Promise<void> {
@@ -84,7 +82,7 @@ export class SurveillancePage {
   ): Promise<void> {
     await this.memberLink(sampleIdentifier).click();
     await expect(this.page).toHaveURL(
-      `/surveillance/${encodeURIComponent(sampleIdentifier)}?pathogen_test_type=${encodeURIComponent(pathogenTestType)}`,
+      this.memberUrl(sampleIdentifier, pathogenTestType),
     );
   }
 
@@ -118,7 +116,7 @@ export class SurveillancePage {
       this.page.getByRole("link", { name: testType, exact: true }),
     ).toHaveAttribute(
       "href",
-      `/surveillance/${encodeURIComponent(sampleIdentifier)}?pathogen_test_type=${encodeURIComponent(testType)}`,
+      this.memberUrl(sampleIdentifier, testType),
     );
   }
 
@@ -128,7 +126,7 @@ export class SurveillancePage {
   ): Promise<void> {
     await this.page.getByRole("link", { name: testType, exact: true }).click();
     await expect(this.page).toHaveURL(
-      `/surveillance/${encodeURIComponent(sampleIdentifier)}?pathogen_test_type=${encodeURIComponent(testType)}`,
+      this.memberUrl(sampleIdentifier, testType),
     );
     await expect(
       this.page.getByRole("heading", {
@@ -137,6 +135,13 @@ export class SurveillancePage {
         exact: true,
       }),
     ).toBeVisible();
+  }
+
+  private memberUrl(sampleIdentifier: string, testType?: string): string {
+    const path = `/surveillance/${encodeURIComponent(sampleIdentifier)}`;
+    return testType === undefined
+      ? path
+      : `${path}?pathogen_test_type=${encodeURIComponent(testType)}`;
   }
 
   private async expectSectionValue(

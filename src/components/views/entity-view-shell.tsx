@@ -123,6 +123,8 @@ export function EntityViewShell<Key extends string>({
           ) : (
             <section
               data-testid="entity-view-scroll-region"
+              aria-label={`${viewLabel} content`}
+              tabIndex={0}
               className="scrollbar-themed -mr-2 min-h-0 flex-1 overflow-y-auto py-4 pr-2 pl-1 sm:-mr-3 sm:pr-3 lg:-mr-4 lg:pr-4"
             >
               {children}

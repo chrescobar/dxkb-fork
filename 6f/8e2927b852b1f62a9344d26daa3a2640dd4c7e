@@ -1,0 +1,138 @@
+e2e/tests/epitope-view.spec.ts
+  s_0b76fc83683e2a::t_475ac52a1da33b 31-37,40,42-44,48
+src/lib/epitope-view/query.ts
+  s_0b76fc83683e2a::t_0745be57ddad9d 20-21
+src/lib/data-api/rql.ts
+  s_0b76fc83683e2a::t_2564791e2825d6 62-65,67-72
+  s_0b76fc83683e2a::t_a00098a7eef44b 146-156
+  s_0b76fc83683e2a::t_026260887258c0 247-251
+src/app/(views)/epitope/epitope-collection.tsx
+  s_0b76fc83683e2a::t_aeb92a1c30b074 21
+src/app/(views)/genome/genome-collection.tsx
+  s_0b76fc83683e2a::t_2abfef5d2e10ba 5-6
+  s_0b76fc83683e2a::t_a04ff607622eda 22-26
+src/lib/genome-view/profile.ts
+  s_0b76fc83683e2a::t_c030d5f22b0183 40
+e2e/tests/serology-view.spec.ts
+  s_0b76fc83683e2a::t_ae6fb79b35554c 30-34,37-40,44-45
+  s_0b76fc83683e2a::t_069fb10bdd33ce 36
+  s_0b76fc83683e2a::t_5aead4b0345c1d 41-43
+  s_0b76fc83683e2a::t_90d365a0c8b226 35
+src/hooks/views/use-resource-collection.ts
+  s_0b76fc83683e2a::t_79ec04d38dd524 114
+  s_0b76fc83683e2a::t_0de2c72c7b1604 103
+src/lib/feature-view/profile.ts
+  s_0b76fc83683e2a::t_9ae5f3b580ee59 42
+src/components/views/__tests__/resource-collection.test.tsx
+  s_0b76fc83683e2a::t_d32ddbafe93fb1 639
+  s_0b76fc83683e2a::t_08b890da265739 45-53
+  s_0b76fc83683e2a::t_52d1cbc89e69ed 650-654,659,666-675,680-683
+  s_0b76fc83683e2a::t_0682ce843084d6 34
+  s_0b76fc83683e2a::t_f742fafb13c7a5 640-649,655-658,660-665,676-679,684-688
+e2e/tests/surveillance-view.spec.ts
+  s_0b76fc83683e2a::t_756aaa85eb0cb4 36
+  s_0b76fc83683e2a::t_8d0dc702fe4768 14
+  s_0b76fc83683e2a::t_1d7ef8469bdbd5 31-35,37,40,42-44
+  s_0b76fc83683e2a::t_08a653a6baa6c0 56
+src/lib/genome-view/query.ts
+  s_0b76fc83683e2a::t_e8dc83d3bd0c00 22-23
+  s_0b76fc83683e2a::t_b63ca030feac1b 18-20
+src/components/views/surveillance-resource-collection.tsx
+  s_0b76fc83683e2a::t_6a2008a6ae08d0 20
+e2e/tests/genome-view.spec.ts
+  s_0b76fc83683e2a::t_2ce735e1c315fc 72-73,76-86
+  s_0b76fc83683e2a::t_3a04880bd96c8b 96-97,99-112
+  s_0b76fc83683e2a::t_9de65dfeccf215 87
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_0b76fc83683e2a::t_167c449f3a9608 22-28
+  s_0b76fc83683e2a::t_eaefa98892d7f1 18
+  s_0b76fc83683e2a::t_47a7d8617db93d 29-34
+  s_0b76fc83683e2a::t_2684d4907f0320 62-63
+  s_0b76fc83683e2a::t_9d142567501ffb 94
+src/hooks/views/use-collection-url-state.ts
+  s_0b76fc83683e2a::t_125b5e3be57fc0 41
+src/lib/surveillance-view/query.ts
+  s_0b76fc83683e2a::t_89347fa7121934 22-23
+src/lib/epitope-view/__tests__/epitope-view.test.ts
+  s_0b76fc83683e2a::t_25da716b3a5c4c 12-18
+src/app/(views)/serology/serology-collection.tsx
+  s_0b76fc83683e2a::t_eb0ce9e314ecec 26
+src/lib/surveillance-view/__tests__/surveillance-view.test.ts
+  s_0b76fc83683e2a::t_0f6c31c1f7d524 14-20
+src/components/views/serology-resource-collection.tsx
+  s_0b76fc83683e2a::t_0ecbfb7a8cd061 20
+src/lib/views/collection-state.ts
+  s_0b76fc83683e2a::t_530468f30c1e35 109
+  s_0b76fc83683e2a::t_3fa812afe86f21 93
+  s_0b76fc83683e2a::t_64fa2633114110 78
+  s_0b76fc83683e2a::t_a8fbd20aef04ce 14
+  s_0b76fc83683e2a::t_f717073ce1f33e 202
+  s_0b76fc83683e2a::t_231dc0a0f5e9a0 131
+  s_0b76fc83683e2a::t_a66c051b36e7d9 30
+  s_0b76fc83683e2a::t_fc27e890c09a66 120
+  s_0b76fc83683e2a::t_fb08d88f7a5a0c 23
+  s_0b76fc83683e2a::t_ff4fa05c9bd873 192-193
+src/app/(views)/feature/feature-collection.tsx
+  s_0b76fc83683e2a::t_edb099e689c0bc 5-6
+  s_0b76fc83683e2a::t_556fb041eadc62 24-28
+src/lib/feature-view/query.ts
+  s_0b76fc83683e2a::t_1731f399b69b43 19-20
+  s_0b76fc83683e2a::t_13835ae7cb8318 15-17
+e2e/pages/serology-page.ts
+  s_0b76fc83683e2a::t_743e51b3a295cc 21-24
+src/components/views/feature-resource-collection.tsx
+  s_0b76fc83683e2a::t_79a2c5a4e35e97 20
+src/components/views/epitope-resource-collection.tsx
+  s_0b76fc83683e2a::t_6983919988b6cb 20
+src/lib/surveillance-view/profile.ts
+  s_0b76fc83683e2a::t_fe874007af5cde 39
+src/lib/views/__tests__/collection-state.test.ts
+  s_0b76fc83683e2a::t_7eab51da8b1572 155
+  s_0b76fc83683e2a::t_2242af7d0d872e 109-120
+src/app/(views)/surveillance/surveillance-collection.tsx
+  s_0b76fc83683e2a::t_8f9a01780d5e14 30
+src/components/views/genome-resource-collection.tsx
+  s_0b76fc83683e2a::t_993c098ae18aa7 19
+src/components/views/resource-collection.tsx
+  s_0b76fc83683e2a::t_6f725618cf7223 433
+  s_0b76fc83683e2a::t_179ca614f52d8b 149,154-155
+  s_0b76fc83683e2a::t_a6f989c06683f7 18
+  s_0b76fc83683e2a::t_4ee66beaf291c2 111,113-114
+  s_0b76fc83683e2a::t_627bbd37f50a5b 112,115
+  s_0b76fc83683e2a::t_6d2ce39da07073 124
+  s_0b76fc83683e2a::t_a19b8cdf2d3420 308-314,332
+  s_0b76fc83683e2a::t_8082a127c45743 89
+  s_0b76fc83683e2a::t_1078a613173a23 110
+src/lib/epitope-view/profile.ts
+  s_0b76fc83683e2a::t_441879bcdf81fc 38
+src/lib/data-api/__tests__/rql.test.ts
+  s_0b76fc83683e2a::t_150cf9cbbbaa3f 41-53
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_0b76fc83683e2a::t_9449a8697f4d02 22-27
+  s_0b76fc83683e2a::t_440b6f8ee900a3 10
+  s_0b76fc83683e2a::t_4a5ba07cf2ffad 15-21
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_0b76fc83683e2a::t_8d694ee5861a57 198-206,208-213,215-217,222-229
+  s_0b76fc83683e2a::t_4677703e1b0026 207,214
+  s_0b76fc83683e2a::t_e3b3c4b4c6eb10 247
+  s_0b76fc83683e2a::t_ca912200348bd3 230-231,233-236,242-246,248-251
+  s_0b76fc83683e2a::t_906e57606b5c92 232
+  s_0b76fc83683e2a::t_0a6c803c9e9a15 218-221
+  s_0b76fc83683e2a::t_0f9ed1afdfcb4b 237-241
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "6f8e2927b852b1f62a9344d26daa3a2640dd4c7e",
+  "prompts": {},
+  "sessions": {
+    "s_0b76fc83683e2a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa1e1a5c8ffeog51anPKB6IYsF",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -38,14 +38,33 @@ describe("typed RQL", () => {
     ).toBe('or(eq(epitope_type,"Linear%20peptide"),keyword(influenza))');
   });
 
-  it("validates Genome relationship predicates for features", () => {
+  it.each([
+    "genome_feature",
+    "genome_sequence",
+    "protein_feature",
+    "protein_structure",
+    "bioset",
+  ] as const)("validates Genome relationship predicates for %s", (resource) => {
     const rql =
       "genome(and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated)))";
 
-    expect(validateRql("genome_feature", rql)).toBe(rql);
-    expect(() => validateRql("epitope", rql)).toThrow(
-      /Unsupported RQL operator: genome/,
-    );
+    expect(validateRql(resource, rql)).toBe(rql);
+  });
+
+  it("validates the PPI Genome relationship target", () => {
+    const rql =
+      "genome(to(genome_id_a),and(eq(taxon_lineage_ids,561),ne(genome_status,Deprecated)))";
+
+    expect(validateRql("ppi", rql)).toBe(rql);
+    expect(() =>
+      validateRql("ppi", "genome(to(genome_id_b),eq(taxon_lineage_ids,561))"),
+    ).toThrow(/genome_id_a/);
+  });
+
+  it("rejects Genome relationships for unsupported resources and fields", () => {
+    expect(() =>
+      validateRql("epitope", "genome(eq(genome_status,Complete))"),
+    ).toThrow(/Unsupported RQL operator: genome/);
     expect(() =>
       validateRql("genome_feature", "genome(eq(secret,value))"),
     ).toThrow(/Field secret is not allowed for genome/);

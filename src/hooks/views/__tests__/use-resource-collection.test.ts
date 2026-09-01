@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { DataRepository } from "@/lib/data-api";
 import type { CollectionState } from "@/lib/views/collection-state";
+import { resourceCollectionPageSize } from "../collection-state";
 import {
   selectedIdsFromSelection,
   useResourceCollection,
@@ -197,7 +198,21 @@ describe("useResourceCollection", () => {
 
   it("does not prefetch from a previous query's placeholder total", async () => {
     const data = repository();
-    const collection = vi.spyOn(data, "collection");
+    const replacementResponse = Promise.withResolvers<
+      Awaited<ReturnType<DataRepository["collection"]>>
+    >();
+    const collection = vi.spyOn(data, "collection").mockImplementation(
+      (_resource, request) =>
+        request.rql === "keyword(N034)"
+          ? replacementResponse.promise
+          : Promise.resolve({
+              rows: [{ id: "1", sample_identifier: "Initial result" }],
+              total: resourceCollectionPageSize + 1,
+              facets: {},
+              page: request.page ?? 1,
+              pageSize: request.pageSize ?? resourceCollectionPageSize,
+            }),
+    );
     const client = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -223,7 +238,7 @@ describe("useResourceCollection", () => {
     await waitFor(() => {
       expect(collection).toHaveBeenCalledWith(
         "serology",
-        expect.objectContaining({ keyword: "influenza", page: 1 }),
+        expect.objectContaining({ keyword: "influenza", page: 2 }),
         expect.any(AbortSignal),
       );
     });
@@ -247,6 +262,14 @@ describe("useResourceCollection", () => {
         ([, request]) => request.rql === "keyword(N034)" && request.page === 2,
       ),
     ).toBe(false);
+
+    replacementResponse.resolve({
+      rows: [],
+      total: 0,
+      facets: {},
+      page: 1,
+      pageSize: resourceCollectionPageSize,
+    });
   });
 
   it("represents all-matching selection without requesting a member detail", async () => {

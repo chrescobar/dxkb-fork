@@ -474,7 +474,13 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
               guideUrl={guideUrls[activeTab]}
               // taxonOverview is enabled only in the taxon-view (which wires the
               // handler); /search has no handler yet, so keep it disabled here.
-              disabledActions={{ taxonOverview: notReady }}
+              disabledActions={{
+                taxonOverview: notReady,
+                serology:
+                  selectedSerologyHref === null
+                    ? "A public sample identifier is required to view serology details."
+                    : undefined,
+              }}
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
                   window.open(

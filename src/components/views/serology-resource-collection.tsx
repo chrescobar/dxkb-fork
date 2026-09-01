@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useCollectionUrlState } from "@/hooks/views/use-collection-url-state";
 import { DataRepository } from "@/lib/data-api";
 import {
@@ -20,7 +21,7 @@ interface SerologyResourceCollectionProps {
   keywordMode?: "server" | "loaded" | "refine";
 }
 
-export function SerologyResourceCollection({
+function SerologyResourceCollectionContent({
   baseRql,
   enableFacets = true,
   enableRowLinks = true,
@@ -46,5 +47,15 @@ export function SerologyResourceCollection({
       keywordMode={keywordMode}
       prefetchNextPage
     />
+  );
+}
+
+export function SerologyResourceCollection(
+  props: SerologyResourceCollectionProps,
+) {
+  return (
+    <Suspense fallback={null}>
+      <SerologyResourceCollectionContent {...props} />
+    </Suspense>
   );
 }

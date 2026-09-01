@@ -1,0 +1,79 @@
+import { notFound, redirect } from "next/navigation";
+import { DataApiError } from "@/lib/data-api/repository";
+
+export type CompoundSampleQuery = Record<string, string | string[] | undefined>;
+
+type FoundLookup = { status: "unique" } | { status: "ambiguous" };
+
+export async function loadCompoundSamplePage<TFound extends FoundLookup>(
+  rawSampleId: string,
+  discriminator: string | undefined,
+  options: {
+    isSampleId: (sampleId: string) => boolean;
+    lookup: (
+      sampleId: string,
+      discriminator?: string,
+    ) => Promise<TFound | { status: "not-found" }>;
+  },
+): Promise<{ sampleId: string; result: TFound }> {
+  let sampleId: string;
+
+  try {
+    sampleId = decodeURIComponent(rawSampleId);
+  } catch {
+    notFound();
+  }
+  if (!options.isSampleId(sampleId)) notFound();
+
+  try {
+    const result = await options.lookup(sampleId, discriminator);
+    if (result.status === "not-found") notFound();
+    return { sampleId, result };
+  } catch (error) {
+    if (error instanceof DataApiError && [401, 403, 404].includes(error.status))
+      notFound();
+    throw error;
+  }
+}
+
+export function scalarQueryParam(
+  value: string | string[] | undefined,
+): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+export function canonicalizeCompoundSampleUrl(
+  sampleId: string,
+  query: CompoundSampleQuery,
+  options: {
+    discriminatorParam: string;
+    href: (sampleId: string) => string;
+  },
+): void {
+  const discriminatorValue = query[options.discriminatorParam];
+  const requestedTab = Array.isArray(query.tab) ? query.tab[0] : query.tab;
+  if (
+    requestedTab === undefined &&
+    !Array.isArray(discriminatorValue) &&
+    discriminatorValue !== ""
+  ) {
+    return;
+  }
+
+  const next = new URLSearchParams();
+  for (const [name, value] of Object.entries(query)) {
+    if (
+      name === "tab" ||
+      name === options.discriminatorParam ||
+      value === undefined
+    ) {
+      continue;
+    }
+    for (const item of Array.isArray(value) ? value : [value]) {
+      next.append(name, item);
+    }
+  }
+  const discriminator = scalarQueryParam(discriminatorValue);
+  if (discriminator) next.set(options.discriminatorParam, discriminator);
+  redirect(`${options.href(sampleId)}${next.size ? `?${next}` : ""}`);
+}

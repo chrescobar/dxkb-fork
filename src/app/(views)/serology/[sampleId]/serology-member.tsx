@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LayoutDashboard } from "lucide-react";
 import { EntityViewShell } from "@/components/views";
 import { serologyTabs, type SerologyViewRecord } from "@/lib/serology-view";
+import { displaySummary } from "@/lib/views/summary";
 import { SerologyOverview } from "./serology-overview";
 
 interface SerologyMemberProps {
@@ -53,16 +54,4 @@ export function SerologyMember({ serology }: SerologyMemberProps) {
       <SerologyOverview serology={serology} />
     </EntityViewShell>
   );
-}
-
-function displaySummary(value: unknown): string {
-  if (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean" ||
-    typeof value === "bigint"
-  ) {
-    return value === "" ? "Not available" : String(value);
-  }
-  return "Not available";
 }

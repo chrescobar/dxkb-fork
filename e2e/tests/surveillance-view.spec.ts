@@ -47,7 +47,8 @@ test.describe("Surveillance view", () => {
       const url = new URL(request.url());
       return (
         url.pathname === "/api/data/surveillance" &&
-        url.searchParams.get("keyword") === "sentinel"
+        url.searchParams.get("keyword") === "sentinel" &&
+        url.searchParams.get("rql")?.includes("keyword(Nasal swab)") === true
       );
     });
     await surveillancePage.selectFacet("RAT/antigen (1)");

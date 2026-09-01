@@ -42,15 +42,15 @@ vi.mock("../resource-filter-bar", () => ({
             });
           }}
         >
-            {keyword === "dna gy"
-              ? "Filter loaded rows"
-              : keyword === "HUMAN"
-                ? "Filter array value"
-                : keyword === "N034"
-                  ? "Refine server results"
-                  : keyword
-                    ? "Filter no matches"
-                    : "Clear loaded filter"}
+          {keyword === "dna gy"
+            ? "Filter loaded rows"
+            : keyword === "HUMAN"
+              ? "Filter array value"
+              : keyword === "N034"
+                ? "Refine server results"
+                : keyword
+                  ? "Filter no matches"
+                  : "Clear loaded filter"}
         </button>
       ))}
     </div>

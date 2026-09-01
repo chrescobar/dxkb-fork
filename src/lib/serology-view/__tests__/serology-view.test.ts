@@ -129,6 +129,7 @@ describe("resolveSerology", () => {
       facets: {
         test_type: [
           { value: "Western blot", count: 1 },
+          { value: "", count: 1 },
           { value: "shared", count: 2 },
           { value: "ELISA/IgG", count: 1 },
         ],

@@ -171,9 +171,7 @@ function maybeSolrCount(
     const hasTestTypeFilter = query.includes("eq(test_type,");
     const requestedTestType = ambiguousSerologyFixtures
       .map((fixture) => fixture.test_type)
-      .find((testType) =>
-        query.includes(`eq(test_type,${encodeURIComponent(testType)})`),
-      );
+      .find((testType) => query.includes(`eq(test_type,${testType})`));
     const docs = isAmbiguous
       ? requestedTestType
         ? ambiguousSerologyFixtures.filter(

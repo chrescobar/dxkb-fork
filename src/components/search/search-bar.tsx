@@ -111,7 +111,7 @@ function SearchBarForm({
 
   return (
     <form onSubmit={handleSearch} className={`flex w-full ${className}`}>
-      <div className="border-input bg-background relative flex size-full items-stretch overflow-hidden rounded-md border">
+      <div className="relative flex size-full items-stretch overflow-hidden rounded-md border border-input bg-background">
         <Select
           items={searchTypes.map((option) => ({
             value: option.id,
@@ -125,7 +125,7 @@ function SearchBarForm({
           <SelectTrigger
             id="type"
             aria-label="Search type"
-            className={`${size === "lg" ? "h-auto py-6" : ""} border-input bg-background text-foreground min-w-30 rounded-l-md rounded-r-none border-0 border-r text-sm shadow-none focus:ring-0`}
+            className={`${size === "lg" ? "h-auto py-6" : ""} min-w-30 rounded-l-md rounded-r-none border-0 border-r border-input bg-background text-sm text-foreground shadow-none focus:ring-0`}
           >
             <SelectValue aria-label="Search type" />
           </SelectTrigger>
@@ -144,7 +144,7 @@ function SearchBarForm({
           <Input
             type="text"
             placeholder={placeholder}
-            className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} bg-background text-foreground w-full rounded-l-none rounded-r-md border-0 shadow-none focus-visible:ring-0`}
+            className={`${size === "lg" ? "py-6" : ""} ${showIcon ? "pl-10" : ""} w-full rounded-l-none rounded-r-md border-0 bg-background text-foreground shadow-none focus-visible:ring-0`}
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
@@ -153,7 +153,7 @@ function SearchBarForm({
           {showIcon && (
             <button
               type="submit"
-              className="text-primary hover:text-primary/80 absolute top-1/2 left-3 -translate-y-1/2 transform cursor-pointer transition-colors"
+              className="absolute top-1/2 left-3 -translate-y-1/2 transform cursor-pointer text-primary transition-colors hover:text-primary/80"
               aria-label="Search"
             >
               <Search size={18} />

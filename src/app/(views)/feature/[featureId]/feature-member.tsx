@@ -66,7 +66,7 @@ function breadcrumbs(feature: FeatureViewRecord) {
         </>
       )}
       <span className="text-muted-foreground/50">»</span>
-      <h1 className="text-secondary m-0 inline text-sm leading-none font-bold">
+      <h1 className="m-0 inline text-sm leading-none font-bold text-secondary">
         {feature.patric_id ?? feature.feature_id}
       </h1>
     </div>
@@ -116,7 +116,7 @@ export function FeatureMember({ feature, activeTab }: FeatureMemberProps) {
       }
       metadataSummary={
         activeTab === "overview" ? (
-          <div className="bg-card mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border px-4 py-3 text-sm">
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
             <span>
               <strong>Type:</strong> {feature.feature_type ?? "Not available"}
             </span>

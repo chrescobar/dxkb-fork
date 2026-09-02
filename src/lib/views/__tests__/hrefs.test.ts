@@ -1,4 +1,5 @@
 import {
+  domainsAndMotifsListHref,
   epitopeHref,
   epitopeIdFromRow,
   epitopeListHref,
@@ -103,6 +104,28 @@ describe("Serology hrefs", () => {
   });
 });
 
+describe("Domains and Motifs hrefs", () => {
+  it("builds list-only links with friendly scopes and RQL precedence", () => {
+    expect(domainsAndMotifsListHref()).toBe("/domains-and-motifs");
+    expect(
+      domainsAndMotifsListHref({
+        keyword: "DNA kinase",
+        genomeId: "83332.12",
+        featureId: "fig|83332.12.peg.1",
+      }),
+    ).toBe(
+      "/domains-and-motifs?keyword=DNA%20kinase&genome_id=83332.12&feature_id=fig%7C83332.12.peg.1",
+    );
+    expect(
+      domainsAndMotifsListHref({
+        keyword: "ignored",
+        genomeId: "ignored",
+        rql: "eq(source,InterPro)",
+      }),
+    ).toBe("/domains-and-motifs?rql=eq(source%2CInterPro)");
+  });
+});
+
 describe("Strain hrefs", () => {
   it("builds list-only collection links with phrase and taxon filters", () => {
     expect(strainListHref()).toBe("/strain");
@@ -188,9 +211,9 @@ describe("genomesHrefFromRow", () => {
 
   it("escapes RQL-special characters in Genome IDs", () => {
     const href = genomesHrefFromRow({ genome_ids: ["id,1", "id(2)"] });
-    expect(new URL(href ?? "", "http://localhost").searchParams.get("rql")).toBe(
-      "in(genome_id,(id%2C1,id%282%29))",
-    );
+    expect(
+      new URL(href ?? "", "http://localhost").searchParams.get("rql"),
+    ).toBe("in(genome_id,(id%2C1,id%282%29))");
   });
 });
 

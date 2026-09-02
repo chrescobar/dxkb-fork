@@ -9,7 +9,11 @@ import {
   parseFeatureCollectionState,
   recentGenomeFeatureRql,
 } from "@/lib/feature-view";
-import { featureInteractionsRql, genomeProteinRql } from "@/lib/views/child-resources";
+import {
+  featureDomainsRql,
+  featureInteractionsRql,
+  genomeProteinRql,
+} from "@/lib/views/child-resources";
 
 describe("Feature view contracts", () => {
   it("preserves backend relevance order by default", () => {
@@ -46,27 +50,47 @@ describe("Feature view contracts", () => {
   });
 
   it("parses collection state without silently adding annotation", () => {
-    const state = parseFeatureCollectionState({ genome_id: "83332.12", feature_type: ["CDS", "tRNA"] });
-    expect(state.filters).toEqual({ genome_id: ["83332.12"], feature_type: ["CDS", "tRNA"] });
-    expect(featureStructuralRql(state)).toBe("and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,tRNA)))");
+    const state = parseFeatureCollectionState({
+      genome_id: "83332.12",
+      feature_type: ["CDS", "tRNA"],
+    });
+    expect(state.filters).toEqual({
+      genome_id: ["83332.12"],
+      feature_type: ["CDS", "tRNA"],
+    });
+    expect(featureStructuralRql(state)).toBe(
+      "and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,tRNA)))",
+    );
   });
 
   it("keeps Feature filter separate from explicit structural RQL", () => {
-    const state = parseFeatureCollectionState({ rql: "eq(genome_id,83332.12)", filter: "protein" });
+    const state = parseFeatureCollectionState({
+      rql: "eq(genome_id,83332.12)",
+      filter: "protein",
+    });
     expect(state.rql).toBe("eq(genome_id,83332.12)");
     expect(state.filters).toEqual({ filter: ["protein"] });
     expect(featureStructuralRql(state)).toContain("eq(annotation,PATRIC)");
   });
 
   it("builds exact protein and interaction predicates", () => {
-    expect(genomeProteinRql("83332.12")).toBe("and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,mat_peptide)),eq(annotation,PATRIC))");
-    expect(featureInteractionsRql("PATRIC.1")).toBe("and(or(eq(feature_id_a,PATRIC.1),eq(feature_id_b,PATRIC.1)),eq(evidence,experimental))");
+    expect(genomeProteinRql("83332.12")).toBe(
+      "and(eq(genome_id,83332.12),or(eq(feature_type,CDS),eq(feature_type,mat_peptide)),eq(annotation,PATRIC))",
+    );
+    expect(featureInteractionsRql("PATRIC.1")).toBe(
+      "and(or(eq(feature_id_a,PATRIC.1),eq(feature_id_b,PATRIC.1)),eq(evidence,experimental))",
+    );
+    expect(featureDomainsRql("PATRIC.1")).toBe("eq(feature_id,PATRIC.1)");
   });
 
   it("enables only established member tabs", () => {
     const feature = featureViewRecordSchema.parse({ feature_id: "PATRIC.1" });
-    expect(buildFeatureTabs(feature).find((tab) => tab.key === "interactions")?.enabled).not.toBe(false);
+    expect(
+      buildFeatureTabs(feature).find((tab) => tab.key === "interactions")
+        ?.enabled,
+    ).not.toBe(false);
     expect(canonicalFeatureTab("interactions", feature)).toBe("interactions");
+    expect(canonicalFeatureTab("domains", feature)).toBe("domains");
     expect(canonicalFeatureTab("genome-browser", feature)).toBe("overview");
     expect(canonicalFeatureTab("unknown", feature)).toBe("overview");
   });

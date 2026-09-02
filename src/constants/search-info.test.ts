@@ -21,6 +21,15 @@ describe("search descriptors", () => {
     );
   });
 
+  it("routes Domains and Motifs searches to the canonical collection", () => {
+    const domains = searchDescriptors.find(
+      (item) => item.id === "protein_feature",
+    );
+    expect(domains && searchHref(domains, "DNA kinase")).toBe(
+      "/domains-and-motifs?keyword=DNA%20kinase",
+    );
+  });
+
   it("routes Strain, Surveillance, and Serology searches to canonical collections", () => {
     const strain = searchDescriptors.find((item) => item.id === "strain");
     const surveillance = searchDescriptors.find(

@@ -19,8 +19,10 @@ import {
   type GenomeTab,
   type GenomeViewRecord,
 } from "@/lib/genome-view";
+import { proteinFeatureColumns } from "@/lib/protein-feature-view";
 import {
   featureColumns,
+  genomeDomainsRql,
   genomeFeatureRql,
   genomeProteinRql,
   genomeSequenceColumns,
@@ -124,6 +126,17 @@ export function GenomeMember({
         }
         columns={featureColumns}
         defaultSort="patric_id:asc"
+      />
+    );
+  } else if (activeTab === "domains") {
+    content = (
+      <ResourceChildCollection
+        resource="protein_feature"
+        label="Domains and Motifs"
+        idField="id"
+        rql={genomeDomainsRql(genome.genome_id)}
+        columns={proteinFeatureColumns}
+        defaultSort="unsorted"
       />
     );
   }

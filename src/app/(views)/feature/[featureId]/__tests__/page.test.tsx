@@ -24,13 +24,25 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/lib/feature-view/server", () => ({ getFeature: mocks.getFeature }));
 
 interface ResourceChildCollectionProps {
+  resource: string;
+  idField: string;
   label: string;
   rql: string;
 }
 
-function ResourceChildCollection({ label, rql }: ResourceChildCollectionProps) {
+function ResourceChildCollection({
+  resource,
+  idField,
+  label,
+  rql,
+}: ResourceChildCollectionProps) {
   return (
-    <div data-testid="resource-collection" data-rql={rql}>
+    <div
+      data-testid="resource-collection"
+      data-resource={resource}
+      data-id-field={idField}
+      data-rql={rql}
+    >
       {label}
     </div>
   );
@@ -101,6 +113,27 @@ describe("Feature member route", () => {
     expect(screen.getByTestId("resource-collection")).toHaveAttribute(
       "data-rql",
       `and(or(eq(feature_id_a,${feature.feature_id}),eq(feature_id_b,${feature.feature_id})),eq(evidence,experimental))`,
+    );
+  });
+
+  it("renders exact-feature domains and motifs", async () => {
+    render(
+      await FeaturePage({
+        params: Promise.resolve({ featureId: feature.feature_id }),
+        searchParams: Promise.resolve({ tab: "domains" }),
+      }),
+    );
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-resource",
+      "protein_feature",
+    );
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-id-field",
+      "id",
+    );
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-rql",
+      `eq(feature_id,${feature.feature_id})`,
     );
   });
 

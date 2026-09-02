@@ -227,6 +227,32 @@ describe("DataTable shared view seams", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders a linked fallback value when the link column is missing", () => {
+    render(
+      <DataTable
+        id="fallback-link"
+        data={[{ stable_id: "row-1", feature_id: "fig|83332.12.peg.1" }]}
+        columns={[
+          {
+            id: "patric_id",
+            label: "BRC ID",
+            valueHref: "/feature/{value}",
+            fallbackValue: (row) => row.feature_id,
+          },
+        ]}
+        totalItems={1}
+        resource="unregistered-resource"
+        idField="stable_id"
+        pageIndex={0}
+        pageSize={200}
+      />,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "fig|83332.12.peg.1" }),
+    ).toHaveAttribute("href", "/feature/fig%7C83332.12.peg.1");
+  });
+
   it("delegates selected exports without fetching", async () => {
     const user = userEvent.setup();
     const onDownloadSelected = vi.fn();

@@ -22,6 +22,7 @@ const operators = new Set([
 ]);
 const transportOperators = new Set(["select", "sort", "limit", "facet"]);
 const fieldOperators = new Set(["eq", "ne", "lt", "le", "gt", "ge", "in"]);
+// These resources join through their genome ID when filtering by genome metadata.
 const genomeRelationshipResources = new Set<DataResource>([
   "genome_feature",
   "genome_sequence",

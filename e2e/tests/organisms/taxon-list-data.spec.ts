@@ -43,14 +43,15 @@ test.describe("taxon strains tab: data API error handling", () => {
 
 // ─── Download Selected: POST regression ───────────────────────────────────────
 // Regression: the download-selected handler sent a GET with all IDs in the URL.
-// With 200 rows, the URL exceeded browser limits → net::ERR_FAILED.
-// Fix: POST with the RQL query in the request body.
+// With 200 rows, the URL exceeded browser limits. The shared collection sends a
+// bounded JSON POST through the same-origin Data API gateway instead.
 
-const DOMAINS_TAXON_ID = "11974"; // Caliciviridae — has protein_feature (domains-and-motifs) data
+const domainsTaxonId = "11974";
 
 function buildProteinFeatureRows(count: number) {
   return Array.from({ length: count }, (_, i) => ({
     id: `mock-pf-${String(i).padStart(4, "0")}`,
+    feature_id: `PATRIC.1.${String(i)}.CDS.1`,
     patric_id: `fig|1.${String(i)}.CDS.1`,
     refseq_locus_tag: `gp${String(i)}`,
     gene: `ORF${String(i)}`,
@@ -64,10 +65,22 @@ function buildProteinFeatureRows(count: number) {
   }));
 }
 
-// In E2E, NEXT_PUBLIC_DATA_API=http://127.0.0.1:${E2E_PORT}/api/e2e-mock/data so all
-// protein_feature fetches (count, rows, download POST) go through the loopback, not bv-brc.org.
-const pfLoopback = /\/api\/e2e-mock\/data\/protein_feature\//;
-const pfLoopbackCount = /\/api\/e2e-mock\/data\/protein_feature\/.*limit\(1\)/;
+const pfGateway = /\/api\/data\/protein_feature(?:\?|$)/;
+
+function proteinFeatureCollection(
+  rows: ReturnType<typeof buildProteinFeatureRows>,
+) {
+  return {
+    rows,
+    total: rows.length,
+    facets: {
+      source: [{ value: "Pfam", count: rows.length }],
+      evidence: [{ value: "InterProScan", count: rows.length }],
+    },
+    page: 1,
+    pageSize: 200,
+  };
+}
 const genomeFeatureBackend =
   /\/(?:data_api|api\/e2e-mock\/data)\/genome_feature\//;
 
@@ -79,27 +92,16 @@ test.describe("taxon data table: checkbox-column selection", () => {
     await applyBackendMocks(page, {
       overrides: [...permissiveBackendOverrides],
     });
-    await page.route("**/*", async (route) => {
-      const request = route.request();
-      if (
-        request.method() !== "GET" ||
-        !request.url().includes("/protein_feature/")
-      ) {
-        return route.fallback();
-      }
-      const isPageRequest = decodeURIComponent(request.url()).includes(
-        "select(",
-      );
+    await page.route(pfGateway, async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(
-          isPageRequest ? rows : { response: { numFound: rows.length } },
-        ),
+        body: JSON.stringify(proteinFeatureCollection(rows)),
       });
     });
 
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await page.goto(`/taxonomy/${domainsTaxonId}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({
       timeout: 10_000,
     });
@@ -125,33 +127,24 @@ test.describe("taxon data table: checkbox-column selection", () => {
 });
 
 test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", () => {
-  test("sends POST with RQL query in body, not GET params in URL", async ({
+  test("sends selected IDs in a JSON body, not GET params in the URL", async ({
     page,
   }) => {
     const rows = buildProteinFeatureRows(3);
 
     await applyBackendMocks(page, {
       overrides: [
-        // Count request (&limit(1) in URL) → solr numFound drives totalItems
-        {
-          url: pfLoopbackCount,
-          method: "GET",
-          body: { response: { numFound: 3 } },
-        },
-        // Data request → table rows (array; ListData parses it directly)
-        { url: pfLoopback, method: "GET", body: rows },
-        // Download-selected POST → rows so handleDownload can build the CSV
-        { url: pfLoopback, method: "POST", body: rows },
+        { url: pfGateway, method: "GET", body: proteinFeatureCollection(rows) },
+        { url: pfGateway, method: "POST", body: { rows } },
         ...permissiveBackendOverrides,
       ],
     });
 
-    // Arm capture BEFORE interaction — waitForRequest resolves when browser initiates it
     const postReqPromise = page.waitForRequest(
-      (req) => pfLoopback.test(req.url()) && req.method() === "POST",
+      (req) => pfGateway.test(req.url()) && req.method() === "POST",
     );
 
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await page.goto(`/taxonomy/${domainsTaxonId}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({
       timeout: 10_000,
     });
@@ -170,10 +163,13 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     const postReq = await postReqPromise;
     expect(postReq.method()).toBe("POST");
 
-    // RQL query must be in the body — the URL itself must be clean (no query params)
-    const body = postReq.postData() ?? "";
-    expect(body).toMatch(/^or\(eq\(id,/);
-    expect(postReq.url()).not.toContain("or(eq(id,");
+    const body = postReq.postDataJSON() as {
+      operation: string;
+      ids: string[];
+    };
+    expect(body).toMatchObject({ operation: "selected" });
+    expect(body.ids).toEqual(rows.map((row) => row.id));
+    expect(postReq.url()).not.toContain("mock-pf-");
   });
 
   test("200-row selection succeeds via POST (regression: GET caused net::ERR_FAILED)", async ({
@@ -183,22 +179,17 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
 
     await applyBackendMocks(page, {
       overrides: [
-        {
-          url: pfLoopbackCount,
-          method: "GET",
-          body: { response: { numFound: 200 } },
-        },
-        { url: pfLoopback, method: "GET", body: rows },
-        { url: pfLoopback, method: "POST", body: rows },
+        { url: pfGateway, method: "GET", body: proteinFeatureCollection(rows) },
+        { url: pfGateway, method: "POST", body: { rows } },
         ...permissiveBackendOverrides,
       ],
     });
 
     const postReqPromise = page.waitForRequest(
-      (req) => pfLoopback.test(req.url()) && req.method() === "POST",
+      (req) => pfGateway.test(req.url()) && req.method() === "POST",
     );
 
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await page.goto(`/taxonomy/${domainsTaxonId}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({
       timeout: 10_000,
     });
@@ -214,77 +205,15 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
     const postReq = await postReqPromise;
     expect(postReq.method()).toBe("POST");
 
-    const body = postReq.postData() ?? "";
-    // First and last of the 200 IDs must be present — GET truncation would have lost some
-    expect(body).toContain("mock-pf-0000");
-    expect(body).toContain("mock-pf-0199");
-  });
-});
-
-// ─── "Downloading..." indicator on the plain Download buttons ────────────────
-// Regression: the plain Download (CSV)/(TXT) buttons route through ListData's
-// onDownloadAll (every ListData instance wires it), and DataTable fired that
-// callback without awaiting it — clearing the "Downloading..." state before the
-// fetch/blob work finished. Selected-row downloads (bounded page fetch, real
-// .finally()) never hit this path, so they never regressed. A slow backend
-// response is required to observe the transient state; this delays the
-// page-data GET (the request onDownloadAll re-issues) by 500ms.
-test.describe("taxon domains-and-motifs: 'Downloading...' indicator on Download (CSV)", () => {
-  test("shows 'Downloading...' while the download fetch is in flight, then reverts", async ({
-    page,
-  }) => {
-    const rows = buildProteinFeatureRows(3);
-
-    await applyBackendMocks(page, {
-      overrides: [
-        {
-          url: pfLoopbackCount,
-          method: "GET",
-          body: { response: { numFound: 3 } },
-        },
-        { url: pfLoopback, method: "GET", body: rows },
-        ...permissiveBackendOverrides,
-      ],
-    });
-
-    // Registered after applyBackendMocks so it wins (routes are LIFO) and delays
-    // only the row-data GET the Download (CSV) button re-issues via handleDownloadAll.
-    // Must fall through the &limit(1) count request — pfLoopback matches both, and
-    // delaying/misshaping the count response would zero out totalItems and block
-    // the initial page-data fetch entirely (enabled: totalItems > 0).
-    await page.route(pfLoopback, async (route) => {
-      const url = route.request().url();
-      if (route.request().method() !== "GET" || pfLoopbackCount.test(url))
-        return route.fallback();
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(rows),
-      });
-    });
-
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
-    await expect(page.getByText("mock-product-0")).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await page.getByRole("button", { name: /^Download \(CSV\)$/i }).click();
-
-    await expect(page.getByText("Downloading...")).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /^Download \(TXT\)$/i }),
-    ).toBeDisabled();
-
-    await expect(page.getByText("Downloading...")).not.toBeVisible({
-      timeout: 10_000,
-    });
-    await expect(
-      page.getByRole("button", { name: /^Download \(CSV\)$/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /^Download \(TXT\)$/i }),
-    ).toBeEnabled();
+    const body = postReq.postDataJSON() as {
+      operation: string;
+      ids: string[];
+    };
+    expect(body.operation).toBe("selected");
+    expect(body.ids).toHaveLength(200);
+    expect(body.ids[0]).toBe("mock-pf-0000");
+    expect(body.ids[199]).toBe("mock-pf-0199");
+    expect(postReq.url()).not.toContain("mock-pf-");
   });
 });
 

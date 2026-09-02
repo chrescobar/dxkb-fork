@@ -62,6 +62,23 @@ const cases = [
     },
   },
   {
+    route: "domains-and-motifs",
+    resource: "protein_feature",
+    keyword: "domain",
+    id: "protein-feature-backend-901",
+    detailText: "Selected domain",
+    firstRow: {
+      id: "protein-feature-backend-901",
+      patric_id: "fig|1282460.2049.peg.1",
+      product: "Selected domain",
+    },
+    secondRow: {
+      id: "protein-feature-backend-902",
+      patric_id: "fig|1282460.2049.peg.2",
+      product: "Next domain",
+    },
+  },
+  {
     route: "serology",
     resource: "serology",
     keyword: "influenza",
@@ -135,7 +152,8 @@ for (const testCase of cases) {
     await collectionPage.goto(testCase.keyword);
     if (
       testCase.resource === "surveillance" ||
-      testCase.resource === "serology"
+      testCase.resource === "serology" ||
+      testCase.resource === "protein_feature"
     ) {
       await expect.poll(() => collectionRequests).toContain(2);
     } else {

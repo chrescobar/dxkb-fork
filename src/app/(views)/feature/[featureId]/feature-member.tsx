@@ -1,9 +1,26 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Blocks, ChartNoAxesCombined, GitCompareArrows, LayoutDashboard, Network, ScanLine, Shapes } from "lucide-react";
+import {
+  Blocks,
+  ChartNoAxesCombined,
+  GitCompareArrows,
+  LayoutDashboard,
+  Network,
+  ScanLine,
+  Shapes,
+} from "lucide-react";
 import { EntityViewShell, ResourceChildCollection } from "@/components/views";
-import { buildFeatureTabs, type FeatureTab, type FeatureViewRecord } from "@/lib/feature-view";
-import { featureInteractionsRql, interactionColumns } from "@/lib/views/child-resources";
+import {
+  buildFeatureTabs,
+  type FeatureTab,
+  type FeatureViewRecord,
+} from "@/lib/feature-view";
+import { proteinFeatureColumns } from "@/lib/protein-feature-view";
+import {
+  featureDomainsRql,
+  featureInteractionsRql,
+  interactionColumns,
+} from "@/lib/views/child-resources";
 import { genomeHref, taxonomyHref } from "@/lib/views/hrefs";
 import { FeatureOverview } from "./feature-overview";
 
@@ -20,11 +37,38 @@ const featureTabIcons: Record<FeatureTab, ReactNode> = {
 function breadcrumbs(feature: FeatureViewRecord) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
-      <Link className="text-muted-foreground hover:text-foreground" href="/feature">Features</Link>
-      {feature.genome_id && <><span className="text-muted-foreground/50">»</span><Link className="text-muted-foreground hover:text-foreground" href={genomeHref(feature.genome_id)}>{feature.genome_name ?? feature.genome_id}</Link></>}
-      {feature.taxon_id != null && <><span className="text-muted-foreground/50">»</span><Link className="text-muted-foreground hover:text-foreground" href={taxonomyHref(feature.taxon_id)}>Taxonomy {feature.taxon_id}</Link></>}
+      <Link
+        className="text-muted-foreground hover:text-foreground"
+        href="/feature"
+      >
+        Features
+      </Link>
+      {feature.genome_id && (
+        <>
+          <span className="text-muted-foreground/50">»</span>
+          <Link
+            className="text-muted-foreground hover:text-foreground"
+            href={genomeHref(feature.genome_id)}
+          >
+            {feature.genome_name ?? feature.genome_id}
+          </Link>
+        </>
+      )}
+      {feature.taxon_id != null && (
+        <>
+          <span className="text-muted-foreground/50">»</span>
+          <Link
+            className="text-muted-foreground hover:text-foreground"
+            href={taxonomyHref(feature.taxon_id)}
+          >
+            Taxonomy {feature.taxon_id}
+          </Link>
+        </>
+      )}
       <span className="text-muted-foreground/50">»</span>
-      <h1 className="m-0 inline text-sm leading-none font-bold text-secondary">{feature.patric_id ?? feature.feature_id}</h1>
+      <h1 className="m-0 inline text-sm leading-none font-bold text-secondary">
+        {feature.patric_id ?? feature.feature_id}
+      </h1>
     </div>
   );
 }
@@ -35,24 +79,57 @@ interface FeatureMemberProps {
 }
 
 export function FeatureMember({ feature, activeTab }: FeatureMemberProps) {
-  const content = activeTab === "interactions" ? (
-    <ResourceChildCollection
-      resource="ppi"
-      label="Interactions"
-      idField="id"
-      rql={featureInteractionsRql(feature.feature_id)}
-      columns={interactionColumns}
-      defaultSort="id:asc"
-    />
-  ) : <FeatureOverview feature={feature} />;
-  const tabs = buildFeatureTabs(feature).map((tab) => ({ ...tab, icon: featureTabIcons[tab.key] }));
+  const content =
+    activeTab === "interactions" ? (
+      <ResourceChildCollection
+        resource="ppi"
+        label="Interactions"
+        idField="id"
+        rql={featureInteractionsRql(feature.feature_id)}
+        columns={interactionColumns}
+        defaultSort="id:asc"
+      />
+    ) : activeTab === "domains" ? (
+      <ResourceChildCollection
+        resource="protein_feature"
+        label="Domains and Motifs"
+        idField="id"
+        rql={featureDomainsRql(feature.feature_id)}
+        columns={proteinFeatureColumns}
+        defaultSort="unsorted"
+      />
+    ) : (
+      <FeatureOverview feature={feature} />
+    );
+  const tabs = buildFeatureTabs(feature).map((tab) => ({
+    ...tab,
+    icon: featureTabIcons[tab.key],
+  }));
   return (
     <EntityViewShell
       viewLabel="Feature View"
       title={feature.patric_id ?? feature.feature_id}
       breadcrumbs={breadcrumbs(feature)}
-      headerContent={feature.product ?? `${feature.feature_type ?? "Feature"} ${feature.feature_id}`}
-      metadataSummary={activeTab === "overview" ? <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm"><span><strong>Type:</strong> {feature.feature_type ?? "Not available"}</span><span><strong>Annotation:</strong> {feature.annotation ?? "Not available"}</span><span><strong>Location:</strong> {feature.location ?? "Not available"}</span></div> : undefined}
+      headerContent={
+        feature.product ??
+        `${feature.feature_type ?? "Feature"} ${feature.feature_id}`
+      }
+      metadataSummary={
+        activeTab === "overview" ? (
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
+            <span>
+              <strong>Type:</strong> {feature.feature_type ?? "Not available"}
+            </span>
+            <span>
+              <strong>Annotation:</strong>{" "}
+              {feature.annotation ?? "Not available"}
+            </span>
+            <span>
+              <strong>Location:</strong> {feature.location ?? "Not available"}
+            </span>
+          </div>
+        ) : undefined
+      }
       tabs={tabs}
       activeTab={activeTab}
       defaultTab="overview"

@@ -16,6 +16,14 @@ export const featureColumns = tableColumns(genomeFeatureFields);
 export const genomeSequenceColumns = tableColumns(genomeSequenceFields);
 export const interactionColumns = tableColumns(ppiFields);
 
+export function featureDomainsRql(featureId: string): string {
+  return eq("protein_feature", "feature_id", featureId);
+}
+
+export function genomeDomainsRql(genomeId: string): string {
+  return eq("protein_feature", "genome_id", genomeId);
+}
+
 export function genomeFeatureRql(
   genomeId: string,
   featureType?: string,

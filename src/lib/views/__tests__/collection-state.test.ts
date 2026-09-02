@@ -79,6 +79,51 @@ describe("collection URL state", () => {
     );
   });
 
+  it("canonicalizes an opted-in legacy RQL filter", () => {
+    const legacyOptions = {
+      ...options,
+      legacyRqlFilter: true,
+    } satisfies CollectionStateOptions;
+    const state = parseCollectionState(
+      { filter: "eq(public,true)" },
+      legacyOptions,
+    );
+
+    expect(state.rql).toBe("eq(public,true)");
+    expect(
+      parseCollectionState(
+        { rql: "eq(public,false)", filter: "eq(public,true)" },
+        legacyOptions,
+      ).rql,
+    ).toBe("eq(public,false)");
+    expect(
+      canonicalizeCollectionSearchParams(
+        { filter: "eq(public,true)" },
+        legacyOptions,
+      ).toString(),
+    ).toBe("rql=eq%28public%2Ctrue%29");
+  });
+
+  it("preserves an opted-in filter that is not consumed as legacy RQL", () => {
+    const legacyOptions = {
+      ...options,
+      legacyRqlFilter: true,
+    } satisfies CollectionStateOptions;
+
+    expect(
+      canonicalizeCollectionSearchParams(
+        { filter: "protein", tab: "details" },
+        legacyOptions,
+      ).toString(),
+    ).toBe("filter=protein&tab=details");
+    expect(
+      canonicalizeCollectionSearchParams(
+        { rql: "eq(public,false)", filter: "eq(public,true)" },
+        legacyOptions,
+      ).toString(),
+    ).toBe("filter=eq%28public%2Ctrue%29&rql=eq%28public%2Cfalse%29");
+  });
+
   it("maps multi-value friendly fields using OR within a field and AND across fields", () => {
     const state = parseCollectionState(
       { keyword: "coli", taxon_id: "2", host: ["human", "swine"] },

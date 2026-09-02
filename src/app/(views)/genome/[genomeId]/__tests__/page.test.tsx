@@ -20,13 +20,23 @@ vi.mock("@/components/views", async (importOriginal) => {
   return {
     ...original,
     ResourceChildCollection: ({
+      resource,
+      idField,
       label,
       rql,
     }: {
+      resource: string;
+      idField: string;
       label: string;
       rql: string;
     }) => (
-      <div data-testid="resource-collection" data-rql={rql} data-show-header="false">
+      <div
+        data-testid="resource-collection"
+        data-resource={resource}
+        data-id-field={idField}
+        data-rql={rql}
+        data-show-header="false"
+      >
         {label}
       </div>
     ),
@@ -103,7 +113,30 @@ describe("Genome member route", () => {
     expect(screen.queryByText("Length:")).not.toBeInTheDocument();
     expect(screen.queryByText("Contigs:")).not.toBeInTheDocument();
     expect(screen.queryByText("Status:")).not.toBeInTheDocument();
-    expect(screen.queryByText("Browse sequences records.")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Browse sequences records."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders exact-genome domains and motifs", async () => {
+    render(
+      await GenomePage({
+        params: Promise.resolve({ genomeId: "83332.12" }),
+        searchParams: Promise.resolve({ tab: "domains" }),
+      }),
+    );
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-resource",
+      "protein_feature",
+    );
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-id-field",
+      "id",
+    );
+    expect(screen.getByTestId("resource-collection")).toHaveAttribute(
+      "data-rql",
+      "eq(genome_id,83332.12)",
+    );
   });
 
   it("uses notFound for malformed and missing IDs", async () => {
@@ -122,18 +155,21 @@ describe("Genome member route", () => {
     ).rejects.toThrow("NEXT_NOT_FOUND");
   });
 
-  it.each([401, 403])("uses notFound for inaccessible status %s", async (status) => {
-    mocks.getGenome.mockRejectedValue(
-      new DataApiError("Inaccessible", status, "inaccessible"),
-    );
-    await expect(
-      GenomePage({
-        params: Promise.resolve({ genomeId: "1.1" }),
-        searchParams: Promise.resolve({}),
-      }),
-    ).rejects.toThrow("NEXT_NOT_FOUND");
-    expect(mocks.notFound).toHaveBeenCalled();
-  });
+  it.each([401, 403])(
+    "uses notFound for inaccessible status %s",
+    async (status) => {
+      mocks.getGenome.mockRejectedValue(
+        new DataApiError("Inaccessible", status, "inaccessible"),
+      );
+      await expect(
+        GenomePage({
+          params: Promise.resolve({ genomeId: "1.1" }),
+          searchParams: Promise.resolve({}),
+        }),
+      ).rejects.toThrow("NEXT_NOT_FOUND");
+      expect(mocks.notFound).toHaveBeenCalled();
+    },
+  );
 
   it("preserves upstream errors", async () => {
     mocks.getGenome.mockRejectedValue(new Error("Backend unavailable"));

@@ -205,6 +205,28 @@ export function strainListHref(opts?: {
   return params.length ? `/strain?${params.join("&")}` : "/strain";
 }
 
+/** Canonical Domains and Motifs collection route. */
+export function domainsAndMotifsListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  genomeId?: number | string;
+  featureId?: number | string;
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else {
+    if (opts?.keyword)
+      params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+    if (opts?.genomeId != null)
+      params.push(`genome_id=${encodeURIComponent(String(opts.genomeId))}`);
+    if (opts?.featureId != null)
+      params.push(`feature_id=${encodeURIComponent(String(opts.featureId))}`);
+  }
+  return params.length
+    ? `/domains-and-motifs?${params.join("&")}`
+    : "/domains-and-motifs";
+}
+
 /** Canonical Serology collection route. Explicit RQL takes precedence over keyword. */
 export function serologyListHref(opts?: {
   keyword?: string;

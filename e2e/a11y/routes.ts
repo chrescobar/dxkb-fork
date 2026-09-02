@@ -333,10 +333,15 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "domains-and-motifs",
-    path: "/domains-and-motifs",
+    path: "/domains-and-motifs?keyword=domain",
     unauthenticated: true,
+    mobile: true,
+    settle: { loadState: "domcontentloaded" },
     prepare: async (page) => {
-      await page.waitForLoadState("networkidle");
+      await page
+        .getByText(/results/)
+        .first()
+        .waitFor();
     },
   },
   {

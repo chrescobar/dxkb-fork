@@ -8,6 +8,7 @@ import type {
 } from "@/lib/views/collection-state";
 import {
   canonicalizeCollectionSearchParams,
+  consumesLegacyRqlFilter,
   parseCollectionState,
   serializeCollectionState,
 } from "@/lib/views/collection-state";
@@ -43,6 +44,7 @@ export function useCollectionUrlState<Sort extends string>(
       "page",
       "sort",
       ...(options.friendlyFilters ?? []),
+      ...(consumesLegacyRqlFilter(current, options) ? ["filter"] : []),
     ]) {
       merged.delete(name);
     }

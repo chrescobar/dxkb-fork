@@ -50,12 +50,7 @@ export function buildGenomeTabs(
     },
     { key: "features", label: "Features" },
     { key: "proteins", label: "Proteins" },
-    {
-      key: "domains",
-      label: "Domains and Motifs",
-      enabled: false,
-      disabledReason: "The Domains and Motifs view is not yet implemented.",
-    },
+    { key: "domains", label: "Domains and Motifs" },
     {
       key: "structures",
       label: "Protein Structures",

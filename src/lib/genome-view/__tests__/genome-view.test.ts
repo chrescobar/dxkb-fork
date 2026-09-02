@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  genomeDomainsRql,
   genomeFeatureRql,
   genomeProteinRql,
   taxonomyInteractionsRql,
@@ -116,6 +117,7 @@ describe("Genome view contracts", () => {
 
   it("builds exact child predicates", () => {
     expect(genomeSequenceRql("83332.12")).toBe("eq(genome_id,83332.12)");
+    expect(genomeDomainsRql("83332.12")).toBe("eq(genome_id,83332.12)");
     expect(genomeInteractionsRql("83332.12")).toBe(
       "and(eq(genome_id_a,83332.12),eq(evidence,experimental))",
     );
@@ -173,6 +175,8 @@ describe("Genome view contracts", () => {
     ).toBe(false);
     expect(canonicalGenomeTab("features", bacterial)).toBe("features");
     expect(canonicalGenomeTab("proteins", bacterial)).toBe("proteins");
+    expect(canonicalGenomeTab("domains", bacterial)).toBe("domains");
+    expect(canonicalGenomeTab("domains", viral)).toBe("domains");
     expect(canonicalGenomeTab("sequences", bacterial)).toBe("sequences");
     expect(canonicalGenomeTab("nonsense", bacterial)).toBe("overview");
   });

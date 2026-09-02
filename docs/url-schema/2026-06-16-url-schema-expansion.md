@@ -17,7 +17,7 @@
 
 **New files (logic — `src/lib/views/`):**
 - `view-types.ts` — `ViewTypeEntry`, `SingularSpec`, `ListSpec` types + `isViewSegment` guard.
-- `view-registry.ts` — the 10-entry `viewRegistry` table + derived helpers (`viewSegments`, `legacyToSegment`).
+- `view-registry.ts` — the 10-entry `viewRegistry` table + derived helpers (`viewSegments`, `legacyViewTargets`, `legacyToSegment`).
 - `rql.ts` — `friendlyParamsToRql()`, `resolveListQuery()` (friendly + `?rql=` precedence).
 - `tab.ts` — `resolveTab()` (validate `?tab=` against a type's tabs, else default).
 - `legacy-redirect.ts` — `mapLegacyViewPath()` (pure: legacy `/view/*` URL parts → new path/query).
@@ -114,11 +114,17 @@ export interface ViewTypeEntry {
   label: string;
   /** Legacy BV-BRC singular view name, e.g. "Genome" (redirect source). */
   legacySingular?: string;
+  /** Additional confirmed legacy singular names for the same canonical route. */
+  legacySingularAliases?: readonly string[];
   /** Legacy BV-BRC list view name, e.g. "GenomeList" (redirect source). */
   legacyList?: string;
+  /** Additional confirmed legacy list names for the same canonical route. */
+  legacyListAliases?: readonly string[];
+  /** Query parameters added when redirecting a specific legacy list alias. */
+  legacyListAliasParams?: Readonly<Record<string, Readonly<Record<string, string>>>>;
   /** searchtype id from constants/searchInfo.ts (for the deferred search repoint). */
   searchType?: string;
-  /** Omitted ⇒ list-only type (strain, domains-and-motifs, experiment). */
+  /** Omitted ⇒ list-only type (strain and domains-and-motifs). */
   singular?: SingularSpec;
   list: ListSpec;
 }
@@ -156,7 +162,13 @@ Default tabs are taken from `docs/url-schema/bvbrc-view-types-url-parameters.md`
 
 ```ts
 // src/lib/views/__tests__/view-registry.test.ts
-import { viewRegistry, viewSegments, legacyToSegment } from "../view-registry";
+import type { ViewRegistry } from "../view-types";
+import {
+  legacyToSegment,
+  legacyViewTargets,
+  viewRegistry,
+  viewSegments,
+} from "../view-registry";
 
 describe("viewRegistry", () => {
   it("has exactly 10 segments", () => {
@@ -169,10 +181,14 @@ describe("viewRegistry", () => {
     }
   });
 
-  it("marks strain, domains-and-motifs, experiment as list-only (no singular)", () => {
+  it("marks strain and domains-and-motifs as list-only (no singular)", () => {
     expect(viewRegistry.strain.singular).toBeUndefined();
     expect(viewRegistry["domains-and-motifs"].singular).toBeUndefined();
-    expect(viewRegistry.experiment.singular).toBeUndefined();
+  });
+
+  it("gives experiment an int singular with ExperimentComparison legacy name", () => {
+    expect(viewRegistry.experiment.singular?.idKind).toBe("int");
+    expect(viewRegistry.experiment.legacySingular).toBe("ExperimentComparison");
   });
 
   it("gives protein-structure an id-less singular", () => {
@@ -184,19 +200,31 @@ describe("viewRegistry", () => {
   });
 
   it("maps every legacy name to a unique existing segment", () => {
-    const names = Object.values(viewRegistry).flatMap((e) =>
-      [e.legacySingular, e.legacyList].filter(Boolean) as string[],
+    const names = Object.values(viewRegistry as ViewRegistry).flatMap(
+      (entry) =>
+        [
+          entry.legacySingular,
+          ...(entry.legacySingularAliases ?? []),
+          entry.legacyList,
+          ...(entry.legacyListAliases ?? []),
+        ].filter(Boolean) as string[],
     );
     expect(new Set(names).size).toBe(names.length); // unique
     for (const name of names) {
-      expect(legacyToSegment[name]).toBeDefined();
-      expect(viewRegistry[legacyToSegment[name]]).toBeDefined();
+      expect(legacyViewTargets[name]).toBeDefined();
+      expect(legacyToSegment[name]).toBe(legacyViewTargets[name]?.segment);
+      expect((viewRegistry as ViewRegistry)[legacyToSegment[name]]).toBeDefined();
     }
   });
 
-  it("reverse-maps a known legacy name", () => {
-    expect(legacyToSegment.GenomeList).toBe("genome");
-    expect(legacyToSegment.Taxonomy).toBe("taxonomy");
+  it("reverse-maps Protein singular and list aliases", () => {
+    expect(legacyViewTargets.Protein).toEqual({ segment: "feature", kind: "singular" });
+    expect(legacyViewTargets.ProteinList).toEqual({
+      segment: "feature",
+      kind: "list",
+      defaultParams: { filter: "protein" },
+    });
+    expect(legacyToSegment.ProteinFeaturesList).toBe("domains-and-motifs");
   });
 });
 ```
@@ -235,7 +263,10 @@ export const viewRegistry = {
     segment: "feature",
     label: "Feature",
     legacySingular: "Feature",
+    legacySingularAliases: ["Protein"],
     legacyList: "FeatureList",
+    legacyListAliases: ["ProteinList"],
+    legacyListAliasParams: { ProteinList: { filter: "protein" } },
     searchType: "genome_feature",
     singular: { idParam: "featureId", idKind: "string", defaultTab: "overview" },
     list: { endpoint: "genome_feature", defaultTab: "overview", friendlyParams: ["keyword", "genome_id"] },
@@ -278,8 +309,9 @@ export const viewRegistry = {
     segment: "domains-and-motifs",
     label: "Domains and Motifs",
     legacyList: "DomainsAndMotifsList",
+    legacyListAliases: ["ProteinFeaturesList"],
     searchType: "protein_feature",
-    list: { endpoint: "protein_feature", defaultTab: "proteinFeatures", friendlyParams: ["keyword", "genome_id"] },
+    list: { endpoint: "protein_feature", defaultTab: "proteinFeatures", friendlyParams: ["keyword", "genome_id", "feature_id"] },
   },
   "protein-structure": {
     segment: "protein-structure",
@@ -293,20 +325,47 @@ export const viewRegistry = {
   experiment: {
     segment: "experiment",
     label: "Experiment",
+    legacySingular: "ExperimentComparison",
     legacyList: "ExperimentList",
     searchType: "experiment",
+    singular: { idParam: "experimentId", idKind: "int", defaultTab: "overview" },
     list: { endpoint: "experiment", defaultTab: "experiments", friendlyParams: ["keyword", "taxon_id"] },
   },
 } satisfies ViewRegistry;
 
 export const viewSegments = Object.keys(viewRegistry);
 
-/** Legacy BV-BRC view name → new segment. Derived so it cannot drift from routes. */
-export const legacyToSegment: Record<string, string> = Object.fromEntries(
-  Object.values(viewRegistry as ViewRegistry).flatMap((entry: ViewTypeEntry) =>
-    [entry.legacySingular, entry.legacyList]
+/** Legacy BV-BRC view name → typed redirect target. Derived from the route registry. */
+export interface LegacyViewTarget {
+  segment: string;
+  kind: "singular" | "list";
+  defaultParams?: Readonly<Record<string, string>>;
+}
+
+export const legacyViewTargets = Object.fromEntries(
+  (Object.values(viewRegistry) as ViewTypeEntry[]).flatMap((entry) => [
+    ...[entry.legacySingular, ...(entry.legacySingularAliases ?? [])]
       .filter((name): name is string => Boolean(name))
-      .map((name) => [name, entry.segment]),
+      .map((name) => [
+        name,
+        { segment: entry.segment, kind: "singular" as const },
+      ]),
+    ...[entry.legacyList, ...(entry.legacyListAliases ?? [])]
+      .filter((name): name is string => Boolean(name))
+      .map((name) => [
+        name,
+        {
+          segment: entry.segment,
+          kind: "list" as const,
+          defaultParams: entry.legacyListAliasParams?.[name],
+        },
+      ]),
+  ]),
+) as Record<string, LegacyViewTarget | undefined>;
+
+export const legacyToSegment: Record<string, string> = Object.fromEntries(
+  Object.entries(legacyViewTargets).flatMap(([name, target]) =>
+    target ? [[name, target.segment]] : [],
   ),
 );
 ```
@@ -314,7 +373,7 @@ export const legacyToSegment: Record<string, string> = Object.fromEntries(
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `pnpm test -- src/lib/views/__tests__/view-registry.test.ts`
-Expected: PASS (all 7 assertions).
+Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
@@ -531,6 +590,38 @@ describe("mapLegacyViewPath", () => {
       search: "rql=eq(taxon_lineage_ids%2C1763)",
     });
   });
+  it("maps a legacy list alias to its canonical segment", () => {
+    expect(
+      mapLegacyViewPath(
+        "/view/ProteinFeaturesList/",
+        "feature_id=fig%7C83332.12.peg.1",
+      ),
+    ).toEqual({
+      pathname: "/domains-and-motifs",
+      search: "feature_id=fig%7C83332.12.peg.1",
+    });
+  });
+  it("maps Protein aliases and supplies the list alias default", () => {
+    expect(mapLegacyViewPath("/view/Protein/fig%7C83332.12.peg.1", "")).toEqual({
+      pathname: "/feature/fig%7C83332.12.peg.1",
+      search: "",
+    });
+    expect(mapLegacyViewPath("/view/ProteinList/", "keyword=kinase")).toEqual({
+      pathname: "/feature",
+      search: "keyword=kinase&filter=protein",
+    });
+  });
+  it("keeps mixed RQL and named query segments separate", () => {
+    expect(
+      mapLegacyViewPath(
+        "/view/FeatureList/",
+        'eq(genome_id,83332.12)&filter="CDS"',
+      ),
+    ).toEqual({
+      pathname: "/feature",
+      search: "rql=eq(genome_id%2C83332.12)&filter=%22CDS%22",
+    });
+  });
   it("preserves a named query param (surveillance)", () => {
     expect(
       mapLegacyViewPath("/view/Surveillance/ISDN123456", "pathogen_test_type=Influenza%20A"),
@@ -557,7 +648,7 @@ Expected: FAIL — cannot find module `../legacy-redirect`.
 
 ```ts
 // src/lib/views/legacy-redirect.ts
-import { legacyToSegment, viewRegistry } from "./view-registry";
+import { legacyViewTargets } from "./view-registry";
 
 export interface MappedPath {
   pathname: string;
@@ -574,28 +665,50 @@ export function mapLegacyViewPath(pathname: string, rawSearch: string): MappedPa
   if (parts.length < 2 || parts[0] !== "view") return null;
 
   const legacyName = parts[1];
-  const segment = legacyToSegment[legacyName];
-  if (!segment) return null;
+  const target = legacyViewTargets[legacyName];
+  if (!target) return null;
 
-  const entry = viewRegistry[segment];
+  const { segment } = target;
   const idParts = parts.slice(2); // remaining path segments after the view name
-  const isList = legacyName === entry.legacyList;
+  const isList = target.kind === "list";
 
   if (isList || idParts.length === 0) {
-    // List view: the legacy raw query string is an RQL expression (if present).
-    if (!rawSearch) return { pathname: `/${segment}`, search: "" };
-    // If it already looks like key=value named params, pass through; else treat as RQL.
-    const looksNamed = /^[A-Za-z_][A-Za-z0-9_]*=/.test(rawSearch);
-    if (looksNamed) {
-      return { pathname: `/${segment}`, search: new URLSearchParams(rawSearch).toString() };
+    // List queries may contain raw RQL, named params, or both. Classify each
+    // ampersand-delimited segment so a named param is not swallowed into rql=.
+    if (!rawSearch && !target.defaultParams) {
+      return { pathname: `/${segment}`, search: "" };
     }
-    // encodeURIComponent (not URLSearchParams) keeps RQL parens literal and only
-    // encodes the comma, which round-trips cleanly and stays readable.
-    return { pathname: `/${segment}`, search: `rql=${encodeURIComponent(rawSearch)}` };
+    const rqlParts: string[] = [];
+    const namedParts: string[] = [];
+    for (const queryPart of rawSearch.split("&")) {
+      if (!queryPart) continue;
+      if (/^[A-Za-z_][A-Za-z0-9_]*=/.test(queryPart)) {
+        namedParts.push(queryPart);
+      } else {
+        rqlParts.push(queryPart);
+      }
+    }
+    const searchParts: string[] = [];
+    if (rqlParts.length > 0) {
+      searchParts.push(`rql=${encodeURIComponent(rqlParts.join("&"))}`);
+    }
+    const namedParams = new URLSearchParams(namedParts.join("&"));
+    for (const [name, value] of Object.entries(target.defaultParams ?? {})) {
+      if (!namedParams.has(name)) namedParams.set(name, value);
+    }
+    if (namedParams.size > 0) searchParts.push(namedParams.toString());
+    return { pathname: `/${segment}`, search: searchParts.join("&") };
   }
 
-  // Singular view: keep the id in the path, preserve named query params verbatim.
-  const id = idParts.join("/");
+  // Canonicalize each id component and reject malformed percent encoding.
+  let id: string;
+  try {
+    id = idParts
+      .map((part) => encodeURIComponent(decodeURIComponent(part)))
+      .join("%2F");
+  } catch {
+    return null;
+  }
   const search = rawSearch ? new URLSearchParams(rawSearch).toString() : "";
   return { pathname: `/${segment}/${id}`, search };
 }
@@ -1314,8 +1427,8 @@ git commit -m "feat(views): add legacy hash adapter and (views) group layout"
 
 Singular id-param folder names come from the registry `singular.idParam`:
 - `genome` → `[genomeId]`, `feature` → `[featureId]`, `epitope` → `[epitopeId]`,
-  `surveillance` → `[sampleId]`, `serology` → `[sampleId]`.
-- List-only (no `[id]` folder): `strain`, `domains-and-motifs`, `experiment`.
+  `surveillance` → `[sampleId]`, `serology` → `[sampleId]`, `experiment` → `[experimentId]`.
+- List-only (no `[id]` folder): `strain`, `domains-and-motifs`.
 - `protein-structure` → single `page.tsx` only (id-less singular handled by `?accession`/`?path`; see Step for it).
 
 - [ ] **Step 1: Write a smoke test for the new list + singular routes**
@@ -1343,6 +1456,7 @@ vi.mock("@tanstack/react-hotkeys", () => ({ useHotkey: () => {} }));
 
 import GenomeListPage from "../genome/page";
 import GenomePage from "../genome/[genomeId]/page";
+import ExperimentPage from "../experiment/[experimentId]/page";
 import StrainListPage from "../strain/page";
 
 beforeEach(() => { notFoundSpy.mockClear(); });
@@ -1358,6 +1472,14 @@ it("genome singular renders for a dotted id", async () => {
     searchParams: Promise.resolve({}),
   }));
   expect(screen.getByText(/Genome 59201\.7581/)).toBeInTheDocument();
+});
+
+it("experiment singular renders for an integer id", async () => {
+  render(await ExperimentPage({
+    params: Promise.resolve({ experimentId: "2000000" }),
+    searchParams: Promise.resolve({}),
+  }));
+  expect(screen.getByText(/Experiment 2000000/)).toBeInTheDocument();
 });
 
 it("strain list renders (list-only type)", async () => {
@@ -1404,9 +1526,9 @@ Per-segment substitutions for the list pages:
 | `domains-and-motifs/page.tsx` | `DomainsAndMotifsListPage` | `viewRegistry["domains-and-motifs"]` |
 | `experiment/page.tsx` | `ExperimentListPage` | `viewRegistry.experiment` |
 
-- [ ] **Step 4: Create the singular pages (5 segments with singulars)**
+- [ ] **Step 4: Create the singular pages (6 segments with singulars)**
 
-For each of `genome, feature, epitope, surveillance, serology`, create `src/app/(views)/<segment>/[<idParam>]/page.tsx`. Template (shown for `genome`):
+For each of `genome, feature, epitope, surveillance, serology, experiment`, create `src/app/(views)/<segment>/[<idParam>]/page.tsx`. Template (shown for `genome`):
 
 ```tsx
 // src/app/(views)/genome/[genomeId]/page.tsx
@@ -1435,6 +1557,7 @@ Per-segment substitutions for the singular pages:
 | `epitope/[epitopeId]/page.tsx` | `EpitopePage` | `epitopeId` | `viewRegistry.epitope` |
 | `surveillance/[sampleId]/page.tsx` | `SurveillancePage` | `sampleId` | `viewRegistry.surveillance` |
 | `serology/[sampleId]/page.tsx` | `SerologyPage` | `sampleId` | `viewRegistry.serology` |
+| `experiment/[experimentId]/page.tsx` | `ExperimentPage` | `experimentId` | `viewRegistry.experiment` |
 
 - [ ] **Step 5: Create the protein-structure dual-mode page**
 
@@ -1465,7 +1588,7 @@ export default async function ProteinStructurePage({ searchParams }: PageProps) 
 - [ ] **Step 6: Run the scaffold smoke test**
 
 Run: `pnpm test -- "src/app/(views)/__tests__/scaffold-routes.test.tsx"`
-Expected: PASS (3 assertions).
+Expected: PASS (4 assertions).
 
 - [ ] **Step 7: Typecheck + commit**
 

@@ -7,6 +7,8 @@ export interface CollectionStateOptions<Sort extends string = string> {
   /** Filters that remain active and serialized alongside explicit structural RQL. */
   independentFilters?: readonly string[];
   filterFieldMap?: Readonly<Record<string, string>>;
+  /** Accept legacy `filter=<RQL>` URLs and canonicalize them to `rql`. */
+  legacyRqlFilter?: boolean;
 }
 
 export interface CollectionState<Sort extends string = string> {
@@ -69,6 +71,16 @@ function parseSort<Sort extends string>(
     : options.defaultSort;
 }
 
+export function consumesLegacyRqlFilter<Sort extends string>(
+  params: SearchParamsRecord,
+  options: CollectionStateOptions<Sort>,
+): boolean {
+  if (!options.legacyRqlFilter || optionalValue(params, "rql") !== undefined) {
+    return false;
+  }
+  return optionalValue(params, "filter")?.includes("(") === true;
+}
+
 /** Parse and validate the URL-owned portion of collection state. */
 export function parseCollectionState<Sort extends string>(
   params: SearchParamsRecord,
@@ -76,7 +88,10 @@ export function parseCollectionState<Sort extends string>(
 ): CollectionState<Sort> {
   const keyword = optionalValue(params, "keyword");
   const refine = optionalValue(params, "refine");
-  const rql = optionalValue(params, "rql");
+  const canonicalRql = optionalValue(params, "rql");
+  const rql = consumesLegacyRqlFilter(params, options)
+    ? optionalValue(params, "filter")
+    : canonicalRql;
   const rawSort = optionalValue(params, "sort", true);
   const sort = parseSort(rawSort ?? options.defaultSort, options);
   const filters: Record<string, string[]> = {};
@@ -239,6 +254,7 @@ function mergeWithUnrelatedParams<Sort extends string>(
   const managed = new Set([
     ...managedParams,
     ...(options.friendlyFilters ?? []),
+    ...(consumesLegacyRqlFilter(source, options) ? ["filter"] : []),
   ]);
   for (const [name, value] of Object.entries(source)) {
     if (managed.has(name) || value === undefined) continue;

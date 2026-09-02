@@ -265,6 +265,32 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.getByTestId("detail")).toHaveTextContent("E. coli fixture");
   });
 
+  it("preserves collection errors and supports retry", async () => {
+    const user = userEvent.setup();
+    const refetch = vi.fn();
+    const message = "Genome service unavailable";
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      error: new Error(message),
+      refetch,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(message);
+
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+    expect(refetch).toHaveBeenCalledOnce();
+  });
+
   it("projects row links and opens the Genome action in a new tab", async () => {
     const user = userEvent.setup();
     const open = vi.fn();
@@ -619,7 +645,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     ).toBeVisible();
   });
 
-  it("surfaces full-detail errors instead of showing a partial row", () => {
+  it("shows full-detail errors instead of a partial row", () => {
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
       detailError: new Error("Genome detail service unavailable"),
@@ -693,7 +719,7 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
     const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(initialHookOptions?.state.keyword).toBe("coli");
+    expect(initialHookOptions?.state.keyword).toBeUndefined();
 
     await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
 
@@ -706,7 +732,9 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.pageIndex).toBe(0);
     expect(onStateChange).not.toHaveBeenCalled();
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBe("coli");
+    expect(hookOptions?.state.keyword).toBeUndefined();
+    hookOptions?.onStateChange({ ...state, keyword: undefined, page: 4 });
+    expect(onStateChange).toHaveBeenCalledWith({ ...state, page: 4 });
 
     await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
 
@@ -715,7 +743,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     });
     expect(dataTableProps.totalItems).toBe(2);
     expect(dataTableProps.pageIndex).toBe(2);
-    expect(onStateChange).not.toHaveBeenCalled();
+    expect(onStateChange).toHaveBeenCalledTimes(1);
   });
 
   it("refines the server query while preserving the primary keyword in URL state", async () => {
@@ -840,7 +868,7 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     expect(exportAll).toHaveBeenCalledWith("genome", {
       rql: "eq(genome_status,Complete)",
-      keyword: "coli",
+      keyword: undefined,
       fields: genomeCollectionProfile.columns.map((column) => column.id),
       sort: { field: "genome_length", direction: "desc" },
     });
@@ -898,7 +926,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.totalItems).toBe(0);
   });
 
-  it("keeps the server keyword separate from the loaded-row filter", () => {
+  it("omits the URL keyword from loaded-mode collection requests", () => {
     render(
       <ResourceCollection
         profile={genomeCollectionProfile}
@@ -911,7 +939,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
 
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBe("coli");
+    expect(hookOptions?.state.keyword).toBeUndefined();
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
   });
 
@@ -971,8 +999,11 @@ describe("ResourceCollection Genome integration contracts", () => {
     });
   });
 
-  it("makes export failures visible while preserving the original message", async () => {
+  it("makes export failures visible without exposing diagnostics", async () => {
     const error = new Error("Genome export service unavailable");
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
     const data = repository(Promise.reject(error));
     render(
       <ResourceCollection
@@ -994,9 +1025,15 @@ describe("ResourceCollection Genome integration contracts", () => {
     });
     await waitFor(() =>
       expect(
-        screen.getByText("Genome export service unavailable"),
+        screen.getByText(
+          "The requested export could not be created. Please try again.",
+        ),
       ).toBeVisible(),
     );
+    expect(
+      screen.queryByText("Genome export service unavailable"),
+    ).not.toBeInTheDocument();
+    expect(consoleError).toHaveBeenCalledWith("Resource export failed:", error);
     expect(screen.getByText("Could not export genomes")).toBeVisible();
   });
 });

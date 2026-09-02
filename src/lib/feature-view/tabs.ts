@@ -12,7 +12,9 @@ export const featureTabKeys = [
 ] as const;
 export type FeatureTab = (typeof featureTabKeys)[number];
 
-export function parseFeatureTab(value: string | string[] | undefined): FeatureTab {
+export function parseFeatureTab(
+  value: string | string[] | undefined,
+): FeatureTab {
   const tab = Array.isArray(value) ? value[0] : value;
   return featureTabKeys.includes(tab as FeatureTab)
     ? (tab as FeatureTab)
@@ -35,7 +37,8 @@ export function buildFeatureTabs(
       key: "compare-region",
       label: "Compare Region Viewer",
       enabled: false,
-      disabledReason: "A supported compare-region data contract is not yet available.",
+      disabledReason:
+        "A supported compare-region data contract is not yet available.",
     },
     {
       key: "transcriptomics",
@@ -44,12 +47,7 @@ export function buildFeatureTabs(
       disabledReason: "Feature-scoped transcriptomics is not yet available.",
     },
     { key: "interactions", label: "Interactions", enabled: hasInteractionId },
-    {
-      key: "domains",
-      label: "Domains and Motifs",
-      enabled: false,
-      disabledReason: "The Domains and Motifs view is not yet implemented.",
-    },
+    { key: "domains", label: "Domains and Motifs" },
     {
       key: "structures",
       label: "Protein Structures",
@@ -64,7 +62,8 @@ export function canonicalFeatureTab(
   feature: FeatureViewRecord,
 ): FeatureTab {
   const tab = parseFeatureTab(requested);
-  return buildFeatureTabs(feature).find((item) => item.key === tab)?.enabled === false
+  return buildFeatureTabs(feature).find((item) => item.key === tab)?.enabled ===
+    false
     ? "overview"
     : tab;
 }

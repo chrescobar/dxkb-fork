@@ -693,7 +693,7 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
     const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(initialHookOptions?.state.keyword).toBe("coli");
+    expect(initialHookOptions?.state.keyword).toBeUndefined();
 
     await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
 
@@ -706,7 +706,9 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.pageIndex).toBe(0);
     expect(onStateChange).not.toHaveBeenCalled();
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBe("coli");
+    expect(hookOptions?.state.keyword).toBeUndefined();
+    hookOptions?.onStateChange({ ...state, keyword: undefined, page: 4 });
+    expect(onStateChange).toHaveBeenCalledWith({ ...state, page: 4 });
 
     await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
 
@@ -715,7 +717,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     });
     expect(dataTableProps.totalItems).toBe(2);
     expect(dataTableProps.pageIndex).toBe(2);
-    expect(onStateChange).not.toHaveBeenCalled();
+    expect(onStateChange).toHaveBeenCalledTimes(1);
   });
 
   it("refines the server query while preserving the primary keyword in URL state", async () => {
@@ -840,7 +842,7 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     expect(exportAll).toHaveBeenCalledWith("genome", {
       rql: "eq(genome_status,Complete)",
-      keyword: "coli",
+      keyword: undefined,
       fields: genomeCollectionProfile.columns.map((column) => column.id),
       sort: { field: "genome_length", direction: "desc" },
     });
@@ -898,7 +900,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(dataTableProps.totalItems).toBe(0);
   });
 
-  it("keeps the server keyword separate from the loaded-row filter", () => {
+  it("omits the URL keyword from loaded-mode collection requests", () => {
     render(
       <ResourceCollection
         profile={genomeCollectionProfile}
@@ -911,7 +913,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
 
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
-    expect(hookOptions?.state.keyword).toBe("coli");
+    expect(hookOptions?.state.keyword).toBeUndefined();
     expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
   });
 

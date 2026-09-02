@@ -18,24 +18,18 @@ import ResultsOverview from "@/components/search/results-overview";
 import {
   allTermSearchTypes,
   labelsBySearchType,
+  searchHref,
 } from "@/constants/search-info";
 import {
-  domainsAndMotifsListHref,
   epitopeHref,
   epitopeIdFromRow,
-  epitopeListHref,
   featureHref,
   featureIdFromRow,
-  featureListHref,
   genomeHref,
-  genomeListHref,
   serologyHref,
   serologyIdFromRow,
-  serologyListHref,
-  strainListHref,
   surveillanceHref,
   surveillanceIdFromRow,
-  surveillanceListHref,
 } from "@/lib/views/hrefs";
 
 const bvbrcAPI = "https://p3.theseed.org/services/data_api/";
@@ -52,6 +46,17 @@ interface BVBRCAPIResponse {
 }
 
 type SearchResults = Record<string, BVBRCAPIResponse>;
+
+const allTermSearchTypesById = new Map(
+  allTermSearchTypes.map((searchType) => [searchType.id, searchType]),
+);
+
+function getSearchResultsHref(dataType: string, query: string): string | null {
+  const searchType = allTermSearchTypesById.get(dataType);
+  return searchType?.route.status === "canonical"
+    ? searchHref(searchType, query)
+    : null;
+}
 
 // ---- make this top-level (outside components) ----
 function processQuery(query: string) {
@@ -451,6 +456,7 @@ function SearchResultsContent({ query }: { query: string }) {
             {validResults.map(([dataType, data]) => {
               const docs = data.result.response.docs;
               const numFound = data.result.response.numFound;
+              const searchResultsHref = getSearchResultsHref(dataType, query);
 
               if (numFound === 0) return null;
 
@@ -463,32 +469,8 @@ function SearchResultsContent({ query }: { query: string }) {
                     <div className="flex items-center gap-2">
                       {getDataTypeIcon(dataType)}
                       <CardTitle className="text-xl font-semibold capitalize">
-                        {dataType === "genome" ||
-                        dataType === "genome_feature" ||
-                        dataType === "epitope" ||
-                        dataType === "surveillance" ||
-                        dataType === "serology" ||
-                        dataType === "strain" ||
-                        dataType === "protein_feature" ? (
-                          <Link
-                            href={
-                              dataType === "genome"
-                                ? genomeListHref({ keyword: query })
-                                : dataType === "genome_feature"
-                                  ? featureListHref({ keyword: query })
-                                  : dataType === "epitope"
-                                    ? epitopeListHref({ keyword: query })
-                                    : dataType === "surveillance"
-                                      ? surveillanceListHref({ keyword: query })
-                                      : dataType === "serology"
-                                        ? serologyListHref({ keyword: query })
-                                        : dataType === "strain"
-                                          ? strainListHref({ keyword: query })
-                                          : domainsAndMotifsListHref({
-                                              keyword: query,
-                                            })
-                            }
-                          >
+                        {searchResultsHref ? (
+                          <Link href={searchResultsHref}>
                             {labelsBySearchType[dataType]}
                           </Link>
                         ) : (

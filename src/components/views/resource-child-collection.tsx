@@ -65,7 +65,16 @@ interface ResourceChildCollectionProps {
   defaultSort: string;
 }
 
-export function ResourceChildCollection({
+export function ResourceChildCollection(props: ResourceChildCollectionProps) {
+  return (
+    <ScopedResourceChildCollection
+      key={`${props.resource}:${props.rql}`}
+      {...props}
+    />
+  );
+}
+
+function ScopedResourceChildCollection({
   resource,
   label,
   idField,
@@ -128,10 +137,13 @@ export function ResourceChildCollection({
               rql: exportRql ?? rql,
               keyword: state.keyword,
               fields: selectedFields,
-              sort: {
-                field: state.sort.split(":")[0],
-                direction: state.sort.endsWith(":desc") ? "desc" : "asc",
-              },
+              sort:
+                state.sort === "unsorted"
+                  ? undefined
+                  : {
+                      field: state.sort.split(":")[0],
+                      direction: state.sort.endsWith(":desc") ? "desc" : "asc",
+                    },
             });
         saveRows(result.rows, selectedFields, format, label.toLowerCase());
       }}

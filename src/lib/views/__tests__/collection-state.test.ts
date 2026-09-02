@@ -79,6 +79,31 @@ describe("collection URL state", () => {
     );
   });
 
+  it("canonicalizes an opted-in legacy RQL filter", () => {
+    const legacyOptions = {
+      ...options,
+      legacyRqlFilter: true,
+    } satisfies CollectionStateOptions;
+    const state = parseCollectionState(
+      { filter: "eq(public,true)" },
+      legacyOptions,
+    );
+
+    expect(state.rql).toBe("eq(public,true)");
+    expect(
+      parseCollectionState(
+        { rql: "eq(public,false)", filter: "eq(public,true)" },
+        legacyOptions,
+      ).rql,
+    ).toBe("eq(public,false)");
+    expect(
+      canonicalizeCollectionSearchParams(
+        { filter: "eq(public,true)" },
+        legacyOptions,
+      ).toString(),
+    ).toBe("rql=eq%28public%2Ctrue%29");
+  });
+
   it("maps multi-value friendly fields using OR within a field and AND across fields", () => {
     const state = parseCollectionState(
       { keyword: "coli", taxon_id: "2", host: ["human", "swine"] },

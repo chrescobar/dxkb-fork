@@ -16,6 +16,11 @@ describe("Domains and Motifs view contracts", () => {
       "Deprecated",
     );
     expect(proteinFeatureCollectionProfile.rowLinkField).toBe("patric_id");
+    expect(
+      proteinFeatureCollectionProfile.columns
+        .find((column) => column.id === "patric_id")
+        ?.fallbackValue?.({ feature_id: "fig|83332.12.peg.1" }),
+    ).toBe("fig|83332.12.peg.1");
     expect(proteinFeatureCollectionProfile.detailFields).toContain(
       "feature_id",
     );

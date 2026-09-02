@@ -94,6 +94,7 @@ export interface DataTableColumn {
   visible?: boolean;
   sortable?: boolean;
   href?: (row: DataTableRow) => string | undefined;
+  fallbackValue?: (row: DataTableRow) => unknown;
   valueHref?: string;
 }
 
@@ -268,7 +269,8 @@ function createColumnDefs(columns: DataTableColumn[]) {
       header: column.label,
       cell: (info: CellContext<DataTableFeatures, DataRow>) => {
         const rawValue = info.getValue();
-        const value = formatCellValue(rawValue);
+        const displayValue = rawValue ?? column.fallbackValue?.(info.row.original);
+        const value = formatCellValue(displayValue);
         const href = column.href?.(info.row.original);
         const valueHref = column.valueHref;
         if (valueHref && Array.isArray(rawValue)) {

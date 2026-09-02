@@ -12,6 +12,8 @@ function tableColumn(definition: DataField): DataTableColumn {
     label: definition.label,
     visible: !definition.hidden,
     sortable: definition.sortable ?? true,
+    fallbackValue:
+      definition.field === "patric_id" ? (row) => row.feature_id : undefined,
     valueHref: definition.link,
   };
 }

@@ -46,7 +46,7 @@ test.describe("taxon strains tab: data API error handling", () => {
 // With 200 rows, the URL exceeded browser limits. The shared collection sends a
 // bounded JSON POST through the same-origin Data API gateway instead.
 
-const DOMAINS_TAXON_ID = "11974";
+const domainsTaxonId = "11974";
 
 function buildProteinFeatureRows(count: number) {
   return Array.from({ length: count }, (_, i) => ({
@@ -101,7 +101,7 @@ test.describe("taxon data table: checkbox-column selection", () => {
       });
     });
 
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await page.goto(`/taxonomy/${domainsTaxonId}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({
       timeout: 10_000,
     });
@@ -144,7 +144,7 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
       (req) => pfGateway.test(req.url()) && req.method() === "POST",
     );
 
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await page.goto(`/taxonomy/${domainsTaxonId}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({
       timeout: 10_000,
     });
@@ -189,7 +189,7 @@ test.describe("taxon domains-and-motifs: Download Selected sends POST not GET", 
       (req) => pfGateway.test(req.url()) && req.method() === "POST",
     );
 
-    await page.goto(`/taxonomy/${DOMAINS_TAXON_ID}?tab=domains-and-motifs`);
+    await page.goto(`/taxonomy/${domainsTaxonId}?tab=domains-and-motifs`);
     await expect(page.getByText("mock-product-0")).toBeVisible({
       timeout: 10_000,
     });

@@ -19,6 +19,7 @@ import {
   type GenomeTab,
   type GenomeViewRecord,
 } from "@/lib/genome-view";
+import { proteinFeatureColumns } from "@/lib/protein-feature-view";
 import {
   featureColumns,
   genomeDomainsRql,
@@ -26,7 +27,6 @@ import {
   genomeProteinRql,
   genomeSequenceColumns,
   interactionColumns,
-  proteinFeatureColumns,
 } from "@/lib/views/child-resources";
 import { GenomeOverview } from "./genome-overview";
 

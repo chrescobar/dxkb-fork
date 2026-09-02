@@ -15,11 +15,11 @@ import {
   type FeatureTab,
   type FeatureViewRecord,
 } from "@/lib/feature-view";
+import { proteinFeatureColumns } from "@/lib/protein-feature-view";
 import {
   featureDomainsRql,
   featureInteractionsRql,
   interactionColumns,
-  proteinFeatureColumns,
 } from "@/lib/views/child-resources";
 import { genomeHref, taxonomyHref } from "@/lib/views/hrefs";
 import { FeatureOverview } from "./feature-overview";

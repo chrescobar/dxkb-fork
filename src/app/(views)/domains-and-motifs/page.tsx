@@ -9,11 +9,13 @@ export const metadata = {
   description: "Browse protein domains, motifs, and other protein features.",
 };
 
+interface DomainsAndMotifsPageProps {
+  searchParams: Promise<SearchParamsRecord>;
+}
+
 export default async function DomainsAndMotifsPage({
   searchParams,
-}: {
-  searchParams: Promise<SearchParamsRecord>;
-}) {
+}: DomainsAndMotifsPageProps) {
   const state = parseProteinFeatureCollectionState(await searchParams);
   return (
     <Suspense fallback={<DomainsAndMotifsLoading />}>

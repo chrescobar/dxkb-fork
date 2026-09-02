@@ -7,11 +7,13 @@ import {
 } from "@/components/views";
 import type { CollectionState } from "@/lib/views/collection-state";
 
+interface DomainsAndMotifsCollectionProps {
+  initialState: CollectionState;
+}
+
 export function DomainsAndMotifsCollection({
   initialState,
-}: {
-  initialState: CollectionState;
-}) {
+}: DomainsAndMotifsCollectionProps) {
   return (
     <EntityViewShell
       viewLabel="Domains and Motifs View"

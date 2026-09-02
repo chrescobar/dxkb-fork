@@ -125,6 +125,8 @@ export function ResourceCollection<Row extends DataTableRow>({
     refinementRql,
   );
   const effectiveRql = combinePredicates(structuralRql, state.rql);
+  const requestState =
+    keywordMode === "loaded" ? { ...state, keyword: undefined } : state;
   const collection = useResourceCollection({
     repository,
     resource: profile.resource,
@@ -134,8 +136,13 @@ export function ResourceCollection<Row extends DataTableRow>({
     facetFields: profile.facets?.map((facet) => facet.field),
     prefetchNextPage,
     structuralRql,
-    state,
-    onStateChange,
+    state: requestState,
+    onStateChange:
+      keywordMode === "loaded"
+        ? (nextState) => {
+            onStateChange({ ...nextState, keyword: state.keyword });
+          }
+        : onStateChange,
   });
   const columns = profile.columns.map((column) =>
     enableRowLinks &&
@@ -214,7 +221,7 @@ export function ResourceCollection<Row extends DataTableRow>({
           })
         : await repository.exportAll(profile.resource, {
             rql: effectiveRql,
-            keyword: state.keyword,
+            keyword: requestState.keyword,
             fields: hasLoadedKeyword ? allFields : selectedFields,
             sort:
               state.sort === "unsorted"

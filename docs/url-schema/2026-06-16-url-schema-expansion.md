@@ -116,6 +116,8 @@ export interface ViewTypeEntry {
   legacySingular?: string;
   /** Legacy BV-BRC list view name, e.g. "GenomeList" (redirect source). */
   legacyList?: string;
+  /** Additional confirmed legacy list names for the same canonical route. */
+  legacyListAliases?: readonly string[];
   /** searchtype id from constants/searchInfo.ts (for the deferred search repoint). */
   searchType?: string;
   /** Omitted ⇒ list-only type (strain, domains-and-motifs, experiment). */
@@ -156,6 +158,7 @@ Default tabs are taken from `docs/url-schema/bvbrc-view-types-url-parameters.md`
 
 ```ts
 // src/lib/views/__tests__/view-registry.test.ts
+import type { ViewRegistry } from "../view-types";
 import { viewRegistry, viewSegments, legacyToSegment } from "../view-registry";
 
 describe("viewRegistry", () => {
@@ -184,19 +187,22 @@ describe("viewRegistry", () => {
   });
 
   it("maps every legacy name to a unique existing segment", () => {
-    const names = Object.values(viewRegistry).flatMap((e) =>
-      [e.legacySingular, e.legacyList].filter(Boolean) as string[],
+    const names = Object.values(viewRegistry as ViewRegistry).flatMap((e) =>
+      [e.legacySingular, e.legacyList, ...(e.legacyListAliases ?? [])].filter(
+        Boolean,
+      ) as string[],
     );
     expect(new Set(names).size).toBe(names.length); // unique
     for (const name of names) {
       expect(legacyToSegment[name]).toBeDefined();
-      expect(viewRegistry[legacyToSegment[name]]).toBeDefined();
+      expect((viewRegistry as ViewRegistry)[legacyToSegment[name]]).toBeDefined();
     }
   });
 
   it("reverse-maps a known legacy name", () => {
     expect(legacyToSegment.GenomeList).toBe("genome");
     expect(legacyToSegment.Taxonomy).toBe("taxonomy");
+    expect(legacyToSegment.ProteinFeaturesList).toBe("domains-and-motifs");
   });
 });
 ```
@@ -305,7 +311,7 @@ export const viewSegments = Object.keys(viewRegistry);
 /** Legacy BV-BRC view name → new segment. Derived so it cannot drift from routes. */
 export const legacyToSegment: Record<string, string> = Object.fromEntries(
   Object.values(viewRegistry as ViewRegistry).flatMap((entry: ViewTypeEntry) =>
-    [entry.legacySingular, entry.legacyList]
+    [entry.legacySingular, entry.legacyList, ...(entry.legacyListAliases ?? [])]
       .filter((name): name is string => Boolean(name))
       .map((name) => [name, entry.segment]),
   ),
@@ -315,7 +321,7 @@ export const legacyToSegment: Record<string, string> = Object.fromEntries(
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `pnpm test -- src/lib/views/__tests__/view-registry.test.ts`
-Expected: PASS (all 7 assertions).
+Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
@@ -532,6 +538,17 @@ describe("mapLegacyViewPath", () => {
       search: "rql=eq(taxon_lineage_ids%2C1763)",
     });
   });
+  it("maps a legacy list alias to its canonical segment", () => {
+    expect(
+      mapLegacyViewPath(
+        "/view/ProteinFeaturesList/",
+        "feature_id=fig%7C83332.12.peg.1",
+      ),
+    ).toEqual({
+      pathname: "/domains-and-motifs",
+      search: "feature_id=fig%7C83332.12.peg.1",
+    });
+  });
   it("preserves a named query param (surveillance)", () => {
     expect(
       mapLegacyViewPath("/view/Surveillance/ISDN123456", "pathogen_test_type=Influenza%20A"),
@@ -559,6 +576,7 @@ Expected: FAIL — cannot find module `../legacy-redirect`.
 ```ts
 // src/lib/views/legacy-redirect.ts
 import { legacyToSegment, viewRegistry } from "./view-registry";
+import type { ViewRegistry } from "./view-types";
 
 export interface MappedPath {
   pathname: string;
@@ -578,9 +596,10 @@ export function mapLegacyViewPath(pathname: string, rawSearch: string): MappedPa
   const segment = legacyToSegment[legacyName];
   if (!segment) return null;
 
-  const entry = viewRegistry[segment];
+  const entry = (viewRegistry as ViewRegistry)[segment];
   const idParts = parts.slice(2); // remaining path segments after the view name
-  const isList = legacyName === entry.legacyList;
+  const isList =
+    legacyName === entry.legacyList || entry.legacyListAliases?.includes(legacyName);
 
   if (isList || idParts.length === 0) {
     // List view: the legacy raw query string is an RQL expression (if present).

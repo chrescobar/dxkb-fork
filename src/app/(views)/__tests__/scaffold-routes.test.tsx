@@ -105,6 +105,33 @@ it("domains and motifs parses canonical list state", async () => {
   );
 });
 
+it("domains and motifs preserves a legacy RQL filter", async () => {
+  render(
+    await DomainsAndMotifsPage({
+      searchParams: Promise.resolve({
+        filter: "eq(source,InterPro)",
+      }),
+    }),
+  );
+  expect(screen.getByTestId("domains-collection")).toHaveTextContent(
+    '"rql":"eq(source,InterPro)"',
+  );
+});
+
+it("domains and motifs prefers canonical RQL over a legacy filter", async () => {
+  render(
+    await DomainsAndMotifsPage({
+      searchParams: Promise.resolve({
+        rql: "eq(source,CDD)",
+        filter: "eq(source,InterPro)",
+      }),
+    }),
+  );
+  expect(screen.getByTestId("domains-collection")).toHaveTextContent(
+    '"rql":"eq(source,CDD)"',
+  );
+});
+
 it("genome singular calls notFound for an empty id", async () => {
   await expect(
     GenomePage({

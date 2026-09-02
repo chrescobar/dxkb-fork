@@ -22,6 +22,7 @@ export const proteinFeatureCollectionOptions: CollectionStateOptions = {
   defaultSort: "unsorted",
   sortAllowlist: ["unsorted", ...proteinFeatureSorts],
   friendlyFilters: ["genome_id", "feature_id", ...facetFields],
+  legacyRqlFilter: true,
 };
 
 export function parseProteinFeatureCollectionState(

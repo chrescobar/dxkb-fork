@@ -76,7 +76,7 @@ explicitly with `notFound()` instead (see §2.4).
 | -------------------- | -------------------------------- | --------------------- | ---------------------------------------- | ------- | --------------------------------------- |
 | `taxonomy`           | `/taxonomy/{taxonId}`            | `/taxonomy`           | NCBI taxon id                            | int     | Taxonomy / TaxonList                    |
 | `genome`             | `/genome/{genomeId}`             | `/genome`             | BV-BRC genome id (`59201.7581`)          | string  | Genome / GenomeList                     |
-| `feature`            | `/feature/{featureId}`           | `/feature`            | PATRIC feature id                        | string  | Feature / FeatureList                   |
+| `feature`            | `/feature/{featureId}`           | `/feature`            | PATRIC feature id                        | string  | Feature, Protein / FeatureList, ProteinList |
 | `epitope`            | `/epitope/{epitopeId}`           | `/epitope`            | epitope id                               | string  | Epitope / EpitopeList                   |
 | `surveillance`       | `/surveillance/{sampleId}`       | `/surveillance`       | sample identifier                        | string  | Surveillance / SurveillanceList         |
 | `serology`           | `/serology/{sampleId}`           | `/serology`           | sample identifier                        | string  | Serology / SerologyList                 |

@@ -1,0 +1,144 @@
+src/components/views/strain-resource-collection.tsx
+  s_5d594922275ce0::t_d735f3113a7011 1-59
+src/lib/strain-view/schema.ts
+  s_5d594922275ce0::t_d11adbfaa608d9 1-28
+src/lib/data-api/resources.ts
+  s_5d594922275ce0::t_64a754acec63c2 123-140
+  s_5d594922275ce0::t_ff5fa2aba6256d 192
+  s_5d594922275ce0::t_f236c9a077f0c2 193-194
+src/lib/views/hrefs.ts
+  s_5d594922275ce0::t_d12b324487f237 175-186
+  s_5d594922275ce0::t_f236c9a077f0c2 63-64,92-93
+  s_5d594922275ce0::t_cfbd993d87c10d 164-174,187-190
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_5d594922275ce0::t_05b0e563be1075 370
+  s_5d594922275ce0::t_2ce995524140c3 114-131
+  s_5d594922275ce0::t_22583817153a5a 172,174-178
+src/app/(views)/strain/error.tsx
+  s_5d594922275ce0::t_dd40564b0e318e 1-12,14-16,18-23
+  s_5d594922275ce0::t_9996af215b53b0 13,17
+src/constants/search-info.ts
+  s_5d594922275ce0::t_aee735a6d19e7c 72
+src/app/(views)/__tests__/scaffold-routes.test.tsx
+  s_5d594922275ce0::t_b317bee12a4215 57,60-64,67-73
+  s_5d594922275ce0::t_968f59ba2ef2d5 25-30
+src/components/views/index.ts
+  s_5d594922275ce0::t_5c74e6fda33495 9
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_5d594922275ce0::t_75a776d441bd8a 92-119
+docs/architecture.md
+  s_5d594922275ce0::t_d4d1714f672598 78
+  s_5d594922275ce0::t_f37584329def3e 83
+src/constants/resources.ts
+  s_5d594922275ce0::t_7a105a97af124e 7
+src/components/detail-panel/info-panel.tsx
+  s_5d594922275ce0::t_b2c9e494d76dd8 20
+  s_5d594922275ce0::t_24493f3cbb05f8 793-807,813-817
+  s_5d594922275ce0::t_f236c9a077f0c2 887
+  s_5d594922275ce0::t_eb8dbc1a639a91 895-896
+  s_5d594922275ce0::t_16c1d59b7faf41 897-909,911-939
+  s_5d594922275ce0::t_f22aa802238d59 910
+e2e/fixtures/overrides/catchall.ts
+  s_5d594922275ce0::t_f35a8a9bf3b121 86-120
+  s_5d594922275ce0::t_d752fe16bc8557 219-257
+src/lib/data-api/__tests__/repository.test.ts
+  s_5d594922275ce0::t_bfd353129591a9 73,79-85
+  s_5d594922275ce0::t_3670cd5c93ac27 57-64
+  s_5d594922275ce0::t_82dc9fb5354c3f 52-56,65-72,74-78,86-87
+  s_5d594922275ce0::t_fbadaf84bb87c1 91-93,170-182
+src/constants/datafields/strain.ts
+  s_5d594922275ce0::t_8011d06ce1bcff 4-353
+src/components/organisms/taxon-views/strains.tsx
+  s_5d594922275ce0::t_e7679edee2df9f 1,7-10
+src/constants/search-info.test.ts
+  s_5d594922275ce0::t_3f928d3890a4e2 24-25
+  s_5d594922275ce0::t_6140c9c7eb14bb 30-32
+src/lib/data-api/__tests__/validation.test.ts
+  s_5d594922275ce0::t_f236c9a077f0c2 42-44,48-50,63-65,82-87,91-104,204-206
+  s_5d594922275ce0::t_1120b290f917ba 11
+  s_5d594922275ce0::t_8baefd82f7f925 53-62,66-76
+  s_5d594922275ce0::t_da6f943a4f5237 51-52
+e2e/a11y/routes.ts
+  s_5d594922275ce0::t_f843c4693e5709 326
+  s_5d594922275ce0::t_fbadaf84bb87c1 328-331
+  s_5d594922275ce0::t_2438e64b37fd22 322-323,325
+src/components/detail-panel/__tests__/info-panel-search.test.tsx
+  s_5d594922275ce0::t_b76a4bd292ba05 75-106
+  s_5d594922275ce0::t_86f29a2d8e5439 11,31,124-126
+src/app/all-term-search-results.tsx
+  s_5d594922275ce0::t_c2d11bb595c4cd 481-483
+  s_5d594922275ce0::t_f2867682ec3a4f 34
+  s_5d594922275ce0::t_ba2b037d186210 469-470
+  s_5d594922275ce0::t_f236c9a077f0c2 459,493
+src/lib/data-api/repository.ts
+  s_5d594922275ce0::t_cbdf31d0c3f2cd 255
+  s_5d594922275ce0::t_1c3baba545f753 345
+  s_5d594922275ce0::t_1217c834736bf6 64-65,67-68,70-81,85
+  s_5d594922275ce0::t_162770631dc7bd 222
+  s_5d594922275ce0::t_f112a07203cba0 319-320,327
+  s_5d594922275ce0::t_273070872aa4bf 82-84,257-262,321-326
+  s_5d594922275ce0::t_7f2ddb167fe176 66,69
+  s_5d594922275ce0::t_49cb177c514d9b 309
+  s_5d594922275ce0::t_8ddf41bdf901be 283,285-291
+  s_5d594922275ce0::t_1985302f9e6690 356-359
+src/lib/strain-view/profile.ts
+  s_5d594922275ce0::t_f236c9a077f0c2 55-68
+  s_5d594922275ce0::t_3c337a0257e372 8-24,30-37
+  s_5d594922275ce0::t_e6d45d1a24f606 1-7,25-29,38-54
+src/lib/strain-view/index.ts
+  s_5d594922275ce0::t_40ac517fd828ad 1-3
+src/components/shared/data-table.tsx
+  s_5d594922275ce0::t_755b9a205e8d8a 270-271,275-281,283-297
+  s_5d594922275ce0::t_b5a7528a4dd117 97
+  s_5d594922275ce0::t_d351900739c6fd 273-274,282
+  s_5d594922275ce0::t_f236c9a077f0c2 301,1049,1057,1063,1088,1101,1118,1131,1143,1157,1193,1223,1364,1412,1441,1460,1520,1526,1552,1641,1777
+src/lib/data-api/schemas.ts
+  s_5d594922275ce0::t_b349754ec0dc62 79-95,99-100
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_5d594922275ce0::t_3f71032c112556 13
+  s_5d594922275ce0::t_86f29a2d8e5439 1-6,32-33,71-72,75-77,90-92,103-105,107-112,128-130,136-140,155-157,159-164,166-168,179-181,186-190,202-204,206-211,233-235,240-244,257-258,268-270,275-277,279-287,329-344,348-353,364-367,373-375,380-387,394-399,402-403,407-409,414-421,425-430,439-441,475-477
+  s_5d594922275ce0::t_14b62076ea09b5 36-38
+  s_5d594922275ce0::t_200b1945590a67 31,39
+src/app/(views)/strain/strain-collection.tsx
+  s_5d594922275ce0::t_9996af215b53b0 21-24
+  s_5d594922275ce0::t_9c2c7816ca9185 1-20,25-27
+src/lib/strain-view/query.ts
+  s_5d594922275ce0::t_4173ac4f95b48a 1-11,30-31,38-63,67-68,74-77
+  s_5d594922275ce0::t_f236c9a077f0c2 64-66,69-73
+  s_5d594922275ce0::t_b664768107651c 12-29,32-37
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_5d594922275ce0::t_8a1bebc2bd25b5 49-55
+  s_5d594922275ce0::t_f236c9a077f0c2 11-16,19-21,28-31,61-63,70-75,89-94,101-104,107
+src/lib/views/view-registry.ts
+  s_5d594922275ce0::t_273070872aa4bf 19-23,32-36,47-56,64-73,82-86,95-99,106-110,117-121,130-134,142-151,168-171,174-181
+src/app/(views)/strain/loading.tsx
+  s_5d594922275ce0::t_c097a2a4240c12 1-15
+src/app/(views)/strain/page.tsx
+  s_5d594922275ce0::t_c623e936ac1262 1-5,7-26
+src/lib/strain-view/__tests__/strain-view.test.ts
+  s_5d594922275ce0::t_5fc5b72cf78213 1-48,52-75,79-95
+  s_5d594922275ce0::t_f236c9a077f0c2 49-51,76-78
+src/lib/views/__tests__/hrefs.test.ts
+  s_5d594922275ce0::t_0b5cb8490418b3 118-123
+  s_5d594922275ce0::t_f236c9a077f0c2 37-42,117,124,130-135,142-144,152-157
+  s_5d594922275ce0::t_a3e0e2ab72c993 14
+  s_5d594922275ce0::t_d38cd611ff410d 105-116,125-127
+e2e/a11y/baseline.generated.ts
+  s_5d594922275ce0::t_68d7abb54f5178 74,78-85,88-90,103-107,109,111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "6e7c725e50930ebf6ff6ae55993cd6a96ba947ce",
+  "prompts": {},
+  "sessions": {
+    "s_5d594922275ce0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa0b0af61ffeJRyfx72Me0ffPe",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

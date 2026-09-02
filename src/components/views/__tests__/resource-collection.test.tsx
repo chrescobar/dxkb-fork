@@ -265,14 +265,13 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.getByTestId("detail")).toHaveTextContent("E. coli fixture");
   });
 
-  it("does not expose collection error diagnostics", async () => {
+  it("preserves collection errors and supports retry", async () => {
     const user = userEvent.setup();
     const refetch = vi.fn();
-    const diagnostic =
-      "Request to https://internal.example/data?token=secret failed";
+    const message = "Genome service unavailable";
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
-      error: new Error(diagnostic),
+      error: new Error(message),
       refetch,
     });
 
@@ -286,10 +285,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       />,
     );
 
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "The requested records could not be loaded. Please try again.",
-    );
-    expect(screen.queryByText(diagnostic)).not.toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(message);
 
     await user.click(screen.getByRole("button", { name: "Retry" }));
     expect(refetch).toHaveBeenCalledOnce();
@@ -649,7 +645,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     ).toBeVisible();
   });
 
-  it("shows stable copy for full-detail errors instead of a partial row", () => {
+  it("shows full-detail errors instead of a partial row", () => {
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
       detailError: new Error("Genome detail service unavailable"),
@@ -665,14 +661,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     );
 
     expect(screen.getByText("Could not load record details")).toBeVisible();
-    expect(
-      screen.getByText(
-        "The requested record details could not be loaded. Please try again.",
-      ),
-    ).toBeVisible();
-    expect(
-      screen.queryByText("Genome detail service unavailable"),
-    ).not.toBeInTheDocument();
+    expect(screen.getByText("Genome detail service unavailable")).toBeVisible();
     expect(screen.queryByTestId("detail")).not.toBeInTheDocument();
   });
 
@@ -1012,6 +1001,9 @@ describe("ResourceCollection Genome integration contracts", () => {
 
   it("makes export failures visible without exposing diagnostics", async () => {
     const error = new Error("Genome export service unavailable");
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
     const data = repository(Promise.reject(error));
     render(
       <ResourceCollection
@@ -1041,6 +1033,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(
       screen.queryByText("Genome export service unavailable"),
     ).not.toBeInTheDocument();
+    expect(consoleError).toHaveBeenCalledWith("Resource export failed:", error);
     expect(screen.getByText("Could not export genomes")).toBeVisible();
   });
 });

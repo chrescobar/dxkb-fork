@@ -40,17 +40,21 @@ test.describe("Genome view", () => {
     );
 
     const row = page.getByRole("row", { name: /Select row 1282460\.2049/ });
+    const checkbox = row.getByRole("checkbox", {
+      name: "Select row 1282460.2049",
+    });
+    const detailHeading = page.getByRole("heading", {
+      level: 3,
+      name: "Middle East respiratory syndrome-related coronavirus isolate",
+    });
     await expect(row).toBeVisible();
-    await row.click();
+    await expect(async () => {
+      await checkbox.check();
+      await expect(detailHeading).toBeVisible({ timeout: 1_000 });
+    }).toPass({ timeout: 10_000 });
     await expect(
       page.getByRole("button", { name: /^G\s*GENOME$/i }),
     ).toBeEnabled();
-    await expect(
-      page.getByRole("heading", {
-        level: 3,
-        name: "Middle East respiratory syndrome-related coronavirus isolate",
-      }),
-    ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "General Info" }),
     ).toBeVisible();

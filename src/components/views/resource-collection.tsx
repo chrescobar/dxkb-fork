@@ -243,7 +243,8 @@ export function ResourceCollection<Row extends DataTableRow>({
         selectedFields,
         format,
       );
-    } catch {
+    } catch (error) {
+      console.error("Resource export failed:", error);
       setExportError("The requested export could not be created. Please try again.");
     }
   };
@@ -255,7 +256,9 @@ export function ResourceCollection<Row extends DataTableRow>({
           <Alert variant="destructive" className="m-4">
             <AlertTitle>Could not load record details</AlertTitle>
             <AlertDescription>
-              The requested record details could not be loaded. Please try again.
+              {collection.detailError instanceof Error
+                ? collection.detailError.message
+                : String(collection.detailError)}
             </AlertDescription>
           </Alert>
         ) : renderDetail && displayedDetail ? (
@@ -362,7 +365,11 @@ export function ResourceCollection<Row extends DataTableRow>({
         <Alert variant="destructive">
           <AlertTitle>Could not load {profile.label.toLowerCase()}</AlertTitle>
           <AlertDescription>
-            <p>The requested records could not be loaded. Please try again.</p>
+            <p>
+              {collection.error instanceof Error
+                ? collection.error.message
+                : String(collection.error)}
+            </p>
             <Button
               variant="outline"
               size="sm"

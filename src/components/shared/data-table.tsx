@@ -298,13 +298,13 @@ function createColumnDefs(columns: DataTableColumn[]) {
         }
         const scalarValueHref =
           valueHref &&
-          (typeof rawValue === "string" ||
-            typeof rawValue === "number" ||
-            typeof rawValue === "bigint" ||
-            typeof rawValue === "boolean")
+          (typeof displayValue === "string" ||
+            typeof displayValue === "number" ||
+            typeof displayValue === "bigint" ||
+            typeof displayValue === "boolean")
             ? valueHref.replace(
                 "{value}",
-                encodeURIComponent(String(rawValue)),
+                encodeURIComponent(String(displayValue)),
               )
             : undefined;
         const cellHref = scalarValueHref ?? href;

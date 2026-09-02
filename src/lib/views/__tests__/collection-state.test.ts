@@ -104,6 +104,26 @@ describe("collection URL state", () => {
     ).toBe("rql=eq%28public%2Ctrue%29");
   });
 
+  it("preserves an opted-in filter that is not consumed as legacy RQL", () => {
+    const legacyOptions = {
+      ...options,
+      legacyRqlFilter: true,
+    } satisfies CollectionStateOptions;
+
+    expect(
+      canonicalizeCollectionSearchParams(
+        { filter: "protein", tab: "details" },
+        legacyOptions,
+      ).toString(),
+    ).toBe("filter=protein&tab=details");
+    expect(
+      canonicalizeCollectionSearchParams(
+        { rql: "eq(public,false)", filter: "eq(public,true)" },
+        legacyOptions,
+      ).toString(),
+    ).toBe("filter=eq%28public%2Ctrue%29&rql=eq%28public%2Cfalse%29");
+  });
+
   it("maps multi-value friendly fields using OR within a field and AND across fields", () => {
     const state = parseCollectionState(
       { keyword: "coli", taxon_id: "2", host: ["human", "swine"] },

@@ -71,6 +71,16 @@ function parseSort<Sort extends string>(
     : options.defaultSort;
 }
 
+export function consumesLegacyRqlFilter<Sort extends string>(
+  params: SearchParamsRecord,
+  options: CollectionStateOptions<Sort>,
+): boolean {
+  if (!options.legacyRqlFilter || optionalValue(params, "rql") !== undefined) {
+    return false;
+  }
+  return optionalValue(params, "filter")?.includes("(") === true;
+}
+
 /** Parse and validate the URL-owned portion of collection state. */
 export function parseCollectionState<Sort extends string>(
   params: SearchParamsRecord,
@@ -79,12 +89,9 @@ export function parseCollectionState<Sort extends string>(
   const keyword = optionalValue(params, "keyword");
   const refine = optionalValue(params, "refine");
   const canonicalRql = optionalValue(params, "rql");
-  const legacyFilter = options.legacyRqlFilter
+  const rql = consumesLegacyRqlFilter(params, options)
     ? optionalValue(params, "filter")
-    : undefined;
-  const rql =
-    canonicalRql ??
-    (legacyFilter?.includes("(") ? legacyFilter : undefined);
+    : canonicalRql;
   const rawSort = optionalValue(params, "sort", true);
   const sort = parseSort(rawSort ?? options.defaultSort, options);
   const filters: Record<string, string[]> = {};
@@ -247,7 +254,7 @@ function mergeWithUnrelatedParams<Sort extends string>(
   const managed = new Set([
     ...managedParams,
     ...(options.friendlyFilters ?? []),
-    ...(options.legacyRqlFilter ? ["filter"] : []),
+    ...(consumesLegacyRqlFilter(source, options) ? ["filter"] : []),
   ]);
   for (const [name, value] of Object.entries(source)) {
     if (managed.has(name) || value === undefined) continue;

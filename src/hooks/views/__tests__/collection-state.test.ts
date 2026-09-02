@@ -1,9 +1,24 @@
+import { act, renderHook } from "@testing-library/react";
 import {
   parseCollectionState,
   resourceCollectionPageSize,
   serializeCollectionState,
   updateCollectionSearchParams,
 } from "../collection-state";
+import { useCollectionUrlState } from "../use-collection-url-state";
+
+const navigation = vi.hoisted(() => ({
+  pathname: "/protein-feature",
+  push: vi.fn(),
+  replace: vi.fn(),
+  searchParams: new URLSearchParams(),
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => navigation.pathname,
+  useRouter: () => ({ push: navigation.push, replace: navigation.replace }),
+  useSearchParams: () => navigation.searchParams,
+}));
 
 const options = {
   defaultSort: "name:asc",
@@ -49,5 +64,42 @@ describe("view collection state exports", () => {
         options,
       ).toString(),
     ).toBe("tab=details&host=swine");
+  });
+
+  it("removes an opted-in legacy RQL filter during an immediate update", () => {
+    navigation.searchParams = new URLSearchParams(
+      "filter=eq%28public%2Ctrue%29&tab=details",
+    );
+    const legacyOptions = { ...options, legacyRqlFilter: true };
+    const { result } = renderHook(() => useCollectionUrlState(legacyOptions));
+
+    act(() => {
+      result.current[1]({
+        ...result.current[0],
+        rql: "eq(public,false)",
+      });
+    });
+
+    expect(navigation.push).toHaveBeenCalledWith(
+      "/protein-feature?tab=details&rql=eq%28public%2Cfalse%29",
+      { scroll: false },
+    );
+  });
+
+  it("preserves a non-RQL filter during an immediate update", () => {
+    navigation.searchParams = new URLSearchParams(
+      "filter=protein&tab=details",
+    );
+    const legacyOptions = { ...options, legacyRqlFilter: true };
+    const { result } = renderHook(() => useCollectionUrlState(legacyOptions));
+
+    act(() => {
+      result.current[1]({ ...result.current[0], page: 2 });
+    });
+
+    expect(navigation.push).toHaveBeenCalledWith(
+      "/protein-feature?filter=protein&tab=details&page=2",
+      { scroll: false },
+    );
   });
 });

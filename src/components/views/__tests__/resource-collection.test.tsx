@@ -265,6 +265,36 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(screen.getByTestId("detail")).toHaveTextContent("E. coli fixture");
   });
 
+  it("does not expose collection error diagnostics", async () => {
+    const user = userEvent.setup();
+    const refetch = vi.fn();
+    const diagnostic =
+      "Request to https://internal.example/data?token=secret failed";
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      error: new Error(diagnostic),
+      refetch,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={repository()}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The requested records could not be loaded. Please try again.",
+    );
+    expect(screen.queryByText(diagnostic)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+    expect(refetch).toHaveBeenCalledOnce();
+  });
+
   it("projects row links and opens the Genome action in a new tab", async () => {
     const user = userEvent.setup();
     const open = vi.fn();

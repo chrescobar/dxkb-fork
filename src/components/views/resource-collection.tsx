@@ -364,11 +364,7 @@ export function ResourceCollection<Row extends DataTableRow>({
         <Alert variant="destructive">
           <AlertTitle>Could not load {profile.label.toLowerCase()}</AlertTitle>
           <AlertDescription>
-            <p>
-              {collection.error instanceof Error
-                ? collection.error.message
-                : String(collection.error)}
-            </p>
+            <p>The requested records could not be loaded. Please try again.</p>
             <Button
               variant="outline"
               size="sm"

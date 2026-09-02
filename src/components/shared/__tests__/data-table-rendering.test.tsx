@@ -236,7 +236,7 @@ describe("DataTable shared view seams", () => {
           {
             id: "patric_id",
             label: "BRC ID",
-            href: (row) => `/feature/${String(row.feature_id)}`,
+            valueHref: "/feature/{value}",
             fallbackValue: (row) => row.feature_id,
           },
         ]}
@@ -250,7 +250,7 @@ describe("DataTable shared view seams", () => {
 
     expect(
       screen.getByRole("link", { name: "fig|83332.12.peg.1" }),
-    ).toHaveAttribute("href", "/feature/fig|83332.12.peg.1");
+    ).toHaveAttribute("href", "/feature/fig%7C83332.12.peg.1");
   });
 
   it("delegates selected exports without fetching", async () => {

@@ -64,6 +64,16 @@ const changedState = {
   sort: "custom:desc",
 };
 
+beforeEach(() => {
+  vi.stubGlobal("URL", {
+    ...URL,
+    createObjectURL: vi.fn(() => "blob:test"),
+    revokeObjectURL: vi.fn(),
+  });
+});
+
+afterEach(() => vi.unstubAllGlobals());
+
 async function changeCollectionState() {
   await userEvent.click(
     screen.getByRole("button", { name: "Change collection state" }),

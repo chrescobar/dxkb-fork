@@ -66,6 +66,27 @@ describe("mapLegacyViewPath", () => {
     });
   });
 
+  it("maps both Domains and Motifs list aliases", () => {
+    expect(
+      mapLegacyViewPath(
+        "/view/DomainsAndMotifsList/",
+        "eq(genome_id,83332.12)",
+      ),
+    ).toEqual({
+      pathname: "/domains-and-motifs",
+      search: "rql=eq(genome_id%2C83332.12)",
+    });
+    expect(
+      mapLegacyViewPath(
+        "/view/ProteinFeaturesList/",
+        "feature_id=fig%7C83332.12.peg.1",
+      ),
+    ).toEqual({
+      pathname: "/domains-and-motifs",
+      search: "feature_id=fig%7C83332.12.peg.1",
+    });
+  });
+
   it("maps Protein aliases to Feature member and list routes", () => {
     expect(mapLegacyViewPath("/view/Protein/fig%7C83332.12.peg.1", "")).toEqual(
       {

@@ -100,7 +100,10 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "protein_feature",
     typeTitle: "Domains and Motifs",
-    route: { status: "legacy" },
+    route: {
+      status: "canonical",
+      segment: viewRegistry["domains-and-motifs"].segment,
+    },
     tabs: { protein_feature: "Domains and Motifs" },
     pickerOrder: 4,
     allTermOrder: 5,

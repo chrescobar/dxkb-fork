@@ -36,13 +36,14 @@ describe("viewRegistry", () => {
   });
 
   it("maps every legacy name to a unique existing segment", () => {
-    const names = Object.values(reg).flatMap((e) =>
-      [
-        e.legacySingular,
-        ...(e.legacySingularAliases ?? []),
-        e.legacyList,
-        ...(e.legacyListAliases ?? []),
-      ].filter(Boolean) as string[],
+    const names = Object.values(reg).flatMap(
+      (e) =>
+        [
+          e.legacySingular,
+          ...(e.legacySingularAliases ?? []),
+          e.legacyList,
+          ...(e.legacyListAliases ?? []),
+        ].filter(Boolean) as string[],
     );
     expect(names.length).toBeGreaterThanOrEqual(10);
     expect(new Set(names).size).toBe(names.length); // unique
@@ -57,5 +58,7 @@ describe("viewRegistry", () => {
     expect(legacyToSegment.Taxonomy).toBe("taxonomy");
     expect(legacyToSegment.Protein).toBe("feature");
     expect(legacyToSegment.ProteinList).toBe("feature");
+    expect(legacyToSegment.DomainsAndMotifsList).toBe("domains-and-motifs");
+    expect(legacyToSegment.ProteinFeaturesList).toBe("domains-and-motifs");
   });
 });

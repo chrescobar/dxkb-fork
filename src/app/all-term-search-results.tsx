@@ -20,6 +20,7 @@ import {
   labelsBySearchType,
 } from "@/constants/search-info";
 import {
+  domainsAndMotifsListHref,
   epitopeHref,
   epitopeIdFromRow,
   epitopeListHref,
@@ -456,7 +457,7 @@ function SearchResultsContent({ query }: { query: string }) {
               return (
                 <Card
                   key={dataType}
-                  className="gap-0 rounded-lg border bg-card px-4 py-0 text-card-foreground shadow-sm"
+                  className="bg-card text-card-foreground gap-0 rounded-lg border px-4 py-0 shadow-sm"
                 >
                   <CardHeader className="flex flex-row items-center justify-between border-b p-6">
                     <div className="flex items-center gap-2">
@@ -467,7 +468,8 @@ function SearchResultsContent({ query }: { query: string }) {
                         dataType === "epitope" ||
                         dataType === "surveillance" ||
                         dataType === "serology" ||
-                        dataType === "strain" ? (
+                        dataType === "strain" ||
+                        dataType === "protein_feature" ? (
                           <Link
                             href={
                               dataType === "genome"
@@ -480,7 +482,11 @@ function SearchResultsContent({ query }: { query: string }) {
                                       ? surveillanceListHref({ keyword: query })
                                       : dataType === "serology"
                                         ? serologyListHref({ keyword: query })
-                                        : strainListHref({ keyword: query })
+                                        : dataType === "strain"
+                                          ? strainListHref({ keyword: query })
+                                          : domainsAndMotifsListHref({
+                                              keyword: query,
+                                            })
                             }
                           >
                             {labelsBySearchType[dataType]}
@@ -490,7 +496,7 @@ function SearchResultsContent({ query }: { query: string }) {
                         )}
                       </CardTitle>
                     </div>
-                    <Badge className="h-8 max-w-fit min-w-8 bg-secondary font-semibold text-white">
+                    <Badge className="bg-secondary h-8 max-w-fit min-w-8 font-semibold text-white">
                       {numFound}
                     </Badge>
                   </CardHeader>

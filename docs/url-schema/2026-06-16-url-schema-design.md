@@ -81,7 +81,7 @@ explicitly with `notFound()` instead (see §2.4).
 | `surveillance`       | `/surveillance/{sampleId}`       | `/surveillance`       | sample identifier                        | string  | Surveillance / SurveillanceList         |
 | `serology`           | `/serology/{sampleId}`           | `/serology`           | sample identifier                        | string  | Serology / SerologyList                 |
 | `strain`             | — (none)                         | `/strain`             | —                                        | —       | — / StrainList                          |
-| `domains-and-motifs` | — (none)                         | `/domains-and-motifs` | —                                        | —       | — / DomainsAndMotifsList                |
+| `domains-and-motifs` | — (none)                         | `/domains-and-motifs` | —                                        | —       | — / DomainsAndMotifsList, ProteinFeaturesList |
 | `protein-structure`  | `/protein-structure?accession=…` | `/protein-structure`  | accession or workspace path (no path id) | none    | ProteinStructure / ProteinStructureList |
 | `experiment`         | `/experiment/{experimentId}`     | `/experiment`         | experiment id                            | int     | ExperimentComparison / ExperimentList   |
 

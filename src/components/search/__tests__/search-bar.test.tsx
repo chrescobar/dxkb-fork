@@ -192,6 +192,20 @@ describe("SearchBar", () => {
       });
     });
 
+    it("recognizes the canonical Domains and Motifs route", async () => {
+      mockPathname.current = "/domains-and-motifs";
+      mockSearchParams.current = new URLSearchParams({ keyword: "DNA kinase" });
+
+      renderSearchBar();
+
+      await waitFor(() => {
+        expect(screen.getByRole("textbox")).toHaveValue("DNA kinase");
+        expect(
+          screen.getByRole("combobox", { name: /search type/i }),
+        ).toHaveTextContent("Domains and Motifs");
+      });
+    });
+
     it("joins multiple keyword matches from URL params", async () => {
       mockSearchParams.current = new URLSearchParams();
       mockSearchParams.current.set("q", "keyword(SARS) keyword(CoV)");

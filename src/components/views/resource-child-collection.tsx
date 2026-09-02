@@ -2,9 +2,19 @@
 
 import { useState } from "react";
 import { DataRepository, type DataResource } from "@/lib/data-api";
-import { featureCollectionProfile, type FeatureViewRecord } from "@/lib/feature-view";
+import {
+  featureCollectionProfile,
+  type FeatureViewRecord,
+} from "@/lib/feature-view";
+import {
+  proteinFeatureCollectionProfile,
+  type ProteinFeatureViewRecord,
+} from "@/lib/protein-feature-view";
 import type { CollectionState } from "@/lib/views/collection-state";
-import { ResourceCollection, type ResourceCollectionProfile } from "./resource-collection";
+import {
+  ResourceCollection,
+  type ResourceCollectionProfile,
+} from "./resource-collection";
 
 const repository = new DataRepository();
 type ChildRow = Record<string, unknown>;
@@ -19,15 +29,25 @@ function saveRows(
   const value = (input: unknown) => {
     const text = Array.isArray(input)
       ? input.map(String).join("; ")
-      : typeof input === "string" || typeof input === "number" || typeof input === "boolean" || typeof input === "bigint"
+      : typeof input === "string" ||
+          typeof input === "number" ||
+          typeof input === "boolean" ||
+          typeof input === "bigint"
         ? String(input)
-        : input == null ? "" : JSON.stringify(input);
+        : input == null
+          ? ""
+          : JSON.stringify(input);
     const cleaned = text.replace(/\r\n|\n|\r/g, " ");
     if (format === "txt") return cleaned.replaceAll("\t", " ");
     const safe = /^[=+\-@]/.test(cleaned) ? `'${cleaned}` : cleaned;
-    return `"${safe.replaceAll("\"", "\"\"")}"`;
+    return `"${safe.replaceAll('"', '""')}"`;
   };
-  const body = [fields.join(separator), ...rows.map((row) => fields.map((field) => value(row[field])).join(separator))].join("\n");
+  const body = [
+    fields.join(separator),
+    ...rows.map((row) =>
+      fields.map((field) => value(row[field])).join(separator),
+    ),
+  ].join("\n");
   const url = URL.createObjectURL(new Blob([body]));
   const anchor = document.createElement("a");
   anchor.href = url;
@@ -53,15 +73,40 @@ export function ResourceChildCollection({
   columns,
   defaultSort,
 }: ResourceChildCollectionProps) {
-  const [state, setState] = useState<CollectionState>({ filters: {}, page: 1, sort: defaultSort });
-  const profile: ResourceCollectionProfile<ChildRow> = resource === "genome_feature"
-    ? {
-        ...featureCollectionProfile,
-        label,
-        basePredicate: rql,
-        rowHref: (row) => featureCollectionProfile.rowHref?.(row as FeatureViewRecord),
-      }
-    : { resource, label, idField, columns, defaultSort, basePredicate: rql };
+  const [state, setState] = useState<CollectionState>({
+    filters: {},
+    page: 1,
+    sort: defaultSort,
+  });
+  let profile: ResourceCollectionProfile<ChildRow>;
+  if (resource === "genome_feature") {
+    profile = {
+      ...featureCollectionProfile,
+      label,
+      basePredicate: rql,
+      rowHref: (row) =>
+        featureCollectionProfile.rowHref?.(row as FeatureViewRecord),
+    };
+  } else if (resource === "protein_feature") {
+    profile = {
+      ...proteinFeatureCollectionProfile,
+      label,
+      basePredicate: rql,
+      rowHref: (row) =>
+        proteinFeatureCollectionProfile.rowHref?.(
+          row as ProteinFeatureViewRecord,
+        ),
+    };
+  } else {
+    profile = {
+      resource,
+      label,
+      idField,
+      columns,
+      defaultSort,
+      basePredicate: rql,
+    };
+  }
 
   return (
     <ResourceCollection
@@ -71,9 +116,14 @@ export function ResourceChildCollection({
       onStateChange={setState}
       showHeader={false}
       onExport={async ({ format, selectedIds, fields, rql: exportRql }) => {
-        const selectedFields = fields ? [...fields] : columns.map((column) => column.id);
+        const selectedFields = fields
+          ? [...fields]
+          : columns.map((column) => column.id);
         const result = selectedIds?.length
-          ? await repository.selected(resource, { ids: [...selectedIds], fields: selectedFields })
+          ? await repository.selected(resource, {
+              ids: [...selectedIds],
+              fields: selectedFields,
+            })
           : await repository.exportAll(resource, {
               rql: exportRql ?? rql,
               keyword: state.keyword,

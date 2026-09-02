@@ -113,11 +113,12 @@ export const viewRegistry = {
     segment: "domains-and-motifs",
     label: "Domains and Motifs",
     legacyList: "DomainsAndMotifsList",
+    legacyListAliases: ["ProteinFeaturesList"],
     searchType: "protein_feature",
     list: {
       endpoint: "protein_feature",
       defaultTab: "proteinFeatures",
-      friendlyParams: ["keyword", "genome_id"],
+      friendlyParams: ["keyword", "genome_id", "feature_id"],
     },
   },
   "protein-structure": {

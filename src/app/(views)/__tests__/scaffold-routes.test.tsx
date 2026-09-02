@@ -19,12 +19,19 @@ vi.mock("next/navigation", () => ({
 // LandingShellClient also calls useHotkey; stub it so the render path doesn't throw.
 vi.mock("@tanstack/react-hotkeys", () => ({ useHotkey: vi.fn() }));
 
+import DomainsAndMotifsPage from "../domains-and-motifs/page";
 import GenomePage from "../genome/[genomeId]/page";
 import StrainListPage from "../strain/page";
 
 vi.mock("../strain/strain-collection", () => ({
   StrainCollection: ({ initialState }: { initialState: unknown }) => (
     <div data-testid="strain-collection">{JSON.stringify(initialState)}</div>
+  ),
+}));
+
+vi.mock("../domains-and-motifs/domains-and-motifs-collection", () => ({
+  DomainsAndMotifsCollection: ({ initialState }: { initialState: unknown }) => (
+    <div data-testid="domains-collection">{JSON.stringify(initialState)}</div>
   ),
 }));
 
@@ -71,6 +78,31 @@ it("strain list parses canonical state without creating a member route", async (
     '"strain":["A/B strain"]',
   );
   expect(screen.getByTestId("strain-collection")).toHaveTextContent('"page":2');
+});
+
+it("domains and motifs parses canonical list state", async () => {
+  render(
+    await DomainsAndMotifsPage({
+      searchParams: Promise.resolve({
+        keyword: "kinase",
+        genome_id: "83332.12",
+        source: ["InterPro", "CDD"],
+        page: "2",
+      }),
+    }),
+  );
+  expect(screen.getByTestId("domains-collection")).toHaveTextContent(
+    '"keyword":"kinase"',
+  );
+  expect(screen.getByTestId("domains-collection")).toHaveTextContent(
+    '"genome_id":["83332.12"]',
+  );
+  expect(screen.getByTestId("domains-collection")).toHaveTextContent(
+    '"source":["InterPro","CDD"]',
+  );
+  expect(screen.getByTestId("domains-collection")).toHaveTextContent(
+    '"page":2',
+  );
 });
 
 it("genome singular calls notFound for an empty id", async () => {

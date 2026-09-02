@@ -129,6 +129,24 @@ vi.mock("@/components/views", () => ({
       />
     );
   },
+  ProteinFeatureResourceCollection: function ProteinFeatureResourceCollection({
+    baseRql,
+    enableRowLinks,
+    keywordMode,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
+  }) {
+    return (
+      <div
+        data-testid="protein-feature-resource-collection"
+        data-q={baseRql}
+        data-row-links={String(enableRowLinks)}
+        data-keyword-mode={keywordMode ?? "loaded"}
+      />
+    );
+  },
   FeatureResourceCollection,
   GenomeResourceCollection: ({
     baseRql,
@@ -250,22 +268,17 @@ describe("makeProteinStructuresView", () => {
 });
 
 describe("makeDomainsAndMotifsView", () => {
-  it("renders TaxonDataPanel with the protein_feature cross-core join query", () => {
+  it("renders the shared collection with the exact cross-core scope", () => {
     const DomainsAndMotifsView = makeDomainsAndMotifsView({ scope });
     const { getByTestId } = render(<DomainsAndMotifsView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "protein_feature");
-    const q = panel.getAttribute("data-q") ?? "";
-    expect(q).toContain("eq(genome_id,*)");
-    expect(q).toContain("genome(eq(taxon_lineage_ids,1234))");
-  });
-
-  it("passes the domains and motifs guide URL", () => {
-    const DomainsAndMotifsView = makeDomainsAndMotifsView({ scope });
-    const { getByTestId } = render(<DomainsAndMotifsView />);
-    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/domains_and_motifs.html",
+    const collection = getByTestId("protein-feature-resource-collection");
+    expect(collection).toHaveAttribute(
+      "data-q",
+      "and(eq(genome_id,*),genome(eq(taxon_lineage_ids,1234)))",
     );
+    expect(collection.getAttribute("data-q")).not.toContain("Deprecated");
+    expect(collection).toHaveAttribute("data-row-links", "false");
+    expect(collection).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
@@ -367,13 +380,19 @@ describe("composite scope queries", () => {
     if (
       resource === "genome" ||
       resource === "epitope" ||
+      resource === "protein_feature" ||
       resource === "strain" ||
       resource === "surveillance" ||
       resource === "serology"
     ) {
-      expect(
-        screen.getByTestId(`${resource}-resource-collection`),
-      ).toHaveAttribute("data-q", expectedQuery);
+      const testId =
+        resource === "protein_feature"
+          ? "protein-feature-resource-collection"
+          : `${resource}-resource-collection`;
+      expect(screen.getByTestId(testId)).toHaveAttribute(
+        "data-q",
+        expectedQuery,
+      );
       return;
     }
     expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(

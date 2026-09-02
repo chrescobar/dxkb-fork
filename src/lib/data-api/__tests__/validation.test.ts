@@ -112,6 +112,15 @@ describe("data API contracts", () => {
         facets: ["genus"],
       }),
     ).toMatchObject({ operation: "collection" });
+    expect(
+      validateDataApiRequest("protein_feature", {
+        operation: "collection",
+        rql: "and(and(eq(genome_id,*),genome(eq(taxon_lineage_ids,2955291))),eq(id,*))",
+      }),
+    ).toMatchObject({
+      operation: "collection",
+      rql: "and(and(eq(genome_id,%2A),genome(eq(taxon_lineage_ids,2955291))),eq(id,%2A))",
+    });
     expect(() =>
       validateDataApiRequest("genome", {
         operation: "collection",

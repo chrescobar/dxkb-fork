@@ -33,6 +33,30 @@ const genomeFeatureRows = [
   },
 ];
 
+const proteinFeatureRows = [
+  {
+    id: "protein-feature-backend-901",
+    genome_id: "1282460.2049",
+    genome_name: "Middle East respiratory syndrome-related coronavirus isolate",
+    taxon_id: 1335626,
+    feature_id: "PATRIC.1282460.2049.JX869059.CDS.1.100.fwd",
+    patric_id: "fig|1282460.2049.peg.1",
+    refseq_locus_tag: "YP_009047204.1",
+    gene: "ORF1ab",
+    product: "replicase polyprotein",
+    interpro_id: "IPR043607",
+    interpro_description: "Coronavirus replicase domain",
+    feature_type: "Domain",
+    source: "InterPro",
+    source_id: "cd21589",
+    description: "RNA-directed RNA polymerase domain",
+    classification: "Conserved domain",
+    e_value: "1E-20",
+    evidence: "HMM",
+    date_inserted: "2024-01-01",
+  },
+];
+
 const epitopeRows = [
   {
     epitope_id: "15780",
@@ -216,6 +240,27 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/data\/protein_feature(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: proteinFeatureRows,
+      total: proteinFeatureRows.length,
+      facets: {
+        feature_type: [{ value: "Domain", count: 1 }],
+        source: [{ value: "InterPro", count: 1 }],
+        classification: [{ value: "Conserved domain", count: 1 }],
+        evidence: [{ value: "HMM", count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/protein_feature(?:\?|$)/,
+    method: "POST",
+    body: { rows: proteinFeatureRows },
+  },
   {
     url: /\/api\/e2e-mock\/data\/strain\/(?:\?|$)/,
     method: "GET",

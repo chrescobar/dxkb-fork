@@ -21,10 +21,12 @@ import {
 } from "@/lib/genome-view";
 import {
   featureColumns,
+  genomeDomainsRql,
   genomeFeatureRql,
   genomeProteinRql,
   genomeSequenceColumns,
   interactionColumns,
+  proteinFeatureColumns,
 } from "@/lib/views/child-resources";
 import { GenomeOverview } from "./genome-overview";
 
@@ -41,7 +43,7 @@ function lineage(genome: GenomeViewRecord) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
       <Link
-        className="text-muted-foreground transition-colors hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground transition-colors"
         href="/genome"
       >
         Genomes
@@ -51,7 +53,7 @@ function lineage(genome: GenomeViewRecord) {
         <span key={ids[index] ?? name} className="contents">
           {ids[index] ? (
             <Link
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               href={`/taxonomy/${encodeURIComponent(String(ids[index]))}`}
             >
               {name}
@@ -62,7 +64,7 @@ function lineage(genome: GenomeViewRecord) {
           <span className="text-muted-foreground/50 select-none">»</span>
         </span>
       ))}
-      <h1 className="m-0 inline text-sm leading-none font-bold text-secondary">
+      <h1 className="text-secondary m-0 inline text-sm leading-none font-bold">
         {genome.genome_name ?? genome.genome_id}
       </h1>
     </div>
@@ -126,6 +128,17 @@ export function GenomeMember({
         defaultSort="patric_id:asc"
       />
     );
+  } else if (activeTab === "domains") {
+    content = (
+      <ResourceChildCollection
+        resource="protein_feature"
+        label="Domains and Motifs"
+        idField="id"
+        rql={genomeDomainsRql(genome.genome_id)}
+        columns={proteinFeatureColumns}
+        defaultSort="unsorted"
+      />
+    );
   }
   const tabs = buildGenomeTabs(genome).map((tab) => ({
     ...tab,
@@ -140,7 +153,7 @@ export function GenomeMember({
       headerContent={`Genome ${genome.genome_id}`}
       metadataSummary={
         activeTab === "overview" ? (
-          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border bg-card px-4 py-3 text-sm">
+          <div className="bg-card mt-4 flex flex-wrap gap-x-6 gap-y-1 rounded-lg border px-4 py-3 text-sm">
             <span>
               <strong>Length:</strong> {genome.genome_length ?? "Not available"}
             </span>

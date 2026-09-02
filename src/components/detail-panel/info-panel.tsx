@@ -884,7 +884,7 @@ function renderSearchInfoPanel(
                         onClick={() =>
                           window.open(resolved, "_blank", "noopener,noreferrer")
                         }
-                        className="bg-primary text-secondary rounded border-black px-2 py-1 text-sm"
+                        className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
                       >
                         {item.linkText ?? "View"}
                       </Button>

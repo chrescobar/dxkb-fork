@@ -490,7 +490,7 @@ function SearchResultsContent({ query }: { query: string }) {
                         )}
                       </CardTitle>
                     </div>
-                    <Badge className="bg-secondary h-8 max-w-fit min-w-8 font-semibold text-white">
+                    <Badge className="h-8 max-w-fit min-w-8 bg-secondary font-semibold text-white">
                       {numFound}
                     </Badge>
                   </CardHeader>

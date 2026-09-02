@@ -1,178 +1,56 @@
-src/app/(views)/surveillance/[sampleId]/surveillance-ambiguity.tsx
-  s_c1be977f824445::t_7af57a2a0147fd 1
-  s_c1be977f824445::t_8093f1ea5fec37 18
-  s_c1be977f824445::t_93b1737e3d3fe4 14-17,19-22
-src/app/search/typesearch.tsx
-  s_fa67c4410ec288::t_6c38ff37d07b5b 479-482
-  s_fa67c4410ec288::t_037b040cecab55 477-478,483
-src/lib/views/summary.ts
-  s_71209fba51bc25::t_430828de0d2ef6 1-18
-src/app/(views)/surveillance/[sampleId]/page.tsx
-  s_b5e82d596c4bc3::t_d7f783f24593fd 24,27,43-44,47,49-52
-  s_b5e82d596c4bc3::t_29fca69f1c3c26 16
-  s_b5e82d596c4bc3::t_7a301eb7dca097 3,5-9
-  s_b5e82d596c4bc3::t_cb51bfe6df2ba2 26
-src/app/api/e2e-mock/[...path]/route.ts
-  s_f293d83858829f::t_40be7f5438b2e9 174
-src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
-  s_45c00a45b22692::t_c36106a939ada6 134,143
-  s_f293d83858829f::t_513c7a0ab6c9cb 125-133,135-142
 e2e/tests/surveillance-view.spec.ts
-  s_228d23792fe81e::t_518e8616dd6160 50
-  s_228d23792fe81e::t_c28be8c744ae3c 51
-src/lib/data-api/rql.ts
-  s_d97ce07627c912::t_a893d954aa49d3 157,159-170
-  s_d97ce07627c912::t_fb06b5ef276267 25-32
-  s_d97ce07627c912::t_c7684f842c160c 269,271-283
-  s_d97ce07627c912::t_dc6825c0575f25 72
-src/lib/serology-view/__tests__/serology-view.test.ts
-  s_1ad8bfd9407199::t_074c0bc751930b 132
-src/lib/views/compound-sample.ts
-  s_3a23f8365bdb90::t_adfbd4ee7206e0 46
-  s_1ad8bfd9407199::t_dc283563ef5d34 51
-src/components/views/ambiguity-choice.tsx
-  s_c1be977f824445::t_3714d3f863663c 7
-  s_c1be977f824445::t_a5b152d883f87b 25,27
-  s_c1be977f824445::t_a0a5ea6a5728c6 1-6,8-16,18-24,26,28-61
-  s_c1be977f824445::t_5448ffc78e9b1e 17
-src/lib/views/compound-sample-page.ts
-  s_b5e82d596c4bc3::t_2df12b31580753 54,56
-  s_b5e82d596c4bc3::t_d70544b55eb154 4
-  s_b5e82d596c4bc3::t_62fdafcdcd846a 1-3,5-53,55,57-79
-src/app/(views)/serology/error.tsx
-  s_cae753cbf673e1::t_b35e80802e16ac 3
-  s_cae753cbf673e1::t_ff778f4c80a10f 27-34
-  s_cae753cbf673e1::t_843ca3d62e0119 11
-src/lib/data-api/__tests__/rql.test.ts
-  s_d97ce07627c912::t_1a5263edb90532 41-47,51-67
-src/app/(views)/serology/[sampleId]/serology-member.tsx
-  s_71209fba51bc25::t_48f096e7c121fd 5
-src/lib/views/__tests__/summary.test.ts
-  s_71209fba51bc25::t_b16b389617fbb5 9
-  s_71209fba51bc25::t_5a96407473e469 1-8,10-26
-src/app/(views)/surveillance/[sampleId]/surveillance-member.tsx
-  s_71209fba51bc25::t_03be93858bdcf5 8
-src/hooks/views/__tests__/use-resource-collection.test.ts
-  s_83b9c32c60a098::t_ed31354c4307c6 6
-  s_83b9c32c60a098::t_93ed9b78964cb9 201-215
-  s_83b9c32c60a098::t_79f57e8ff0c1ba 241,265-272
+  h_dbd94c95afa702 50-51
 src/app/(views)/serology/[sampleId]/page.tsx
-  s_b5e82d596c4bc3::t_83fa00287c88d0 3-9
-  s_b5e82d596c4bc3::t_abc2b59165198c 16
-  s_b5e82d596c4bc3::t_0fce0c6136fe79 24,27,43-44,47,49-52
-  s_b5e82d596c4bc3::t_b4f039ca18ff15 26
+  h_dbd94c95afa702 3-9,16,24,26-27,43-44,47,49-52
 src/app/(views)/serology/[sampleId]/serology-ambiguity.tsx
-  s_c1be977f824445::t_98d5e816c02cac 18
-  s_c1be977f824445::t_f9c0975f21f856 1
-  s_c1be977f824445::t_ade4a920ccb273 14-17,19-22
+  h_dbd94c95afa702 1,14-22
+src/app/(views)/serology/[sampleId]/serology-member.tsx
+  h_dbd94c95afa702 5
+src/app/(views)/serology/error.tsx
+  h_dbd94c95afa702 3,11,27-34
+src/app/(views)/surveillance/[sampleId]/page.tsx
+  h_dbd94c95afa702 3,5-9,16,24,26-27,43-44,47,49-52
+src/app/(views)/surveillance/[sampleId]/surveillance-ambiguity.tsx
+  h_dbd94c95afa702 1,14-22
+src/app/(views)/surveillance/[sampleId]/surveillance-member.tsx
+  h_dbd94c95afa702 8
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  h_dbd94c95afa702 125-143
+src/app/api/e2e-mock/[...path]/route.ts
+  h_dbd94c95afa702 174
+src/app/search/typesearch.tsx
+  h_dbd94c95afa702 477-483
 src/components/views/__tests__/resource-collection.test.tsx
-  s_3a23f8365bdb90::t_8a765ba8f6b9df 45-53
+  h_dbd94c95afa702 45-53
+src/components/views/ambiguity-choice.tsx
+  h_dbd94c95afa702 1-61
 src/components/views/serology-resource-collection.tsx
-  s_cae753cbf673e1::t_2bbc6ae9fd0151 52-61
-  s_cae753cbf673e1::t_8bbb9915af3fbf 24
-  s_cae753cbf673e1::t_7a1d0a414ad7e3 3
+  h_dbd94c95afa702 3,24,52-61
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  h_dbd94c95afa702 6,201-215,241,265-272
+src/lib/data-api/__tests__/rql.test.ts
+  h_dbd94c95afa702 41-47,51-67
+src/lib/data-api/rql.ts
+  h_dbd94c95afa702 25-32,72,157,159-170,269,271-283
+src/lib/serology-view/__tests__/serology-view.test.ts
+  h_dbd94c95afa702 132
+src/lib/views/__tests__/summary.test.ts
+  h_dbd94c95afa702 1-26
+src/lib/views/compound-sample-page.ts
+  h_dbd94c95afa702 1-79
+src/lib/views/compound-sample.ts
+  h_dbd94c95afa702 46,51
+src/lib/views/summary.ts
+  h_dbd94c95afa702 1-18
 ---
 {
   "schema_version": "authorship/3.0.0",
   "git_ai_version": "1.7.0",
   "base_commit_sha": "ba4fd3e69198b19deabe8fa53ceba012da4a7fa0",
   "prompts": {},
-  "sessions": {
-    "s_1ad8bfd9407199": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa183fb5effeA7G7J6bqjWTuOP",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_228d23792fe81e": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa1781cc2ffeqVna6ebZJb2P2i",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_3a23f8365bdb90": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa175e48bffemk0sJZlmFPvEMj",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_45c00a45b22692": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa18f1ac5ffeJ2Gvd7jHN0dE8z",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_71209fba51bc25": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa18071b8ffeHjI1UtkJiKxGW1",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_83b9c32c60a098": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa188f154ffeuU8PUoBXVnh4qV",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_b5e82d596c4bc3": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa17b9b78ffeJBI3ktsmqbjqc6",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_c1be977f824445": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa17e5d37ffeSG3X3HuGaJGaNe",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_cae753cbf673e1": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa18b14daffeMONpFNCm8reE5v",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_d97ce07627c912": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa18770a8ffeJRGw3aOgvq9h3Y",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_f293d83858829f": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa185092fffe7BKohr7Ua7x9Lu",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
-    },
-    "s_fa67c4410ec288": {
-      "agent_id": {
-        "tool": "opencode",
-        "id": "ses_fa18cc9b5ffe2QtYVwTplh2qDe",
-        "model": "gpt56sol"
-      },
-      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
     }
   }
 }

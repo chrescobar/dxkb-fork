@@ -1,0 +1,153 @@
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_0a894536954cf4::t_672c8646c79edd 119-139
+  s_0a894536954cf4::t_f0302e02d8a7f3 27-28,33-38,40-45
+src/lib/protein-feature-view/schema.ts
+  s_0a894536954cf4::t_927c79a05ee221 4-8
+  s_0a894536954cf4::t_a9ba94d29a817f 1-3,9-12
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_0a894536954cf4::t_7e9443fa11a863 383,388-391
+  s_0a894536954cf4::t_128d4ed746260e 132-149
+  s_0a894536954cf4::t_9fd696ffcb7229 271,274-277,279-281
+  s_0a894536954cf4::t_c5821535b7f27c 392-395
+src/app/(views)/__tests__/scaffold-routes.test.tsx
+  s_0a894536954cf4::t_f2cb7475f576f0 83-102,106-107
+  s_0a894536954cf4::t_927c79a05ee221 103-105
+  s_0a894536954cf4::t_c0c8a31dfcc51c 22,32-37
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_0a894536954cf4::t_927c79a05ee221 3-11,13-17,40-67,69-71,104-107,113-132
+  s_0a894536954cf4::t_592cf1749955d6 18-23
+  s_0a894536954cf4::t_d68d7b7461d9a9 82-103
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_0a894536954cf4::t_c786747221717f 3,178-179
+  s_0a894536954cf4::t_6c0309d94934be 120
+src/components/organisms/taxon-views/domains-and-motifs.tsx
+  s_0a894536954cf4::t_dd841d07c88ed9 1,9-12
+src/lib/views/child-resources.ts
+  s_0a894536954cf4::t_e60d355e5a06c9 4
+  s_0a894536954cf4::t_d85a6cf966df31 19-27
+src/lib/views/__tests__/hrefs.test.ts
+  s_0a894536954cf4::t_927c79a05ee221 214-216
+  s_0a894536954cf4::t_1172db2e6fd765 2
+  s_0a894536954cf4::t_e5e9cc2e60790e 107-128
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_0a894536954cf4::t_f3dc3a05253815 69-89
+e2e/a11y/routes.ts
+  s_0a894536954cf4::t_f8f2d93aee011a 336,338-339
+  s_0a894536954cf4::t_c5821535b7f27c 341-344
+src/components/search/__tests__/search-bar.test.tsx
+  s_0a894536954cf4::t_8dce2d0345dbcb 195-208
+src/app/(views)/domains-and-motifs/loading.tsx
+  s_0a894536954cf4::t_4017b5dbbb5f19 1-15
+docs/architecture.md
+  s_0a894536954cf4::t_a957f07762a3c8 78
+  s_0a894536954cf4::t_a9c2722fcbb760 79-80,84
+e2e/fixtures/overrides/catchall.ts
+  s_0a894536954cf4::t_8fcfcd0ceb0581 36-59,243-263
+src/app/(views)/domains-and-motifs/domains-and-motifs-collection.tsx
+  s_0a894536954cf4::t_18ec10693c6a0c 1-36
+docs/url-schema/2026-06-16-url-schema-expansion.md
+  s_0a894536954cf4::t_e89bcbe8abcb99 281,283
+src/constants/search-info.ts
+  s_0a894536954cf4::t_957039864543a9 103-106
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_0a894536954cf4::t_927c79a05ee221 46,56,67,156
+  s_0a894536954cf4::t_ff1c488966b778 131-141
+  s_0a894536954cf4::t_496e46f54559e8 24,29
+src/lib/views/view-registry.ts
+  s_0a894536954cf4::t_929bc97561bde5 116,121
+src/lib/views/hrefs.ts
+  s_0a894536954cf4::t_d0b2c427e6df4e 208-229
+src/lib/feature-view/tabs.ts
+  s_0a894536954cf4::t_c130a9d093669f 50
+  s_0a894536954cf4::t_927c79a05ee221 15-17,40-41,65-66
+src/lib/protein-feature-view/profile.ts
+  s_0a894536954cf4::t_6c0a6d230d54ca 1-53
+src/lib/protein-feature-view/index.ts
+  s_0a894536954cf4::t_1a5785f33b4e4d 1-3
+src/components/views/index.ts
+  s_0a894536954cf4::t_a32a8ce71560d3 5
+src/lib/protein-feature-view/__tests__/protein-feature-view.test.ts
+  s_0a894536954cf4::t_927c79a05ee221 19-21,55-62
+  s_0a894536954cf4::t_5c5046ab1bfc8c 73
+  s_0a894536954cf4::t_e74beb02a23639 1-18,22-54,63-72,74-105
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_0a894536954cf4::t_4c97194599e414 208-216
+  s_0a894536954cf4::t_bcb150885b6565 130
+  s_0a894536954cf4::t_2099a7806eb281 70-72
+  s_0a894536954cf4::t_d5ea5ddf223f65 182-183,189
+  s_0a894536954cf4::t_923f2b628f60b9 166-172
+  s_0a894536954cf4::t_f5cfec79e4bed5 137-138,144
+  s_0a894536954cf4::t_39ff7346d2f7d0 46-47,49,54,68-69,73-83
+  s_0a894536954cf4::t_a19e0ef77e563b 95-96,100
+src/lib/protein-feature-view/query.ts
+  s_0a894536954cf4::t_ea67c85fecac95 1-53
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_0a894536954cf4::t_927c79a05ee221 116-118,158-172
+  s_0a894536954cf4::t_b1e9a64427bc2a 121-139
+  s_0a894536954cf4::t_83ca70be8bf82f 23-24,28-29,33-39
+  s_0a894536954cf4::t_b446f22e0048ed 119-120
+src/components/views/protein-feature-resource-collection.tsx
+  s_0a894536954cf4::t_0a1f3a3dd54cef 1-63
+src/app/all-term-search-results.tsx
+  s_0a894536954cf4::t_927c79a05ee221 460,487-489,499
+  s_0a894536954cf4::t_dd5f9b17aec67a 485-486
+  s_0a894536954cf4::t_05a864d98a9bb9 23
+  s_0a894536954cf4::t_58d326d855bb7f 471-472
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_0a894536954cf4::t_dec0304c3bae69 84
+src/components/views/resource-child-collection.tsx
+  s_0a894536954cf4::t_927c79a05ee221 6-9,14-17,32-35,37-39,43,45-50,76-80,101-108,119-121,123-126
+  s_0a894536954cf4::t_03bb39bde73f66 81-100,109
+  s_0a894536954cf4::t_a850de0da7c19f 5,10-12
+src/app/(views)/domains-and-motifs/page.tsx
+  s_0a894536954cf4::t_eb579933e069ab 1-5,7-23
+src/lib/data-api/rql.ts
+  s_0a894536954cf4::t_ee1e657fcad9e6 25
+src/lib/data-api/__tests__/validation.test.ts
+  s_0a894536954cf4::t_67306c6072bb21 122
+  s_0a894536954cf4::t_2e21c469eb7a19 115-121,123
+src/constants/datafields/protein_feature.ts
+  s_0a894536954cf4::t_927c79a05ee221 4-262
+src/lib/genome-view/tabs.ts
+  s_0a894536954cf4::t_1129317295591e 53
+src/components/search/search-bar.tsx
+  s_0a894536954cf4::t_9bc0b4693a6cb3 42-43
+  s_0a894536954cf4::t_927c79a05ee221 44-54,114,128,147,156
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_0a894536954cf4::t_86dfe66d7cf0ec 12-16
+  s_0a894536954cf4::t_9e1d44ab5276b9 83,93
+  s_0a894536954cf4::t_927c79a05ee221 53-63,67-70,77-82,88-91
+src/lib/views/__tests__/view-registry.test.ts
+  s_0a894536954cf4::t_927c79a05ee221 39-46
+  s_0a894536954cf4::t_fb147286821bfa 61-62
+e2e/tests/resource-collection-pagination.spec.ts
+  s_0a894536954cf4::t_4d03d7d68f1fd0 65-80
+  s_0a894536954cf4::t_fc3feda4267cff 155-156
+  s_0a894536954cf4::t_ea5a3f7d8329f0 64
+e2e/tests/domains-and-motifs-view.spec.ts
+  s_0a894536954cf4::t_867e7f80a3757d 30-32,46
+  s_0a894536954cf4::t_bbf665fa60a09f 29
+  s_0a894536954cf4::t_7748b0c6e8116b 40,42
+  s_0a894536954cf4::t_a149759eddcfb7 1-28,33-39,41,43-45,47-48
+src/constants/search-info.test.ts
+  s_0a894536954cf4::t_0bd21dc9e0cb9b 24-32
+src/app/(views)/domains-and-motifs/error.tsx
+  s_0a894536954cf4::t_eb6b0e15680c7c 14,20
+  s_0a894536954cf4::t_498f5b08ea5481 1-13,15-19,21-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "77c45c566d3cbe4eaf851bc0cfaa6b083b3a6196",
+  "prompts": {},
+  "sessions": {
+    "s_0a894536954cf4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9d3527b2ffe14e5VroO0f482I",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

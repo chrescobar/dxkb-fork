@@ -1427,8 +1427,8 @@ git commit -m "feat(views): add legacy hash adapter and (views) group layout"
 
 Singular id-param folder names come from the registry `singular.idParam`:
 - `genome` → `[genomeId]`, `feature` → `[featureId]`, `epitope` → `[epitopeId]`,
-  `surveillance` → `[sampleId]`, `serology` → `[sampleId]`.
-- List-only (no `[id]` folder): `strain`, `domains-and-motifs`, `experiment`.
+  `surveillance` → `[sampleId]`, `serology` → `[sampleId]`, `experiment` → `[experimentId]`.
+- List-only (no `[id]` folder): `strain`, `domains-and-motifs`.
 - `protein-structure` → single `page.tsx` only (id-less singular handled by `?accession`/`?path`; see Step for it).
 
 - [ ] **Step 1: Write a smoke test for the new list + singular routes**
@@ -1456,6 +1456,7 @@ vi.mock("@tanstack/react-hotkeys", () => ({ useHotkey: () => {} }));
 
 import GenomeListPage from "../genome/page";
 import GenomePage from "../genome/[genomeId]/page";
+import ExperimentPage from "../experiment/[experimentId]/page";
 import StrainListPage from "../strain/page";
 
 beforeEach(() => { notFoundSpy.mockClear(); });
@@ -1471,6 +1472,14 @@ it("genome singular renders for a dotted id", async () => {
     searchParams: Promise.resolve({}),
   }));
   expect(screen.getByText(/Genome 59201\.7581/)).toBeInTheDocument();
+});
+
+it("experiment singular renders for an integer id", async () => {
+  render(await ExperimentPage({
+    params: Promise.resolve({ experimentId: "2000000" }),
+    searchParams: Promise.resolve({}),
+  }));
+  expect(screen.getByText(/Experiment 2000000/)).toBeInTheDocument();
 });
 
 it("strain list renders (list-only type)", async () => {
@@ -1517,9 +1526,9 @@ Per-segment substitutions for the list pages:
 | `domains-and-motifs/page.tsx` | `DomainsAndMotifsListPage` | `viewRegistry["domains-and-motifs"]` |
 | `experiment/page.tsx` | `ExperimentListPage` | `viewRegistry.experiment` |
 
-- [ ] **Step 4: Create the singular pages (5 segments with singulars)**
+- [ ] **Step 4: Create the singular pages (6 segments with singulars)**
 
-For each of `genome, feature, epitope, surveillance, serology`, create `src/app/(views)/<segment>/[<idParam>]/page.tsx`. Template (shown for `genome`):
+For each of `genome, feature, epitope, surveillance, serology, experiment`, create `src/app/(views)/<segment>/[<idParam>]/page.tsx`. Template (shown for `genome`):
 
 ```tsx
 // src/app/(views)/genome/[genomeId]/page.tsx
@@ -1548,6 +1557,7 @@ Per-segment substitutions for the singular pages:
 | `epitope/[epitopeId]/page.tsx` | `EpitopePage` | `epitopeId` | `viewRegistry.epitope` |
 | `surveillance/[sampleId]/page.tsx` | `SurveillancePage` | `sampleId` | `viewRegistry.surveillance` |
 | `serology/[sampleId]/page.tsx` | `SerologyPage` | `sampleId` | `viewRegistry.serology` |
+| `experiment/[experimentId]/page.tsx` | `ExperimentPage` | `experimentId` | `viewRegistry.experiment` |
 
 - [ ] **Step 5: Create the protein-structure dual-mode page**
 
@@ -1578,7 +1588,7 @@ export default async function ProteinStructurePage({ searchParams }: PageProps) 
 - [ ] **Step 6: Run the scaffold smoke test**
 
 Run: `pnpm test -- "src/app/(views)/__tests__/scaffold-routes.test.tsx"`
-Expected: PASS (3 assertions).
+Expected: PASS (4 assertions).
 
 - [ ] **Step 7: Typecheck + commit**
 

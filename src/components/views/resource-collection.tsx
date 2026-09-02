@@ -243,8 +243,8 @@ export function ResourceCollection<Row extends DataTableRow>({
         selectedFields,
         format,
       );
-    } catch (error) {
-      setExportError(error instanceof Error ? error.message : String(error));
+    } catch {
+      setExportError("The requested export could not be created. Please try again.");
     }
   };
 
@@ -255,9 +255,7 @@ export function ResourceCollection<Row extends DataTableRow>({
           <Alert variant="destructive" className="m-4">
             <AlertTitle>Could not load record details</AlertTitle>
             <AlertDescription>
-              {collection.detailError instanceof Error
-                ? collection.detailError.message
-                : String(collection.detailError)}
+              The requested record details could not be loaded. Please try again.
             </AlertDescription>
           </Alert>
         ) : renderDetail && displayedDetail ? (

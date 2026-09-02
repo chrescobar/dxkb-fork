@@ -1,0 +1,20 @@
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  h_dbd94c95afa702 69,119
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  h_dbd94c95afa702 46,56,67,156
+src/app/all-term-search-results.tsx
+  h_dbd94c95afa702 460,499
+src/components/search/search-bar.tsx
+  h_dbd94c95afa702 114,128,147,156
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "05dd7f7ffc1b017cd873a2b196f8c74ef2053516",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

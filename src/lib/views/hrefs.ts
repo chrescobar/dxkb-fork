@@ -2,6 +2,8 @@
 // query encoding here so callers do not hand-build strings (and re-derive encoding
 // rules) at each site.
 
+import { escapeRqlValue } from "./rql";
+
 /** Internal taxonomy singular route, e.g. `/taxonomy/561`. */
 export function taxonomyHref(taxonId: number | string): string {
   return `/taxonomy/${String(taxonId)}`;
@@ -20,6 +22,21 @@ export function genomeIdFromRow(
 /** Internal genome singular route, e.g. `/genome/83332.12`. */
 export function genomeHref(genomeId: number | string): string {
   return `/genome/${encodeURIComponent(String(genomeId))}`;
+}
+
+/** Return the canonical Genome list for all genome IDs associated with a row. */
+export function genomesHrefFromRow(
+  row: Record<string, unknown> | null,
+): string | null {
+  if (!Array.isArray(row?.genome_ids)) return null;
+  const genomeIds = [...new Set(row.genome_ids)]
+    .filter(
+      (id): id is string | number =>
+        typeof id === "string" || typeof id === "number",
+    )
+    .map((id) => escapeRqlValue(String(id)));
+  if (genomeIds.length === 0) return null;
+  return genomeListHref({ rql: `in(genome_id,(${genomeIds.join(",")}))` });
 }
 
 /**

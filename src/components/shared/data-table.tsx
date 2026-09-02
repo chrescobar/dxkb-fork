@@ -274,8 +274,7 @@ function createColumnDefs(columns: DataTableColumn[]) {
         if (valueHref && Array.isArray(rawValue)) {
           return (
             <span className="flex flex-wrap gap-x-2 gap-y-1">
-              {rawValue.map((item) => {
-                const itemValue = String(item);
+              {[...new Set(rawValue.map(String))].map((itemValue) => {
                 return (
                   <Link
                     key={itemValue}

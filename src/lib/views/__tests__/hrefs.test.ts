@@ -8,6 +8,7 @@ import {
   genomeHref,
   genomeIdFromRow,
   genomeListHref,
+  genomesHrefFromRow,
   serologyHref,
   serologyIdFromRow,
   serologyListHref,
@@ -169,6 +170,27 @@ describe("genomeHref", () => {
     expect(genomeIdFromRow({ genome_id: 42 })).toBe("42");
     expect(genomeIdFromRow({ genome_id: { invalid: true } })).toBeNull();
     expect(genomeIdFromRow(null)).toBeNull();
+  });
+});
+
+describe("genomesHrefFromRow", () => {
+  it("builds a canonical list filtered to unique associated Genome IDs", () => {
+    expect(
+      genomesHrefFromRow({ genome_ids: ["11320.1", "11320.2", "11320.1"] }),
+    ).toBe("/genome?rql=in(genome_id%2C(11320.1%2C11320.2))");
+  });
+
+  it("returns null when the row has no associated Genome IDs", () => {
+    expect(genomesHrefFromRow({ genome_ids: [] })).toBeNull();
+    expect(genomesHrefFromRow({})).toBeNull();
+    expect(genomesHrefFromRow(null)).toBeNull();
+  });
+
+  it("escapes RQL-special characters in Genome IDs", () => {
+    const href = genomesHrefFromRow({ genome_ids: ["id,1", "id(2)"] });
+    expect(new URL(href ?? "", "http://localhost").searchParams.get("rql")).toBe(
+      "in(genome_id,(id%2C1,id%282%29))",
+    );
   });
 });
 

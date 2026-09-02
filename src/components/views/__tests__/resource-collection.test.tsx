@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import type { DataRepository } from "@/lib/data-api";
 import { featureCollectionProfile } from "@/lib/feature-view/profile";
 import { genomeCollectionProfile } from "@/lib/genome-view/profile";
+import { strainCollectionProfile } from "@/lib/strain-view/profile";
 import { surveillanceCollectionProfile } from "@/lib/surveillance-view/profile";
 import type { CollectionState } from "@/lib/views/collection-state";
 import type { useResourceCollection as useResourceCollectionHook } from "@/hooks/views/use-resource-collection";
@@ -67,6 +68,13 @@ vi.mock("@/components/search/search-action-bar", () => ({
           }
         >
           Genome action
+        </button>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.("genomes")
+          }
+        >
+          Genomes action
         </button>
         <button
           onClick={() =>
@@ -283,6 +291,79 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
+  it("enables the Strain Genomes action and opens its canonical Genome list", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "strain-row-1",
+      detail: {
+        id: "strain-row-1",
+        strain: "A/fixture/2025",
+        genome_ids: ["11320.1", "11320.2", "11320.1"],
+      },
+      rows: [
+        {
+          id: "strain-row-1",
+          strain: "A/fixture/2025",
+          genome_ids: ["11320.1", "11320.2", "11320.1"],
+        },
+      ],
+      selection: { "strain-row-1": true },
+      selectedIds: ["strain-row-1"],
+    });
+
+    render(
+      <ResourceCollection
+        profile={strainCollectionProfile}
+        repository={repository()}
+        state={{ keyword: "", filters: {}, page: 1, sort: "unsorted" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(actionBarProps).toMatchObject({
+      enabledActions: ["genomes"],
+      disabledActions: undefined,
+    });
+    await user.click(screen.getByRole("button", { name: "Genomes action" }));
+    expect(open).toHaveBeenCalledWith(
+      "/genome?rql=in(genome_id%2C(11320.1%2C11320.2))",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  });
+
+  it("keeps the Strain Genomes action disabled without associated genomes", () => {
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "strain-row-1",
+      detail: { id: "strain-row-1", strain: "A/fixture/2025" },
+      rows: [{ id: "strain-row-1", strain: "A/fixture/2025" }],
+      selection: { "strain-row-1": true },
+      selectedIds: ["strain-row-1"],
+    });
+
+    render(
+      <ResourceCollection
+        profile={strainCollectionProfile}
+        repository={repository()}
+        state={{ keyword: "", filters: {}, page: 1, sort: "unsorted" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(actionBarProps).toMatchObject({
+      enabledActions: undefined,
+      disabledActions: {
+        genomes: "No genomes are associated with this strain",
+      },
+    });
+  });
+
   it("opens the selected feature member in a new tab", async () => {
     const user = userEvent.setup();
     const open = vi.fn();
@@ -418,7 +499,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       <ResourceCollection
         profile={{ ...genomeCollectionProfile, defaultSort: "unsorted" }}
         repository={data}
-        state={{ ...state, sort: "unsorted" }}
+        state={{ keyword: "", filters: {}, page: 1, sort: "unsorted" }}
         onStateChange={vi.fn()}
         showHeader={false}
       />,

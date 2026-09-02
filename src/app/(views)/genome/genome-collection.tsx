@@ -2,7 +2,7 @@
 
 import { Dna } from "lucide-react";
 import { EntityViewShell, GenomeResourceCollection } from "@/components/views";
-import { recentGenomeRql } from "@/lib/genome-view";
+import { genomeBaseRql } from "@/lib/genome-view";
 import type { CollectionState } from "@/lib/views/collection-state";
 
 export function GenomeCollection({
@@ -20,7 +20,7 @@ export function GenomeCollection({
       layout="fill"
     >
       <GenomeResourceCollection
-        baseRql={recentGenomeRql}
+        baseRql={genomeBaseRql(initialState)}
         initialState={initialState}
         keywordMode="refine"
       />

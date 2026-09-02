@@ -117,6 +117,39 @@ describe("DataTable shared view seams", () => {
     );
   });
 
+  it("renders repeated multivalue links without duplicate React keys", () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    render(
+      <DataTable
+        id="repeated-multivalue-links"
+        data={[{ id: "strain-1", accessions: ["PX806884", "PX806884"] }]}
+        columns={[
+          {
+            id: "accessions",
+            label: "Accessions",
+            valueHref: "https://example.test/{value}",
+          },
+        ]}
+        totalItems={1}
+        resource="strain"
+        idField="id"
+      />,
+    );
+
+    expect(screen.getAllByRole("link", { name: "PX806884" })).toHaveLength(1);
+    expect(
+      consoleError.mock.calls.some((call) =>
+        call.some(
+          (argument) =>
+            typeof argument === "string" && argument.includes("same key"),
+        ),
+      ),
+    ).toBe(false);
+  });
+
   it("uses an explicit row identity, named focusable region, links, and pagination semantics", () => {
     render(
       <DataTable

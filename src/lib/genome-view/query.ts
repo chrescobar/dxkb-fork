@@ -18,6 +18,10 @@ export type GenomeSort = string;
 export const recentGenomeRql =
   "and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated))";
 
+export function genomeBaseRql(state: CollectionState): string | undefined {
+  return state.rql ? undefined : recentGenomeRql;
+}
+
 export const genomeCollectionOptions: CollectionStateOptions = {
   defaultSort: "unsorted",
   sortAllowlist: ["unsorted", ...genomeSorts],

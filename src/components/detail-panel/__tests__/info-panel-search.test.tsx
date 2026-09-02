@@ -104,6 +104,34 @@ describe("InfoPanel — search variant", () => {
       );
     });
 
+    it("does not warn when strain link arrays contain duplicate IDs", () => {
+      const consoleError = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+
+      render(
+        <InfoPanel
+          selectedIds={["strain-row-1"]}
+          activeTab="strain"
+          selectedRow={{
+            id: "strain-row-1",
+            strain: "A/test/1/2024",
+            genome_ids: ["100.1", "100.1"],
+            "4_ha": ["CY000001", "CY000001"],
+          }}
+        />,
+      );
+
+      expect(screen.getAllByRole("link", { name: "100.1" })).toHaveLength(2);
+      expect(screen.getAllByRole("link", { name: "CY000001" })).toHaveLength(2);
+      const hasDuplicateKeyWarning = consoleError.mock.calls.some(([message]) =>
+        String(message).includes("Encountered two children with the same key"),
+      );
+      consoleError.mockRestore();
+
+      expect(hasDuplicateKeyWarning).toBe(false);
+    });
+
     it("renders ppi details for a selected interaction row", () => {
       render(
         <InfoPanel

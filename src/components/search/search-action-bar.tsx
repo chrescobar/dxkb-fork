@@ -275,10 +275,11 @@ export function SearchActionBar({
     if (action.requiresSelection && selectedCount === 0) {
       return false;
     }
-    // Hide single-select-only actions once more than maxSelection rows are chosen
+    // Strains resolve genomes from one selected row; taxonomy supports aggregates.
     if (
-      action.maxSelection !== undefined &&
-      selectedCount > action.maxSelection
+      (action.maxSelection !== undefined &&
+        selectedCount > action.maxSelection) ||
+      (action.id === "genomes" && searchType === "strain" && selectedCount > 1)
     ) {
       return false;
     }

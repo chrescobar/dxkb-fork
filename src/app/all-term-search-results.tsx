@@ -456,7 +456,7 @@ function SearchResultsContent({ query }: { query: string }) {
               return (
                 <Card
                   key={dataType}
-                  className="bg-card text-card-foreground gap-0 rounded-lg border px-4 py-0 shadow-sm"
+                  className="gap-0 rounded-lg border bg-card px-4 py-0 text-card-foreground shadow-sm"
                 >
                   <CardHeader className="flex flex-row items-center justify-between border-b p-6">
                     <div className="flex items-center gap-2">

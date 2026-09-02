@@ -895,45 +895,52 @@ function renderSearchInfoPanel(
                 const linkTemplate = item.link;
                 if (linkTemplate && Array.isArray(rawValue)) {
                   const values = rawValue.filter(
-                    (value): value is string | number | boolean =>
-                      typeof value === "string" ||
-                      typeof value === "number" ||
-                      typeof value === "boolean",
+                    function isLinkValue(
+                      value,
+                    ): value is string | number | boolean {
+                      return (
+                        typeof value === "string" ||
+                        typeof value === "number" ||
+                        typeof value === "boolean"
+                      );
+                    },
                   );
                   return {
                     label: item.label,
                     value: rawValue,
-                    render: () => (
-                      <span className="flex flex-wrap gap-x-2 gap-y-1">
-                        {values.map((value) => {
-                          const href = resolveLink(
-                            linkTemplate,
-                            { ...selectedRow, [fieldId]: value },
-                            fieldId,
-                          );
-                          const external = /^https?:\/\//.test(href);
-                          return external ? (
-                            <a
-                              key={String(value)}
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 underline hover:text-blue-800"
-                            >
-                              {String(value)}
-                            </a>
-                          ) : (
-                            <Link
-                              key={String(value)}
-                              href={href}
-                              className="text-blue-600 underline hover:text-blue-800"
-                            >
-                              {String(value)}
-                            </Link>
-                          );
-                        })}
-                      </span>
-                    ),
+                    render: function renderArrayLinks() {
+                      return (
+                        <span className="flex flex-wrap gap-x-2 gap-y-1">
+                          {values.map(function renderLink(value, index) {
+                            const href = resolveLink(
+                              linkTemplate,
+                              { ...selectedRow, [fieldId]: value },
+                              fieldId,
+                            );
+                            const isExternal = /^https?:\/\//.test(href);
+                            return isExternal ? (
+                              <a
+                                key={`${String(value)}-${String(index)}`}
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline hover:text-blue-800"
+                              >
+                                {String(value)}
+                              </a>
+                            ) : (
+                              <Link
+                                key={`${String(value)}-${String(index)}`}
+                                href={href}
+                                className="text-blue-600 underline hover:text-blue-800"
+                              >
+                                {String(value)}
+                              </Link>
+                            );
+                          })}
+                        </span>
+                      );
+                    },
                   };
                 }
 

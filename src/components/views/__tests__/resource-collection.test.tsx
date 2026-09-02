@@ -334,6 +334,7 @@ describe("ResourceCollection Genome integration contracts", () => {
       "_blank",
       "noopener,noreferrer",
     );
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("keeps the Strain Genomes action disabled without associated genomes", () => {

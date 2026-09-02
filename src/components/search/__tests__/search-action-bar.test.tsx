@@ -171,6 +171,20 @@ describe("SearchActionBar (taxonomy)", () => {
       expect(onAction).toHaveBeenCalledWith("genomes");
     });
 
+    it("hides the single-strain Genomes action for multiple selections", () => {
+      render(
+        <SearchActionBar
+          selectedCount={2}
+          searchType="strain"
+          enabledActions={["genomes"]}
+        />,
+      );
+
+      expect(
+        screen.queryByRole("button", { name: /^ggenomes$/i }),
+      ).not.toBeInTheDocument();
+    });
+
     it("honors an explicit disable when an enabled action has no target", () => {
       render(
         <SearchActionBar

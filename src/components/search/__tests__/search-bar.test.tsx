@@ -2,13 +2,14 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const { mockPush, mockSearchParams } = vi.hoisted(() => ({
+const { mockPathname, mockPush, mockSearchParams } = vi.hoisted(() => ({
+  mockPathname: { current: "/search" },
   mockPush: vi.fn(),
   mockSearchParams: { current: new URLSearchParams() },
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/search",
+  usePathname: () => mockPathname.current,
   useRouter: () => ({ push: mockPush }),
   useSearchParams: () => mockSearchParams.current,
 }));
@@ -39,6 +40,7 @@ function getForm(): HTMLFormElement {
 
 describe("SearchBar", () => {
   beforeEach(() => {
+    mockPathname.current = "/search";
     mockPush.mockClear();
     mockSearchParams.current = new URLSearchParams();
   });
@@ -114,7 +116,9 @@ describe("SearchBar", () => {
 
     it("navigates Feature searches to the canonical list route", async () => {
       const user = userEvent.setup();
-      mockSearchParams.current = new URLSearchParams({ type: "genome_feature" });
+      mockSearchParams.current = new URLSearchParams({
+        type: "genome_feature",
+      });
       renderSearchBar();
 
       await user.type(screen.getByRole("textbox"), "DNA kinase");
@@ -171,6 +175,20 @@ describe("SearchBar", () => {
         expect(
           screen.getByRole("combobox", { name: /search type/i }),
         ).toHaveTextContent("Genomes");
+      });
+    });
+
+    it("recognizes the canonical Strain route and keyword param", async () => {
+      mockPathname.current = "/strain";
+      mockSearchParams.current = new URLSearchParams({ keyword: "SARS-CoV-2" });
+
+      renderSearchBar();
+
+      await waitFor(() => {
+        expect(screen.getByRole("textbox")).toHaveValue("SARS-CoV-2");
+        expect(
+          screen.getByRole("combobox", { name: /search type/i }),
+        ).toHaveTextContent("Strains");
       });
     });
 

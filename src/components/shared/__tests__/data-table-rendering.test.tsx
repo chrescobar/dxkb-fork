@@ -115,6 +115,41 @@ describe("DataTable shared view seams", () => {
       "href",
       "/genome/100%2F2",
     );
+    const linkStrip = screen.getByRole("link", { name: "100.1" }).parentElement;
+    expect(linkStrip).toHaveClass(
+      "flex",
+      "min-w-0",
+      "overflow-x-auto",
+      "whitespace-nowrap",
+    );
+    expect(linkStrip).not.toHaveClass("flex-wrap");
+    expect(screen.getByRole("link", { name: "100.1" })).toHaveClass(
+      "shrink-0",
+    );
+  });
+
+  it("renders a scalar value using its value link template", () => {
+    render(
+      <DataTable
+        id="scalar-value-link"
+        data={[{ id: "strain-1", accession: "100/2" }]}
+        columns={[
+          {
+            id: "accession",
+            label: "Accession",
+            valueHref: "https://example.test/{value}",
+          },
+        ]}
+        totalItems={1}
+        resource="strain"
+        idField="id"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "100/2" })).toHaveAttribute(
+      "href",
+      "https://example.test/100%2F2",
+    );
   });
 
   it("renders repeated multivalue links without duplicate React keys", () => {
@@ -148,6 +183,7 @@ describe("DataTable shared view seams", () => {
         ),
       ),
     ).toBe(false);
+    consoleError.mockRestore();
   });
 
   it("uses an explicit row identity, named focusable region, links, and pagination semantics", () => {

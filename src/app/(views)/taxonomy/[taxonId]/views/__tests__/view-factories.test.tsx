@@ -111,6 +111,24 @@ vi.mock("@/components/views", () => ({
       />
     );
   },
+  StrainResourceCollection: function StrainResourceCollection({
+    baseRql,
+    enableRowLinks,
+    keywordMode,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
+  }) {
+    return (
+      <div
+        data-testid="strain-resource-collection"
+        data-q={baseRql}
+        data-row-links={String(enableRowLinks)}
+        data-keyword-mode={keywordMode ?? "loaded"}
+      />
+    );
+  },
   FeatureResourceCollection,
   GenomeResourceCollection: ({
     baseRql,
@@ -151,12 +169,13 @@ const compositeClause =
   "or(eq(taxon_lineage_ids,131567),eq(taxon_lineage_ids,10239))";
 
 describe("makeStrainsView", () => {
-  it("renders TaxonDataPanel with strain resource and taxon query", () => {
+  it("renders the shared Strain collection with taxon scope", () => {
     const StrainsView = makeStrainsView({ scope });
-    const { getByTestId } = render(<StrainsView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "strain");
-    expect(panel.getAttribute("data-q")).toContain("1234");
+    render(<StrainsView />);
+    const panel = screen.getByTestId("strain-resource-collection");
+    expect(panel).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
+    expect(panel).toHaveAttribute("data-row-links", "false");
+    expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
@@ -348,6 +367,7 @@ describe("composite scope queries", () => {
     if (
       resource === "genome" ||
       resource === "epitope" ||
+      resource === "strain" ||
       resource === "surveillance" ||
       resource === "serology"
     ) {

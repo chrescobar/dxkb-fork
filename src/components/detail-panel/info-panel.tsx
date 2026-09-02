@@ -17,6 +17,7 @@ import { taxonomyFields } from "@/constants/datafields/taxonomy";
 import { ppiFields } from "@/constants/datafields/ppi";
 import type { DataFieldMap } from "@/constants/datafields/types";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { DetailPanel, type DetailField } from "./index";
 import { formatOwner, formatFileSize } from "@/lib/services/workspace/helpers";
 import type { WorkspaceItem } from "@/lib/services/workspace/domain";
@@ -789,12 +790,31 @@ function renderSearchInfoPanel(
     linkText?: string;
   }
   const allowedFieldIds = new Set(allowedFields);
+  const strainAccessionFields = new Set([
+    "genbank_accessions",
+    "1_pb2",
+    "2_pb1",
+    "3_pa",
+    "4_ha",
+    "5_np",
+    "6_na",
+    "7_mp",
+    "8_ns",
+    "s",
+    "m",
+    "l",
+    "other_segments",
+  ]);
   const displayColumns: DisplayColumn[] = Object.values(fieldFile).map((o) => ({
     id: o.field,
     label: o.label,
     visible: !o.hidden,
     group: o.group,
-    link: o.link,
+    link:
+      o.link ??
+      (activeTab === "strain" && strainAccessionFields.has(o.field)
+        ? "https://www.ncbi.nlm.nih.gov/nuccore/{value}"
+        : undefined),
     linkType: o.linkType,
     linkText: o.linkText,
   }));
@@ -864,10 +884,55 @@ function renderSearchInfoPanel(
                         onClick={() =>
                           window.open(resolved, "_blank", "noopener,noreferrer")
                         }
-                        className="rounded border-black bg-primary px-2 py-1 text-sm text-secondary"
+                        className="bg-primary text-secondary rounded border-black px-2 py-1 text-sm"
                       >
                         {item.linkText ?? "View"}
                       </Button>
+                    ),
+                  };
+                }
+
+                const linkTemplate = item.link;
+                if (linkTemplate && Array.isArray(rawValue)) {
+                  const values = rawValue.filter(
+                    (value): value is string | number | boolean =>
+                      typeof value === "string" ||
+                      typeof value === "number" ||
+                      typeof value === "boolean",
+                  );
+                  return {
+                    label: item.label,
+                    value: rawValue,
+                    render: () => (
+                      <span className="flex flex-wrap gap-x-2 gap-y-1">
+                        {values.map((value) => {
+                          const href = resolveLink(
+                            linkTemplate,
+                            { ...selectedRow, [fieldId]: value },
+                            fieldId,
+                          );
+                          const external = /^https?:\/\//.test(href);
+                          return external ? (
+                            <a
+                              key={String(value)}
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 underline hover:text-blue-800"
+                            >
+                              {String(value)}
+                            </a>
+                          ) : (
+                            <Link
+                              key={String(value)}
+                              href={href}
+                              className="text-blue-600 underline hover:text-blue-800"
+                            >
+                              {String(value)}
+                            </Link>
+                          );
+                        })}
+                      </span>
                     ),
                   };
                 }

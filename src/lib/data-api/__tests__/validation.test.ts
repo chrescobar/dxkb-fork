@@ -8,6 +8,7 @@ import {
   epitopeRecordSchema,
   genomeRecordSchema,
   serologyRecordSchema,
+  strainRecordSchema,
   surveillanceRecordSchema,
 } from "../schemas";
 import {
@@ -38,25 +39,69 @@ describe("data API contracts", () => {
     expect(
       resourceRegistry.surveillance.fields.taxon_lineage_ids.cardinality,
     ).toBe("multiple");
-    expect(resourceRegistry.surveillance.fields.taxon_lineage_ids.sortable).toBe(
-      false,
-    );
+    expect(
+      resourceRegistry.surveillance.fields.taxon_lineage_ids.sortable,
+    ).toBe(false);
     expect(resourceRegistry.serology.fields.taxon_lineage_ids.cardinality).toBe(
       "multiple",
     );
-    expect(resourceRegistry.serology.fields.taxon_lineage_ids.sortable).toBe(false);
+    expect(resourceRegistry.serology.fields.taxon_lineage_ids.sortable).toBe(
+      false,
+    );
+  });
+
+  it("registers Strain backend identity and multivalue accession fields", () => {
+    expect(resourceRegistry.strain.idField).toBe("id");
+    for (const field of [
+      "genome_ids",
+      "genbank_accessions",
+      "1_pb2",
+      "4_ha",
+      "8_ns",
+      "other_segments",
+    ]) {
+      expect(resourceRegistry.strain.fields[field].cardinality).toBe(
+        "multiple",
+      );
+      expect(resourceRegistry.strain.fields[field].sortable).toBe(false);
+    }
+    expect(
+      strainRecordSchema.parse({
+        id: "strain-row-1",
+        strain: "A/test/1/2024",
+        genome_ids: ["1.1", "1.2"],
+        genbank_accessions: ["CY000001", "CY000002"],
+        "4_ha": ["CY000004"],
+      }),
+    ).toMatchObject({ id: "strain-row-1" });
   });
 
   it("registers the Epitope and assay contracts", () => {
     expect(resourceRegistry.epitope.idField).toBe("epitope_id");
     expect(resourceRegistry.epitope_assay.idField).toBe("assay_id");
-    expect(resourceRegistry.epitope.fields.taxon_lineage_ids.cardinality).toBe("multiple");
-    expect(resourceRegistry.epitope.fields.host_name.cardinality).toBe("multiple");
+    expect(resourceRegistry.epitope.fields.taxon_lineage_ids.cardinality).toBe(
+      "multiple",
+    );
+    expect(resourceRegistry.epitope.fields.host_name.cardinality).toBe(
+      "multiple",
+    );
     expect(resourceRegistry.epitope.fields.total_assays.type).toBe("number");
     expect(resourceRegistry.epitope.fields.assay_results.sortable).toBe(false);
     expect(resourceRegistry.epitope_assay.fields.assay_result.facet).toBe(true);
-    expect(epitopeRecordSchema.parse({ epitope_id: "15780", total_assays: 2, host_name: ["Mus musculus BALB/c", "Ovis aries, domestic sheep"] })).toMatchObject({ epitope_id: "15780" });
-    expect(epitopeAssayRecordSchema.parse({ assay_id: "A1", epitope_id: "15780", assay_result: "Positive" })).toMatchObject({ assay_id: "A1" });
+    expect(
+      epitopeRecordSchema.parse({
+        epitope_id: "15780",
+        total_assays: 2,
+        host_name: ["Mus musculus BALB/c", "Ovis aries, domestic sheep"],
+      }),
+    ).toMatchObject({ epitope_id: "15780" });
+    expect(
+      epitopeAssayRecordSchema.parse({
+        assay_id: "A1",
+        epitope_id: "15780",
+        assay_result: "Positive",
+      }),
+    ).toMatchObject({ assay_id: "A1" });
   });
 
   it("allows a valid collection and rejects disallowed fields and sorts", () => {
@@ -156,11 +201,9 @@ describe("data API contracts", () => {
   });
 
   it("keeps cached collections stale so remounts refresh them", () => {
-    const options = collectionQueryOptions(
-      new DataRepository(),
-      "genome",
-      { fields: ["genome_id"] },
-    );
+    const options = collectionQueryOptions(new DataRepository(), "genome", {
+      fields: ["genome_id"],
+    });
 
     expect(options.staleTime).toBe(0);
   });

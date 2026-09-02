@@ -69,7 +69,7 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "strain",
     typeTitle: "Strains",
-    route: { status: "legacy" },
+    route: { status: "canonical", segment: viewRegistry.strain.segment },
     tabs: { strain: "Strains" },
     pickerOrder: 2,
     allTermOrder: 2,

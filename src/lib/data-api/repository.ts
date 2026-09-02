@@ -61,9 +61,28 @@ function addFields(
   url: URL,
   fields: string[] | undefined,
   idField: string,
-): void {
-  if (fields?.length)
-    appendQuery(url, `select(${[...new Set([...fields, idField])].join(",")})`);
+): boolean {
+  if (!fields?.length) return false;
+  // The upstream RQL parser misreads identifiers such as `1_pb2` in select().
+  // Omit its projection, then project the full response locally.
+  if (fields.some((field) => /^\d/.test(field))) return true;
+  appendQuery(url, `select(${[...new Set([...fields, idField])].join(",")})`);
+  return false;
+}
+
+function projectRows(
+  rows: Record<string, unknown>[],
+  fields: string[] | undefined,
+  idField: string,
+  projectLocally: boolean,
+): Record<string, unknown>[] {
+  if (!projectLocally || !fields?.length) return rows;
+  const selected = new Set([...fields, idField]);
+  return rows.map((row) =>
+    Object.fromEntries(
+      Object.entries(row).filter(([field]) => selected.has(field)),
+    ),
+  );
 }
 
 function addSort(url: URL, sort: DataSort | undefined, idField: string): void {
@@ -200,7 +219,7 @@ export class ServerDataRepository {
     const start = (page - 1) * size;
     const url = this.url(resource);
     addPredicate(url, request, resource);
-    addFields(url, request.fields, definition.idField);
+    const projectLocally = addFields(url, request.fields, definition.idField);
     addSort(url, request.sort, definition.idField);
     if (request.facets?.length)
       appendQuery(
@@ -233,8 +252,14 @@ export class ServerDataRepository {
         502,
         "malformed_response",
       );
+    const rows = this.parseRows(resource, normalizeRows(payload));
     return {
-      rows: this.parseRows(resource, normalizeRows(payload)),
+      rows: projectRows(
+        rows,
+        request.fields,
+        definition.idField,
+        projectLocally,
+      ),
       total,
       facets: parseFacets(object.facet_counts),
       page,
@@ -255,9 +280,15 @@ export class ServerDataRepository {
       );
     const url = this.url(resource);
     appendQuery(url, eq(resource, idField, request.id));
-    addFields(url, request.fields, definition.idField);
+    const projectLocally = addFields(url, request.fields, definition.idField);
     const payload = await this.request(url, 0, 2, signal, "application/json");
-    const rows = this.parseRows(resource, normalizeRows(payload));
+    const parsedRows = this.parseRows(resource, normalizeRows(payload));
+    const rows = projectRows(
+      parsedRows,
+      request.fields,
+      definition.idField,
+      projectLocally,
+    );
     if (rows.length > 1)
       throw new DataApiError(
         `Multiple ${resource} records matched ${idField}.`,
@@ -275,7 +306,7 @@ export class ServerDataRepository {
     const definition = getResourceDefinition(resource);
     const url = this.url(resource);
     addPredicate(url, request, resource);
-    addFields(url, request.fields, definition.idField);
+    const projectLocally = addFields(url, request.fields, definition.idField);
     addSort(url, request.sort, definition.idField);
     const offset = request.offset ?? 0;
     const payload = await this.request(
@@ -285,7 +316,15 @@ export class ServerDataRepository {
       signal,
       "application/json",
     );
-    return { rows: this.parseRows(resource, normalizeRows(payload)) };
+    const rows = this.parseRows(resource, normalizeRows(payload));
+    return {
+      rows: projectRows(
+        rows,
+        request.fields,
+        definition.idField,
+        projectLocally,
+      ),
+    };
   }
 
   private async rows(
@@ -303,7 +342,7 @@ export class ServerDataRepository {
       field: definition.idField,
       values: ids,
     });
-    addFields(url, fields, definition.idField);
+    const projectLocally = addFields(url, fields, definition.idField);
     addSort(url, sort, definition.idField);
     const payload = await this.request(
       url,
@@ -314,7 +353,10 @@ export class ServerDataRepository {
       "POST",
       predicate,
     );
-    return { rows: this.parseRows(resource, normalizeRows(payload)) };
+    const rows = this.parseRows(resource, normalizeRows(payload));
+    return {
+      rows: projectRows(rows, fields, definition.idField, projectLocally),
+    };
   }
 
   private url(resource: DataResource): URL {

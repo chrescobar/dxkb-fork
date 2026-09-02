@@ -4,7 +4,7 @@ export const resourceIdField: Record<string, string> = {
   genome_feature: "feature_id",
   protein_feature: "id",
   genome_amr: "id",
-  strain: "strain",
+  strain: "id",
   epitope: "epitope_id",
   epitope_assay: "assay_id",
   protein_structure: "pdb_id",

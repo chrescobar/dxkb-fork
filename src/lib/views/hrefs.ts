@@ -60,7 +60,8 @@ export function featureListHref(opts?: {
 }): string {
   const params: string[] = [];
   if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
-  else if (opts?.keyword) params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
   if (opts?.filter) params.push(`filter=${encodeURIComponent(opts.filter)}`);
   return params.length ? `/feature?${params.join("&")}` : "/feature";
 }
@@ -88,7 +89,8 @@ export function epitopeListHref(opts?: {
 }): string {
   const params: string[] = [];
   if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
-  else if (opts?.keyword) params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
   if (opts?.taxonId != null) {
     params.push(`taxon_id=${encodeURIComponent(String(opts.taxonId))}`);
   }
@@ -157,6 +159,33 @@ export function serologyHref(
 ): string {
   const path = `/serology/${encodeURIComponent(String(sampleIdentifier))}`;
   return testType ? `${path}?test_type=${encodeURIComponent(testType)}` : path;
+}
+
+/** Canonical Strain collection route. Explicit RQL takes precedence over keyword. */
+export function strainListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  taxonId?: number | string;
+  strain?: string | readonly string[];
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  if (!opts?.rql) {
+    if (opts?.taxonId != null) {
+      params.push(`taxon_id=${encodeURIComponent(String(opts.taxonId))}`);
+    }
+    const strain = opts?.strain;
+    const values: readonly string[] = Array.isArray(strain)
+      ? strain
+      : typeof strain === "string"
+        ? [strain]
+        : [];
+    for (const value of values)
+      params.push(`strain=${encodeURIComponent(value)}`);
+  }
+  return params.length ? `/strain?${params.join("&")}` : "/strain";
 }
 
 /** Canonical Serology collection route. Explicit RQL takes precedence over keyword. */

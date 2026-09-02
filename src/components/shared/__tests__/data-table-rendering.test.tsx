@@ -89,6 +89,34 @@ beforeAll(() => {
 });
 
 describe("DataTable shared view seams", () => {
+  it("renders multivalue fields as individual links", () => {
+    render(
+      <DataTable
+        id="multivalue-links"
+        data={[{ id: "strain-1", genome_ids: ["100.1", "100/2"] }]}
+        columns={[
+          {
+            id: "genome_ids",
+            label: "Genome IDs",
+            valueHref: "/genome/{value}",
+          },
+        ]}
+        totalItems={1}
+        resource="strain"
+        idField="id"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "100.1" })).toHaveAttribute(
+      "href",
+      "/genome/100.1",
+    );
+    expect(screen.getByRole("link", { name: "100/2" })).toHaveAttribute(
+      "href",
+      "/genome/100%2F2",
+    );
+  });
+
   it("uses an explicit row identity, named focusable region, links, and pagination semantics", () => {
     render(
       <DataTable

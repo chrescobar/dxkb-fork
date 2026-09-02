@@ -8,20 +8,27 @@ describe("mapLegacyViewPath", () => {
     });
   });
   it("maps a list legacy path with raw RQL into ?rql=", () => {
-    expect(mapLegacyViewPath("/view/GenomeList/", "eq(taxon_id,1763)")).toEqual({
-      pathname: "/genome",
-      search: "rql=eq(taxon_id%2C1763)",
-    });
+    expect(mapLegacyViewPath("/view/GenomeList/", "eq(taxon_id,1763)")).toEqual(
+      {
+        pathname: "/genome",
+        search: "rql=eq(taxon_id%2C1763)",
+      },
+    );
   });
   it("maps TaxonList to the taxonomy segment", () => {
-    expect(mapLegacyViewPath("/view/TaxonList/", "eq(taxon_lineage_ids,1763)")).toEqual({
+    expect(
+      mapLegacyViewPath("/view/TaxonList/", "eq(taxon_lineage_ids,1763)"),
+    ).toEqual({
       pathname: "/taxonomy",
       search: "rql=eq(taxon_lineage_ids%2C1763)",
     });
   });
   it("preserves a named query param (surveillance)", () => {
     expect(
-      mapLegacyViewPath("/view/Surveillance/ISDN123456", "pathogen_test_type=Influenza%20A"),
+      mapLegacyViewPath(
+        "/view/Surveillance/ISDN123456",
+        "pathogen_test_type=Influenza%20A",
+      ),
     ).toEqual({
       pathname: "/surveillance/ISDN123456",
       search: "pathogen_test_type=Influenza+A",
@@ -39,22 +46,33 @@ describe("mapLegacyViewPath", () => {
     });
   });
 
+  it("maps the list-only Strain route", () => {
+    expect(mapLegacyViewPath("/view/StrainList/", "strain=H1N1")).toEqual({
+      pathname: "/strain",
+      search: "strain=H1N1",
+    });
+  });
+
   it("maps Epitope member and list routes", () => {
     expect(mapLegacyViewPath("/view/Epitope/15780", "")).toEqual({
       pathname: "/epitope/15780",
       search: "",
     });
-    expect(mapLegacyViewPath("/view/EpitopeList/", "eq(taxon_id,11520)")).toEqual({
+    expect(
+      mapLegacyViewPath("/view/EpitopeList/", "eq(taxon_id,11520)"),
+    ).toEqual({
       pathname: "/epitope",
       search: "rql=eq(taxon_id%2C11520)",
     });
   });
 
   it("maps Protein aliases to Feature member and list routes", () => {
-    expect(mapLegacyViewPath("/view/Protein/fig%7C83332.12.peg.1", "")).toEqual({
-      pathname: "/feature/fig%7C83332.12.peg.1",
-      search: "",
-    });
+    expect(mapLegacyViewPath("/view/Protein/fig%7C83332.12.peg.1", "")).toEqual(
+      {
+        pathname: "/feature/fig%7C83332.12.peg.1",
+        search: "",
+      },
+    );
     expect(mapLegacyViewPath("/view/ProteinList/", "keyword=kinase")).toEqual({
       pathname: "/feature",
       search: "keyword=kinase&filter=protein",
@@ -68,17 +86,25 @@ describe("mapLegacyViewPath", () => {
     expect(mapLegacyViewPath("/genome/123", "")).toBeNull();
   });
   it("maps a list legacy path with named params (not RQL) using URLSearchParams encoding", () => {
-    expect(mapLegacyViewPath("/view/GenomeList/", "keyword=mycobacterium tuberculosis")).toEqual({
+    expect(
+      mapLegacyViewPath(
+        "/view/GenomeList/",
+        "keyword=mycobacterium tuberculosis",
+      ),
+    ).toEqual({
       pathname: "/genome",
       search: "keyword=mycobacterium+tuberculosis",
     });
   });
   it("splits mixed RQL + named param so filter= is not swallowed into rql=", () => {
     expect(
-      mapLegacyViewPath("/view/FeatureList/", 'eq(genome_id,83332.12)&filter="CDS"'),
+      mapLegacyViewPath(
+        "/view/FeatureList/",
+        'eq(genome_id,83332.12)&filter="CDS"',
+      ),
     ).toEqual({
       pathname: "/feature",
-      search: 'rql=eq(genome_id%2C83332.12)&filter=%22CDS%22',
+      search: "rql=eq(genome_id%2C83332.12)&filter=%22CDS%22",
     });
   });
 });

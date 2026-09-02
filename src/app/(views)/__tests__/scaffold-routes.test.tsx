@@ -22,6 +22,12 @@ vi.mock("@tanstack/react-hotkeys", () => ({ useHotkey: vi.fn() }));
 import GenomePage from "../genome/[genomeId]/page";
 import StrainListPage from "../strain/page";
 
+vi.mock("../strain/strain-collection", () => ({
+  StrainCollection: ({ initialState }: { initialState: unknown }) => (
+    <div data-testid="strain-collection">{JSON.stringify(initialState)}</div>
+  ),
+}));
+
 vi.mock("@/lib/genome-view/server", () => ({
   getGenome: vi.fn((genomeId: string) =>
     Promise.resolve({
@@ -48,13 +54,23 @@ it("genome singular renders for a dotted id", async () => {
   ).toBeInTheDocument();
 });
 
-it("strain list renders (list-only type)", async () => {
+it("strain list parses canonical state without creating a member route", async () => {
   render(
     await StrainListPage({
-      searchParams: Promise.resolve({ keyword: "H1N1" }),
+      searchParams: Promise.resolve({
+        keyword: "H1N1",
+        strain: "A/B strain",
+        page: "2",
+      }),
     }),
   );
-  expect(screen.getByText("keyword(H1N1)")).toBeInTheDocument();
+  expect(screen.getByTestId("strain-collection")).toHaveTextContent(
+    '"keyword":"H1N1"',
+  );
+  expect(screen.getByTestId("strain-collection")).toHaveTextContent(
+    '"strain":["A/B strain"]',
+  );
+  expect(screen.getByTestId("strain-collection")).toHaveTextContent('"page":2');
 });
 
 it("genome singular calls notFound for an empty id", async () => {

@@ -8,6 +8,7 @@ import {
 import {
   buildGenomeTabs,
   canonicalGenomeTab,
+  genomeBaseRql,
   genomeCollectionProfile,
   genomeInteractionsRql,
   genomeSequenceRql,
@@ -26,10 +27,25 @@ describe("Genome view contracts", () => {
     );
   });
 
-  it("uses the legacy recent, non-deprecated scope for the global list", () => {
+  it("uses the legacy recent, non-deprecated scope for an unfiltered global list", () => {
     expect(recentGenomeRql).toBe(
       "and(gt(completion_date,NOW-1YEARS),ne(genome_status,Deprecated))",
     );
+    expect(
+      genomeBaseRql({ keyword: "", filters: {}, page: 1, sort: "unsorted" }),
+    ).toBe(recentGenomeRql);
+  });
+
+  it("does not restrict an explicit RQL query to recent genomes", () => {
+    expect(
+      genomeBaseRql({
+        keyword: "",
+        filters: {},
+        page: 1,
+        sort: "unsorted",
+        rql: "in(genome_id,(11320.1,11320.2))",
+      }),
+    ).toBeUndefined();
   });
 
   it("accepts dotted numeric IDs only", () => {

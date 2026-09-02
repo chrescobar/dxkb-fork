@@ -37,17 +37,19 @@ function SearchBarWithParams(props: SearchBarProps) {
   const canonicalType =
     pathname === "/genome"
       ? "genome"
-      : pathname === "/feature"
-        ? searchParams.get("filter") === "protein"
-          ? "protein"
-          : "genome_feature"
-        : pathname === "/epitope"
-          ? "epitope"
-          : pathname === "/surveillance"
-            ? "surveillance"
-            : pathname === "/serology"
-              ? "serology"
-              : undefined;
+      : pathname === "/strain"
+        ? "strain"
+        : pathname === "/feature"
+          ? searchParams.get("filter") === "protein"
+            ? "protein"
+            : "genome_feature"
+          : pathname === "/epitope"
+            ? "epitope"
+            : pathname === "/surveillance"
+              ? "surveillance"
+              : pathname === "/serology"
+                ? "serology"
+                : undefined;
   const rawQuery =
     (canonicalType ? searchParams.get("keyword") : searchParams.get("q")) ||
     props.initialValue ||

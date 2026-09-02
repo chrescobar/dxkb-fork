@@ -89,6 +89,103 @@ beforeAll(() => {
 });
 
 describe("DataTable shared view seams", () => {
+  it("renders multivalue fields as individual links", () => {
+    render(
+      <DataTable
+        id="multivalue-links"
+        data={[{ id: "strain-1", genome_ids: ["100.1", "100/2"] }]}
+        columns={[
+          {
+            id: "genome_ids",
+            label: "Genome IDs",
+            valueHref: "/genome/{value}",
+          },
+        ]}
+        totalItems={1}
+        resource="strain"
+        idField="id"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "100.1" })).toHaveAttribute(
+      "href",
+      "/genome/100.1",
+    );
+    expect(screen.getByRole("link", { name: "100/2" })).toHaveAttribute(
+      "href",
+      "/genome/100%2F2",
+    );
+    const linkStrip = screen.getByRole("link", { name: "100.1" }).parentElement;
+    expect(linkStrip).toHaveClass(
+      "flex",
+      "min-w-0",
+      "overflow-x-auto",
+      "whitespace-nowrap",
+    );
+    expect(linkStrip).not.toHaveClass("flex-wrap");
+    expect(screen.getByRole("link", { name: "100.1" })).toHaveClass(
+      "shrink-0",
+    );
+  });
+
+  it("renders a scalar value using its value link template", () => {
+    render(
+      <DataTable
+        id="scalar-value-link"
+        data={[{ id: "strain-1", accession: "100/2" }]}
+        columns={[
+          {
+            id: "accession",
+            label: "Accession",
+            valueHref: "https://example.test/{value}",
+          },
+        ]}
+        totalItems={1}
+        resource="strain"
+        idField="id"
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "100/2" })).toHaveAttribute(
+      "href",
+      "https://example.test/100%2F2",
+    );
+  });
+
+  it("renders repeated multivalue links without duplicate React keys", () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+
+    render(
+      <DataTable
+        id="repeated-multivalue-links"
+        data={[{ id: "strain-1", accessions: ["PX806884", "PX806884"] }]}
+        columns={[
+          {
+            id: "accessions",
+            label: "Accessions",
+            valueHref: "https://example.test/{value}",
+          },
+        ]}
+        totalItems={1}
+        resource="strain"
+        idField="id"
+      />,
+    );
+
+    expect(screen.getAllByRole("link", { name: "PX806884" })).toHaveLength(1);
+    expect(
+      consoleError.mock.calls.some((call) =>
+        call.some(
+          (argument) =>
+            typeof argument === "string" && argument.includes("same key"),
+        ),
+      ),
+    ).toBe(false);
+    consoleError.mockRestore();
+  });
+
   it("uses an explicit row identity, named focusable region, links, and pagination semantics", () => {
     render(
       <DataTable

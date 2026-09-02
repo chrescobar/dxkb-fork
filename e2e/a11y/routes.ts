@@ -319,11 +319,16 @@ export const routes: RouteEntry[] = [
     },
   },
   {
-    name: "strain",
-    path: "/strain",
+    name: "strain-list",
+    path: "/strain?keyword=influenza",
     unauthenticated: true,
+    mobile: true,
+    settle: { loadState: "domcontentloaded" },
     prepare: async (page) => {
-      await page.waitForLoadState("networkidle");
+      await page
+        .getByText(/results/)
+        .first()
+        .waitFor();
     },
   },
   {

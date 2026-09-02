@@ -31,6 +31,7 @@ import {
   serologyHref,
   serologyIdFromRow,
   serologyListHref,
+  strainListHref,
   surveillanceHref,
   surveillanceIdFromRow,
   surveillanceListHref,
@@ -465,7 +466,8 @@ function SearchResultsContent({ query }: { query: string }) {
                         dataType === "genome_feature" ||
                         dataType === "epitope" ||
                         dataType === "surveillance" ||
-                        dataType === "serology" ? (
+                        dataType === "serology" ||
+                        dataType === "strain" ? (
                           <Link
                             href={
                               dataType === "genome"
@@ -476,7 +478,9 @@ function SearchResultsContent({ query }: { query: string }) {
                                     ? epitopeListHref({ keyword: query })
                                     : dataType === "surveillance"
                                       ? surveillanceListHref({ keyword: query })
-                                      : serologyListHref({ keyword: query })
+                                      : dataType === "serology"
+                                        ? serologyListHref({ keyword: query })
+                                        : strainListHref({ keyword: query })
                             }
                           >
                             {labelsBySearchType[dataType]}

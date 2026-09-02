@@ -49,10 +49,48 @@ describe("ServerDataRepository", () => {
     });
   });
 
+  it("omits projection when a field starts with a digit", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
+      jsonResponse({
+        response: {
+          numFound: 1,
+          docs: [
+            {
+              id: "strain-1",
+              strain: "A/test/1/2024",
+              "1_pb2": ["CY000001"],
+              unrequested_field: "must not escape",
+            },
+          ],
+        },
+      }),
+    );
+    const repository = new ServerDataRepository({
+      baseUrl: "https://data.test",
+      fetch: fetcher,
+    });
+
+    const result = await repository.collection("strain", {
+      operation: "collection",
+      fields: ["strain", "1_pb2"],
+    });
+
+    expect((fetcher.mock.calls[0][0] as URL).href).not.toContain("select(");
+    expect(result.rows).toEqual([
+      {
+        id: "strain-1",
+        strain: "A/test/1/2024",
+        "1_pb2": ["CY000001"],
+      },
+    ]);
+  });
+
   it("includes the required resource ID in narrow export projections", async () => {
     const fetcher = vi
       .fn<typeof fetch>()
-      .mockResolvedValue(jsonResponse([{ genome_id: "1.1", genome_name: "One" }]));
+      .mockResolvedValue(
+        jsonResponse([{ genome_id: "1.1", genome_name: "One" }]),
+      );
     const repository = new ServerDataRepository({
       baseUrl: "https://data.test",
       fetch: fetcher,
@@ -129,20 +167,19 @@ describe("ServerDataRepository", () => {
     ).toBe("raw-token");
   });
 
-  it.each([
-    { response: { unsupported: [] } },
-    { items: null },
-    { rows: {} },
-  ])("rejects unsupported row envelopes", async (payload) => {
-    const repository = new ServerDataRepository({
-      baseUrl: "https://data.test",
-      fetch: vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(payload)),
-    });
+  it.each([{ response: { unsupported: [] } }, { items: null }, { rows: {} }])(
+    "rejects unsupported row envelopes",
+    async (payload) => {
+      const repository = new ServerDataRepository({
+        baseUrl: "https://data.test",
+        fetch: vi.fn<typeof fetch>().mockResolvedValue(jsonResponse(payload)),
+      });
 
-    await expect(
-      repository.member("genome", { operation: "member", id: "1" }),
-    ).rejects.toMatchObject({ code: "malformed_response" });
-  });
+      await expect(
+        repository.member("genome", { operation: "member", id: "1" }),
+      ).rejects.toMatchObject({ code: "malformed_response" });
+    },
+  );
 
   it.each([null, true, "", -1, Number.POSITIVE_INFINITY])(
     "rejects invalid facet count %j",

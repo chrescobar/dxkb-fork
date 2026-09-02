@@ -21,11 +21,15 @@ describe("search descriptors", () => {
     );
   });
 
-  it("routes Surveillance and Serology searches to canonical collections", () => {
+  it("routes Strain, Surveillance, and Serology searches to canonical collections", () => {
+    const strain = searchDescriptors.find((item) => item.id === "strain");
     const surveillance = searchDescriptors.find(
       (item) => item.id === "surveillance",
     );
     const serology = searchDescriptors.find((item) => item.id === "serology");
+    expect(strain && searchHref(strain, "A/B strain")).toBe(
+      "/strain?keyword=A%2FB%20strain",
+    );
     expect(surveillance && searchHref(surveillance, "RAT/antigen")).toBe(
       "/surveillance?keyword=RAT%2Fantigen",
     );

@@ -120,7 +120,24 @@ const multipleFields: Partial<Record<DataResource, ReadonlySet<string>>> = {
   epitope: new Set(["assay_results", "host_name", "taxon_lineage_ids"]),
   surveillance: new Set(["pathogen_test_type", "taxon_lineage_ids"]),
   serology: new Set(["taxon_lineage_ids"]),
-  strain: new Set(["genome_ids"]),
+  strain: new Set([
+    "taxon_lineage_ids",
+    "taxon_lineage_names",
+    "genome_ids",
+    "genbank_accessions",
+    "1_pb2",
+    "2_pb1",
+    "3_pa",
+    "4_ha",
+    "5_np",
+    "6_na",
+    "7_mp",
+    "8_ns",
+    "s",
+    "m",
+    "l",
+    "other_segments",
+  ]),
 };
 const equalityOperators = ["eq", "ne", "in"] as const;
 const orderedOperators = [
@@ -172,7 +189,9 @@ function buildFields(resource: DataResource): Record<string, ResourceField> {
             ? "multiple"
             : "scalar",
           selectable: true,
-          sortable: metadata?.sortable !== false,
+          sortable:
+            !multipleFields[resource]?.has(name) &&
+            metadata?.sortable !== false,
           facet: metadata?.facet === true,
           quote:
             resource === "serology" && name === "test_type"

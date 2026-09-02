@@ -94,6 +94,7 @@ export interface DataTableColumn {
   visible?: boolean;
   sortable?: boolean;
   href?: (row: DataTableRow) => string | undefined;
+  valueHref?: string;
 }
 
 interface DataTableMeta {
@@ -266,11 +267,48 @@ function createColumnDefs(columns: DataTableColumn[]) {
       accessorKey: column.id,
       header: column.label,
       cell: (info: CellContext<DataTableFeatures, DataRow>) => {
-        const value = formatCellValue(info.getValue());
+        const rawValue = info.getValue();
+        const value = formatCellValue(rawValue);
         const href = column.href?.(info.row.original);
-        return href ? (
+        const valueHref = column.valueHref;
+        if (valueHref && Array.isArray(rawValue)) {
+          return (
+            <span className="flex min-w-0 gap-x-2 overflow-x-auto whitespace-nowrap">
+              {[...new Set(rawValue.map(String))].map((itemValue) => {
+                return (
+                  <Link
+                    key={itemValue}
+                    href={valueHref.replace(
+                      "{value}",
+                      encodeURIComponent(itemValue),
+                    )}
+                    className="shrink-0 text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                    }}
+                  >
+                    {itemValue}
+                  </Link>
+                );
+              })}
+            </span>
+          );
+        }
+        const scalarValueHref =
+          valueHref &&
+          (typeof rawValue === "string" ||
+            typeof rawValue === "number" ||
+            typeof rawValue === "bigint" ||
+            typeof rawValue === "boolean")
+            ? valueHref.replace(
+                "{value}",
+                encodeURIComponent(String(rawValue)),
+              )
+            : undefined;
+        const cellHref = scalarValueHref ?? href;
+        return cellHref ? (
           <Link
-            href={href}
+            href={cellHref}
             className="truncate text-primary underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
             onClick={(event) => {
               event.stopPropagation();

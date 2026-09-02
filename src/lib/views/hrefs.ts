@@ -2,6 +2,8 @@
 // query encoding here so callers do not hand-build strings (and re-derive encoding
 // rules) at each site.
 
+import { escapeRqlValue } from "./rql";
+
 /** Internal taxonomy singular route, e.g. `/taxonomy/561`. */
 export function taxonomyHref(taxonId: number | string): string {
   return `/taxonomy/${String(taxonId)}`;
@@ -20,6 +22,21 @@ export function genomeIdFromRow(
 /** Internal genome singular route, e.g. `/genome/83332.12`. */
 export function genomeHref(genomeId: number | string): string {
   return `/genome/${encodeURIComponent(String(genomeId))}`;
+}
+
+/** Return the canonical Genome list for all genome IDs associated with a row. */
+export function genomesHrefFromRow(
+  row: Record<string, unknown> | null,
+): string | null {
+  if (!Array.isArray(row?.genome_ids)) return null;
+  const genomeIds = [...new Set(row.genome_ids)]
+    .filter(
+      (id): id is string | number =>
+        typeof id === "string" || typeof id === "number",
+    )
+    .map((id) => escapeRqlValue(String(id)));
+  if (genomeIds.length === 0) return null;
+  return genomeListHref({ rql: `in(genome_id,(${genomeIds.join(",")}))` });
 }
 
 /**
@@ -60,7 +77,8 @@ export function featureListHref(opts?: {
 }): string {
   const params: string[] = [];
   if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
-  else if (opts?.keyword) params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
   if (opts?.filter) params.push(`filter=${encodeURIComponent(opts.filter)}`);
   return params.length ? `/feature?${params.join("&")}` : "/feature";
 }
@@ -88,7 +106,8 @@ export function epitopeListHref(opts?: {
 }): string {
   const params: string[] = [];
   if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
-  else if (opts?.keyword) params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
   if (opts?.taxonId != null) {
     params.push(`taxon_id=${encodeURIComponent(String(opts.taxonId))}`);
   }
@@ -157,6 +176,33 @@ export function serologyHref(
 ): string {
   const path = `/serology/${encodeURIComponent(String(sampleIdentifier))}`;
   return testType ? `${path}?test_type=${encodeURIComponent(testType)}` : path;
+}
+
+/** Canonical Strain collection route. Explicit RQL takes precedence over keyword. */
+export function strainListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  taxonId?: number | string;
+  strain?: string | readonly string[];
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else if (opts?.keyword)
+    params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+  if (!opts?.rql) {
+    if (opts?.taxonId != null) {
+      params.push(`taxon_id=${encodeURIComponent(String(opts.taxonId))}`);
+    }
+    const strain = opts?.strain;
+    const values: readonly string[] = Array.isArray(strain)
+      ? strain
+      : typeof strain === "string"
+        ? [strain]
+        : [];
+    for (const value of values)
+      params.push(`strain=${encodeURIComponent(value)}`);
+  }
+  return params.length ? `/strain?${params.join("&")}` : "/strain";
 }
 
 /** Canonical Serology collection route. Explicit RQL takes precedence over keyword. */

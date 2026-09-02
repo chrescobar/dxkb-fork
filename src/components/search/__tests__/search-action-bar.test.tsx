@@ -154,6 +154,50 @@ describe("SearchActionBar (taxonomy)", () => {
       expect(onAction).toHaveBeenCalledWith("taxonOverview");
     });
 
+    it("enables the Genomes action when a consumer implements it", async () => {
+      const onAction = vi.fn();
+      render(
+        <SearchActionBar
+          selectedCount={1}
+          searchType="strain"
+          enabledActions={["genomes"]}
+          onAction={onAction}
+        />,
+      );
+
+      const button = screen.getByRole("button", { name: /^ggenomes$/i });
+      expect(button).not.toBeDisabled();
+      await userEvent.click(button);
+      expect(onAction).toHaveBeenCalledWith("genomes");
+    });
+
+    it("hides the single-strain Genomes action for multiple selections", () => {
+      render(
+        <SearchActionBar
+          selectedCount={2}
+          searchType="strain"
+          enabledActions={["genomes"]}
+        />,
+      );
+
+      expect(
+        screen.queryByRole("button", { name: /^ggenomes$/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("honors an explicit disable when an enabled action has no target", () => {
+      render(
+        <SearchActionBar
+          selectedCount={1}
+          searchType="strain"
+          enabledActions={["genomes"]}
+          disabledActions={{ genomes: "No genomes are associated with this strain" }}
+        />,
+      );
+
+      expect(screen.getByRole("button", { name: /^ggenomes$/i })).toBeDisabled();
+    });
+
     it("enables the Genome action for one selected genome", async () => {
       const onAction = vi.fn();
       render(

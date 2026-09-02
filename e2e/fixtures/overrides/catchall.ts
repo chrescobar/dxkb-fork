@@ -83,6 +83,41 @@ const epitopeAssayRows = [
   },
 ];
 
+const strainRows = [
+  {
+    id: "strain-backend-901",
+    taxon_id: 11520,
+    taxon_lineage_ids: [10239, 11520],
+    family: "Orthomyxoviridae",
+    genus: "Alphainfluenzavirus",
+    species: "Influenza A virus",
+    strain: "A/California/04/2009",
+    subtype: "H1N1",
+    genome_ids: ["641501.3", "641501.4"],
+    genbank_accessions: ["FJ969513", "FJ969514"],
+    segment_count: 8,
+    status: "Complete",
+    host_common_name: "Human",
+    isolation_country: "United States",
+    collection_date: "2009-04",
+    collection_year: 2009,
+    "1_pb2": ["FJ969513"],
+    "4_ha": ["FJ969516"],
+  },
+  {
+    id: "strain-backend-902",
+    taxon_id: 11520,
+    taxon_lineage_ids: [10239, 11520],
+    species: "Influenza A virus",
+    strain: "A/California/04/2009",
+    subtype: "H1N1",
+    genome_ids: ["641501.5"],
+    genbank_accessions: ["FJ969515"],
+    segment_count: 8,
+    status: "Partial",
+  },
+];
+
 const surveillanceRows = [
   {
     id: "surveillance-backend-901",
@@ -181,6 +216,45 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/e2e-mock\/data\/strain\/(?:\?|$)/,
+    method: "GET",
+    body: {
+      response: { numFound: strainRows.length, docs: strainRows },
+      facet_counts: {
+        facet_fields: {
+          subtype: ["H1N1", 2],
+          status: ["Complete", 1, "Partial", 1],
+          isolation_country: ["United States", 1],
+          collection_year: [2009, 1],
+        },
+      },
+    },
+  },
+  {
+    url: /\/api\/data\/strain(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: strainRows,
+      total: strainRows.length,
+      facets: {
+        subtype: [{ value: "H1N1", count: 2 }],
+        status: [
+          { value: "Complete", count: 1 },
+          { value: "Partial", count: 1 },
+        ],
+        isolation_country: [{ value: "United States", count: 1 }],
+        collection_year: [{ value: 2009, count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/strain(?:\?|$)/,
+    method: "POST",
+    body: { rows: strainRows },
+  },
   {
     url: /\/api\/e2e-mock\/data\/serology\/(?:\?|$)/,
     method: "GET",

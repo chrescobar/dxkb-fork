@@ -29,6 +29,7 @@ import {
   featureIdFromRow,
   genomeHref,
   genomeIdFromRow,
+  genomesHrefFromRow,
 } from "@/lib/views/hrefs";
 
 export interface ResourceCollectionFacet {
@@ -173,6 +174,7 @@ export function ResourceCollection<Row extends DataTableRow>({
         ? collection.activeId
         : null
       : genomeIdFromRow(displayedDetail);
+  const selectedGenomesHref = genomesHrefFromRow(displayedDetail);
   const selectedFeatureId = featureIdFromRow(displayedDetail);
   const selectedEpitopeId = epitopeIdFromRow(displayedDetail);
   const selectedMemberHref = displayedDetail
@@ -389,10 +391,26 @@ export function ResourceCollection<Row extends DataTableRow>({
               }
               searchType={profile.resource}
               guideUrl={profile.guideUrl}
+              enabledActions={
+                profile.resource === "strain" && selectedGenomesHref
+                  ? ["genomes"]
+                  : undefined
+              }
+              disabledActions={
+                profile.resource === "strain" && !selectedGenomesHref
+                  ? { genomes: "No genomes are associated with this strain" }
+                  : undefined
+              }
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
                   window.open(
                     genomeHref(selectedGenomeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (actionId === "genomes" && selectedGenomesHref) {
+                  window.open(
+                    selectedGenomesHref,
                     "_blank",
                     "noopener,noreferrer",
                   );

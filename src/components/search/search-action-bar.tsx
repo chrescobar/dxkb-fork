@@ -247,6 +247,7 @@ export interface SearchActionBarProps {
   // /search and the taxon-view, which disable different subsets of the same
   // taxonomy actions.
   disabledActions?: Partial<Record<SearchActionId, string>>;
+  enabledActions?: SearchActionId[];
   loadingActionIds?: SearchActionId[];
   onAction?: (actionId: SearchActionId) => void;
 }
@@ -256,6 +257,7 @@ export function SearchActionBar({
   searchType,
   guideUrl,
   disabledActions,
+  enabledActions,
   loadingActionIds,
   onAction,
 }: SearchActionBarProps) {
@@ -273,10 +275,11 @@ export function SearchActionBar({
     if (action.requiresSelection && selectedCount === 0) {
       return false;
     }
-    // Hide single-select-only actions once more than maxSelection rows are chosen
+    // Strains resolve genomes from one selected row; taxonomy supports aggregates.
     if (
-      action.maxSelection !== undefined &&
-      selectedCount > action.maxSelection
+      (action.maxSelection !== undefined &&
+        selectedCount > action.maxSelection) ||
+      (action.id === "genomes" && searchType === "strain" && selectedCount > 1)
     ) {
       return false;
     }
@@ -284,7 +287,8 @@ export function SearchActionBar({
   });
 
   const isDisabled = (action: ActionConfig) =>
-    !!(action.disabledWithTooltip || disabledActions?.[action.id]);
+    Boolean(disabledActions?.[action.id]) ||
+    (!enabledActions?.includes(action.id) && Boolean(action.disabledWithTooltip));
 
   const isLoading = (actionId: SearchActionId) =>
     loadingActionIds?.includes(actionId) ?? false;

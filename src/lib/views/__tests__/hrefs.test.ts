@@ -8,9 +8,11 @@ import {
   genomeHref,
   genomeIdFromRow,
   genomeListHref,
+  genomesHrefFromRow,
   serologyHref,
   serologyIdFromRow,
   serologyListHref,
+  strainListHref,
   surveillanceHref,
   surveillanceIdFromRow,
   surveillanceListHref,
@@ -33,8 +35,12 @@ describe("Epitope hrefs", () => {
     expect(epitopeIdFromRow({ epitope_id: 15780 })).toBe("15780");
     expect(epitopeIdFromRow(null)).toBeNull();
     expect(epitopeListHref()).toBe("/epitope");
-    expect(epitopeListHref({ keyword: "linear peptide", taxonId: 11520 })).toBe("/epitope?keyword=linear%20peptide&taxon_id=11520");
-    expect(epitopeListHref({ keyword: "ignored", rql: "eq(epitope_type,B-cell)" })).toBe("/epitope?rql=eq(epitope_type%2CB-cell)");
+    expect(epitopeListHref({ keyword: "linear peptide", taxonId: 11520 })).toBe(
+      "/epitope?keyword=linear%20peptide&taxon_id=11520",
+    );
+    expect(
+      epitopeListHref({ keyword: "ignored", rql: "eq(epitope_type,B-cell)" }),
+    ).toBe("/epitope?rql=eq(epitope_type%2CB-cell)");
   });
 });
 
@@ -97,17 +103,46 @@ describe("Serology hrefs", () => {
   });
 });
 
+describe("Strain hrefs", () => {
+  it("builds list-only collection links with phrase and taxon filters", () => {
+    expect(strainListHref()).toBe("/strain");
+    expect(
+      strainListHref({
+        keyword: "avian flu",
+        taxonId: 11520,
+        strain: ["A/B strain", "H1N1"],
+      }),
+    ).toBe(
+      "/strain?keyword=avian%20flu&taxon_id=11520&strain=A%2FB%20strain&strain=H1N1",
+    );
+    expect(
+      strainListHref({
+        keyword: "ignored",
+        rql: "eq(status,Complete)",
+        taxonId: 11520,
+        strain: "ignored",
+      }),
+    ).toBe("/strain?rql=eq(status%2CComplete)");
+  });
+});
+
 describe("Feature hrefs", () => {
   it("encodes member IDs and prefers the canonical row field", () => {
-    expect(featureHref("fig|83332.12/peg 1")).toBe("/feature/fig%7C83332.12%2Fpeg%201");
-    expect(featureIdFromRow({ feature_id: "canonical", patric_id: "alternate" })).toBe("canonical");
+    expect(featureHref("fig|83332.12/peg 1")).toBe(
+      "/feature/fig%7C83332.12%2Fpeg%201",
+    );
+    expect(
+      featureIdFromRow({ feature_id: "canonical", patric_id: "alternate" }),
+    ).toBe("canonical");
     expect(featureIdFromRow({ patric_id: "alternate" })).toBe("alternate");
     expect(featureIdFromRow(null)).toBeNull();
   });
 
   it("builds a canonical URL with encoded explicit RQL", () => {
     expect(
-      featureListHref({ rql: "and(eq(genome_id,83332.12),eq(feature_type,CDS))" }),
+      featureListHref({
+        rql: "and(eq(genome_id,83332.12),eq(feature_type,CDS))",
+      }),
     ).toBe(
       "/feature?rql=and(eq(genome_id%2C83332.12)%2Ceq(feature_type%2CCDS))",
     );
@@ -115,8 +150,12 @@ describe("Feature hrefs", () => {
 
   it("builds bare, keyword, and protein-filtered list routes", () => {
     expect(featureListHref()).toBe("/feature");
-    expect(featureListHref({ keyword: "DNA kinase" })).toBe("/feature?keyword=DNA%20kinase");
-    expect(featureListHref({ keyword: "kinase", filter: "protein" })).toBe("/feature?keyword=kinase&filter=protein");
+    expect(featureListHref({ keyword: "DNA kinase" })).toBe(
+      "/feature?keyword=DNA%20kinase",
+    );
+    expect(featureListHref({ keyword: "kinase", filter: "protein" })).toBe(
+      "/feature?keyword=kinase&filter=protein",
+    );
   });
 });
 
@@ -131,6 +170,27 @@ describe("genomeHref", () => {
     expect(genomeIdFromRow({ genome_id: 42 })).toBe("42");
     expect(genomeIdFromRow({ genome_id: { invalid: true } })).toBeNull();
     expect(genomeIdFromRow(null)).toBeNull();
+  });
+});
+
+describe("genomesHrefFromRow", () => {
+  it("builds a canonical list filtered to unique associated Genome IDs", () => {
+    expect(
+      genomesHrefFromRow({ genome_ids: ["11320.1", "11320.2", "11320.1"] }),
+    ).toBe("/genome?rql=in(genome_id%2C(11320.1%2C11320.2))");
+  });
+
+  it("returns null when the row has no associated Genome IDs", () => {
+    expect(genomesHrefFromRow({ genome_ids: [] })).toBeNull();
+    expect(genomesHrefFromRow({})).toBeNull();
+    expect(genomesHrefFromRow(null)).toBeNull();
+  });
+
+  it("escapes RQL-special characters in Genome IDs", () => {
+    const href = genomesHrefFromRow({ genome_ids: ["id,1", "id(2)"] });
+    expect(new URL(href ?? "", "http://localhost").searchParams.get("rql")).toBe(
+      "in(genome_id,(id%2C1,id%282%29))",
+    );
   });
 });
 

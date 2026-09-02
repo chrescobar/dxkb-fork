@@ -8,11 +8,7 @@ describe("InfoPanel — search variant", () => {
   describe("loading state", () => {
     it("shows loading indicator when a single row is selected and data is loading", () => {
       render(
-        <InfoPanel
-          selectedIds={["genome-1"]}
-          activeTab="genome"
-          isLoading
-        />,
+        <InfoPanel selectedIds={["genome-1"]} activeTab="genome" isLoading />,
       );
       expect(screen.getByText("Loading...")).toBeInTheDocument();
     });
@@ -32,10 +28,7 @@ describe("InfoPanel — search variant", () => {
   describe("multi-selection display", () => {
     it("shows selected count when more than one row is selected", () => {
       render(
-        <InfoPanel
-          selectedIds={["genome-1", "genome-2"]}
-          activeTab="genome"
-        />,
+        <InfoPanel selectedIds={["genome-1", "genome-2"]} activeTab="genome" />,
       );
       expect(screen.getByText("2 rows selected")).toBeInTheDocument();
     });
@@ -79,6 +72,66 @@ describe("InfoPanel — search variant", () => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
 
+    it("renders Strain genome IDs and segment accessions as individual links", () => {
+      render(
+        <InfoPanel
+          selectedIds={["strain-row-1"]}
+          activeTab="strain"
+          selectedRow={{
+            id: "strain-row-1",
+            strain: "A/test/1/2024",
+            genome_ids: ["100.1", "100/2"],
+            "4_ha": ["CY000001", "CY000002"],
+          }}
+        />,
+      );
+
+      expect(screen.getByRole("link", { name: "100.1" })).toHaveAttribute(
+        "href",
+        "/genome/100.1",
+      );
+      expect(screen.getByRole("link", { name: "100/2" })).toHaveAttribute(
+        "href",
+        "/genome/100%2F2",
+      );
+      expect(screen.getByRole("link", { name: "CY000001" })).toHaveAttribute(
+        "href",
+        "https://www.ncbi.nlm.nih.gov/nuccore/CY000001",
+      );
+      expect(screen.getByRole("link", { name: "CY000002" })).toHaveAttribute(
+        "rel",
+        "noopener noreferrer",
+      );
+    });
+
+    it("does not warn when strain link arrays contain duplicate IDs", () => {
+      const consoleError = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+
+      render(
+        <InfoPanel
+          selectedIds={["strain-row-1"]}
+          activeTab="strain"
+          selectedRow={{
+            id: "strain-row-1",
+            strain: "A/test/1/2024",
+            genome_ids: ["100.1", "100.1"],
+            "4_ha": ["CY000001", "CY000001"],
+          }}
+        />,
+      );
+
+      expect(screen.getAllByRole("link", { name: "100.1" })).toHaveLength(2);
+      expect(screen.getAllByRole("link", { name: "CY000001" })).toHaveLength(2);
+      const hasDuplicateKeyWarning = consoleError.mock.calls.some(([message]) =>
+        String(message).includes("Encountered two children with the same key"),
+      );
+      consoleError.mockRestore();
+
+      expect(hasDuplicateKeyWarning).toBe(false);
+    });
+
     it("renders ppi details for a selected interaction row", () => {
       render(
         <InfoPanel
@@ -96,7 +149,9 @@ describe("InfoPanel — search variant", () => {
         />,
       );
 
-      expect(screen.getAllByText("fig|224914.16.peg.635").length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByText("fig|224914.16.peg.635").length,
+      ).toBeGreaterThan(0);
       expect(screen.getByText("Genome Name A")).toBeInTheDocument();
       expect(screen.getAllByText("Interactor B").length).toBeGreaterThan(0);
       expect(screen.getByText("PPI")).toBeInTheDocument();

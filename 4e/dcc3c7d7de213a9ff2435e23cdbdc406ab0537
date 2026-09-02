@@ -1,0 +1,22 @@
+src/app/(views)/strain/error.tsx
+  h_dbd94c95afa702 13,17
+src/app/all-term-search-results.tsx
+  h_dbd94c95afa702 493
+src/components/detail-panel/info-panel.tsx
+  h_dbd94c95afa702 887
+src/components/search/search-bar.tsx
+  h_dbd94c95afa702 112,126,145,154
+src/components/shared/data-table.tsx
+  h_dbd94c95afa702 312,1060,1068,1074,1099,1112,1129,1142,1154,1168,1204,1234,1375,1423,1452,1471,1531,1537,1563,1652
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "4edcc3c7d7de213a9ff2435e23cdbdc406ab0537",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

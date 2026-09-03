@@ -61,7 +61,7 @@ interface ResourceChildCollectionProps {
   label: string;
   idField: string;
   rql: string;
-  columns: ResourceCollectionProfile<ChildRow>["columns"];
+  columns?: ResourceCollectionProfile<ChildRow>["columns"];
   defaultSort: string;
 }
 
@@ -107,6 +107,9 @@ function ScopedResourceChildCollection({
         ),
     };
   } else {
+    if (!columns) {
+      throw new Error(`Columns are required for ${resource} child collections.`);
+    }
     profile = {
       resource,
       label,
@@ -117,6 +120,7 @@ function ScopedResourceChildCollection({
     };
   }
 
+  const exportColumns = profile.columns;
   return (
     <ResourceCollection
       profile={profile}
@@ -127,7 +131,7 @@ function ScopedResourceChildCollection({
       onExport={async ({ format, selectedIds, fields, rql: exportRql }) => {
         const selectedFields = fields
           ? [...fields]
-          : columns.map((column) => column.id);
+          : exportColumns.map((column) => column.id);
         const result = selectedIds?.length
           ? await repository.selected(resource, {
               ids: [...selectedIds],

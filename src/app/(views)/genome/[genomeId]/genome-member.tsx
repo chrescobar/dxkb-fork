@@ -24,7 +24,6 @@ import {
   type GenomeViewRecord,
 } from "@/lib/genome-view";
 import { eq } from "@/lib/data-api";
-import { proteinFeatureColumns } from "@/lib/protein-feature-view";
 import {
   featureColumns,
   genomeDomainsRql,
@@ -140,7 +139,6 @@ export function GenomeMember({
         label="Domains and Motifs"
         idField="id"
         rql={genomeDomainsRql(genome.genome_id)}
-        columns={proteinFeatureColumns}
         defaultSort="unsorted"
       />
     );

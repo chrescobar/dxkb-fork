@@ -19,7 +19,6 @@ import {
   type FeatureTab,
   type FeatureViewRecord,
 } from "@/lib/feature-view";
-import { proteinFeatureColumns } from "@/lib/protein-feature-view";
 import { featureProteinStructureRql } from "@/lib/protein-structure-view";
 import {
   featureDomainsRql,
@@ -100,7 +99,6 @@ export function FeatureMember({ feature, activeTab }: FeatureMemberProps) {
         label="Domains and Motifs"
         idField="id"
         rql={featureDomainsRql(feature.feature_id)}
-        columns={proteinFeatureColumns}
         defaultSort="unsorted"
       />
     ) : activeTab === "structures" ? (

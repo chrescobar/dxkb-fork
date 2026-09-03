@@ -1,0 +1,21 @@
+src/components/views/resource-child-collection.tsx
+  s_ffb473497600d5::t_0b1f8ac05258c6 134
+  s_ffb473497600d5::t_d96ddeb78f98dc 64
+  s_ffb473497600d5::t_34c46db17eb08b 110-112,123
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "33e162285eb5520027a9510b5b8c4a7ab45d8823",
+  "prompts": {},
+  "sessions": {
+    "s_ffb473497600d5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9c52b2eeffeqDH1PHWYzx1H9R",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

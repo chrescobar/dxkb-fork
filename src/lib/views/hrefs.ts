@@ -114,6 +114,42 @@ export function epitopeListHref(opts?: {
   return params.length ? `/epitope?${params.join("&")}` : "/epitope";
 }
 
+/** Internal Protein Structure route using the canonical accession query. */
+export function proteinStructureHref(accession: number | string): string {
+  return `/protein-structure?accession=${encodeURIComponent(String(accession))}`;
+}
+
+/** Canonical Protein Structure collection route. Explicit RQL takes precedence. */
+export function proteinStructureListHref(opts?: {
+  keyword?: string;
+  rql?: string;
+  taxonId?: number | string;
+  genomeId?: number | string;
+  page?: number;
+  sort?: string;
+}): string {
+  const params: string[] = [];
+  if (opts?.rql) params.push(`rql=${encodeURIComponent(opts.rql)}`);
+  else {
+    if (opts?.keyword)
+      params.push(`keyword=${encodeURIComponent(opts.keyword)}`);
+    if (opts?.taxonId != null)
+      params.push(`taxon_id=${encodeURIComponent(String(opts.taxonId))}`);
+    if (opts?.genomeId != null)
+      params.push(`genome_id=${encodeURIComponent(String(opts.genomeId))}`);
+  }
+  if (opts?.page != null) params.push(`page=${encodeURIComponent(String(opts.page))}`);
+  if (opts?.sort) params.push(`sort=${encodeURIComponent(opts.sort)}`);
+  return params.length
+    ? `/protein-structure?${params.join("&")}`
+    : "/protein-structure";
+}
+
+/** Protein Structure route for a workspace file. */
+export function proteinStructurePathHref(path: string): string {
+  return `/protein-structure?path=${encodeURIComponent(path)}`;
+}
+
 /** Return a public Surveillance sample identifier from an API row, if present. */
 export function surveillanceIdFromRow(
   row: Record<string, unknown> | null,

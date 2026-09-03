@@ -122,7 +122,10 @@ export const searchDescriptors: readonly SearchType[] = [
   {
     id: "protein_structure",
     typeTitle: "Protein Structures",
-    route: { status: "legacy" },
+    route: {
+      status: "canonical",
+      segment: viewRegistry["protein-structure"].segment,
+    },
     tabs: { protein_structure: "Protein Structures" },
     pickerOrder: 6,
     allTermOrder: 7,

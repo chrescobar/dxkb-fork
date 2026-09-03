@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import "molstar/lib/mol-plugin-ui/skin/light.scss";
-import { getProxyUrl } from "../file-viewer-registry";
+
+import type { StructureSource } from "@/lib/protein-structure-view/source";
 import { loadMolstar } from "./molstar-loader";
 
 export type ViewerStatus = "loading" | "initializing" | "ready" | "error";
@@ -21,13 +22,14 @@ export interface UseMolstarPluginResult {
 
 /**
  * Shared hook that initialises a Mol* plugin inside the given container,
- * loads a PDB file, and keeps the WebGL canvas in sync with resize events.
+ * loads a resolved structure source, and keeps the WebGL canvas in sync with
+ * resize events.
  *
  * Both the dedicated viewer page and the embedded preview component use this
- * hook — the only difference is the `layout` spec (full panels vs. hidden).
+ * hook - the only difference is the `layout` spec (full panels vs. hidden).
  */
 export function useMolstarPlugin(
-  filePath: string,
+  source: StructureSource,
   layout: MolstarLayoutSpec,
 ): UseMolstarPluginResult {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -37,8 +39,6 @@ export function useMolstarPlugin(
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    if (!filePath) return;
-
     // `isDisposed` reads through a function call so TypeScript cannot narrow the
     // return value to `false` after a guard — the cleanup callback can set it to
     // `true` at any await boundary and all subsequent checks are genuinely needed.
@@ -46,7 +46,10 @@ export function useMolstarPlugin(
     const isDisposed = (): boolean => lifecycle.disposed;
 
     async function init() {
-      if (!containerRef.current) return;
+      setStatus("loading");
+      setErrorMessage(undefined);
+
+      if (!source.url || !containerRef.current) return;
 
       try {
         const { createPluginUI, renderReact18, DefaultPluginUISpec } =
@@ -88,14 +91,15 @@ export function useMolstarPlugin(
 
         pluginRef.current = plugin;
 
-        const url = getProxyUrl(filePath);
+        const isBinary = source.format === "bcif";
+        const format = source.format === "bcif" ? "mmcif" : source.format;
         const data = await plugin.builders.data.download(
-          { url, isBinary: false },
+          { url: source.url, isBinary },
           { state: { isGhost: true } },
         );
         const trajectory = await plugin.builders.structure.parseTrajectory(
           data,
-          "pdb",
+          format,
         );
         await plugin.builders.structure.hierarchy.applyPreset(
           trajectory,
@@ -120,7 +124,13 @@ export function useMolstarPlugin(
       pluginRef.current?.dispose();
       pluginRef.current = null;
     };
-  }, [filePath, layout.showControls, layout.regionState, retryCount]);
+  }, [
+    source.url,
+    source.format,
+    layout.showControls,
+    layout.regionState,
+    retryCount,
+  ]);
 
   const isReady = status === "ready";
   useEffect(() => {

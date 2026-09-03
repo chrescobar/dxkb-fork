@@ -57,6 +57,50 @@ const proteinFeatureRows = [
   },
 ];
 
+const minimalPdb = [
+  "HEADER    E2E PROTEIN STRUCTURE",
+  "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N  ",
+  "TER",
+  "END",
+  "",
+].join("\n");
+
+const proteinStructureRows = [
+  {
+    pdb_id: "6VXX",
+    title: "SARS-CoV-2 spike glycoprotein",
+    organism_name: "Severe acute respiratory syndrome coronavirus 2",
+    taxon_id: 2697049,
+    taxon_lineage_ids: [10239, 2697049],
+    taxon_lineage_names: ["Viruses", "Betacoronavirus pandemicum"],
+    genome_id: "2697049.42",
+    patric_id: "fig|2697049.42.peg.1",
+    uniprotkb_accession: ["P0DTC2"],
+    gene: "S",
+    product: "surface glycoprotein",
+    sequence_md5: "e2e6vxxsequence",
+    method: "Electron microscopy",
+    resolution: 2.8,
+    pmid: 32155444,
+    institution: ["University of Texas at Austin"],
+    authors: ["Walls AC"],
+    release_date: "2020-03-25",
+    file_path: "/PDB/6VXX.pdb",
+    date_inserted: "2024-01-01",
+  },
+  {
+    pdb_id: "7BV2",
+    title: "RNA-dependent RNA polymerase in complex with remdesivir",
+    organism_name: "Severe acute respiratory syndrome coronavirus 2",
+    taxon_id: 2697049,
+    method: "Electron microscopy",
+    resolution: 2.5,
+    release_date: "2020-05-20",
+    file_path: "/PDB/7BV2.pdb",
+    date_inserted: "2024-01-02",
+  },
+];
+
 const epitopeRows = [
   {
     epitope_id: "15780",
@@ -240,6 +284,31 @@ function genomeDataResponse({ parsedBody }: { parsedBody: unknown }) {
 }
 
 export const apiCatchallOverrides: JsonOverride[] = [
+  {
+    url: /\/api\/structure\/PDB\/(?:6VXX|7BV2)\.pdb$/,
+    method: "GET",
+    headers: { "Content-Type": "chemical/x-pdb" },
+    body: minimalPdb,
+  },
+  {
+    url: /\/api\/data\/protein_structure(?:\?|$)/,
+    method: "GET",
+    body: {
+      rows: proteinStructureRows,
+      total: proteinStructureRows.length,
+      facets: {
+        method: [{ value: "Electron microscopy", count: 2 }],
+        institution: [{ value: "University of Texas at Austin", count: 1 }],
+      },
+      page: 1,
+      pageSize: 200,
+    },
+  },
+  {
+    url: /\/api\/data\/protein_structure(?:\?|$)/,
+    method: "POST",
+    body: { rows: proteinStructureRows },
+  },
   {
     url: /\/api\/data\/protein_feature(?:\?|$)/,
     method: "GET",
@@ -475,6 +544,50 @@ export const apiCatchallOverrides: JsonOverride[] = [
 // domains. Without the anchor, a URL like `http://127.0.0.1:3020/workspace/user@patricbrc.org/home`
 // would match `/patricbrc\.org/` and hijack the page navigation itself.
 export const externalCatchallOverrides: JsonOverride[] = [
+  {
+    url: /^https:\/\/alphafold\.ebi\.ac\.uk\/files\/AF-P12345-F1-model_v6\.cif$/i,
+    headers: { "Content-Type": "chemical/x-mmcif" },
+    body: [
+      "data_E2E",
+      "_entry.id E2E",
+      "loop_",
+      "_atom_site.group_PDB",
+      "_atom_site.id",
+      "_atom_site.type_symbol",
+      "_atom_site.label_atom_id",
+      "_atom_site.label_comp_id",
+      "_atom_site.label_asym_id",
+      "_atom_site.label_seq_id",
+      "_atom_site.Cartn_x",
+      "_atom_site.Cartn_y",
+      "_atom_site.Cartn_z",
+      "ATOM 1 N N ALA A 1 0.000 0.000 0.000",
+      "#",
+      "",
+    ].join("\n"),
+  },
+  {
+    url: /^https:\/\/files\.rcsb\.org\/download\/(?:6VXX|7BV2)\.cif$/i,
+    headers: { "Content-Type": "chemical/x-mmcif" },
+    body: [
+      "data_E2E",
+      "_entry.id E2E",
+      "loop_",
+      "_atom_site.group_PDB",
+      "_atom_site.id",
+      "_atom_site.type_symbol",
+      "_atom_site.label_atom_id",
+      "_atom_site.label_comp_id",
+      "_atom_site.label_asym_id",
+      "_atom_site.label_seq_id",
+      "_atom_site.Cartn_x",
+      "_atom_site.Cartn_y",
+      "_atom_site.Cartn_z",
+      "ATOM 1 N N ALA A 1 0.000 0.000 0.000",
+      "#",
+      "",
+    ].join("\n"),
+  },
   { url: /^https?:\/\/(?:[a-z0-9-]+\.)*patricbrc\.org(?:[:/]|$)/i, body: {} },
   { url: /^https?:\/\/(?:[a-z0-9-]+\.)*bv-brc\.org(?:[:/]|$)/i, body: {} },
   {

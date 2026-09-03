@@ -1,4 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+import type { StructureSource } from "@/lib/protein-structure-view/source";
 
 // ---------------------------------------------------------------------------
 // jsdom stubs — ResizeObserver is not implemented in jsdom.
@@ -62,7 +65,22 @@ vi.mock("../../file-viewer-registry", () => ({
 // Tests
 // ---------------------------------------------------------------------------
 
+import { StructureSourceViewer } from "../structure-source-viewer";
 import { StructureViewer } from "../structure-viewer";
+
+const testLayout = { showControls: false, regionState: "hidden" } as const;
+
+function directSource(
+  overrides: Partial<StructureSource> = {},
+): StructureSource {
+  return {
+    url: "https://structures.example/model.cif",
+    format: "mmcif",
+    label: "model.cif",
+    kind: "url",
+    ...overrides,
+  };
+}
 
 describe("StructureViewer", () => {
   beforeEach(() => {
@@ -74,7 +92,10 @@ describe("StructureViewer", () => {
 
   it("shows loading state initially", () => {
     render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
     expect(screen.getByText("Loading viewer\u2026")).toBeInTheDocument();
@@ -82,35 +103,36 @@ describe("StructureViewer", () => {
 
   it("renders the Mol* container div", () => {
     render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
     expect(screen.getByTestId("molstar-container")).toBeInTheDocument();
   });
 
-  it("loads structure from proxy URL after initialization", async () => {
+  it("resolves workspace paths before loading the structure", async () => {
     const { getProxyUrl } = await import("../../file-viewer-registry");
 
     render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
-    await waitFor(() => {
-      expect(getProxyUrl).toHaveBeenCalledWith("/user@bvbrc/home/model.pdb");
-    });
+    expect(getProxyUrl).toHaveBeenCalledWith("/user@bvbrc/home/model.pdb");
 
     await waitFor(() => {
       expect(mockDownload).toHaveBeenCalledWith(
-        expect.objectContaining({ url: expect.stringContaining("model.pdb") as string }),
-        expect.anything() as unknown,
+        {
+          url: "/api/workspace/view/user@bvbrc/home/model.pdb",
+          isBinary: false,
+        },
+        { state: { isGhost: true } },
       );
-    });
-
-    await waitFor(() => {
       expect(mockParseTrajectory).toHaveBeenCalledWith("mock-data", "pdb");
-    });
-
-    await waitFor(() => {
       expect(mockApplyPreset).toHaveBeenCalledWith(
         "mock-trajectory",
         "default",
@@ -122,7 +144,10 @@ describe("StructureViewer", () => {
     const { createPluginUI } = await import("molstar/lib/mol-plugin-ui");
 
     render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
     await waitFor(() => {
@@ -146,7 +171,10 @@ describe("StructureViewer", () => {
 
   it("disposes the plugin on unmount", async () => {
     const { unmount } = render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
     // Wait for plugin to be created
@@ -166,7 +194,10 @@ describe("StructureViewer", () => {
     );
 
     render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
     await waitFor(() => {
@@ -178,12 +209,193 @@ describe("StructureViewer", () => {
 
   it("wraps content in ExpandableViewerWrapper with filename as title", () => {
     render(
-      <StructureViewer filePath="/user@bvbrc/home/model.pdb" fileName="model.pdb" />,
+      <StructureViewer
+        filePath="/user@bvbrc/home/model.pdb"
+        fileName="model.pdb"
+      />,
     );
 
     // The expand button from ExpandableViewerWrapper should be present
     expect(
       screen.getByRole("button", { name: "Expand to full screen" }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("StructureSourceViewer", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDownload.mockResolvedValue("mock-data");
+    mockParseTrajectory.mockResolvedValue("mock-trajectory");
+    mockApplyPreset.mockResolvedValue(undefined);
+  });
+
+  it("loads a direct URL using the source format", async () => {
+    render(
+      <StructureSourceViewer source={directSource()} layout={testLayout} />,
+    );
+
+    await waitFor(() => {
+      expect(mockDownload).toHaveBeenCalledWith(
+        { url: "https://structures.example/model.cif", isBinary: false },
+        { state: { isGhost: true } },
+      );
+      expect(mockParseTrajectory).toHaveBeenCalledWith("mock-data", "mmcif");
+    });
+  });
+
+  it("falls back to the next source after a load failure", async () => {
+    mockDownload
+      .mockRejectedValueOnce(new Error("BV-BRC unavailable"))
+      .mockResolvedValueOnce("fallback-data");
+
+    render(
+      <StructureSourceViewer
+        source={directSource({
+          url: "/api/structure/model.pdb",
+          format: "pdb",
+        })}
+        sources={[
+          directSource({ url: "/api/structure/model.pdb", format: "pdb" }),
+          directSource({ url: "https://files.rcsb.org/download/1ABC.cif" }),
+        ]}
+        layout={testLayout}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(mockDownload).toHaveBeenNthCalledWith(
+        1,
+        { url: "/api/structure/model.pdb", isBinary: false },
+        { state: { isGhost: true } },
+      );
+      expect(mockDownload).toHaveBeenNthCalledWith(
+        2,
+        { url: "https://files.rcsb.org/download/1ABC.cif", isBinary: false },
+        { state: { isGhost: true } },
+      );
+    });
+  });
+
+  it("restarts the fallback chain when retrying after all sources fail", async () => {
+    const user = userEvent.setup();
+    mockDownload
+      .mockRejectedValueOnce(new Error("BV-BRC unavailable"))
+      .mockRejectedValueOnce(new Error("RCSB unavailable"))
+      .mockResolvedValueOnce("retry-data");
+
+    render(
+      <StructureSourceViewer
+        source={directSource({
+          url: "/api/structure/model.pdb",
+          format: "pdb",
+        })}
+        sources={[
+          directSource({ url: "/api/structure/model.pdb", format: "pdb" }),
+          directSource({ url: "https://files.rcsb.org/download/1ABC.cif" }),
+        ]}
+        layout={testLayout}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("RCSB unavailable")).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+
+    await waitFor(() => {
+      expect(mockDownload).toHaveBeenNthCalledWith(
+        3,
+        { url: "/api/structure/model.pdb", isBinary: false },
+        { state: { isGhost: true } },
+      );
+    });
+  });
+
+  it("resets status and reloads when the source changes", async () => {
+    let resolveSecondDownload: ((value: string) => void) | undefined;
+    mockDownload.mockResolvedValueOnce("first-data").mockImplementationOnce(
+      () =>
+        new Promise<string>((resolve) => {
+          resolveSecondDownload = resolve;
+        }),
+    );
+
+    const { rerender } = render(
+      <StructureSourceViewer source={directSource()} layout={testLayout} />,
+    );
+
+    await waitFor(() => {
+      expect(mockApplyPreset).toHaveBeenCalledTimes(1);
+    });
+
+    rerender(
+      <StructureSourceViewer
+        source={directSource({
+          url: "https://structures.example/next.bcif",
+          format: "bcif",
+          label: "next.bcif",
+        })}
+        layout={testLayout}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Initializing structure\u2026"),
+      ).toBeInTheDocument();
+      expect(mockDispose).toHaveBeenCalledTimes(1);
+      expect(mockDownload).toHaveBeenLastCalledWith(
+        { url: "https://structures.example/next.bcif", isBinary: true },
+        { state: { isGhost: true } },
+      );
+    });
+
+    resolveSecondDownload?.("second-data");
+    await waitFor(() => {
+      expect(mockParseTrajectory).toHaveBeenLastCalledWith(
+        "second-data",
+        "mmcif",
+      );
+    });
+  });
+
+  it("resets status and disposes the failed plugin before retrying", async () => {
+    const user = userEvent.setup();
+    let resolveRetryDownload: ((value: string) => void) | undefined;
+    mockDownload
+      .mockRejectedValueOnce(new Error("Network unavailable"))
+      .mockImplementationOnce(
+        () =>
+          new Promise<string>((resolve) => {
+            resolveRetryDownload = resolve;
+          }),
+      );
+
+    render(
+      <StructureSourceViewer source={directSource()} layout={testLayout} />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Network unavailable")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: "Retry" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Initializing structure\u2026"),
+      ).toBeInTheDocument();
+      expect(mockDispose).toHaveBeenCalledTimes(1);
+      expect(mockDownload).toHaveBeenCalledTimes(2);
+    });
+
+    resolveRetryDownload?.("retry-data");
+    await waitFor(() => {
+      expect(mockParseTrajectory).toHaveBeenLastCalledWith(
+        "retry-data",
+        "mmcif",
+      );
+    });
   });
 });

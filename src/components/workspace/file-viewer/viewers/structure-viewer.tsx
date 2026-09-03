@@ -1,11 +1,10 @@
 "use client";
 
+import type { StructureSource } from "@/lib/protein-structure-view/source";
+import { getProxyUrl } from "../file-viewer-registry";
 import { ExpandableViewerWrapper } from "./expandable-viewer-wrapper";
-import { MolstarStatusOverlay } from "./molstar-status-overlay";
-import {
-  useMolstarPlugin,
-  type MolstarLayoutSpec,
-} from "./use-molstar-plugin";
+import { StructureSourceViewer } from "./structure-source-viewer";
+import type { MolstarLayoutSpec } from "./use-molstar-plugin";
 
 interface StructureViewerProps {
   filePath: string;
@@ -18,23 +17,18 @@ const embeddedLayout: MolstarLayoutSpec = {
 };
 
 export function StructureViewer({ filePath, fileName }: StructureViewerProps) {
-  const { containerRef, status, errorMessage, resetError } = useMolstarPlugin(
-    filePath,
-    embeddedLayout,
-  );
-
+  const source: StructureSource = {
+    url: getProxyUrl(filePath),
+    format: "pdb",
+    label: fileName,
+    kind: "workspace",
+  };
   return (
     <ExpandableViewerWrapper title={fileName}>
       <div className="relative flex size-full flex-col overflow-hidden rounded-b-lg">
-        <div
-          ref={containerRef}
-          className="relative isolate min-h-0 flex-1 overflow-hidden"
-          data-testid="molstar-container"
-        />
-        <MolstarStatusOverlay
-          status={status}
-          errorMessage={errorMessage}
-          onRetry={resetError}
+        <StructureSourceViewer
+          source={source}
+          layout={embeddedLayout}
           compact
         />
       </div>

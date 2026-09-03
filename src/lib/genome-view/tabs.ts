@@ -54,8 +54,7 @@ export function buildGenomeTabs(
     {
       key: "structures",
       label: "Protein Structures",
-      enabled: false,
-      disabledReason: "The Protein Structure view is not yet implemented.",
+      enabled: Boolean(genome.genome_id),
     },
     {
       key: "experiments",

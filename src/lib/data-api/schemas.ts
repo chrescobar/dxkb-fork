@@ -2,6 +2,8 @@ import { z } from "zod";
 
 const identifier = z.string().min(1);
 const stringOrNumber = z.union([z.string(), z.number()]);
+const stringList = z.union([z.string(), z.array(z.string())]);
+const scalarList = z.union([stringOrNumber, z.array(stringOrNumber)]);
 const optionalTaxonomy = {
   taxon_id: stringOrNumber.optional(),
   taxon_lineage_ids: z
@@ -110,9 +112,27 @@ export const proteinFeatureRecordSchema = z.looseObject({
 
 export const proteinStructureRecordSchema = z.looseObject({
   pdb_id: identifier,
+  title: z.string().optional(),
+  organism_name: stringList.optional(),
+  taxon_id: scalarList.optional(),
+  taxon_lineage_ids: scalarList.optional(),
+  taxon_lineage_names: stringList.optional(),
   genome_id: z.string().optional(),
   patric_id: z.string().optional(),
-  ...optionalTaxonomy,
+  uniprotkb_accession: stringList.optional(),
+  gene: stringList.optional(),
+  product: stringList.optional(),
+  sequence_md5: stringList.optional(),
+  sequence: z.string().optional(),
+  alignments: z.unknown().optional(),
+  method: stringList.optional(),
+  resolution: stringOrNumber.optional(),
+  pmid: scalarList.optional(),
+  institution: stringList.optional(),
+  authors: stringList.optional(),
+  release_date: z.string().optional(),
+  file_path: z.string().optional(),
+  date_inserted: z.string().optional(),
 });
 
 export const experimentRecordSchema = z.looseObject({

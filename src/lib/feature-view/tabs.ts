@@ -1,4 +1,5 @@
 import type { EntityViewTab } from "@/components/views";
+import { featureProteinStructureRql } from "@/lib/protein-structure-view/scope";
 import type { FeatureViewRecord } from "./schema";
 
 export const featureTabKeys = [
@@ -51,8 +52,10 @@ export function buildFeatureTabs(
     {
       key: "structures",
       label: "Protein Structures",
-      enabled: false,
-      disabledReason: "The Protein Structure view is not yet implemented.",
+      enabled: Boolean(featureProteinStructureRql(feature)),
+      disabledReason: featureProteinStructureRql(feature)
+        ? undefined
+        : "No protein structure identifiers are available for this feature.",
     },
   ];
 }

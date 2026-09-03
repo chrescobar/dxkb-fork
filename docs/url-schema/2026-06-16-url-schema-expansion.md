@@ -11,6 +11,14 @@
 **Design spec:** `docs/url-schema/2026-06-16-url-schema-design.md`
 **Legacy reference:** `docs/url-schema/bvbrc-view-types-url-parameters.md`
 
+> **Historical note (2026-09-02):** This is the original routing-skeleton implementation
+> plan, so its unchecked steps and placeholder examples are not current implementation
+> status. Protein Structures Phase 8 is complete: `/protein-structure` now uses a
+> profile-backed collection plus a query-identified accession/workspace member, ordered
+> BV-BRC/AlphaFold/RCSB source fallback (with BV-BRC and workspace proxies), and shared
+> Genome, Feature, and Taxonomy integrations. See the design spec and `docs/architecture.md`
+> for the current architecture.
+
 ---
 
 ## File Structure
@@ -1560,6 +1568,10 @@ Per-segment substitutions for the singular pages:
 | `experiment/[experimentId]/page.tsx` | `ExperimentPage` | `experimentId` | `viewRegistry.experiment` |
 
 - [ ] **Step 5: Create the protein-structure dual-mode page**
+
+> Historical scaffold step. Phase 8 replaced this shell delegation with an explicit page:
+> bare requests render the profile-backed collection; `?accession=` and `?path=` render the
+> Mol* member with metadata enrichment, source fallback/proxy behavior, and validation.
 
 ```tsx
 // src/app/(views)/protein-structure/page.tsx

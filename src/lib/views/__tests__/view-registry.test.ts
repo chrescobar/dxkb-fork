@@ -27,8 +27,15 @@ describe("viewRegistry", () => {
     expect(reg.experiment.legacySingular).toBe("ExperimentComparison");
   });
 
-  it("gives protein-structure an id-less singular", () => {
+  it("gives protein-structure an id-less singular and dual-mode parameters", () => {
     expect(reg["protein-structure"].singular?.idKind).toBe("none");
+    expect(reg["protein-structure"].list.friendlyParams).toEqual([
+      "keyword",
+      "taxon_id",
+      "genome_id",
+      "accession",
+      "path",
+    ]);
   });
 
   it("uses int id kind for taxonomy", () => {

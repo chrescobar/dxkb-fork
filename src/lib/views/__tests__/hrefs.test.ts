@@ -10,6 +10,9 @@ import {
   genomeIdFromRow,
   genomeListHref,
   genomesHrefFromRow,
+  proteinStructureHref,
+  proteinStructureListHref,
+  proteinStructurePathHref,
   serologyHref,
   serologyIdFromRow,
   serologyListHref,
@@ -42,6 +45,41 @@ describe("Epitope hrefs", () => {
     expect(
       epitopeListHref({ keyword: "ignored", rql: "eq(epitope_type,B-cell)" }),
     ).toBe("/epitope?rql=eq(epitope_type%2CB-cell)");
+  });
+});
+
+describe("Protein Structure hrefs", () => {
+  it("builds accession and workspace member links", () => {
+    expect(proteinStructureHref("AF-P12345-F1")).toBe(
+      "/protein-structure?accession=AF-P12345-F1",
+    );
+    expect(proteinStructurePathHref("/user name/home/model.pdb")).toBe(
+      "/protein-structure?path=%2Fuser%20name%2Fhome%2Fmodel.pdb",
+    );
+  });
+
+  it("builds collection links with paging, sorting, and RQL precedence", () => {
+    expect(proteinStructureListHref()).toBe("/protein-structure");
+    expect(
+      proteinStructureListHref({
+        keyword: "spike protein",
+        taxonId: 2697049,
+        genomeId: "123.4",
+        page: 2,
+        sort: "resolution:desc",
+      }),
+    ).toBe(
+      "/protein-structure?keyword=spike%20protein&taxon_id=2697049&genome_id=123.4&page=2&sort=resolution%3Adesc",
+    );
+    expect(
+      proteinStructureListHref({
+        keyword: "ignored",
+        taxonId: "ignored",
+        genomeId: "ignored",
+        rql: "eq(method,Predicted)",
+        page: 3,
+      }),
+    ).toBe("/protein-structure?rql=eq(method%2CPredicted)&page=3");
   });
 });
 

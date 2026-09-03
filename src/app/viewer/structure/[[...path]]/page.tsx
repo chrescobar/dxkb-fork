@@ -6,11 +6,10 @@ import { ArrowLeft, Cuboid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { safeDecode } from "@/lib/url";
-import { MolstarStatusOverlay } from "@/components/workspace/file-viewer/viewers/molstar-status-overlay";
-import {
-  useMolstarPlugin,
-  type MolstarLayoutSpec,
-} from "@/components/workspace/file-viewer/viewers/use-molstar-plugin";
+import type { StructureSource } from "@/lib/protein-structure-view/source";
+import { getProxyUrl } from "@/components/workspace/file-viewer/file-viewer-registry";
+import { StructureSourceViewer } from "@/components/workspace/file-viewer/viewers/structure-source-viewer";
+import type { MolstarLayoutSpec } from "@/components/workspace/file-viewer/viewers/use-molstar-plugin";
 
 interface StructurePageProps {
   params: Promise<{ path?: string[] }>;
@@ -25,11 +24,12 @@ export default function StructureViewerPage({ params }: StructurePageProps) {
   const { path } = use(params);
   const filePath = path ? `/${path.map(safeDecode).join("/")}` : "";
   const fileName = filePath.split("/").filter(Boolean).pop() ?? "";
-
-  const { containerRef, status, errorMessage, resetError } = useMolstarPlugin(
-    filePath,
-    fullLayout,
-  );
+  const source: StructureSource = {
+    url: filePath ? getProxyUrl(filePath) : "",
+    format: "pdb",
+    label: fileName,
+    kind: "workspace",
+  };
 
   if (!filePath) {
     return (
@@ -66,15 +66,10 @@ export default function StructureViewerPage({ params }: StructurePageProps) {
       <Separator />
 
       <div className="relative min-h-0 flex-1">
-        <div
-          ref={containerRef}
-          className="size-full"
-          data-testid="molstar-container"
-        />
-        <MolstarStatusOverlay
-          status={status}
-          errorMessage={errorMessage}
-          onRetry={resetError}
+        <StructureSourceViewer
+          source={source}
+          layout={fullLayout}
+          containerClassName="size-full"
         />
       </div>
     </div>

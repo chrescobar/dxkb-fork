@@ -1,7 +1,7 @@
 # URL Schema Expansion for All View Types — Design
 
 **Date:** 2026-06-16
-**Status:** Approved; amended 2026-08-27 for the shared view prerequisite and Genome Phase 1
+**Status:** Approved; amended 2026-09-02 through completed Protein Structures Phase 8
 **Scope:** URL schema contract, routing skeleton, and production collection/member conventions
 
 ---
@@ -103,9 +103,10 @@ per-type in the registry. From the legacy doc:
 - **List-only types** (`strain`, `domains-and-motifs`): no `[id]` folder exists; any
   attempt to reach a singular returns `notFound()`.
 - **`protein-structure`**: no path id. The singular form is `?accession=6VXX` (comma-
-  separated for multiple: `6VXX,7BZ5`) or `?path=/user@bvbrc/home/x.pdb` (workspace,
-  mutually exclusive with `accession`). One `page.tsx` handles both list and id-less
-  singular by branching on presence of `accession`/`path`.
+  separated for up to 10 PDB or AlphaFold accessions: `6VXX,7BZ5`) or
+  `?path=/user@bvbrc/home/x.pdb` (one workspace file, mutually exclusive with
+  `accession`). One explicit `page.tsx` handles both the profile-backed collection and
+  query-identified member.
 - **`experiment`**: has both list and singular routes. Legacy singular URL segment is `ExperimentComparison` (not `Experiment`); map `legacySingular: "ExperimentComparison"` in the registry. The bare `Experiment` viewer is workspace-only and has no public URL.
 
 ### 2.7 Examples
@@ -366,6 +367,21 @@ Genome Phase 1 replaces both scaffold handlers with explicit routes:
   tabs are capability-gated rather than rendered as placeholders. The default Overview tab
   is omitted from the URL.
 
+Protein Structures Phase 8 replaces its historical scaffold body with explicit dual-mode
+composition:
+
+- Bare `/protein-structure` renders the shared `protein_structure` collection profile with
+  URL-owned keyword, facet, page, sort, and RQL state. Rows link to the accession member.
+- `?accession=` renders one or more query-identified structures. PDB accessions receive
+  optional BV-BRC metadata lookup; missing metadata does not prevent public-source viewing.
+  `?path=` renders one workspace structure through the workspace proxy.
+- Mol* consumes an ordered source list and advances after load failure: BV-BRC `file_path`
+  through `/api/structure/[...path]`, AlphaFold from an AlphaFold/UniProt accession, then
+  RCSB for PDB IDs. The BV-BRC proxy validates path segments and preserves upstream errors.
+- Genome members embed the profile with exact `genome_id` scope. Feature members match
+  available PATRIC ID, sequence MD5, UniProt, and PDB identifiers. Taxonomy embeds it through
+  the Genome lineage join while excluding Deprecated genomes.
+
 ---
 
 ## 6. Redirects (build-now)
@@ -429,7 +445,7 @@ Vitest (coverage floors enforced — new pure modules raise the numbers):
 Each item below is **intentionally deferred**. The schema/skeleton makes each a contained
 follow-up. Guidance for the next engineer:
 
-### 8.1 Real list data-fetch + grids (per type)
+### 8.1 Real list data-fetch + grids (per type; historical deferral)
 
 - **Why deferred:** each type has its own endpoint, columns, filters, and pagination — this
   is the bulk of the work and is naturally one sub-project per type.
@@ -440,8 +456,10 @@ follow-up. Guidance for the next engineer:
   the React Compiler rules in `AGENTS.md`. Wire columns from the registry endpoint. Start
   with `genome` (highest traffic) as the template, then replicate.
 - **Dependency:** none on other deferred items; can begin immediately after the skeleton.
+- **Current status:** completed for implemented production profiles, including Protein
+  Structures in Phase 8. This subsection records the original scaffold boundary.
 
-### 8.2 Real singular data-fetch for the 9 non-taxonomy types
+### 8.2 Real singular data-fetch for the 9 non-taxonomy types (historical deferral)
 
 - **Why deferred:** only `taxonomy` has a real fetch + overview today; the other singulars
   render placeholders via `OrganismLandingShell`.
@@ -451,6 +469,9 @@ follow-up. Guidance for the next engineer:
   taxonomy route's `_config.ts` / `views/` colocated pattern.
 - **Dependency:** `protein-structure` singular needs the 3D viewer already at
   `src/app/viewer/structure/` — reuse it rather than rebuilding.
+- **Current status:** Protein Structures Phase 8 is complete and shares the Mol* source
+  viewer with workspace and standalone structure viewing. Other types may retain their own
+  implementation status; this subsection records the original scaffold boundary.
 
 ### 8.3 Search-bar / command-palette repoint → List views
 
@@ -508,7 +529,7 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 
 | Decision              | Choice                                                                                                                                                                |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Deliverable           | Schema + routing skeleton for all view types, plus the implemented Genome Phase 1 collection and member views                                                       |
+| Deliverable           | Schema + routing skeleton for all view types, plus subsequent production phases through Protein Structures Phase 8                                                   |
 | List ↔ singular       | Combined: bare segment = list, `+id` = singular → **10 segments**                                                                                                     |
 | Segment casing        | lowercase kebab-case                                                                                                                                                  |
 | Tab param             | `?tab=` (query, server-readable), migrated from `?view=`                                                                                                              |
@@ -516,4 +537,4 @@ These shipped files (commits from 2026-06-15) must be updated for the `view` →
 | List query format     | Friendly named params **+** `?rql=` escape hatch                                                                                                                      |
 | Oddballs              | All 10 documented; scaffold the real ones; list-only → `notFound()` on `[id]`; protein-structure id-less; experiment singular uses legacy name `ExperimentComparison` |
 | Redirects (build now) | Internal `view`→`tab` + legacy `/view/*` two-stage (server path/query + client hash)                                                                                  |
-| Deferred              | Real list/singular data for the remaining scaffolded types, search repoint, sitemap/JSON-LD/ISR                                                                       |
+| Deferred              | Historical scaffold deferrals remain recorded in §8; Protein Structures list/member data and its Genome/Feature/Taxonomy integrations are complete                    |

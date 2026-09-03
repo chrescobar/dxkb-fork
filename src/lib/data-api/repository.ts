@@ -401,9 +401,17 @@ export class ServerDataRepository {
     });
     const payload: unknown = await response.json().catch(() => null);
     if (!response.ok) {
-      const safeStatus = [401, 403, 404, 429].includes(response.status)
-        ? response.status
-        : 502;
+      const message = upstreamMessage(payload, response.status);
+      const serviceUnavailable =
+        response.status === 503 ||
+        /503 service unavailable|no server is available to handle this request/i.test(
+          message,
+        );
+      const safeStatus = serviceUnavailable
+        ? 503
+        : [401, 403, 404, 429].includes(response.status)
+          ? response.status
+          : 502;
       const code =
         safeStatus === 401
           ? "unauthorized"
@@ -413,9 +421,13 @@ export class ServerDataRepository {
               ? "not_found"
               : safeStatus === 429
                 ? "rate_limited"
-                : "upstream_error";
+                : safeStatus === 503
+                  ? "service_unavailable"
+                  : "upstream_error";
       throw new DataApiError(
-        upstreamMessage(payload, response.status),
+        serviceUnavailable
+          ? "The data service is temporarily unavailable. Please try again."
+          : message,
         safeStatus,
         code,
       );

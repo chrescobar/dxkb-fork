@@ -23,6 +23,7 @@ import {
   featureIdFromRow,
   genomeHref,
   genomeIdFromRow,
+  proteinStructureHref,
   serologyHref,
   serologyIdFromRow,
   surveillanceHref,
@@ -71,6 +72,7 @@ interface TabsRendererProps {
   setSelectedIds: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedGenomeId: (id: string | null) => void;
   setSelectedFeatureId: (id: string | null) => void;
+  setSelectedStructureHref: (href: string | null) => void;
   setSelectedSurveillanceHref: (href: string | null) => void;
   setSelectedSerologyHref: (href: string | null) => void;
   selectedIds: string[];
@@ -97,6 +99,7 @@ function TabsRenderer({
   setSelectedIds,
   setSelectedGenomeId,
   setSelectedFeatureId,
+  setSelectedStructureHref,
   setSelectedSurveillanceHref,
   setSelectedSerologyHref,
   selectedIds,
@@ -128,6 +131,7 @@ function TabsRenderer({
     setSelectedIds([]);
     setSelectedGenomeId(null);
     setSelectedFeatureId(null);
+    setSelectedStructureHref(null);
     setSelectedSurveillanceHref(null);
     setSelectedSerologyHref(null);
     setIsAllPagesSelected(false);
@@ -207,6 +211,12 @@ function TabsRenderer({
             onSelectedRowChange={(row) => {
               setSelectedGenomeId(genomeIdFromRow(row));
               setSelectedFeatureId(featureIdFromRow(row));
+              const pdbId = row?.pdb_id;
+              setSelectedStructureHref(
+                typeof pdbId === "string" || typeof pdbId === "number"
+                  ? proteinStructureHref(pdbId)
+                  : null,
+              );
               const surveillanceId = surveillanceIdFromRow(row);
               const pathogenTestType = row?.pathogen_test_type;
               setSelectedSurveillanceHref(
@@ -330,6 +340,9 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
     null,
   );
+  const [selectedStructureHref, setSelectedStructureHref] = useState<
+    string | null
+  >(null);
   const [selectedSurveillanceHref, setSelectedSurveillanceHref] = useState<
     string | null
   >(null);
@@ -349,6 +362,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
     setSelectedIds([]);
     setSelectedGenomeId(null);
     setSelectedFeatureId(null);
+    setSelectedStructureHref(null);
     setSelectedSurveillanceHref(null);
     setSelectedSerologyHref(null);
     setPageIndex(0);
@@ -476,6 +490,18 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
               // handler); /search has no handler yet, so keep it disabled here.
               disabledActions={{
                 taxonOverview: notReady,
+                genome:
+                  activeTab === "protein_structure" && selectedGenomeId === null
+                    ? "No genome is associated with this structure."
+                    : undefined,
+                feature:
+                  activeTab === "protein_structure" && selectedFeatureId === null
+                    ? "No feature is associated with this structure."
+                    : undefined,
+                structure:
+                  selectedStructureHref === null
+                    ? "A PDB accession is required to view this structure."
+                    : undefined,
                 serology:
                   selectedSerologyHref === null
                     ? "A public sample identifier is required to view serology details."
@@ -491,6 +517,12 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
                 } else if (actionId === "feature" && selectedFeatureId) {
                   window.open(
                     featureHref(selectedFeatureId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (actionId === "structure" && selectedStructureHref) {
+                  window.open(
+                    selectedStructureHref,
                     "_blank",
                     "noopener,noreferrer",
                   );
@@ -537,6 +569,7 @@ export function TypeSearch({ q, searchtype }: TypeSearchProps) {
             setSelectedIds={setSelectedIds}
             setSelectedGenomeId={setSelectedGenomeId}
             setSelectedFeatureId={setSelectedFeatureId}
+            setSelectedStructureHref={setSelectedStructureHref}
             setSelectedSurveillanceHref={setSelectedSurveillanceHref}
             setSelectedSerologyHref={setSelectedSerologyHref}
             selectedIds={selectedIds}

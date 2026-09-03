@@ -1,0 +1,288 @@
+e2e/fixtures/overrides/catchall.ts
+  s_8ddc888a12ba08::t_7d6f604210e238 68-86
+  s_8ddc888a12ba08::t_1ef56c4d235c19 569,574
+src/app/api/e2e-mock/[...path]/route.ts
+  s_afd80c49af60fd::t_7f69c74e59346f 237-243
+  s_24d2e01c7f42d3::t_762225fd5f58af 244
+e2e/pages/protein-structure-page.ts
+  s_cb5f970871ad33::t_c982b1a3749c50 50
+src/lib/protein-structure-view/mode.ts
+  s_cd62f22089b9f1::t_c25808e846dfaf 70-77,80
+src/lib/data-api/__tests__/repository.test.ts
+  s_e2fb10efc39ba2::t_9b2569b81c6a13 335-356
+src/app/(views)/protein-structure/error.tsx
+  s_8b44be0a50612b::t_3f6ac4a9d65b52 5-13
+src/lib/data-api/repository.ts
+  s_e2fb10efc39ba2::t_22a17e2ffb89b7 407-410
+src/app/all-term-search-results.tsx
+  s_1c6deb5668bab0::t_2ea50bd197bffd 491-493
+src/app/api/structure/[...path]/route.ts
+  s_748991fe365f1d::t_3c9f52bfb751db 40
+src/components/views/__tests__/protein-structure-resource-collection.test.tsx
+  s_2791898d439be1::t_e1e9f5b8869786 34-40
+  s_2791898d439be1::t_e37e07d878159a 1-33,41-70
+src/lib/protein-structure-view/profile.ts
+  s_05b429c4877469::t_0bfafd4124f73c 5
+  s_05b429c4877469::t_98517bde84fbe9 21
+  s_05b429c4877469::t_abf70b832d969d 14
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_24d2e01c7f42d3::t_6510c5eb394d94 111-116
+  s_afd80c49af60fd::t_876dee7faf652f 98-110,117-127
+  s_24d2e01c7f42d3::t_00dc899a412d03 91-97
+src/components/workspace/file-viewer/viewers/structure-source-viewer.tsx
+  s_c57cf31a2ec89a::t_c8e018f6ad4903 36
+  s_c57cf31a2ec89a::t_5f4b2cf69782e0 16-26
+src/app/(views)/protein-structure/__tests__/protein-structure-member.test.tsx
+  s_6370a188a183fe::t_6b833687a2b05e 125-172
+  s_f6a356a2ccedf8::t_df9f95a30c18b6 47-49
+  s_f6a356a2ccedf8::t_d897c1d3f1f3b6 34-46,50-52
+  s_c444d54eaad3dd::t_b8f275b086b768 105-124
+src/lib/views/view-registry.ts
+  s_57ecc079e07b8f::t_5107415496d2c5 134
+src/app/(views)/protein-structure/protein-structure-collection.tsx
+  s_7c50d524e0fea0::t_5cc62d4241fc41 10-13,16
+src/app/__tests__/all-term-search-results.test.tsx
+  s_1c6deb5668bab0::t_afa63de5a87d93 1-53
+src/components/views/protein-structure-resource-collection.tsx
+  s_2791898d439be1::t_2429260bd089dd 3
+  s_2791898d439be1::t_f4ede7895f594b 31,37-39
+  s_2791898d439be1::t_c48d2d27abc434 34-36
+src/lib/views/__tests__/view-registry.test.ts
+  s_57ecc079e07b8f::t_911a53700e7308 31,38-47
+  s_57ecc079e07b8f::t_0fc06a37ad7ce4 3
+src/app/(views)/protein-structure/protein-structure-member.tsx
+  s_b826c2dfc1cc54::t_83b8a1e2349d0c 50-52,56-57
+  s_c444d54eaad3dd::t_930f2b1a0edceb 216-228
+  s_b826c2dfc1cc54::t_c599fd6470c7ef 53-55
+  s_b826c2dfc1cc54::t_6f66382822efe2 6
+  s_c444d54eaad3dd::t_3f43661c603da3 13
+  s_6370a188a183fe::t_21edf06a92f0c5 68-74
+  s_c1d4b95260f37b::t_9a9cfb41175b5c 40-44,48
+  s_f6a356a2ccedf8::t_cc8c552a8bde00 49
+  s_3b4629a78b2fc1::t_cedfd0680e81b5 165
+src/lib/protein-structure-view/query.ts
+  s_05b429c4877469::t_193202140497f9 3
+  s_05b429c4877469::t_8eed0f068a06f7 20
+  s_05b429c4877469::t_cf166768515e54 13
+src/lib/protein-structure-view/__tests__/server.test.ts
+  s_cd6231c3371f5d::t_ab135b4c9c1521 58-60
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_d451d09bdf1557::t_384005d7de5099 272-275,277-282
+  s_4045422120f527::t_c1b7bd9489bb85 178-180
+  s_cd62f22089b9f1::t_3ed34c5a7f6175 110-117
+  s_d451d09bdf1557::t_dbb01228da91fb 283-318
+  s_4045422120f527::t_6ca47962401935 177,181-182
+  s_b8d77ebe4b1795::t_750b3088c3eeb2 109,161-176
+src/app/api/structure/__tests__/route.test.ts
+  s_748991fe365f1d::t_3492d43e4142b9 39
+  s_be0a6960332ae8::t_95ca03b739e55e 43-44
+  s_be0a6960332ae8::t_a48d4300e55b03 74-84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fd67ed87da20ef24ab5a78f25f76fcc4bebf6d17",
+  "prompts": {},
+  "sessions": {
+    "s_05b429c4877469": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97aa397effeV8CD0KS5hAF72j",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_1c6deb5668bab0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f980028dbffe583088Y1zvfVlu",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_24d2e01c7f42d3": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97b0643effeIYUDiiIgsoMi8g",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_2791898d439be1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97aee060ffePSYUMf1mcr31lP",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3b4629a78b2fc1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97bf262bffemu63lLakHfbh9i",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_4045422120f527": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97b9c662ffesDXFQBs28Y0sbq",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_57ecc079e07b8f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97fcdbd5ffeCHHAbRc3GKEiZ7",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_6370a188a183fe": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97e90d27ffeuIMJLWD1RYjp4n",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_748991fe365f1d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97f135f5ffeMORWP1qVoZvz3g",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_7c50d524e0fea0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97d142deffea6zLyEi6olZ32w",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8b44be0a50612b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f980a0778ffesq8J3IwVL76RIP",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8ddc888a12ba08": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f980af325ffeAtBtoUBPH1OEeG",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_afd80c49af60fd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9810737effeoiRGopiD7952sW",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b826c2dfc1cc54": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97b552e1ffeyLOiEV7ylO1667",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b8d77ebe4b1795": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97dfd0f6ffe84XkK3RpfNJnNR",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_be0a6960332ae8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97b6bffeffeXekHWBBclpYI1t",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c1d4b95260f37b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f980357bdffezdkmKoKN2rGhqA",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c444d54eaad3dd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97e454d0ffe6NrMXmEEb4zame",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c57cf31a2ec89a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9804cfecffetKn3qpKaWQGl0u",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_cb5f970871ad33": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97d0655effejZOQPooySY3CTu",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_cd6231c3371f5d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97d43a29ffe10fIF5TzYq3er4",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_cd62f22089b9f1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f981415ecffecu27hwL4cH7n0r",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d451d09bdf1557": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97e1c5afffeJoFaVO3YRUnmcA",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e2fb10efc39ba2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9801c24dffe4HekzOPdHpTMAU",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f6a356a2ccedf8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9818e56dffecriAqkZwC8C054",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

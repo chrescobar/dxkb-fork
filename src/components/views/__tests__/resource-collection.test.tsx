@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { DataRepository } from "@/lib/data-api";
+import { experimentCollectionProfile } from "@/lib/experiment-view/profile";
 import { featureCollectionProfile } from "@/lib/feature-view/profile";
 import { genomeCollectionProfile } from "@/lib/genome-view/profile";
 import { strainCollectionProfile } from "@/lib/strain-view/profile";
@@ -91,6 +92,33 @@ vi.mock("@/components/search/search-action-bar", () => ({
           }
         >
           Surveillance action
+        </button>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "experiment",
+            )
+          }
+        >
+          Experiment action
+        </button>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "download",
+            )
+          }
+        >
+          Download action
+        </button>
+        <button
+          onClick={() =>
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "biosets",
+            )
+          }
+        >
+          Biosets action
         </button>
       </div>
     );
@@ -389,6 +417,85 @@ describe("ResourceCollection Genome integration contracts", () => {
         genomes: "No genomes are associated with this strain",
       },
     });
+  });
+
+  it("supports legacy Bioset sidebar actions", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    const selected = vi.fn(() => Promise.resolve({ rows: [] }));
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "bioset-1",
+      detail: { bioset_id: "bioset-1", exp_id: "00042" },
+      rows: [{ bioset_id: "bioset-1", exp_id: "00042" }],
+      selection: { "bioset-1": true },
+      selectedIds: ["bioset-1"],
+    });
+
+    render(
+      <ResourceCollection
+        profile={{
+          resource: "bioset",
+          label: "Biosets",
+          idField: "bioset_id",
+          columns: [{ id: "bioset_id", label: "Bioset ID" }],
+          defaultSort: "bioset_id:asc",
+          guideUrl: "https://example.test/guide",
+        }}
+        repository={{ selected } as unknown as DataRepository}
+        state={{ filters: {}, page: 1, sort: "bioset_id:asc" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(actionBarProps).toMatchObject({
+      enabledActions: ["biosets"],
+      guideUrl: "https://example.test/guide",
+    });
+    await user.click(screen.getByRole("button", { name: "Download action" }));
+    expect(selected).toHaveBeenCalledWith("bioset", {
+      ids: ["bioset-1"],
+      fields: ["bioset_id"],
+    });
+    await user.click(screen.getByRole("button", { name: "Biosets action" }));
+    expect(open).toHaveBeenCalledWith(
+      "https://www.bv-brc.org/view/BiosetResult/?in(exp_id,(00042))",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  });
+
+  it("opens the selected Experiment member in a new tab", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "00042",
+      detail: { exp_id: "00042", exp_title: "Fixture experiment" },
+      rows: [{ exp_id: "00042", exp_title: "Fixture experiment" }],
+      selection: { "00042": true },
+      selectedIds: ["00042"],
+    });
+
+    render(
+      <ResourceCollection
+        profile={experimentCollectionProfile}
+        repository={repository()}
+        state={{ keyword: "", filters: {}, page: 1, sort: "unsorted" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Experiment action" }));
+    expect(open).toHaveBeenCalledWith(
+      "/experiment/00042",
+      "_blank",
+      "noopener,noreferrer",
+    );
   });
 
   it("opens the selected feature member in a new tab", async () => {

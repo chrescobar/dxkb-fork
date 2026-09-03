@@ -42,6 +42,7 @@ const e2eDeterministicCounts: Record<string, number> = {
   epitope: 7890,
   protein_structure: 4567,
   protein_feature: 8901,
+  experiment: 1,
   ppi: 4358,
 };
 
@@ -97,6 +98,33 @@ const epitopeRecordFixture = {
   tcell_assays: 0,
   mhc_assays: 0,
   comments: "Discontinuous residues",
+  date_inserted: "2024-01-01",
+};
+
+const experimentRecordFixture = {
+  exp_id: "2000000",
+  study_name: "E2E host response study",
+  study_title: "Host response to viral infection",
+  study_description: "A deterministic experiment fixture.",
+  study_pi: "Ada Scientist",
+  study_institution: "Research Institute",
+  exp_name: "E2E-RNA-1",
+  exp_title: "RNA response experiment",
+  exp_description: "Differential expression after infection.",
+  public_repository: "GEO",
+  public_identifier: "GSE2000000",
+  pmid: "12345678",
+  exp_type: "Transcript Quantification",
+  measurement_technique: "RNA-Seq",
+  organism: ["Middle East respiratory syndrome-related coronavirus"],
+  taxon_id: [1335626],
+  taxon_lineage_ids: [10239, 1335626],
+  strain: ["E2E strain"],
+  treatment_type: ["Infectious Agent"],
+  treatment_name: ["Virus infection"],
+  samples: 6,
+  biosets: 1,
+  genome_id: ["1282460.2049"],
   date_inserted: "2024-01-01",
 };
 
@@ -231,6 +259,13 @@ function maybeSolrCount(
         },
       },
     };
+  }
+  if (core === "experiment") {
+    const docs = query.includes("eq(exp_id,2000000)")
+      ? [experimentRecordFixture]
+      : [];
+    if (request.headers.get("accept") === "application/json") return docs;
+    return { response: { numFound: docs.length, docs } };
   }
   if (core === "protein_structure") {
     const accession = query.match(/eq\(pdb_id,([^)&]+)\)/)?.[1];

@@ -63,6 +63,7 @@ interface ResourceChildCollectionProps {
   rql: string;
   columns?: ResourceCollectionProfile<ChildRow>["columns"];
   defaultSort: string;
+  profile?: ResourceCollectionProfile<ChildRow>;
 }
 
 export function ResourceChildCollection(props: ResourceChildCollectionProps) {
@@ -81,6 +82,7 @@ function ScopedResourceChildCollection({
   rql,
   columns,
   defaultSort,
+  profile: suppliedProfile,
 }: ResourceChildCollectionProps) {
   const [state, setState] = useState<CollectionState>({
     filters: {},
@@ -88,7 +90,9 @@ function ScopedResourceChildCollection({
     sort: defaultSort,
   });
   let profile: ResourceCollectionProfile<ChildRow>;
-  if (resource === "genome_feature") {
+  if (suppliedProfile) {
+    profile = { ...suppliedProfile, label, basePredicate: rql };
+  } else if (resource === "genome_feature") {
     profile = {
       ...featureCollectionProfile,
       label,

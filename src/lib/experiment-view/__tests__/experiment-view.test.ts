@@ -1,0 +1,63 @@
+import {
+  experimentBiosetCollectionRql,
+  experimentBiosetRql,
+  experimentCollectionProfile,
+  experimentCollectionScopeRql,
+  experimentStructuralRql,
+  genomeExperimentRql,
+  isExperimentId,
+  parseExperimentCollectionState,
+  parseExperimentCollectionTab,
+  parseExperimentTab,
+} from "@/lib/experiment-view";
+
+describe("Experiment view", () => {
+  it("validates positive digit strings without coercion", () => {
+    expect(isExperimentId("00042")).toBe(true);
+    expect(isExperimentId("2000000")).toBe(true);
+    expect(isExperimentId("0")).toBe(false);
+    expect(isExperimentId("1.5")).toBe(false);
+    expect(isExperimentId("-1")).toBe(false);
+  });
+
+  it("parses collection state and builds multi-value filters", () => {
+    const state = parseExperimentCollectionState({
+      keyword: "expression",
+      taxon_id: "561",
+      exp_type: ["RNA", "Proteomics"],
+      page: "2",
+      sort: "exp_id:desc",
+    });
+    expect(state).toMatchObject({ keyword: "expression", page: 2, sort: "exp_id:desc" });
+    expect(experimentStructuralRql(state)).toBe(
+      "and(eq(taxon_lineage_ids,561),or(eq(exp_type,RNA),eq(exp_type,Proteomics)))",
+    );
+  });
+
+  it("builds exact child and Genome scopes", () => {
+    expect(experimentBiosetRql("00042")).toBe("eq(exp_id,00042)");
+    expect(experimentBiosetCollectionRql(["00042", "51"])).toBe(
+      "in(exp_id,(00042,51))",
+    );
+    expect(genomeExperimentRql("83332.12")).toBe("eq(genome_id,83332.12)");
+  });
+
+  it("preserves Experiment search scope for the collection Biosets tab", () => {
+    const state = parseExperimentCollectionState({
+      keyword: "influenza",
+      taxon_id: "11320",
+      refine: "RNA",
+    });
+    expect(experimentCollectionScopeRql(state)).toBe(
+      "and(eq(taxon_lineage_ids,11320),keyword(RNA))",
+    );
+    expect(parseExperimentCollectionTab("biosets")).toBe("biosets");
+    expect(parseExperimentCollectionTab("missing")).toBe("experiments");
+  });
+
+  it("defines member links and canonical tabs", () => {
+    expect(experimentCollectionProfile.rowHref?.({ exp_id: "00042" })).toBe("/experiment/00042");
+    expect(parseExperimentTab("biosets")).toBe("biosets");
+    expect(parseExperimentTab("missing")).toBe("overview");
+  });
+});

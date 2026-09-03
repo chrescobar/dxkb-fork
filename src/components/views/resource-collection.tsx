@@ -23,8 +23,11 @@ import {
   type DataResource,
 } from "@/lib/data-api";
 import {
+  biosetResultsHref,
   epitopeHref,
   epitopeIdFromRow,
+  experimentHref,
+  experimentIdFromRow,
   featureHref,
   featureIdFromRow,
   genomeHref,
@@ -189,6 +192,7 @@ export function ResourceCollection<Row extends DataTableRow>({
   const selectedGenomesHref = genomesHrefFromRow(displayedDetail);
   const selectedFeatureId = featureIdFromRow(displayedDetail);
   const selectedEpitopeId = epitopeIdFromRow(displayedDetail);
+  const selectedExperimentId = experimentIdFromRow(displayedDetail);
   const selectedPdbId = displayedDetail?.pdb_id;
   const selectedStructureHref =
     profile.resource === "protein_structure" &&
@@ -198,6 +202,13 @@ export function ResourceCollection<Row extends DataTableRow>({
   const selectedMemberHref = displayedDetail
     ? profile.rowHref?.(displayedDetail)
     : undefined;
+  const selectedBiosetExperimentIds = displayedSelectedIds.flatMap((id) => {
+    const row = displayedRows.find(
+      (candidate) => String(candidate[profile.idField]) === id,
+    );
+    const experimentId = experimentIdFromRow(row ?? null);
+    return experimentId ? [experimentId] : [];
+  });
 
   const exportRows = async (
     format: "csv" | "txt",
@@ -416,14 +427,17 @@ export function ResourceCollection<Row extends DataTableRow>({
               }
               searchType={profile.resource}
               guideUrl={profile.guideUrl}
-              enabledActions={
-                profile.resource === "strain" && selectedGenomesHref
-                  ? ["genomes"]
-                  : profile.resource === "protein_structure" &&
-                      selectedStructureHref
-                    ? ["structure"]
-                    : undefined
-              }
+               enabledActions={
+                 profile.resource === "strain" && selectedGenomesHref
+                   ? ["genomes"]
+                   : profile.resource === "protein_structure" &&
+                       selectedStructureHref
+                     ? ["structure"]
+                     : profile.resource === "bioset" &&
+                         selectedBiosetExperimentIds.length > 0
+                       ? ["biosets"]
+                       : undefined
+               }
                disabledActions={
                  profile.resource === "strain" && !selectedGenomesHref
                    ? { genomes: "No genomes are associated with this strain" }
@@ -441,8 +455,19 @@ export function ResourceCollection<Row extends DataTableRow>({
                        }
                      : undefined
                }
-              onAction={(actionId) => {
-                if (actionId === "genome" && selectedGenomeId) {
+               onAction={(actionId) => {
+                 if (actionId === "download") {
+                   void exportRows("csv", displayedSelectedIds);
+                 } else if (
+                   actionId === "biosets" &&
+                   selectedBiosetExperimentIds.length > 0
+                 ) {
+                   window.open(
+                     biosetResultsHref(selectedBiosetExperimentIds),
+                     "_blank",
+                     "noopener,noreferrer",
+                   );
+                 } else if (actionId === "genome" && selectedGenomeId) {
                   window.open(
                     genomeHref(selectedGenomeId),
                     "_blank",
@@ -469,6 +494,15 @@ export function ResourceCollection<Row extends DataTableRow>({
                 } else if (actionId === "epitope" && selectedEpitopeId) {
                   window.open(
                     epitopeHref(selectedEpitopeId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (
+                  actionId === "experiment" &&
+                  selectedExperimentId
+                ) {
+                  window.open(
+                    experimentHref(selectedExperimentId),
                     "_blank",
                     "noopener,noreferrer",
                   );

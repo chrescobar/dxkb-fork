@@ -34,7 +34,7 @@ export const biosetFields = {
     bioset_id: { 
         label: 'Bioset ID', 
         field: 'bioset_id', 
-        hidden: true,
+        hidden: false,
         group: 'Bioset Info' 
         },
     bioset_name: { 
@@ -53,7 +53,9 @@ export const biosetFields = {
         label: 'Type', 
         field: 'bioset_type', 
         hidden: false,
-        group: 'Bioset Info' 
+        group: 'Bioset Info',
+        facet: true,
+        facet_hidden: false
         },
     analysis_method: { 
         label: 'Analysis Method', 
@@ -62,9 +64,9 @@ export const biosetFields = {
         show_in_table: false,
         group: 'Bioset Info' 
         },
-    bioset_criter: {
+    bioset_criteria: {
         label: 'Criteria',
-        field: 'bioset_criter',
+        field: 'bioset_criteria',
         hidden: false,
         show_in_table: false,
         group: 'Bioset Info' 
@@ -94,7 +96,9 @@ export const biosetFields = {
         label: 'Organism', 
         field: 'organism', 
         hidden: false,
-        group: 'Bioset Info' 
+        group: 'Bioset Info',
+        facet: true,
+        facet_hidden: false
         },
     strain: { 
         label: 'Strain', 
@@ -140,7 +144,7 @@ export const biosetFields = {
         },
     additional_metadata: { 
         label: 'Additional Metadata', 
-        field: 'additonal_metadata', 
+        field: 'additional_metadata',
         hidden: false,
         group: 'Additional Metadata',
         show_in_table: false

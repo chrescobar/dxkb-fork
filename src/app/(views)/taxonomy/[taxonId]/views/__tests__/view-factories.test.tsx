@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { makeStrainsView } from "@/components/organisms/taxon-views/strains";
 import { makeSerologyView } from "@/components/organisms/taxon-views/serology";
@@ -59,6 +59,22 @@ function FeatureResourceCollection({
 }
 
 vi.mock("@/components/views", () => ({
+  ExperimentResourceCollection: ({
+    baseRql,
+    enableRowLinks,
+    keywordMode,
+  }: {
+    baseRql: string;
+    enableRowLinks: boolean;
+    keywordMode?: "server" | "loaded";
+  }) => (
+    <div
+      data-testid="experiment-resource-collection"
+      data-q={baseRql}
+      data-row-links={String(enableRowLinks)}
+      data-keyword-mode={keywordMode ?? "loaded"}
+    />
+  ),
   EpitopeResourceCollection: ({
     baseRql,
     enableRowLinks,
@@ -291,16 +307,15 @@ describe("makeDomainsAndMotifsView", () => {
 });
 
 describe("makeFeaturesView", () => {
-  it("renders TaxonDataPanel with the genome_feature descendant-taxon query and local keyword filtering", () => {
+  it("renders the shared Feature collection with the descendant-taxon query", () => {
     const FeaturesView = makeFeaturesView({ scope });
-    const { getByTestId } = render(<FeaturesView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "genome_feature");
+    render(<FeaturesView />);
+    const panel = screen.getByTestId("feature-resource-collection");
     expect(panel).toHaveAttribute(
       "data-q",
       "and(eq(genome_id,*),genome(and(eq(taxon_lineage_ids,1234),ne(genome_status,Deprecated))),eq(annotation,PATRIC))",
     );
-    expect(panel.getAttribute("data-guide")).toContain("features.html");
+    expect(panel).toHaveAttribute("data-row-links", "false");
     expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
@@ -328,29 +343,13 @@ describe("makeSurveillanceView", () => {
 });
 
 describe("makeExperimentsView", () => {
-  it("renders the experiment panel by default", () => {
+  it("renders the shared Experiment collection with taxon scope", () => {
     const ExperimentsView = makeExperimentsView({ scope });
-    const { getByTestId } = render(<ExperimentsView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "experiment");
-    expect(panel.getAttribute("data-q")).toBe("eq(taxon_lineage_ids,1234)");
-    expect(panel.getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
-    );
-  });
-
-  it("renders the bioset panel after selecting the Biosets sub-tab", () => {
-    const ExperimentsView = makeExperimentsView({ scope });
-    const { getByTestId } = render(<ExperimentsView />);
-
-    fireEvent.click(screen.getByRole("tab", { name: "Biosets" }));
-
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "bioset");
-    const q = panel.getAttribute("data-q") ?? "";
-    expect(q).toContain("eq(genome_id,*)");
-    expect(q).toContain("genome(eq(taxon_lineage_ids,1234))");
-    expect(panel.getAttribute("data-guide")).toBeNull();
+    render(<ExperimentsView />);
+    const panel = screen.getByTestId("experiment-resource-collection");
+    expect(panel).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
+    expect(panel).toHaveAttribute("data-row-links", "false");
+    expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
   });
 });
 
@@ -387,6 +386,7 @@ describe("composite scope queries", () => {
 
     if (
       resource === "genome" ||
+      resource === "genome_feature" ||
       resource === "epitope" ||
       resource === "protein_feature" ||
       resource === "protein_structure" ||
@@ -395,7 +395,9 @@ describe("composite scope queries", () => {
       resource === "serology"
     ) {
       const testId =
-        resource === "protein_feature"
+        resource === "genome_feature"
+          ? "feature-resource-collection"
+          : resource === "protein_feature"
           ? "protein-feature-resource-collection"
           : resource === "protein_structure"
             ? "protein-structure-resource-collection"
@@ -468,18 +470,12 @@ describe("composite scope queries", () => {
     );
   });
 
-  it("applies the composite clause to both experiment subviews", () => {
+  it("applies the composite clause to experiments", () => {
     const View = makeExperimentsView({ scope: compositeScope });
     render(<View />);
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
+    expect(screen.getByTestId("experiment-resource-collection")).toHaveAttribute(
       "data-q",
       compositeClause,
-    );
-
-    fireEvent.click(screen.getByRole("tab", { name: "Biosets" }));
-    expect(screen.getByTestId("taxon-data-panel")).toHaveAttribute(
-      "data-q",
-      `and(eq(genome_id,*),genome(${compositeClause}))`,
     );
   });
 });

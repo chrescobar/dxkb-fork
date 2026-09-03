@@ -4,7 +4,7 @@ export const experimentFields = {
     exp_id: { 
         label: 'Experiment ID', 
         field: 'exp_id', 
-        hidden: true,
+        hidden: false,
         group: 'Study Info',
         facet: false, 
         facet_hidden: true, 
@@ -102,7 +102,7 @@ export const experimentFields = {
         },
     public_repository: { 
         label: 'Public Repository', 
-        field: 'public_repositories', 
+        field: 'public_repository',
         hidden: false,
         group: 'Experiment Info',
         show_in_table: false,
@@ -119,6 +119,15 @@ export const experimentFields = {
         facet_hidden: true, 
         search: true  
         },
+    pmid: {
+        label: 'PubMed ID',
+        field: 'pmid',
+        hidden: false,
+        group: 'Experiment Info',
+        facet: false,
+        facet_hidden: true,
+        search: true
+        },
     exp_type: { 
         label: 'Exp Type', 
         field: 'exp_type', 
@@ -129,7 +138,7 @@ export const experimentFields = {
         search: true  
         },
     measurement_technique: {
-        label: 'Meaurement Technique',
+        label: 'Measurement Technique',
         field: 'measurement_technique',
         hidden: true,
         group: 'Experiment Info',
@@ -146,6 +155,25 @@ export const experimentFields = {
         facet: true, 
         facet_hidden: false, 
         search: true  
+        },
+    taxon_id: {
+        label: 'Taxon ID',
+        field: 'taxon_id',
+        hidden: true,
+        group: 'Experiment Info',
+        facet: false,
+        facet_hidden: true,
+        search: false
+        },
+    taxon_lineage_ids: {
+        label: 'Taxon Lineage IDs',
+        field: 'taxon_lineage_ids',
+        hidden: true,
+        group: 'Experiment Info',
+        show_in_table: false,
+        facet: false,
+        facet_hidden: true,
+        search: false
         },
     strain: {
         label: 'Strain', 

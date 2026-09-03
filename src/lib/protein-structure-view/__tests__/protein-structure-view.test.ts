@@ -89,6 +89,27 @@ describe("Protein Structure view contracts", () => {
     }
   });
 
+  it("canonicalizes encoded workspace paths before source resolution", () => {
+    const mode = parseProteinStructureMode({
+      path: "/user%20name/home/model%2Ebcif",
+    });
+
+    expect(mode).toEqual({
+      kind: "path",
+      path: "/user name/home/model.bcif",
+    });
+    if (mode.kind === "path") {
+      expect(resolveProteinStructureSources({ workspacePath: mode.path })).toEqual([
+        {
+          url: "/api/workspace/view/user%20name/home/model.bcif",
+          format: "bcif",
+          label: "model.bcif",
+          kind: "workspace",
+        },
+      ]);
+    }
+  });
+
   it("validates workspace paths before source resolution", () => {
     expect(
       parseProteinStructureMode({ path: "relative/model.pdb" }),

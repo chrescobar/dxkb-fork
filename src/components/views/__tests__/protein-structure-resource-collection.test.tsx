@@ -43,7 +43,7 @@ vi.mock("../resource-collection", () => ({
 }));
 
 describe("ProteinStructureResourceCollection", () => {
-  it("updates local state when initialized with collection state", async () => {
+  it("keeps URL-backed state handling when initialized with collection state", async () => {
     const initialState: CollectionState = {
       filters: {},
       page: 1,
@@ -55,9 +55,9 @@ describe("ProteinStructureResourceCollection", () => {
     await userEvent.click(screen.getByRole("button", { name: "Change state" }));
 
     expect(screen.getByTestId("collection-state")).toHaveTextContent(
-      JSON.stringify(changedState),
+      JSON.stringify(initialState),
     );
-    expect(setUrlState).not.toHaveBeenCalled();
+    expect(setUrlState).toHaveBeenCalledWith(changedState);
   });
 
   it("keeps URL-backed state handling without initial state", async () => {

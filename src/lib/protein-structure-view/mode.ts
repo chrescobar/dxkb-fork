@@ -64,17 +64,25 @@ export function canonicalProteinStructureQuery(
     : `/protein-structure?${query.toString()}`;
 }
 
-function workspacePathError(path: string): string | undefined {
+function decodeWorkspacePath(path: string): string | undefined {
+  try {
+    return path.split("/").map(decodeURIComponent).join("/");
+  } catch {
+    return undefined;
+  }
+}
+
+function workspacePathError(
+  path: string,
+  decodedPath: string | undefined,
+): string | undefined {
   if (!path.startsWith("/")) return "Workspace path must be absolute.";
   if (path.length > 1024) return "Workspace path is too long.";
-
-  let decodedPath: string;
-  try {
-    decodedPath = path.split("/").map(decodeURIComponent).join("/");
-  } catch {
-    return "Workspace path contains an invalid segment.";
-  }
-  if (decodedPath.includes("\0") || decodedPath.split("/").includes("..")) {
+  if (
+    decodedPath === undefined ||
+    decodedPath.includes("\0") ||
+    decodedPath.split("/").includes("..")
+  ) {
     return "Workspace path contains an invalid segment.";
   }
   if (!/\.(?:pdb|cif|mmcif|bcif)$/i.test(decodedPath)) {
@@ -123,10 +131,15 @@ export function parseProteinStructureMode(
       : { kind: "accession", accessions };
   }
   if (paths.length === 1) {
-    const error = workspacePathError(paths[0]);
-    return error
-      ? { kind: "invalid", reason: error }
-      : { kind: "path", path: paths[0] };
+    const decodedPath = decodeWorkspacePath(paths[0]);
+    const error = workspacePathError(paths[0], decodedPath);
+    if (error || decodedPath === undefined) {
+      return {
+        kind: "invalid",
+        reason: error ?? "Workspace path contains an invalid segment.",
+      };
+    }
+    return { kind: "path", path: decodedPath };
   }
   return { kind: "collection" };
 }

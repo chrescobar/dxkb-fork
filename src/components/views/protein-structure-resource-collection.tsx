@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { useCollectionUrlState } from "@/hooks/views/use-collection-url-state";
 import { DataRepository } from "@/lib/data-api";
 import {
@@ -28,15 +28,10 @@ function ProteinStructureResourceCollectionContent({
   initialState,
   keywordMode = "server",
 }: ProteinStructureResourceCollectionProps) {
-  const [urlState, setUrlState] = useCollectionUrlState(
+  const [urlState, setState] = useCollectionUrlState(
     proteinStructureCollectionOptions,
   );
-  const [localState, setLocalState] = useState<CollectionState>(
-    () => initialState ?? urlState,
-  );
-  const usesLocalState = initialState !== undefined;
-  const state = usesLocalState ? localState : urlState;
-  const setState = usesLocalState ? setLocalState : setUrlState;
+  const state = initialState ?? urlState;
 
   return (
     <ResourceCollection<ProteinStructureViewRecord>

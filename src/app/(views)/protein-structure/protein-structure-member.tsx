@@ -3,7 +3,7 @@
 import { ExternalLink } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { startTransition, useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
@@ -47,13 +47,18 @@ export function ProteinStructureMember({
   workspacePath,
 }: ProteinStructureMemberProps) {
   const defaultSelection = lookups?.[0]?.accession ?? workspacePath ?? "";
+  const [previousDefaultSelection, setPreviousDefaultSelection] =
+    useState(defaultSelection);
   const [selected, setSelected] = useState(defaultSelection);
+  const selectionAvailable =
+    !lookups || lookups.some((item) => item.accession === selected);
 
-  useEffect(() => {
-    startTransition(() => {
-      setSelected(defaultSelection);
-    });
-  }, [defaultSelection]);
+  if (defaultSelection !== previousDefaultSelection) {
+    setPreviousDefaultSelection(defaultSelection);
+    setSelected(defaultSelection);
+  } else if (!selectionAvailable) {
+    setSelected(defaultSelection);
+  }
 
   const lookup = lookups?.find((item) => item.accession === selected);
   const sources: StructureSource[] = workspacePath

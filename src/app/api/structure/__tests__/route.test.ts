@@ -36,9 +36,12 @@ describe("GET /api/structure/[...path]", () => {
         {
           cache: "force-cache",
           headers: { "User-Agent": "curl/8.7.1" },
+          next: { revalidate: 300 },
         },
       );
       expect(response.status).toBe(200);
+      expect(response.headers.get("Cache-Control")).toBe("public, max-age=300");
+      expect(response.headers.get("Content-Type")).toBe("chemical/x-pdb");
       expect(response.headers.has("Content-Length")).toBe(false);
       expect(await response.text()).toBe("ATOM");
     },
@@ -67,5 +70,16 @@ describe("GET /api/structure/[...path]", () => {
     expect(await response.json()).toEqual({
       error: "BV-BRC structure request failed: 404 Not Found",
     });
+  });
+
+  it("returns 502 when the upstream request fails", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(
+      new Error("upstream unavailable"),
+    );
+
+    const response = await GET(mockNextRequest(), context(["model.pdb"]));
+
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({ error: "upstream unavailable" });
   });
 });

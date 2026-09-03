@@ -88,6 +88,43 @@ describe("api/e2e-mock catch-all — enabled", () => {
     expect((await resp.json()) as unknown).toEqual({});
   });
 
+  it("returns protein structure fixtures for collections and exact members", async () => {
+    const unfilteredResp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/protein_structure/",
+      }),
+      ctx(["data", "protein_structure"]),
+    );
+    const collectionResp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/protein_structure/?eq(pdb_id,*)",
+      }),
+      ctx(["data", "protein_structure"]),
+    );
+    const memberResp = await GET(
+      mockNextRequest({
+        url: "http://localhost:3020/api/e2e-mock/data/protein_structure/?eq(pdb_id,6VXX)",
+      }),
+      ctx(["data", "protein_structure"]),
+    );
+
+    await expect(unfilteredResp.json()).resolves.toMatchObject({
+      response: {
+        numFound: 2,
+        docs: [{ pdb_id: "6VXX" }, { pdb_id: "7BV2" }],
+      },
+    });
+    await expect(collectionResp.json()).resolves.toMatchObject({
+      response: {
+        numFound: 2,
+        docs: [{ pdb_id: "6VXX" }, { pdb_id: "7BV2" }],
+      },
+    });
+    await expect(memberResp.json()).resolves.toMatchObject({
+      response: { numFound: 1, docs: [{ pdb_id: "6VXX" }] },
+    });
+  });
+
   it("filters ambiguous surveillance fixtures by pathogen test type", async () => {
     const unfilteredResp = await GET(
       mockNextRequest({

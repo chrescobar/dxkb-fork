@@ -2,37 +2,23 @@ import type { DataTableColumn } from "@/components/shared/data-table";
 import type { ResourceCollectionProfile } from "@/components/views/resource-collection";
 import { proteinStructureFields } from "@/constants/datafields/protein_structure";
 import type { DataField } from "@/constants/datafields/types";
+import { resourceRegistry } from "@/lib/data-api";
 import { proteinStructureHref } from "@/lib/views/hrefs";
 import { proteinStructureStructuralRql } from "./query";
 import type { ProteinStructureViewRecord } from "./schema";
 
 const unsafeProjectionFields = new Set(["sequence", "alignments"]);
-const multipleFields = new Set([
-  "organism_name",
-  "taxon_id",
-  "taxon_lineage_ids",
-  "taxon_lineage_names",
-  "uniprotkb_accession",
-  "gene",
-  "product",
-  "sequence_md5",
-  "method",
-  "pmid",
-  "institution",
-  "authors",
-]);
 const fields: DataField[] = Object.values(proteinStructureFields).filter(
   (field) => !unsafeProjectionFields.has(field.field),
 );
+const resourceFields = resourceRegistry.protein_structure.fields;
 
 function tableColumn(definition: DataField): DataTableColumn {
   return {
     id: definition.field,
     label: definition.label,
     visible: !definition.hidden,
-    sortable: multipleFields.has(definition.field)
-      ? false
-      : (definition.sortable ?? true),
+    sortable: resourceFields[definition.field].sortable,
     valueHref: definition.field === "pdb_id" ? undefined : definition.link,
   };
 }

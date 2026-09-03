@@ -47,9 +47,8 @@ export class ProteinStructurePage {
     await expect(
       this.page.getByRole("heading", { level: 1, name: accession }),
     ).toBeVisible();
-    if (title) {
+    if (title)
       await expect(this.page.getByText(title, { exact: true })).toBeVisible();
-    }
     await expect(this.page.getByTestId("molstar-container")).toBeVisible();
   }
 

@@ -107,6 +107,15 @@ describe("Protein Structure view contracts", () => {
       parseProteinStructureMode({ path: "/user/../model.pdb" }),
     ).toMatchObject({ kind: "invalid" });
     expect(
+      parseProteinStructureMode({ path: "/user/%2e%2e/model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: "/user/folder%2f../model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: "/user/%E0%A4%A/model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
       parseProteinStructureMode({ path: `/user/${"a".repeat(1024)}.pdb` }),
     ).toMatchObject({ kind: "invalid" });
   });
@@ -147,6 +156,28 @@ describe("Protein Structure view contracts", () => {
     expect(() =>
       parseProteinStructureCollectionState({ rql: "sort(+pdb_id)" }),
     ).toThrow("Transport operator");
+  });
+
+  it.each([
+    "taxon_id",
+    "gene",
+    "product",
+    "sequence_md5",
+    "method",
+    "pmid",
+  ])("rejects sorting by multi-valued field %s", (field) => {
+    expect(
+      parseProteinStructureCollectionState({ sort: `${field}:asc` }).sort,
+    ).toBe("unsorted");
+    expect(
+      parseProteinStructureCollectionState({ sort: `${field}:desc` }).sort,
+    ).toBe("unsorted");
+  });
+
+  it("exposes the protein structures guide URL", () => {
+    expect(proteinStructureCollectionProfile.guideUrl).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
+    );
   });
 
   it("uses pdb_id links and omits unsafe sequence projections", () => {
@@ -238,49 +269,53 @@ describe("Protein Structure view contracts", () => {
     ).toBeUndefined();
   });
 
-  it("keeps Mol* out of the collection's initial client chunks", () => {
-    const manifestPath = resolve(
-      process.cwd(),
-      ".next/server/app/(views)/protein-structure/page_client-reference-manifest.js",
-    );
-    if (!existsSync(manifestPath)) return;
+  const manifestPath = resolve(
+    process.cwd(),
+    ".next/server/app/(views)/protein-structure/page_client-reference-manifest.js",
+  );
 
-    const context: { globalThis: { __RSC_MANIFEST?: Record<string, unknown> } } = {
-      globalThis: {},
-    };
-    vm.runInNewContext(readFileSync(manifestPath, "utf8"), context);
-    const manifest = context.globalThis.__RSC_MANIFEST?.[
-      "/(views)/protein-structure/page"
-    ] as
-      | {
-          clientModules?: Record<
-            string,
-            { chunks?: string[]; async?: boolean }
-          >;
-        }
-      | undefined;
-    const collection = Object.entries(manifest?.clientModules ?? {}).find(
-      ([name]) => name.endsWith("protein-structure-collection.tsx"),
-    )?.[1];
-    const member = Object.entries(manifest?.clientModules ?? {}).find(([name]) =>
-      name.endsWith("protein-structure-member.tsx"),
-    )?.[1];
-    expect(collection?.chunks).toBeDefined();
-    expect(member?.chunks).toBeDefined();
-    expect(collection?.chunks).toEqual(member?.chunks);
-    for (const chunk of collection?.chunks ?? []) {
-      const contents = readFileSync(
-        resolve(process.cwd(), `.next${chunk.replace("/_next", "")}`),
-        "utf8",
-      );
-      expect(contents.toLowerCase()).not.toContain("molstar");
-    }
-    expect(
-      Object.keys(manifest?.clientModules ?? {}).some((name) =>
-        name.includes("structure-source-viewer"),
-      ),
-    ).toBe(false);
-  });
+  it.skipIf(!existsSync(manifestPath))(
+    "keeps Mol* out of the collection's initial client chunks",
+    () => {
+      const context: {
+        globalThis: { __RSC_MANIFEST?: Record<string, unknown> };
+      } = {
+        globalThis: {},
+      };
+      vm.runInNewContext(readFileSync(manifestPath, "utf8"), context);
+      const manifest = context.globalThis.__RSC_MANIFEST?.[
+        "/(views)/protein-structure/page"
+      ] as
+        | {
+            clientModules?: Record<
+              string,
+              { chunks?: string[]; async?: boolean }
+            >;
+          }
+        | undefined;
+      const collection = Object.entries(manifest?.clientModules ?? {}).find(
+        ([name]) => name.endsWith("protein-structure-collection.tsx"),
+      )?.[1];
+      const member = Object.entries(manifest?.clientModules ?? {}).find(
+        ([name]) => name.endsWith("protein-structure-member.tsx"),
+      )?.[1];
+      expect(collection?.chunks).toBeDefined();
+      expect(member?.chunks).toBeDefined();
+      expect(collection?.chunks).toEqual(member?.chunks);
+      for (const chunk of collection?.chunks ?? []) {
+        const contents = readFileSync(
+          resolve(process.cwd(), `.next${chunk.replace("/_next", "")}`),
+          "utf8",
+        );
+        expect(contents.toLowerCase()).not.toContain("molstar");
+      }
+      expect(
+        Object.keys(manifest?.clientModules ?? {}).some((name) =>
+          name.includes("structure-source-viewer"),
+        ),
+      ).toBe(false);
+    },
+  );
 
   it("resolves AlphaFold identifiers and workspace paths", () => {
     expect(resolveProteinStructureSources({ pdb_id: "AF-Q9Y2X3-F2" })).toEqual([

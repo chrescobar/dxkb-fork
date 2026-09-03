@@ -31,6 +31,25 @@ describe("ProteinStructureMember", () => {
     );
   });
 
+  it("selects the first accession when route lookups change", () => {
+    const { rerender } = render(
+      <ProteinStructureMember
+        lookups={[{ accession: "1ABC", metadata: null }]}
+      />,
+    );
+
+    rerender(
+      <ProteinStructureMember
+        lookups={[{ accession: "2DEF", metadata: null }]}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "2DEF",
+    );
+    expect(screen.getByTestId("viewer")).toHaveTextContent("2DEF.cif");
+  });
+
   it("presents metadata and internal and external record links", () => {
     render(
       <ProteinStructureMember
@@ -81,6 +100,74 @@ describe("ProteinStructureMember", () => {
       "href",
       "https://pubmed.ncbi.nlm.nih.gov/123456/",
     );
+  });
+
+  it("does not link AlphaFold accessions to RCSB PDB", () => {
+    render(
+      <ProteinStructureMember
+        lookups={[
+          {
+            accession: "AF-P12345-F1",
+            metadata: {
+              pdb_id: "AF-P12345-F1",
+              title: "Predicted structure",
+            },
+          },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("link", { name: /RCSB PDB/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders comma-separated UniProt accessions as individual links", () => {
+    const { rerender } = render(
+      <ProteinStructureMember
+        lookups={[
+          {
+            accession: "1ABC",
+            metadata: {
+              pdb_id: "1ABC",
+              uniprotkb_accession: "P12345, Q67890",
+            },
+          },
+        ]}
+      />,
+    );
+
+    for (const accession of ["P12345", "Q67890"]) {
+      expect(
+        screen.getByRole("link", { name: new RegExp(`UniProt ${accession}`) }),
+      ).toHaveAttribute(
+        "href",
+        `https://www.uniprot.org/uniprotkb/${accession}`,
+      );
+    }
+
+    rerender(
+      <ProteinStructureMember
+        lookups={[
+          {
+            accession: "2DEF",
+            metadata: {
+              pdb_id: "2DEF",
+              uniprotkb_accession: ["A0A123, A0A456"],
+            },
+          },
+        ]}
+      />,
+    );
+
+    for (const accession of ["A0A123", "A0A456"]) {
+      expect(
+        screen.getByRole("link", { name: new RegExp(`UniProt ${accession}`) }),
+      ).toHaveAttribute(
+        "href",
+        `https://www.uniprot.org/uniprotkb/${accession}`,
+      );
+    }
   });
 
   it("shows metadata errors without suppressing the viewer", () => {

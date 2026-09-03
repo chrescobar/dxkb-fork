@@ -13,6 +13,17 @@ interface StructureSourceViewerProps {
   containerClassName?: string;
 }
 
+interface ActiveStructureSourceViewerProps {
+  source: StructureSource;
+  layout: MolstarLayoutSpec;
+  compact?: boolean;
+  containerClassName: string;
+  hasNext: boolean;
+  onFailure: () => void;
+  onRetry: () => void;
+  retryFromStart: boolean;
+}
+
 function ActiveStructureSourceViewer({
   source,
   layout,
@@ -22,16 +33,7 @@ function ActiveStructureSourceViewer({
   onFailure,
   onRetry,
   retryFromStart,
-}: {
-  source: StructureSource;
-  layout: MolstarLayoutSpec;
-  compact?: boolean;
-  containerClassName: string;
-  hasNext: boolean;
-  onFailure: () => void;
-  onRetry: () => void;
-  retryFromStart: boolean;
-}) {
+}: ActiveStructureSourceViewerProps) {
   const { containerRef, status, errorMessage, resetError } = useMolstarPlugin(
     source,
     layout,

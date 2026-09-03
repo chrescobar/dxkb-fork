@@ -7,11 +7,13 @@ import {
 } from "@/components/views";
 import type { CollectionState } from "@/lib/views/collection-state";
 
+interface ProteinStructureCollectionProps {
+  initialState: CollectionState;
+}
+
 export function ProteinStructureCollection({
   initialState,
-}: {
-  initialState: CollectionState;
-}) {
+}: ProteinStructureCollectionProps) {
   return (
     <EntityViewShell
       viewLabel="Protein Structure View"

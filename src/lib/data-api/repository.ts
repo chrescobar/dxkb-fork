@@ -404,9 +404,10 @@ export class ServerDataRepository {
       const message = upstreamMessage(payload, response.status);
       const serviceUnavailable =
         response.status === 503 ||
-        /503 service unavailable|no server is available to handle this request/i.test(
-          message,
-        );
+        (response.status >= 500 &&
+          /503 service unavailable|no server is available to handle this request/i.test(
+            message,
+          ));
       const safeStatus = serviceUnavailable
         ? 503
         : [401, 403, 404, 429].includes(response.status)

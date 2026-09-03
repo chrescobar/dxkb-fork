@@ -2,7 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 
-export default function ProteinStructureError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+interface ProteinStructureErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
+}
+
+export default function ProteinStructureError({
+  error,
+  reset,
+}: ProteinStructureErrorProps) {
   return (
     <div className="m-4 rounded-lg border border-destructive/40 bg-destructive/5 p-6" role="alert">
       <h1 className="text-lg font-semibold">Protein structure view could not be loaded</h1>

@@ -234,11 +234,14 @@ function maybeSolrCount(
   }
   if (core === "protein_structure") {
     const accession = query.match(/eq\(pdb_id,([^)&]+)\)/)?.[1];
-    const docs = accession
-      ? proteinStructureRecordFixtures.filter(
-          (record) => record.pdb_id === accession,
-        )
-      : [];
+    const docs =
+      accession === "*"
+        ? proteinStructureRecordFixtures
+        : accession
+          ? proteinStructureRecordFixtures.filter(
+              (record) => record.pdb_id === accession,
+            )
+          : proteinStructureRecordFixtures;
     if (request.headers.get("accept") === "application/json") return docs;
     return { response: { numFound: docs.length, docs } };
   }

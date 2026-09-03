@@ -3,13 +3,14 @@
 import { ExternalLink } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import { featureHref, genomeHref, taxonomyHref } from "@/lib/views/hrefs";
 import {
+  isPdbId,
   resolveProteinStructureSources,
   type StructureSource,
 } from "@/lib/protein-structure-view";
@@ -36,16 +37,24 @@ function values(value: string | number | readonly (string | number)[]): string[]
   return (Array.isArray(value) ? value : [value]).map(String);
 }
 
+interface ProteinStructureMemberProps {
+  lookups?: readonly ProteinStructureLookup[];
+  workspacePath?: string;
+}
+
 export function ProteinStructureMember({
   lookups,
   workspacePath,
-}: {
-  lookups?: readonly ProteinStructureLookup[];
-  workspacePath?: string;
-}) {
-  const [selected, setSelected] = useState(
-    lookups?.[0]?.accession ?? workspacePath ?? "",
-  );
+}: ProteinStructureMemberProps) {
+  const defaultSelection = lookups?.[0]?.accession ?? workspacePath ?? "";
+  const [selected, setSelected] = useState(defaultSelection);
+
+  useEffect(() => {
+    startTransition(() => {
+      setSelected(defaultSelection);
+    });
+  }, [defaultSelection]);
+
   const lookup = lookups?.find((item) => item.accession === selected);
   const sources: StructureSource[] = workspacePath
     ? resolveProteinStructureSources({ workspacePath })
@@ -56,7 +65,13 @@ export function ProteinStructureMember({
     ? (Array.isArray(metadata.uniprotkb_accession)
         ? metadata.uniprotkb_accession
         : [metadata.uniprotkb_accession]
-      ).filter((value): value is string => Boolean(value))
+      ).reduce<string[]>((accessions, value) => {
+        for (const item of value?.split(",") ?? []) {
+          const accession = item.trim();
+          if (accession) accessions.push(accession);
+        }
+        return accessions;
+      }, [])
     : [];
   const provenance = metadata
     ? [
@@ -147,11 +162,7 @@ export function ProteinStructureMember({
             <h2 className="text-sm font-semibold">Organism and records</h2>
             <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
               {metadata.organism_name && (
-                <span>
-                  {Array.isArray(metadata.organism_name)
-                    ? metadata.organism_name.join(", ")
-                    : metadata.organism_name}
-                </span>
+                <span>{values(metadata.organism_name).join(", ")}</span>
               )}
                {metadata.taxon_id != null &&
                  values(metadata.taxon_id).map((taxonId) => (
@@ -202,17 +213,19 @@ export function ProteinStructureMember({
             </dl>
           </div>
           <div className="flex flex-wrap gap-2 md:col-span-3">
-            <a
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "gap-2",
-              )}
-              href={`https://www.rcsb.org/structure/${encodeURIComponent(metadata.pdb_id)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              RCSB PDB <ExternalLink className="size-4" aria-hidden="true" />
-            </a>
+            {isPdbId(metadata.pdb_id) && (
+              <a
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "gap-2",
+                )}
+                href={`https://www.rcsb.org/structure/${encodeURIComponent(metadata.pdb_id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                RCSB PDB <ExternalLink className="size-4" aria-hidden="true" />
+              </a>
+            )}
             {uniProtAccessions.map((accession) => (
               <a
                 key={accession}

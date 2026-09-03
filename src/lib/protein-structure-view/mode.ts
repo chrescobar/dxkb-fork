@@ -67,10 +67,17 @@ export function canonicalProteinStructureQuery(
 function workspacePathError(path: string): string | undefined {
   if (!path.startsWith("/")) return "Workspace path must be absolute.";
   if (path.length > 1024) return "Workspace path is too long.";
-  if (path.includes("\0") || path.split("/").includes("..")) {
+
+  let decodedPath: string;
+  try {
+    decodedPath = path.split("/").map(decodeURIComponent).join("/");
+  } catch {
     return "Workspace path contains an invalid segment.";
   }
-  if (!/\.(?:pdb|cif|mmcif|bcif)$/i.test(path)) {
+  if (decodedPath.includes("\0") || decodedPath.split("/").includes("..")) {
+    return "Workspace path contains an invalid segment.";
+  }
+  if (!/\.(?:pdb|cif|mmcif|bcif)$/i.test(decodedPath)) {
     return "Workspace path must identify an uncompressed PDB, CIF, mmCIF, or BCIF structure file.";
   }
   return undefined;

@@ -1,5 +1,6 @@
 import type { ViewRegistry } from "../view-types";
 import { viewRegistry, viewSegments, legacyToSegment } from "../view-registry";
+import { resolveListQuery } from "../rql";
 
 // Cast to the loose ViewRegistry type so TypeScript treats every entry as
 // ViewTypeEntry (with optional singular/legacySingular) rather than the
@@ -27,15 +28,23 @@ describe("viewRegistry", () => {
     expect(reg.experiment.legacySingular).toBe("ExperimentComparison");
   });
 
-  it("gives protein-structure an id-less singular and dual-mode parameters", () => {
+  it("keeps protein-structure mode parameters out of collection RQL", () => {
     expect(reg["protein-structure"].singular?.idKind).toBe("none");
     expect(reg["protein-structure"].list.friendlyParams).toEqual([
       "keyword",
       "taxon_id",
       "genome_id",
-      "accession",
-      "path",
     ]);
+    expect(
+      resolveListQuery(
+        {
+          genome_id: "83332.12",
+          accession: "1ABC",
+          path: "/user/home/model.pdb",
+        },
+        reg["protein-structure"].list.friendlyParams,
+      ),
+    ).toBe("eq(genome_id,83332.12)");
   });
 
   it("uses int id kind for taxonomy", () => {

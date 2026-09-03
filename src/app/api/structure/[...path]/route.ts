@@ -37,6 +37,7 @@ export async function GET(
       cache: "force-cache",
       // Cloudflare challenges Node's default Undici user agent for these files.
       headers: { "User-Agent": "curl/8.7.1" },
+      next: { revalidate: 300 },
     });
     if (!response.ok) {
       return NextResponse.json(

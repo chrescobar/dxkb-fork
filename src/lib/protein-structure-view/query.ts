@@ -1,6 +1,6 @@
 import { proteinStructureFields } from "@/constants/datafields/protein_structure";
 import type { DataField } from "@/constants/datafields/types";
-import { eq, validateRql } from "@/lib/data-api";
+import { eq, resourceRegistry, validateRql } from "@/lib/data-api";
 import {
   parseCollectionState,
   type CollectionState,
@@ -9,23 +9,15 @@ import {
 import type { SearchParamsRecord } from "@/lib/views/rql";
 
 const unsafeProjectionFields = new Set(["sequence", "alignments"]);
-const multipleFields = new Set([
-  "organism_name",
-  "taxon_lineage_ids",
-  "taxon_lineage_names",
-  "uniprotkb_accession",
-  "institution",
-  "authors",
-]);
 const fields: DataField[] = Object.values(proteinStructureFields);
+const resourceFields = resourceRegistry.protein_structure.fields;
 
 export const proteinStructureSorts = fields
   .filter(
     (field) =>
       !unsafeProjectionFields.has(field.field) &&
-      !multipleFields.has(field.field) &&
       field.show_in_table !== false &&
-      field.sortable !== false,
+      resourceFields[field.field].sortable,
   )
   .flatMap((field) => [`${field.field}:asc`, `${field.field}:desc`]);
 

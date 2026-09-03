@@ -141,7 +141,6 @@ vi.mock("@/components/views", () => ({
         <div
           data-testid="protein-structure-resource-collection"
           data-q={baseRql}
-          data-guide="https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html"
           data-keyword-mode={keywordMode ?? "loaded"}
         />
       );
@@ -274,17 +273,6 @@ describe("makeProteinStructuresView", () => {
     );
   });
 
-  it("passes the protein structures guide URL", () => {
-    const ProteinStructuresView = makeProteinStructuresView({ scope });
-    const { getByTestId } = render(<ProteinStructuresView />);
-    expect(
-      getByTestId("protein-structure-resource-collection").getAttribute(
-        "data-guide",
-      ),
-    ).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
-    );
-  });
 });
 
 describe("makeDomainsAndMotifsView", () => {

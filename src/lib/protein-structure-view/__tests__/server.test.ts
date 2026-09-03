@@ -55,6 +55,8 @@ describe("getProteinStructures", () => {
       metadata: { title: "One" },
     });
     expect(result[1]).toMatchObject({ accession: "2XYZ", metadata: null });
-    expect(result[1]?.error).toContain("status 503");
+    expect(result[1]?.error).toBe(
+      "The data service is temporarily unavailable. Please try again.",
+    );
   });
 });

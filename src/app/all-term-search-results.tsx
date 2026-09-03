@@ -488,6 +488,9 @@ function SearchResultsContent({ query }: { query: string }) {
                       const doc = docUnknown as Record<string, unknown>;
                       const rawDocumentKey =
                         doc.id ??
+                        (dataType === "protein_structure"
+                          ? doc.pdb_id
+                          : undefined) ??
                         doc.genome_id ??
                         doc.patric_id ??
                         doc.pdb_id ??

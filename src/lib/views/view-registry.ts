@@ -131,7 +131,7 @@ export const viewRegistry = {
     list: {
       endpoint: "protein_structure",
       defaultTab: "structures",
-      friendlyParams: ["keyword", "taxon_id", "genome_id", "accession", "path"],
+      friendlyParams: ["keyword", "taxon_id", "genome_id"],
     },
   },
   experiment: {

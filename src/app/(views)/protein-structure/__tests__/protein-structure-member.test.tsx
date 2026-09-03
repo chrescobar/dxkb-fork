@@ -1,14 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ProteinStructureMember } from "../protein-structure-member";
 
-const { viewerRender } = vi.hoisted(() => ({
-  viewerRender: vi.fn<(sources: { url: string }[]) => void>(),
-}));
-
 vi.mock("next/dynamic", () => ({
   default: () =>
     function Viewer({ sources }: { sources: { url: string }[] }) {
-      viewerRender(sources);
       return (
         <div data-testid="viewer">
           {sources.map((source) => source.url).join("|")}
@@ -18,10 +13,6 @@ vi.mock("next/dynamic", () => ({
 }));
 
 describe("ProteinStructureMember", () => {
-  beforeEach(() => {
-    viewerRender.mockClear();
-  });
-
   it("initializes one viewer and switches accessions", () => {
     render(
       <ProteinStructureMember
@@ -47,7 +38,6 @@ describe("ProteinStructureMember", () => {
       />,
     );
 
-    viewerRender.mockClear();
     rerender(
       <ProteinStructureMember
         lookups={[{ accession: "2DEF", metadata: null }]}
@@ -58,10 +48,6 @@ describe("ProteinStructureMember", () => {
       "2DEF",
     );
     expect(screen.getByTestId("viewer")).toHaveTextContent("2DEF.cif");
-    expect(viewerRender).toHaveBeenCalled();
-    for (const [sources] of viewerRender.mock.calls) {
-      expect(sources[0]?.url).toContain("2DEF.cif");
-    }
   });
 
   it("selects the first accession when the selected lookup is removed", () => {

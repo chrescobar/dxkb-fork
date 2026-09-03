@@ -354,10 +354,15 @@ export const routes: RouteEntry[] = [
   },
   {
     name: "protein-structure",
-    path: "/protein-structure",
+    path: "/protein-structure?accession=AF-P12345-F1",
     unauthenticated: true,
+    mobile: true,
+    settle: { loadState: "domcontentloaded" },
     prepare: async (page) => {
-      await page.waitForLoadState("networkidle");
+      await page
+        .getByRole("heading", { level: 1, name: "AF-P12345-F1" })
+        .waitFor({ timeout: 10_000 });
+      await page.getByTestId("molstar-container").waitFor({ timeout: 30_000 });
     },
   },
 

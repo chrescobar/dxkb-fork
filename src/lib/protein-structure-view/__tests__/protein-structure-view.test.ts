@@ -1,0 +1,363 @@
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import vm from "node:vm";
+import {
+  canonicalProteinStructureQuery,
+  isAlphaFoldId,
+  isPdbId,
+  maxProteinStructureAccessions,
+  normalizeProteinStructureAccessions,
+  parseProteinStructureCollectionState,
+  parseProteinStructureMode,
+  proteinStructureCollectionProfile,
+  proteinStructureStructuralRql,
+  proteinStructureViewRecordSchema,
+  resolveProteinStructureSources,
+  featureProteinStructureRql,
+} from "@/lib/protein-structure-view";
+
+describe("Protein Structure view contracts", () => {
+  it("parses collection, accession, and workspace path modes", () => {
+    expect(parseProteinStructureMode({})).toEqual({ kind: "collection" });
+    expect(
+      parseProteinStructureMode({ accession: " 1abc,AF-P12345-F2 " }),
+    ).toEqual({
+      kind: "accession",
+      accessions: ["1ABC", "AF-P12345-F2"],
+    });
+    expect(parseProteinStructureMode({ path: "/user/home/model.pdb" })).toEqual(
+      {
+        kind: "path",
+        path: "/user/home/model.pdb",
+      },
+    );
+  });
+
+  it("returns explicit invalid modes for ambiguous or malformed input", () => {
+    const ambiguous = parseProteinStructureMode({
+      accession: "1ABC",
+      path: "/model.pdb",
+    });
+    expect(ambiguous.kind).toBe("invalid");
+    if (ambiguous.kind === "invalid") {
+      expect(ambiguous.reason).toMatch(/mutually exclusive/);
+    }
+    expect(
+      parseProteinStructureMode({ path: ["/one.pdb", "/two.pdb"] }),
+    ).toMatchObject({
+      kind: "invalid",
+    });
+    const malformed = parseProteinStructureMode({ accession: "not-an-id" });
+    expect(malformed.kind).toBe("invalid");
+    if (malformed.kind === "invalid") {
+      expect(malformed.reason).toContain("NOT-AN-ID");
+    }
+  });
+
+  it("normalizes, deduplicates, preserves order, and bounds accessions", () => {
+    const values = Array.from(
+      { length: maxProteinStructureAccessions + 3 },
+      (_, index) => `1A${index.toString(36).padStart(2, "0")}`,
+    );
+    expect(
+      normalizeProteinStructureAccessions([
+        ` ${values[0].toLowerCase()} ,${values[1]}`,
+        values[0],
+        ...values.slice(2),
+      ]),
+    ).toEqual(values.slice(0, maxProteinStructureAccessions));
+    expect(parseProteinStructureMode({ accession: values })).toMatchObject({
+      kind: "invalid",
+    });
+    expect(isPdbId("1abc")).toBe(true);
+    expect(isAlphaFoldId("af-p12345-f12")).toBe(true);
+    expect(isAlphaFoldId("AF-P12345-F0")).toBe(false);
+  });
+
+  it("canonicalizes member discriminators while preserving other query state", () => {
+    const accessionMode = parseProteinStructureMode({
+      accession: ["1abc", "1ABC, af-p12345-f1"],
+    });
+    expect(accessionMode.kind).toBe("accession");
+    if (accessionMode.kind === "accession") {
+      expect(
+        canonicalProteinStructureQuery(
+          { accession: ["1abc", "1ABC, af-p12345-f1"], source: "search" },
+          accessionMode,
+        ),
+      ).toBe("/protein-structure?source=search&accession=1ABC%2CAF-P12345-F1");
+    }
+  });
+
+  it("canonicalizes encoded workspace paths before source resolution", () => {
+    const mode = parseProteinStructureMode({
+      path: "/user%20name/home/model%2Ebcif",
+    });
+
+    expect(mode).toEqual({
+      kind: "path",
+      path: "/user name/home/model.bcif",
+    });
+    if (mode.kind === "path") {
+      expect(resolveProteinStructureSources({ workspacePath: mode.path })).toEqual([
+        {
+          url: "/api/workspace/view/user%20name/home/model.bcif",
+          format: "bcif",
+          label: "model.bcif",
+          kind: "workspace",
+        },
+      ]);
+    }
+  });
+
+  it("validates workspace paths before source resolution", () => {
+    expect(
+      parseProteinStructureMode({ path: "relative/model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: "/user/home/model.txt" }),
+    ).toMatchObject({ kind: "invalid" });
+    const compressedPath = parseProteinStructureMode({
+      path: "/user/home/model.cif.gz",
+    });
+    expect(compressedPath.kind).toBe("invalid");
+    if (compressedPath.kind === "invalid") {
+      expect(compressedPath.reason).toContain("uncompressed");
+    }
+    expect(
+      parseProteinStructureMode({ path: "/user/../model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: "/user/%2e%2e/model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: "/user/folder%2f../model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: "/user/%E0%A4%A/model.pdb" }),
+    ).toMatchObject({ kind: "invalid" });
+    expect(
+      parseProteinStructureMode({ path: `/user/${"a".repeat(1024)}.pdb` }),
+    ).toMatchObject({ kind: "invalid" });
+  });
+
+  it("supports collection URL state and exact structural filters", () => {
+    const state = parseProteinStructureCollectionState({
+      keyword: "spike",
+      taxon_id: "2697049",
+      genome_id: "123.4",
+      method: ["X-RAY", "Predicted"],
+      page: "3",
+      sort: "resolution:desc",
+    });
+    expect(state).toMatchObject({
+      keyword: "spike",
+      page: 3,
+      sort: "resolution:desc",
+      filters: {
+        taxon_id: ["2697049"],
+        genome_id: ["123.4"],
+        method: ["X-RAY", "Predicted"],
+      },
+    });
+    expect(proteinStructureStructuralRql(state)).toBe(
+      "and(eq(taxon_lineage_ids,2697049),eq(genome_id,123.4),or(eq(method,X-RAY),eq(method,Predicted)))",
+    );
+  });
+
+  it("gives explicit RQL precedence and validates sort", () => {
+    const state = parseProteinStructureCollectionState({
+      rql: "eq(method,Predicted)",
+      genome_id: "ignored",
+      sort: "missing:asc",
+    });
+    expect(state.filters).toEqual({});
+    expect(state.sort).toBe("unsorted");
+    expect(proteinStructureStructuralRql(state)).toBeUndefined();
+    expect(() =>
+      parseProteinStructureCollectionState({ rql: "sort(+pdb_id)" }),
+    ).toThrow("Transport operator");
+  });
+
+  it.each([
+    "taxon_id",
+    "gene",
+    "product",
+    "sequence_md5",
+    "method",
+    "pmid",
+  ])("rejects sorting by multi-valued field %s", (field) => {
+    expect(
+      parseProteinStructureCollectionState({ sort: `${field}:asc` }).sort,
+    ).toBe("unsorted");
+    expect(
+      parseProteinStructureCollectionState({ sort: `${field}:desc` }).sort,
+    ).toBe("unsorted");
+  });
+
+  it("exposes the protein structures guide URL", () => {
+    expect(proteinStructureCollectionProfile.guideUrl).toBe(
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
+    );
+  });
+
+  it("uses pdb_id links and omits unsafe sequence projections", () => {
+    expect(proteinStructureCollectionProfile.idField).toBe("pdb_id");
+    expect(proteinStructureCollectionProfile.rowLinkField).toBe("pdb_id");
+    expect(
+      proteinStructureCollectionProfile.rowHref?.({ pdb_id: "1ABC" }),
+    ).toBe("/protein-structure?accession=1ABC");
+    expect(proteinStructureCollectionProfile.detailFields).not.toContain(
+      "sequence",
+    );
+    expect(proteinStructureCollectionProfile.detailFields).not.toContain(
+      "alignments",
+    );
+    expect(
+      proteinStructureCollectionProfile.columns.map((column) => column.id),
+    ).not.toContain("sequence");
+  });
+
+  it("validates structure metadata while retaining additional fields", () => {
+    expect(
+      proteinStructureViewRecordSchema.parse({
+        pdb_id: "1ABC",
+        taxon_id: [562],
+        uniprotkb_accession: ["P12345"],
+        gene: ["abc"],
+        product: ["Example protein"],
+        sequence_md5: ["abc123"],
+        method: ["X-RAY DIFFRACTION"],
+        resolution: 2.1,
+        pmid: [123456],
+        authors: ["A. Researcher"],
+        custom_field: true,
+      }),
+    ).toMatchObject({ pdb_id: "1ABC", custom_field: true });
+    expect(() => proteinStructureViewRecordSchema.parse({})).toThrow();
+  });
+
+  it("orders BV-BRC, AlphaFold, and RCSB source candidates", () => {
+    expect(
+      resolveProteinStructureSources({
+        pdb_id: "1abc",
+        file_path: "structures/pdb/1abc.pdb.gz",
+        uniprotkb_accession: ["P12345"],
+        workspacePath: "/user/home/fallback.pdb",
+      }),
+    ).toEqual([
+      {
+        url: "/api/structure/structures/pdb/1abc.pdb",
+        format: "pdb",
+        label: "1ABC",
+        kind: "bv-brc",
+      },
+      {
+        url: "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v6.cif",
+        format: "mmcif",
+        label: "AF-P12345-F1",
+        kind: "alphafold",
+      },
+      {
+        url: "https://files.rcsb.org/download/1ABC.cif",
+        format: "mmcif",
+        label: "1ABC",
+        kind: "rcsb",
+      },
+      {
+        url: "/api/workspace/view/user/home/fallback.pdb",
+        format: "pdb",
+        label: "fallback.pdb",
+        kind: "workspace",
+      },
+    ]);
+  });
+
+  it("builds exact feature scope from all available structure identifiers", () => {
+    expect(
+      featureProteinStructureRql({
+        feature_id: "feature-1",
+        patric_id: "fig|123.4.peg.5",
+        aa_sequence_md5: "abc123",
+        uniprotkb_accession: "P12345",
+        pdb_accession: "1abc, 2xyz",
+      }),
+    ).toBe(
+      "or(eq(patric_id,fig%7C123.4.peg.5),eq(sequence_md5,abc123),eq(uniprotkb_accession,P12345),eq(pdb_id,1ABC),eq(pdb_id,2XYZ))",
+    );
+    expect(
+      featureProteinStructureRql({ feature_id: "feature-2" }),
+    ).toBeUndefined();
+  });
+
+  const manifestPath = resolve(
+    process.cwd(),
+    ".next/server/app/(views)/protein-structure/page_client-reference-manifest.js",
+  );
+
+  it.skipIf(!existsSync(manifestPath))(
+    "keeps Mol* out of the collection's initial client chunks",
+    () => {
+      const context: {
+        globalThis: { __RSC_MANIFEST?: Record<string, unknown> };
+      } = {
+        globalThis: {},
+      };
+      vm.runInNewContext(readFileSync(manifestPath, "utf8"), context);
+      const manifest = context.globalThis.__RSC_MANIFEST?.[
+        "/(views)/protein-structure/page"
+      ] as
+        | {
+            clientModules?: Record<
+              string,
+              { chunks?: string[]; async?: boolean }
+            >;
+          }
+        | undefined;
+      const collection = Object.entries(manifest?.clientModules ?? {}).find(
+        ([name]) => name.endsWith("protein-structure-collection.tsx"),
+      )?.[1];
+      const member = Object.entries(manifest?.clientModules ?? {}).find(
+        ([name]) => name.endsWith("protein-structure-member.tsx"),
+      )?.[1];
+      expect(collection?.chunks).toBeDefined();
+      expect(member?.chunks).toBeDefined();
+      expect(collection?.chunks).toEqual(member?.chunks);
+      for (const chunk of collection?.chunks ?? []) {
+        const contents = readFileSync(
+          resolve(process.cwd(), `.next${chunk.replace("/_next", "")}`),
+          "utf8",
+        );
+        expect(contents.toLowerCase()).not.toContain("molstar");
+      }
+      expect(
+        Object.keys(manifest?.clientModules ?? {}).some((name) =>
+          name.includes("structure-source-viewer"),
+        ),
+      ).toBe(false);
+    },
+  );
+
+  it("resolves AlphaFold identifiers and workspace paths", () => {
+    expect(resolveProteinStructureSources({ pdb_id: "AF-Q9Y2X3-F2" })).toEqual([
+      {
+        url: "https://alphafold.ebi.ac.uk/files/AF-Q9Y2X3-F2-model_v6.cif",
+        format: "mmcif",
+        label: "AF-Q9Y2X3-F2",
+        kind: "alphafold",
+      },
+    ]);
+    expect(
+      resolveProteinStructureSources({
+        workspacePath: "/user name/home/model 1.cif",
+      }),
+    ).toEqual([
+      {
+        url: "/api/workspace/view/user%20name/home/model%201.cif",
+        format: "mmcif",
+        label: "model 1.cif",
+        kind: "workspace",
+      },
+    ]);
+  });
+});

@@ -9,13 +9,17 @@ import {
   ScanLine,
   Shapes,
 } from "lucide-react";
-import { EntityViewShell, ResourceChildCollection } from "@/components/views";
+import {
+  EntityViewShell,
+  ProteinStructureResourceCollection,
+  ResourceChildCollection,
+} from "@/components/views";
 import {
   buildFeatureTabs,
   type FeatureTab,
   type FeatureViewRecord,
 } from "@/lib/feature-view";
-import { proteinFeatureColumns } from "@/lib/protein-feature-view";
+import { featureProteinStructureRql } from "@/lib/protein-structure-view";
 import {
   featureDomainsRql,
   featureInteractionsRql,
@@ -95,8 +99,13 @@ export function FeatureMember({ feature, activeTab }: FeatureMemberProps) {
         label="Domains and Motifs"
         idField="id"
         rql={featureDomainsRql(feature.feature_id)}
-        columns={proteinFeatureColumns}
         defaultSort="unsorted"
+      />
+    ) : activeTab === "structures" ? (
+      <ProteinStructureResourceCollection
+        baseRql={featureProteinStructureRql(feature)}
+        enableFacets={false}
+        keywordMode="loaded"
       />
     ) : (
       <FeatureOverview feature={feature} />

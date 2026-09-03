@@ -129,6 +129,22 @@ vi.mock("@/components/views", () => ({
       />
     );
   },
+  ProteinStructureResourceCollection:
+    function ProteinStructureResourceCollection({
+      baseRql,
+      keywordMode,
+    }: {
+      baseRql: string;
+      keywordMode?: "server" | "loaded";
+    }) {
+      return (
+        <div
+          data-testid="protein-structure-resource-collection"
+          data-q={baseRql}
+          data-keyword-mode={keywordMode ?? "loaded"}
+        />
+      );
+    },
   ProteinFeatureResourceCollection: function ProteinFeatureResourceCollection({
     baseRql,
     enableRowLinks,
@@ -249,8 +265,7 @@ describe("makeProteinStructuresView", () => {
   it("renders TaxonDataPanel with the protein_structure cross-core join query", () => {
     const ProteinStructuresView = makeProteinStructuresView({ scope });
     const { getByTestId } = render(<ProteinStructuresView />);
-    const panel = getByTestId("taxon-data-panel");
-    expect(panel).toHaveAttribute("data-resource", "protein_structure");
+    const panel = getByTestId("protein-structure-resource-collection");
     const q = panel.getAttribute("data-q") ?? "";
     expect(q).toContain("eq(genome_id,*)");
     expect(q).toContain(
@@ -258,13 +273,6 @@ describe("makeProteinStructuresView", () => {
     );
   });
 
-  it("passes the protein structures guide URL", () => {
-    const ProteinStructuresView = makeProteinStructuresView({ scope });
-    const { getByTestId } = render(<ProteinStructuresView />);
-    expect(getByTestId("taxon-data-panel").getAttribute("data-guide")).toBe(
-      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/protein_structures.html",
-    );
-  });
 });
 
 describe("makeDomainsAndMotifsView", () => {
@@ -381,6 +389,7 @@ describe("composite scope queries", () => {
       resource === "genome" ||
       resource === "epitope" ||
       resource === "protein_feature" ||
+      resource === "protein_structure" ||
       resource === "strain" ||
       resource === "surveillance" ||
       resource === "serology"
@@ -388,7 +397,9 @@ describe("composite scope queries", () => {
       const testId =
         resource === "protein_feature"
           ? "protein-feature-resource-collection"
-          : `${resource}-resource-collection`;
+          : resource === "protein_structure"
+            ? "protein-structure-resource-collection"
+            : `${resource}-resource-collection`;
       expect(screen.getByTestId(testId)).toHaveAttribute(
         "data-q",
         expectedQuery,

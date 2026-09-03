@@ -21,7 +21,7 @@ export async function GET(
     const headers: Record<string, string> = {
       "Content-Type": contentType,
       "Content-Disposition": contentDisposition("inline", filename),
-      "Cache-Control": "private, max-age=300",
+      "Cache-Control": "private, no-store",
     };
 
     const contentLength = shockResponse.headers.get("Content-Length");

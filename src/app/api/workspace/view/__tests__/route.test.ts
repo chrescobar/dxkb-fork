@@ -38,7 +38,7 @@ describe("GET /api/workspace/view/[...path]", () => {
     expect(res.headers.get("Content-Type")).toBe("text/plain");
     expect(res.headers.get("Content-Disposition")).toBe('inline; filename="data.fasta"');
     expect(res.headers.get("Content-Length")).toBe("17");
-    expect(res.headers.get("Cache-Control")).toBe("private, max-age=300");
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store");
   });
 
   it("omits Content-Length when not present in shock response", async () => {

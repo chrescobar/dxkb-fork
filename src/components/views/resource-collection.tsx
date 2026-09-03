@@ -30,6 +30,7 @@ import {
   genomeHref,
   genomeIdFromRow,
   genomesHrefFromRow,
+  proteinStructureHref,
 } from "@/lib/views/hrefs";
 
 export interface ResourceCollectionFacet {
@@ -66,7 +67,9 @@ function matchesLoadedKeyword(row: DataTableRow, keyword: string) {
   return Object.values(row).some((value) => {
     const values = Array.isArray(value) ? value : [value];
     return values.some((item) =>
-      String(item ?? "").toLowerCase().includes(keyword),
+      String(item ?? "")
+        .toLowerCase()
+        .includes(keyword),
     );
   });
 }
@@ -159,7 +162,9 @@ export function ResourceCollection<Row extends DataTableRow>({
         matchesLoadedKeyword(row, normalizedLoadedKeyword),
       )
     : collection.rows;
-  const displayedTotal = hasLoadedKeyword ? displayedRows.length : collection.total;
+  const displayedTotal = hasLoadedKeyword
+    ? displayedRows.length
+    : collection.total;
   const displayedIds = hasLoadedKeyword
     ? displayedRows.map((row) => String(row[profile.idField]))
     : undefined;
@@ -184,6 +189,12 @@ export function ResourceCollection<Row extends DataTableRow>({
   const selectedGenomesHref = genomesHrefFromRow(displayedDetail);
   const selectedFeatureId = featureIdFromRow(displayedDetail);
   const selectedEpitopeId = epitopeIdFromRow(displayedDetail);
+  const selectedPdbId = displayedDetail?.pdb_id;
+  const selectedStructureHref =
+    profile.resource === "protein_structure" &&
+    (typeof selectedPdbId === "string" || typeof selectedPdbId === "number")
+      ? proteinStructureHref(selectedPdbId)
+      : undefined;
   const selectedMemberHref = displayedDetail
     ? profile.rowHref?.(displayedDetail)
     : undefined;
@@ -196,7 +207,9 @@ export function ResourceCollection<Row extends DataTableRow>({
     setExportError(null);
     if (selectedIds && selectedIds.length === 0) return;
     if (!selectedIds && collection.isRefreshing) {
-      setExportError("Wait for the current results to finish loading before exporting.");
+      setExportError(
+        "Wait for the current results to finish loading before exporting.",
+      );
       return;
     }
     if (!selectedIds?.length && collection.total > maxExportRows) {
@@ -231,11 +244,12 @@ export function ResourceCollection<Row extends DataTableRow>({
                     direction: state.sort.endsWith(":desc") ? "desc" : "asc",
                   },
           });
-      const exportedRows = hasLoadedKeyword && !selectedIds
-        ? result.rows.filter((row) =>
-            matchesLoadedKeyword(row, normalizedLoadedKeyword),
-          )
-        : result.rows;
+      const exportedRows =
+        hasLoadedKeyword && !selectedIds
+          ? result.rows.filter((row) =>
+              matchesLoadedKeyword(row, normalizedLoadedKeyword),
+            )
+          : result.rows;
       downloadResourceExport(
         profile.resource,
         exportedRows,
@@ -245,7 +259,9 @@ export function ResourceCollection<Row extends DataTableRow>({
       );
     } catch (error) {
       console.error("Resource export failed:", error);
-      setExportError("The requested export could not be created. Please try again.");
+      setExportError(
+        "The requested export could not be created. Please try again.",
+      );
     }
   };
 
@@ -386,7 +402,8 @@ export function ResourceCollection<Row extends DataTableRow>({
           hasSidePanel={
             hasLoadedKeyword
               ? displayedSelectedIds.length > 0
-              : collection.isAllPagesSelected || collection.selectedIds.length > 0
+              : collection.isAllPagesSelected ||
+                collection.selectedIds.length > 0
           }
           actionBar={
             <SearchActionBar
@@ -402,13 +419,28 @@ export function ResourceCollection<Row extends DataTableRow>({
               enabledActions={
                 profile.resource === "strain" && selectedGenomesHref
                   ? ["genomes"]
-                  : undefined
+                  : profile.resource === "protein_structure" &&
+                      selectedStructureHref
+                    ? ["structure"]
+                    : undefined
               }
-              disabledActions={
-                profile.resource === "strain" && !selectedGenomesHref
-                  ? { genomes: "No genomes are associated with this strain" }
-                  : undefined
-              }
+               disabledActions={
+                 profile.resource === "strain" && !selectedGenomesHref
+                   ? { genomes: "No genomes are associated with this strain" }
+                   : profile.resource === "protein_structure"
+                     ? {
+                         genome: selectedGenomeId
+                           ? undefined
+                           : "No genome is associated with this structure",
+                         feature: selectedFeatureId
+                           ? undefined
+                           : "No feature is associated with this structure",
+                         structure: selectedStructureHref
+                           ? undefined
+                           : "A structure accession is required",
+                       }
+                     : undefined
+               }
               onAction={(actionId) => {
                 if (actionId === "genome" && selectedGenomeId) {
                   window.open(
@@ -425,6 +457,12 @@ export function ResourceCollection<Row extends DataTableRow>({
                 } else if (actionId === "feature" && selectedFeatureId) {
                   window.open(
                     featureHref(selectedFeatureId),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                } else if (actionId === "structure" && selectedStructureHref) {
+                  window.open(
+                    selectedStructureHref,
                     "_blank",
                     "noopener,noreferrer",
                   );

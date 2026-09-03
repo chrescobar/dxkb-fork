@@ -45,6 +45,42 @@ const e2eDeterministicCounts: Record<string, number> = {
   ppi: 4358,
 };
 
+const proteinStructureRecordFixtures = [
+  {
+    pdb_id: "6VXX",
+    title: "SARS-CoV-2 spike glycoprotein",
+    organism_name: "Severe acute respiratory syndrome coronavirus 2",
+    taxon_id: 2697049,
+    taxon_lineage_ids: [10239, 2697049],
+    taxon_lineage_names: ["Viruses", "Betacoronavirus pandemicum"],
+    genome_id: "2697049.42",
+    patric_id: "fig|2697049.42.peg.1",
+    uniprotkb_accession: ["P0DTC2"],
+    gene: "S",
+    product: "surface glycoprotein",
+    sequence_md5: "e2e6vxxsequence",
+    method: "Electron microscopy",
+    resolution: 2.8,
+    pmid: 32155444,
+    institution: ["University of Texas at Austin"],
+    authors: ["Walls AC"],
+    release_date: "2020-03-25",
+    file_path: "/PDB/6VXX.pdb",
+    date_inserted: "2024-01-01",
+  },
+  {
+    pdb_id: "7BV2",
+    title: "RNA-dependent RNA polymerase in complex with remdesivir",
+    organism_name: "Severe acute respiratory syndrome coronavirus 2",
+    taxon_id: 2697049,
+    method: "Electron microscopy",
+    resolution: 2.5,
+    release_date: "2020-05-20",
+    file_path: "/PDB/7BV2.pdb",
+    date_inserted: "2024-01-02",
+  },
+];
+
 const epitopeRecordFixture = {
   epitope_id: "15780",
   epitope_type: "Discontinuous peptide",
@@ -195,6 +231,19 @@ function maybeSolrCount(
         },
       },
     };
+  }
+  if (core === "protein_structure") {
+    const accession = query.match(/eq\(pdb_id,([^)&]+)\)/)?.[1];
+    const docs =
+      accession === "*"
+        ? proteinStructureRecordFixtures
+        : accession
+          ? proteinStructureRecordFixtures.filter(
+              (record) => record.pdb_id === accession,
+            )
+          : proteinStructureRecordFixtures;
+    if (request.headers.get("accept") === "application/json") return docs;
+    return { response: { numFound: docs.length, docs } };
   }
   if (core === "surveillance") {
     const isAmbiguous = query.includes("eq(sample_identifier,ambiguous-sample)");

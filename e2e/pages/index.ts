@@ -13,3 +13,4 @@ export { SerologyPage } from "./serology-page";
 export { SurveillancePage } from "./surveillance-page";
 export { ResourceCollectionPage } from "./resource-collection-page";
 export { DomainsAndMotifsPage } from "./domains-and-motifs-page";
+export { ProteinStructurePage } from "./protein-structure-page";

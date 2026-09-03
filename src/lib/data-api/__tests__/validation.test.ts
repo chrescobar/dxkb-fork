@@ -7,6 +7,7 @@ import {
   epitopeAssayRecordSchema,
   epitopeRecordSchema,
   genomeRecordSchema,
+  proteinStructureRecordSchema,
   serologyRecordSchema,
   strainRecordSchema,
   surveillanceRecordSchema,
@@ -102,6 +103,52 @@ describe("data API contracts", () => {
         assay_result: "Positive",
       }),
     ).toMatchObject({ assay_id: "A1" });
+  });
+
+  it("registers Protein Structure metadata and multivalue fields", () => {
+    expect(resourceRegistry.protein_structure.idField).toBe("pdb_id");
+    expect(resourceRegistry.protein_structure.fields.resolution.type).toBe("number");
+    expect(resourceRegistry.protein_structure.fields.release_date.type).toBe("date");
+    for (const field of [
+      "taxon_id",
+      "taxon_lineage_ids",
+      "taxon_lineage_names",
+      "uniprotkb_accession",
+      "gene",
+      "product",
+      "sequence_md5",
+      "method",
+      "pmid",
+      "institution",
+      "authors",
+    ]) {
+      expect(resourceRegistry.protein_structure.fields[field].cardinality).toBe(
+        "multiple",
+      );
+      expect(resourceRegistry.protein_structure.fields[field].sortable).toBe(false);
+    }
+    expect(
+      proteinStructureRecordSchema.parse({
+        pdb_id: "AF-P43722-F1",
+        organism_name: ["Haemophilus influenzae Rd KW20"],
+        taxon_id: [71421],
+        taxon_lineage_ids: ["131567", "2", "71421"],
+        gene: ["hupA"],
+        product: ["DNA-binding protein HU-alpha"],
+        sequence_md5: ["595c80a3ddc17b3c15db15056fbb7048"],
+        method: ["Predicted"],
+        uniprotkb_accession: ["P43722"],
+        pmid: ["123456"],
+        resolution: 2.1,
+        authors: ["DeepMind and EMBL-EBI"],
+      }),
+    ).toMatchObject({ pdb_id: "AF-P43722-F1" });
+    expect(() =>
+      proteinStructureRecordSchema.parse({
+        pdb_id: "1ABC",
+        uniprotkb_accession: { invalid: true },
+      }),
+    ).toThrow();
   });
 
   it("allows a valid collection and rejects disallowed fields and sorts", () => {

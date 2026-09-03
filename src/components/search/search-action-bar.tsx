@@ -184,7 +184,7 @@ const actionConfig: ActionConfig[] = [
     letter: "S",
     validSearchTypes: ["protein_structure"],
     requiresSelection: true,
-    disabledWithTooltip: notReady,
+    maxSelection: 1,
   },
   {
     id: "surveillance",
@@ -288,7 +288,8 @@ export function SearchActionBar({
 
   const isDisabled = (action: ActionConfig) =>
     Boolean(disabledActions?.[action.id]) ||
-    (!enabledActions?.includes(action.id) && Boolean(action.disabledWithTooltip));
+    (!enabledActions?.includes(action.id) &&
+      Boolean(action.disabledWithTooltip));
 
   const isLoading = (actionId: SearchActionId) =>
     loadingActionIds?.includes(actionId) ?? false;

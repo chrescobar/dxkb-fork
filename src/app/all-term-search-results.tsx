@@ -26,6 +26,7 @@ import {
   featureHref,
   featureIdFromRow,
   genomeHref,
+  proteinStructureHref,
   serologyHref,
   serologyIdFromRow,
   surveillanceHref,
@@ -487,8 +488,12 @@ function SearchResultsContent({ query }: { query: string }) {
                       const doc = docUnknown as Record<string, unknown>;
                       const rawDocumentKey =
                         doc.id ??
+                        (dataType === "protein_structure"
+                          ? doc.pdb_id
+                          : undefined) ??
                         doc.genome_id ??
                         doc.patric_id ??
+                        doc.pdb_id ??
                         doc.epitope_id ??
                         doc.sample_identifier ??
                         doc.taxon_id;
@@ -528,16 +533,20 @@ function SearchResultsContent({ query }: { query: string }) {
                             ? featureHref(featureId)
                             : dataType === "epitope" && epitopeId
                               ? epitopeHref(epitopeId)
-                              : dataType === "surveillance" && surveillanceId
-                                ? surveillanceHref(
-                                    surveillanceId,
-                                    pathogenTestTypes.length === 1
-                                      ? pathogenTestTypes[0]
-                                      : undefined,
-                                  )
-                                : dataType === "serology" && serologyId
-                                  ? serologyHref(serologyId, testType)
-                                  : null;
+                              : dataType === "protein_structure" &&
+                                  (typeof doc.pdb_id === "string" ||
+                                    typeof doc.pdb_id === "number")
+                                ? proteinStructureHref(doc.pdb_id)
+                                : dataType === "surveillance" && surveillanceId
+                                  ? surveillanceHref(
+                                      surveillanceId,
+                                      pathogenTestTypes.length === 1
+                                        ? pathogenTestTypes[0]
+                                        : undefined,
+                                    )
+                                  : dataType === "serology" && serologyId
+                                    ? serologyHref(serologyId, testType)
+                                    : null;
                       return (
                         <div key={documentKey} className="py-6">
                           {href ? (

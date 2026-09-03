@@ -11,7 +11,11 @@ import {
   Shapes,
   Waypoints,
 } from "lucide-react";
-import { EntityViewShell, ResourceChildCollection } from "@/components/views";
+import {
+  EntityViewShell,
+  ProteinStructureResourceCollection,
+  ResourceChildCollection,
+} from "@/components/views";
 import {
   buildGenomeTabs,
   genomeInteractionsRql,
@@ -19,7 +23,7 @@ import {
   type GenomeTab,
   type GenomeViewRecord,
 } from "@/lib/genome-view";
-import { proteinFeatureColumns } from "@/lib/protein-feature-view";
+import { eq } from "@/lib/data-api";
 import {
   featureColumns,
   genomeDomainsRql,
@@ -135,8 +139,15 @@ export function GenomeMember({
         label="Domains and Motifs"
         idField="id"
         rql={genomeDomainsRql(genome.genome_id)}
-        columns={proteinFeatureColumns}
         defaultSort="unsorted"
+      />
+    );
+  } else if (activeTab === "structures") {
+    content = (
+      <ProteinStructureResourceCollection
+        baseRql={eq("protein_structure", "genome_id", genome.genome_id)}
+        enableFacets={false}
+        keywordMode="loaded"
       />
     );
   }

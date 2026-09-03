@@ -30,6 +30,15 @@ describe("search descriptors", () => {
     );
   });
 
+  it("routes Protein Structure searches to the canonical collection", () => {
+    const structures = searchDescriptors.find(
+      (item) => item.id === "protein_structure",
+    );
+    expect(structures && searchHref(structures, "spike protein")).toBe(
+      "/protein-structure?keyword=spike%20protein",
+    );
+  });
+
   it("routes Strain, Surveillance, and Serology searches to canonical collections", () => {
     const strain = searchDescriptors.find((item) => item.id === "strain");
     const surveillance = searchDescriptors.find(

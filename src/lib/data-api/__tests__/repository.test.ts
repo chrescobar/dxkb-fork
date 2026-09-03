@@ -281,6 +281,33 @@ describe("ServerDataRepository", () => {
     });
   });
 
+  it("recognizes a nested upstream service outage", async () => {
+    const repository = new ServerDataRepository({
+      baseUrl: "https://data.test",
+      fetch: vi.fn<typeof fetch>().mockResolvedValue(
+        jsonResponse(
+          {
+            status: 500,
+            message:
+              "Unable to parse the query response. <html><body><h1>503 Service Unavailable</h1> No server is available to handle this request. </body></html>",
+          },
+          { status: 500 },
+        ),
+      ),
+    });
+
+    await expect(
+      repository.collection("protein_structure", {
+        operation: "collection",
+        rql: "eq(pdb_id,*)",
+      }),
+    ).rejects.toMatchObject({
+      message: "The data service is temporarily unavailable. Please try again.",
+      status: 503,
+      code: "service_unavailable",
+    });
+  });
+
   it.each([
     [401, "unauthorized"],
     [403, "forbidden"],
@@ -304,6 +331,28 @@ describe("ServerDataRepository", () => {
       message: "Upstream denied request",
     });
   });
+
+  it.each([
+    [401, "unauthorized"],
+    [403, "forbidden"],
+    [404, "not_found"],
+    [429, "rate_limited"],
+  ] as const)(
+    "does not classify safe upstream status %i as a service outage from its message",
+    async (status, code) => {
+      const message = "No server is available to handle this request";
+      const repository = new ServerDataRepository({
+        baseUrl: "https://data.test",
+        fetch: vi
+          .fn<typeof fetch>()
+          .mockResolvedValue(jsonResponse({ message }, { status })),
+      });
+
+      await expect(
+        repository.member("genome", { operation: "member", id: "1" }),
+      ).rejects.toMatchObject({ status, code, message });
+    },
+  );
 
   it("forwards abort signals and cache options to the upstream request", async () => {
     const signal = new AbortController().signal;

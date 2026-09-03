@@ -1,0 +1,64 @@
+src/app/(views)/protein-structure/protein-structure-member.tsx
+  s_ce8624f750aed2::t_83f753565781d8 56,59-60
+  s_ce8624f750aed2::t_23b2106faa5ba0 50-51,57-58,61
+  s_f18a9c8afca452::t_bdb144bd01e33a 53-54
+  s_ce8624f750aed2::t_8f068e9acc9c1c 6
+src/app/(views)/protein-structure/__tests__/protein-structure-member.test.tsx
+  s_ce8624f750aed2::t_cc618a1e5910ad 21-24,65
+  s_ce8624f750aed2::t_fe05ba089e4577 4-6
+  s_ce8624f750aed2::t_1712ad7374bf75 50,61-64
+  s_f18a9c8afca452::t_d6614cb3a09cab 67-90
+  s_ce8624f750aed2::t_ad26c8654faa68 7,11
+src/lib/protein-structure-view/mode.ts
+  s_dc8513114ceecf::t_3b304537cf9405 67,69,71,73-85
+  s_dc8513114ceecf::t_745743dca31274 134-135
+  s_dc8513114ceecf::t_f07954b23204e3 136-142
+src/components/views/protein-structure-resource-collection.tsx
+  s_cc0a1cc1e4e81b::t_cbe53ada2afc28 3
+  s_cc0a1cc1e4e81b::t_0119149df1c1fb 31,34
+src/components/views/__tests__/protein-structure-resource-collection.test.tsx
+  s_cc0a1cc1e4e81b::t_1e1c60864b9787 58,60
+  s_cc0a1cc1e4e81b::t_60993840e073cb 46
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_dc8513114ceecf::t_371961833f43c5 92-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "284770bbc23d7c167ef2b77b67efdae9e2477a6b",
+  "prompts": {},
+  "sessions": {
+    "s_cc0a1cc1e4e81b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f977bbef7ffe6xbvSGfJxVRIMN",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ce8624f750aed2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9771e90dffeHBJt3sxTAJWmmp",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_dc8513114ceecf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f97791abdffevLMvkh4D7X1SXP",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f18a9c8afca452": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f977e0a0bffeuiAyAyugrRtOO3",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

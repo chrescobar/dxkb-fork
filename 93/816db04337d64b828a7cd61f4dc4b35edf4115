@@ -1,0 +1,19 @@
+e2e/a11y/routes.ts
+  s_b2af37c620055b::t_6bbd5cf496c387 429
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "93816db04337d64b828a7cd61f4dc4b35edf4115",
+  "prompts": {},
+  "sessions": {
+    "s_b2af37c620055b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f9361be48ffeTwt2XBaC5C0SpT",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -39,7 +39,7 @@ export function parseExperimentCollectionState(
 function structuralRql(
   state: CollectionState,
   resource: DataResource,
-  fieldMap: Record<string, string> = {},
+  fieldMap: Readonly<Record<string, string>> = {},
 ): string | undefined {
   if (state.rql) return undefined;
   const clauses = Object.entries(state.filters).flatMap(([field, selected]) => {
@@ -56,9 +56,11 @@ function structuralRql(
 export function experimentStructuralRql(
   state: CollectionState,
 ): string | undefined {
-  return structuralRql(state, "experiment", {
-    taxon_id: "taxon_lineage_ids",
-  });
+  return structuralRql(
+    state,
+    "experiment",
+    experimentCollectionOptions.filterFieldMap,
+  );
 }
 
 export function biosetStructuralRql(

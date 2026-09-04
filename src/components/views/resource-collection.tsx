@@ -215,9 +215,17 @@ export function ResourceCollection<Row extends DataTableRow>({
     const experimentId = experimentIdFromRow(selectedRow ?? null);
     return experimentId ? [experimentId] : [];
   });
+  const hasCompleteBiosetSelection =
+    selectedBiosetExperimentIds.length > 0 &&
+    selectedBiosetExperimentIds.length === collection.selectedIds.length;
   const hasBiosetSelection =
     profile.resource === "bioset" &&
-    (collection.isAllPagesSelected || selectedBiosetExperimentIds.length > 0);
+    (collection.isAllPagesSelected || hasCompleteBiosetSelection);
+  const hasIncompleteBiosetSelection =
+    profile.resource === "bioset" &&
+    !collection.isAllPagesSelected &&
+    collection.selectedIds.length > 0 &&
+    !hasCompleteBiosetSelection;
 
   const openBiosetResults = async () => {
     setBiosetActionError(null);
@@ -516,19 +524,25 @@ export function ResourceCollection<Row extends DataTableRow>({
               disabledActions={
                 profile.resource === "strain" && !selectedGenomesHref
                   ? { genomes: "No genomes are associated with this strain" }
-                  : profile.resource === "protein_structure"
-                    ? {
-                        genome: selectedGenomeId
-                          ? undefined
-                          : "No genome is associated with this structure",
-                        feature: selectedFeatureId
-                          ? undefined
-                          : "No feature is associated with this structure",
-                        structure: selectedStructureHref
-                          ? undefined
-                          : "A structure accession is required",
-                      }
-                    : undefined
+                    : profile.resource === "protein_structure"
+                      ? {
+                          genome: selectedGenomeId
+                            ? undefined
+                            : "No genome is associated with this structure",
+                          feature: selectedFeatureId
+                            ? undefined
+                            : "No feature is associated with this structure",
+                          structure: selectedStructureHref
+                            ? undefined
+                            : "A structure accession is required",
+                        }
+                      : hasIncompleteBiosetSelection
+                        ? {
+                            biosets:
+                              "Some selected Biosets are not associated with experiments",
+                          }
+                        : undefined
+
               }
               onAction={(actionId) => {
                 if (actionId === "download") {

@@ -490,6 +490,43 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
+  it("disables Bioset results when any selected Bioset lacks an experiment", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: "bioset-1",
+      detail: { bioset_id: "bioset-1", exp_id: "00042" },
+      rows: [
+        { bioset_id: "bioset-1", exp_id: "00042" },
+        { bioset_id: "bioset-2" },
+      ],
+      selection: { "bioset-1": true, "bioset-2": true },
+      selectedIds: ["bioset-1", "bioset-2"],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={biosetCollectionProfile}
+        repository={repository()}
+        state={{ filters: {}, page: 1, sort: "bioset_id:asc" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(actionBarProps).toMatchObject({
+      enabledActions: undefined,
+      disabledActions: {
+        biosets: "Some selected Biosets are not associated with experiments",
+      },
+    });
+    await user.click(screen.getByRole("button", { name: "Biosets action" }));
+    expect(open).not.toHaveBeenCalled();
+  });
+
   it("resolves Bioset experiment IDs retained across pages", async () => {
     const user = userEvent.setup();
     const open = vi.fn();

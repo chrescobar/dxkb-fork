@@ -94,7 +94,15 @@ function ScopedResourceChildCollection({
   if (suppliedProfile) {
     profile = { ...suppliedProfile, label, basePredicate: rql };
   } else if (resource === "bioset") {
-    profile = { ...biosetCollectionProfile, label, basePredicate: rql };
+    profile = {
+      ...biosetCollectionProfile,
+      label,
+      basePredicate: rql,
+      buildStructuralRql: (state) => {
+        const facetRql = biosetCollectionProfile.buildStructuralRql?.(state);
+        return facetRql ? `and(${rql},${facetRql})` : rql;
+      },
+    };
   } else if (resource === "genome_feature") {
     profile = {
       ...featureCollectionProfile,

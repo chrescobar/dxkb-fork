@@ -1,0 +1,14 @@
+src/components/views/resource-collection.tsx
+  h_dbd94c95afa702 351,397,403
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "c03ac7e19915d11117c13be6bf9fb5ce45d8e299",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

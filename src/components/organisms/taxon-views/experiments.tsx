@@ -3,7 +3,6 @@ import {
   ResourceChildCollection,
 } from "@/components/views";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { biosetCollectionProfile } from "@/lib/experiment-view";
 import { taxonLineageClause, type TaxonViewScope } from "./scope";
 
 export function makeExperimentsView({ scope }: { scope: TaxonViewScope }) {
@@ -30,7 +29,6 @@ export function makeExperimentsView({ scope }: { scope: TaxonViewScope }) {
             idField="bioset_id"
             rql={`and(eq(genome_id,*),genome(${lineageClause}))`}
             defaultSort="bioset_id:asc"
-            profile={biosetCollectionProfile}
           />
         </TabsContent>
       </Tabs>

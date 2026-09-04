@@ -6,6 +6,7 @@ import {
   featureCollectionProfile,
   type FeatureViewRecord,
 } from "@/lib/feature-view";
+import { biosetCollectionProfile } from "@/lib/experiment-view/profile";
 import {
   proteinFeatureCollectionProfile,
   type ProteinFeatureViewRecord,
@@ -92,6 +93,8 @@ function ScopedResourceChildCollection({
   let profile: ResourceCollectionProfile<ChildRow>;
   if (suppliedProfile) {
     profile = { ...suppliedProfile, label, basePredicate: rql };
+  } else if (resource === "bioset") {
+    profile = { ...biosetCollectionProfile, label, basePredicate: rql };
   } else if (resource === "genome_feature") {
     profile = {
       ...featureCollectionProfile,

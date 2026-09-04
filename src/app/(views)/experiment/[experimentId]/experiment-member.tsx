@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { FlaskConical, LayoutDashboard } from "lucide-react";
 import { EntityViewShell, ResourceChildCollection } from "@/components/views";
 import {
-  biosetCollectionProfile,
   experimentBiosetRql,
   experimentTabs,
   type ExperimentTab,
@@ -33,7 +32,6 @@ export function ExperimentMember({
         idField="bioset_id"
         rql={experimentBiosetRql(experiment.exp_id)}
         defaultSort="bioset_id:asc"
-        profile={biosetCollectionProfile}
       />
     ) : (
       <ExperimentOverview experiment={experiment} />

@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ResourceChildCollection } from "@/components/views";
 import { DataRepository } from "@/lib/data-api";
 import {
-  biosetCollectionProfile,
   experimentBiosetCollectionRql,
   experimentCollectionScopeRql,
 } from "@/lib/experiment-view";
@@ -89,7 +88,6 @@ export function ExperimentBiosetCollection({
           : "eq(bioset_id,*)"
       }
       defaultSort="bioset_id:asc"
-      profile={biosetCollectionProfile}
     />
   );
 }

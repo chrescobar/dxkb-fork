@@ -1,6 +1,11 @@
 import { experimentFields } from "@/constants/datafields/experiment";
 import type { DataField } from "@/constants/datafields/types";
-import { eq, serializeRql, validateRql } from "@/lib/data-api";
+import {
+  eq,
+  serializeRql,
+  validateRql,
+  type DataResource,
+} from "@/lib/data-api";
 import {
   parseCollectionState,
   type CollectionState,
@@ -31,13 +36,15 @@ export function parseExperimentCollectionState(
   return state;
 }
 
-export function experimentStructuralRql(
+function structuralRql(
   state: CollectionState,
+  resource: DataResource,
+  fieldMap: Record<string, string> = {},
 ): string | undefined {
   if (state.rql) return undefined;
   const clauses = Object.entries(state.filters).flatMap(([field, selected]) => {
-    const backendField = field === "taxon_id" ? "taxon_lineage_ids" : field;
-    const predicates = selected.map((value) => eq("experiment", backendField, value));
+    const backendField = fieldMap[field] ?? field;
+    const predicates = selected.map((value) => eq(resource, backendField, value));
     return predicates.length === 0
       ? []
       : [predicates.length === 1 ? predicates[0] : `or(${predicates.join(",")})`];
@@ -46,18 +53,18 @@ export function experimentStructuralRql(
   return clauses.length === 1 ? clauses[0] : `and(${clauses.join(",")})`;
 }
 
+export function experimentStructuralRql(
+  state: CollectionState,
+): string | undefined {
+  return structuralRql(state, "experiment", {
+    taxon_id: "taxon_lineage_ids",
+  });
+}
+
 export function biosetStructuralRql(
   state: CollectionState,
 ): string | undefined {
-  if (state.rql) return undefined;
-  const clauses = Object.entries(state.filters).flatMap(([field, selected]) => {
-    const predicates = selected.map((value) => eq("bioset", field, value));
-    return predicates.length === 0
-      ? []
-      : [predicates.length === 1 ? predicates[0] : `or(${predicates.join(",")})`];
-  });
-  if (clauses.length === 0) return undefined;
-  return clauses.length === 1 ? clauses[0] : `and(${clauses.join(",")})`;
+  return structuralRql(state, "bioset");
 }
 
 export function experimentBiosetRql(experimentId: string): string {

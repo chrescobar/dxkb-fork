@@ -1,18 +1,23 @@
 "use client";
 
 import { FlaskConical, TestTubes } from "lucide-react";
-import { EntityViewShell, ExperimentResourceCollection } from "@/components/views";
+import {
+  EntityViewShell,
+  ExperimentResourceCollection,
+} from "@/components/views";
 import type { ExperimentCollectionTab } from "@/lib/experiment-view";
 import type { CollectionState } from "@/lib/views/collection-state";
 import { ExperimentBiosetCollection } from "./experiment-bioset-collection";
 
+interface ExperimentCollectionProps {
+  initialState: CollectionState;
+  activeTab: ExperimentCollectionTab;
+}
+
 export function ExperimentCollection({
   initialState,
   activeTab,
-}: {
-  initialState: CollectionState;
-  activeTab: ExperimentCollectionTab;
-}) {
+}: ExperimentCollectionProps) {
   return (
     <EntityViewShell
       viewLabel="Experiment View"

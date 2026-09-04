@@ -37,7 +37,10 @@ vi.mock("../resource-filter-bar", () => ({
         <button
           key={keyword ?? "clear"}
           onClick={() => {
-            const onChange = props.onChange as (update: { keyword?: string; filters: CollectionState["filters"] }) => void;
+            const onChange = props.onChange as (update: {
+              keyword?: string;
+              filters: CollectionState["filters"];
+            }) => void;
             onChange({
               keyword,
               filters: props.filters as CollectionState["filters"],
@@ -65,21 +68,27 @@ vi.mock("@/components/search/search-action-bar", () => ({
       <div>
         <button
           onClick={() =>
-            (props.onAction as ((action: string) => void) | undefined)?.("genome")
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "genome",
+            )
           }
         >
           Genome action
         </button>
         <button
           onClick={() =>
-            (props.onAction as ((action: string) => void) | undefined)?.("genomes")
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "genomes",
+            )
           }
         >
           Genomes action
         </button>
         <button
           onClick={() =>
-            (props.onAction as ((action: string) => void) | undefined)?.("feature")
+            (props.onAction as ((action: string) => void) | undefined)?.(
+              "feature",
+            )
           }
         >
           Feature action
@@ -125,7 +134,11 @@ vi.mock("@/components/search/search-action-bar", () => ({
   },
 }));
 vi.mock("@/components/detail-panel/info-panel", () => ({
-  InfoPanel: ({ selectedRow }: { selectedRow: Record<string, unknown> | null }) => (
+  InfoPanel: ({
+    selectedRow,
+  }: {
+    selectedRow: Record<string, unknown> | null;
+  }) => (
     <div data-testid="detail">
       {selectedRow ? String(selectedRow.genome_name) : null}
     </div>
@@ -421,9 +434,14 @@ describe("ResourceCollection Genome integration contracts", () => {
 
   it("supports legacy Bioset sidebar actions", async () => {
     const user = userEvent.setup();
-    const open = vi.fn();
+    const replace = vi.fn();
+    const open = vi.fn(() => ({ opener: window, location: { replace } }));
     vi.stubGlobal("open", open);
-    const selected = vi.fn(() => Promise.resolve({ rows: [] }));
+    const selected = vi.fn((resource, request: { fields: string[] }) =>
+      Promise.resolve({
+        rows: request.fields.includes("exp_id") ? [{ exp_id: "00042" }] : [],
+      }),
+    );
     useResourceCollection.mockReturnValueOnce({
       ...collectionResult(),
       activeId: "bioset-1",
@@ -460,10 +478,145 @@ describe("ResourceCollection Genome integration contracts", () => {
       fields: ["bioset_id"],
     });
     await user.click(screen.getByRole("button", { name: "Biosets action" }));
+    expect(selected).toHaveBeenCalledOnce();
     expect(open).toHaveBeenCalledWith(
       "https://www.bv-brc.org/view/BiosetResult/?in(exp_id,(00042))",
       "_blank",
       "noopener,noreferrer",
+    );
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it("resolves Bioset experiment IDs retained across pages", async () => {
+    const user = userEvent.setup();
+    const open = vi.fn();
+    vi.stubGlobal("open", open);
+    const selected = vi.fn();
+    const profile = {
+      resource: "bioset" as const,
+      label: "Biosets",
+      idField: "bioset_id",
+      columns: [{ id: "bioset_id", label: "Bioset ID" }],
+      defaultSort: "bioset_id:asc",
+    };
+    let currentCollection = {
+      ...collectionResult(),
+      activeId: null,
+      detail: null,
+      rows: [{ bioset_id: "bioset-1", exp_id: "00042" }],
+      selection: {} as Record<string, true>,
+      selectedIds: [] as string[],
+      total: 2,
+    };
+    useResourceCollection.mockImplementation(() => currentCollection);
+
+    const view = render(
+      <ResourceCollection
+        profile={profile}
+        repository={{ selected } as unknown as DataRepository}
+        state={{ filters: {}, page: 1, sort: "bioset_id:asc" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+    act(() => {
+      (
+        dataTableProps.onRowSelectionChange as (
+          selection: Record<string, boolean>,
+        ) => void
+      )({
+        "bioset-1": true,
+      });
+    });
+
+    currentCollection = {
+      ...currentCollection,
+      rows: [{ bioset_id: "bioset-2", exp_id: "00051" }],
+      selection: { "bioset-1": true, "bioset-2": true },
+      selectedIds: ["bioset-1", "bioset-2"],
+    };
+    view.rerender(
+      <ResourceCollection
+        profile={profile}
+        repository={{ selected } as unknown as DataRepository}
+        state={{ filters: {}, page: 2, sort: "bioset_id:asc" }}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+    act(() => {
+      (
+        dataTableProps.onRowSelectionChange as (
+          selection: Record<string, boolean>,
+        ) => void
+      )({
+        "bioset-1": true,
+        "bioset-2": true,
+      });
+    });
+
+    expect(actionBarProps).toMatchObject({ enabledActions: ["biosets"] });
+    await user.click(screen.getByRole("button", { name: "Biosets action" }));
+    expect(selected).not.toHaveBeenCalled();
+    expect(open).toHaveBeenCalledWith(
+      "https://www.bv-brc.org/view/BiosetResult/?in(exp_id,(00042,00051))",
+      "_blank",
+      "noopener,noreferrer",
+    );
+  });
+
+  it("resolves all matching Bioset experiment IDs", async () => {
+    const user = userEvent.setup();
+    const replace = vi.fn();
+    const open = vi.fn(() => ({ opener: window, location: { replace } }));
+    vi.stubGlobal("open", open);
+    const exportAll = vi.fn(() =>
+      Promise.resolve({ rows: [{ exp_id: "00042" }, { exp_id: "00051" }] }),
+    );
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: null,
+      detail: null,
+      isAllPagesSelected: true,
+      rows: [{ bioset_id: "bioset-2", exp_id: "00051" }],
+      selection: {},
+      selectedIds: [],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={{
+          resource: "bioset",
+          label: "Biosets",
+          idField: "bioset_id",
+          columns: [{ id: "bioset_id", label: "Bioset ID" }],
+          defaultSort: "bioset_id:asc",
+        }}
+        repository={{ exportAll } as unknown as DataRepository}
+        state={{
+          keyword: "expression",
+          filters: {},
+          page: 2,
+          sort: "bioset_id:asc",
+        }}
+        baseRql="eq(exp_id,*)"
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    expect(actionBarProps).toMatchObject({ enabledActions: ["biosets"] });
+    await user.click(screen.getByRole("button", { name: "Biosets action" }));
+    expect(exportAll).toHaveBeenCalledWith("bioset", {
+      rql: "eq(exp_id,*)",
+      keyword: "expression",
+      fields: ["exp_id"],
+      sort: { field: "bioset_id", direction: "asc" },
+    });
+    expect(open).toHaveBeenCalledWith("about:blank", "_blank");
+    expect(replace).toHaveBeenCalledWith(
+      "https://www.bv-brc.org/view/BiosetResult/?in(exp_id,(00042,00051))",
     );
   });
 
@@ -578,13 +731,49 @@ describe("ResourceCollection Genome integration contracts", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Surveillance action" }));
+    await user.click(
+      screen.getByRole("button", { name: "Surveillance action" }),
+    );
     expect(open).toHaveBeenCalledWith(
       "/surveillance/sample%2F1?pathogen_test_type=RAT%2Fantigen",
       "_blank",
       "noopener,noreferrer",
     );
     expect(push).not.toHaveBeenCalled();
+  });
+
+  it("routes action-bar downloads through export-all for an all-pages selection", async () => {
+    const user = userEvent.setup();
+    const data = repository();
+    const exportAll = vi.spyOn(data, "exportAll");
+    useResourceCollection.mockReturnValueOnce({
+      ...collectionResult(),
+      activeId: null,
+      detail: null,
+      isAllPagesSelected: true,
+      selection: {},
+      selectedIds: [],
+      total: 2,
+    });
+
+    render(
+      <ResourceCollection
+        profile={genomeCollectionProfile}
+        repository={data}
+        state={state}
+        onStateChange={vi.fn()}
+        showHeader={false}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Download action" }));
+
+    expect(exportAll).toHaveBeenCalledWith("genome", {
+      rql: "eq(genome_status,Complete)",
+      keyword: "coli",
+      fields: genomeCollectionProfile.columns.map((column) => column.id),
+      sort: { field: "genome_length", direction: "desc" },
+    });
   });
 
   it("requests all matching rows using the active scope, sort, and columns", async () => {
@@ -747,9 +936,7 @@ describe("ResourceCollection Genome integration contracts", () => {
     });
 
     expect(exportAll).not.toHaveBeenCalled();
-    expect(
-      screen.getByText(/This export matches 10,001 rows/),
-    ).toBeVisible();
+    expect(screen.getByText(/This export matches 10,001 rows/)).toBeVisible();
   });
 
   it("shows full-detail errors instead of a partial row", () => {
@@ -791,7 +978,9 @@ describe("ResourceCollection Genome integration contracts", () => {
       "coli",
     );
 
-    await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Filter loaded rows" }),
+    );
 
     expect(onStateChange).toHaveBeenCalledWith({
       ...state,
@@ -806,7 +995,11 @@ describe("ResourceCollection Genome integration contracts", () => {
       ...collectionResult(),
       rows: [
         row,
-        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
       ],
       selection: {},
       selectedIds: [],
@@ -824,15 +1017,24 @@ describe("ResourceCollection Genome integration contracts", () => {
       />,
     );
 
-    expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute(
+      "data-keyword",
+      "",
+    );
     const initialHookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
     expect(initialHookOptions?.state.keyword).toBeUndefined();
 
-    await userEvent.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Filter loaded rows" }),
+    );
 
     await waitFor(() => {
       expect(dataTableProps.data).toEqual([
-        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
       ]);
     });
     expect(dataTableProps.totalItems).toBe(1);
@@ -843,7 +1045,9 @@ describe("ResourceCollection Genome integration contracts", () => {
     hookOptions?.onStateChange({ ...state, keyword: undefined, page: 4 });
     expect(onStateChange).toHaveBeenCalledWith({ ...state, page: 4 });
 
-    await userEvent.click(screen.getByRole("button", { name: "Clear loaded filter" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Clear loaded filter" }),
+    );
 
     await waitFor(() => {
       expect(dataTableProps.data).toHaveLength(2);
@@ -914,7 +1118,11 @@ describe("ResourceCollection Genome integration contracts", () => {
       Promise.resolve({
         rows: [
           row,
-          { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+          {
+            genome_id: "83332.13",
+            genome_name: "DNA gyrase fixture",
+            genome_length: 5678,
+          },
           laterMatch,
         ],
       }),
@@ -927,7 +1135,11 @@ describe("ResourceCollection Genome integration contracts", () => {
       ...collectionResult(),
       rows: [
         row,
-        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
       ],
       selection: { "83332.12": true, "83332.13": true },
       selectedIds: ["83332.12", "83332.13"],
@@ -947,11 +1159,17 @@ describe("ResourceCollection Genome integration contracts", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Filter loaded rows" }));
+    await user.click(
+      screen.getByRole("button", { name: "Filter loaded rows" }),
+    );
 
     await waitFor(() => {
       expect(dataTableProps.data).toEqual([
-        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
       ]);
     });
     expect(setSelection).toHaveBeenCalledWith({});
@@ -1001,7 +1219,11 @@ describe("ResourceCollection Genome integration contracts", () => {
       ...collectionResult(),
       rows: [
         { ...row, host_name: ["Homo sapiens", "Human"] },
-        { genome_id: "83332.13", genome_name: "DNA gyrase fixture", genome_length: 5678 },
+        {
+          genome_id: "83332.13",
+          genome_name: "DNA gyrase fixture",
+          genome_length: 5678,
+        },
       ],
       selection: {},
       selectedIds: [],
@@ -1019,14 +1241,18 @@ describe("ResourceCollection Genome integration contracts", () => {
       />,
     );
 
-    await userEvent.click(screen.getByRole("button", { name: "Filter array value" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Filter array value" }),
+    );
     await waitFor(() => {
       expect(dataTableProps.data).toEqual([
         { ...row, host_name: ["Homo sapiens", "Human"] },
       ]);
     });
 
-    await userEvent.click(screen.getByRole("button", { name: "Filter no matches" }));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Filter no matches" }),
+    );
     await waitFor(() => {
       expect(dataTableProps.data).toEqual([]);
     });
@@ -1047,7 +1273,10 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     const hookOptions = useResourceCollection.mock.calls.at(-1)?.[0];
     expect(hookOptions?.state.keyword).toBeUndefined();
-    expect(screen.getByTestId("filter-bar")).toHaveAttribute("data-keyword", "");
+    expect(screen.getByTestId("filter-bar")).toHaveAttribute(
+      "data-keyword",
+      "",
+    );
   });
 
   it("keeps the data table mounted when no rows are available", () => {

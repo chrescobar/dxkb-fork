@@ -350,11 +350,17 @@ export const routes: RouteEntry[] = [
     unauthenticated: true,
     mobile: true,
     variants: [
-      { nameSuffix: "experiments", path: "/experiment" },
-      { nameSuffix: "biosets", path: "/experiment?keyword=influenza&tab=biosets" },
+      { nameSuffix: "experiments", path: "/experiment?keyword=RNA" },
+      {
+        nameSuffix: "biosets",
+        path: "/experiment?keyword=influenza&tab=biosets",
+      },
     ],
     prepare: async (page) => {
-      await page.getByText(/results/).first().waitFor();
+      await page
+        .getByText(/results/)
+        .first()
+        .waitFor();
     },
   },
   {

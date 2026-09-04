@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import type { OrganismTaxonomy } from "@/lib/services/organisms/types";
 import { makeStrainsView } from "@/components/organisms/taxon-views/strains";
 import { makeSerologyView } from "@/components/organisms/taxon-views/serology";
@@ -59,6 +59,19 @@ function FeatureResourceCollection({
 }
 
 vi.mock("@/components/views", () => ({
+  ResourceChildCollection: ({
+    resource,
+    rql,
+  }: {
+    resource: string;
+    rql: string;
+  }) => (
+    <div
+      data-testid="resource-child-collection"
+      data-resource={resource}
+      data-q={rql}
+    />
+  ),
   ExperimentResourceCollection: ({
     baseRql,
     enableRowLinks,
@@ -350,6 +363,20 @@ describe("makeExperimentsView", () => {
     expect(panel).toHaveAttribute("data-q", "eq(taxon_lineage_ids,1234)");
     expect(panel).toHaveAttribute("data-row-links", "false");
     expect(panel).toHaveAttribute("data-keyword-mode", "loaded");
+  });
+
+  it("preserves the Biosets tab with taxon scope", () => {
+    const ExperimentsView = makeExperimentsView({ scope });
+    render(<ExperimentsView />);
+
+    fireEvent.click(screen.getByRole("tab", { name: "Biosets" }));
+
+    const panel = screen.getByTestId("resource-child-collection");
+    expect(panel).toHaveAttribute("data-resource", "bioset");
+    expect(panel).toHaveAttribute(
+      "data-q",
+      "and(eq(genome_id,*),genome(eq(taxon_lineage_ids,1234)))",
+    );
   });
 });
 

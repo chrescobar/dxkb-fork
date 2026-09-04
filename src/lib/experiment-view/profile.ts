@@ -16,49 +16,54 @@ function tableColumn(definition: DataField): DataTableColumn {
   };
 }
 
-const fields: DataField[] = Object.values(experimentFields);
-const childFields: DataField[] = Object.values(biosetFields);
+function deriveProfileFields(fieldMap: Record<string, DataField>) {
+  const fields = Object.values(fieldMap);
 
-export const experimentColumns = fields
-  .filter((field) => field.show_in_table !== false)
-  .map(tableColumn);
-export const experimentDetailFields = fields.map((field) => field.field);
-export const experimentFacets = fields
-  .filter((field) => field.facet && field.facet_hidden !== true)
-  .map((field) => ({
-    field: field.field,
-    label: field.label,
-    initiallyVisible: true,
-  }));
+  return {
+    columns: fields
+      .filter((field) => field.show_in_table !== false)
+      .map(tableColumn),
+    detailFields: fields.map((field) => field.field),
+    facets: fields
+      .filter((field) => field.facet && field.facet_hidden !== true)
+      .map((field) => ({
+        field: field.field,
+        label: field.label,
+        initiallyVisible: true,
+      })),
+  };
+}
 
-export const biosetColumns = childFields
-  .filter((field) => field.show_in_table !== false)
-  .map(tableColumn);
-export const biosetDetailFields = childFields.map((field) => field.field);
-export const biosetFacets = childFields
-  .filter((field) => field.facet && field.facet_hidden !== true)
-  .map((field) => ({
-    field: field.field,
-    label: field.label,
-    initiallyVisible: true,
-  }));
+const experimentProfileFields = deriveProfileFields(experimentFields);
+const biosetProfileFields = deriveProfileFields(biosetFields);
 
-export const experimentCollectionProfile: ResourceCollectionProfile<ExperimentViewRecord> = {
-  resource: "experiment",
-  label: "Experiments",
-  idField: "exp_id",
-  columns: experimentColumns,
-  detailFields: experimentDetailFields,
-  defaultSort: "unsorted",
-  basePredicate: "eq(exp_id,*)",
-  guideUrl: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
-  buildStructuralRql: experimentStructuralRql,
-  facets: experimentFacets,
-  rowHref: (row) => experimentHref(row.exp_id),
-  rowLinkField: "exp_id",
-};
+export const experimentColumns = experimentProfileFields.columns;
+export const experimentDetailFields = experimentProfileFields.detailFields;
+export const experimentFacets = experimentProfileFields.facets;
+export const biosetColumns = biosetProfileFields.columns;
+export const biosetDetailFields = biosetProfileFields.detailFields;
+export const biosetFacets = biosetProfileFields.facets;
 
-export const biosetCollectionProfile: ResourceCollectionProfile<Record<string, unknown>> = {
+export const experimentCollectionProfile: ResourceCollectionProfile<ExperimentViewRecord> =
+  {
+    resource: "experiment",
+    label: "Experiments",
+    idField: "exp_id",
+    columns: experimentColumns,
+    detailFields: experimentDetailFields,
+    defaultSort: "unsorted",
+    basePredicate: "eq(exp_id,*)",
+    guideUrl:
+      "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
+    buildStructuralRql: experimentStructuralRql,
+    facets: experimentFacets,
+    rowHref: (row) => experimentHref(row.exp_id),
+    rowLinkField: "exp_id",
+  };
+
+export const biosetCollectionProfile: ResourceCollectionProfile<
+  Record<string, unknown>
+> = {
   resource: "bioset",
   label: "Biosets",
   idField: "bioset_id",
@@ -66,6 +71,7 @@ export const biosetCollectionProfile: ResourceCollectionProfile<Record<string, u
   detailFields: biosetDetailFields,
   defaultSort: "bioset_id:asc",
   basePredicate: "eq(bioset_id,*)",
-  guideUrl: "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
+  guideUrl:
+    "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
   facets: biosetFacets,
 };

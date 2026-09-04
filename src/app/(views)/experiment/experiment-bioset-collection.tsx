@@ -15,26 +15,24 @@ import type { CollectionState } from "@/lib/views/collection-state";
 const repository = new DataRepository();
 const maxScopedExperiments = 500;
 
+interface ExperimentBiosetCollectionProps {
+  experimentState: CollectionState;
+}
+
 export function ExperimentBiosetCollection({
   experimentState,
-}: {
-  experimentState: CollectionState;
-}) {
+}: ExperimentBiosetCollectionProps) {
   const experimentRql = experimentCollectionScopeRql(experimentState);
-  const hasExperimentScope = Boolean(experimentRql || experimentState.keyword);
+  const keyword = experimentState.keyword?.trim() || undefined;
+  const hasExperimentScope = Boolean(experimentRql || keyword);
   const experimentIds = useQuery({
-    queryKey: [
-      "experiment",
-      "bioset-scope",
-      experimentRql,
-      experimentState.keyword,
-    ],
+    queryKey: ["experiment", "bioset-scope", experimentRql, keyword],
     queryFn: ({ signal }) =>
       repository.export(
         "experiment",
         {
           rql: experimentRql,
-          keyword: experimentState.keyword,
+          keyword,
           fields: ["exp_id"],
           limit: maxScopedExperiments + 1,
         },
@@ -45,10 +43,7 @@ export function ExperimentBiosetCollection({
 
   if (experimentIds.isPending && hasExperimentScope) {
     return (
-      <Skeleton
-        className="m-4 min-h-96 flex-1"
-        aria-label="Loading Biosets"
-      />
+      <Skeleton className="m-4 min-h-96 flex-1" aria-label="Loading Biosets" />
     );
   }
   if (experimentIds.error) {

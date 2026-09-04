@@ -112,6 +112,12 @@ export function ResourceCollection<Row extends DataTableRow>({
   onExport,
 }: ResourceCollectionProps<Row>) {
   const [exportError, setExportError] = useState<string | null>(null);
+  const [biosetActionError, setBiosetActionError] = useState<string | null>(
+    null,
+  );
+  const [selectedRowsById, setSelectedRowsById] = useState<
+    Partial<Record<string, Row>>
+  >({});
   const [loadedKeyword, setLoadedKeyword] = useState("");
   const normalizedLoadedKeyword = loadedKeyword.trim().toLowerCase();
   const hasLoadedKeyword =
@@ -202,28 +208,92 @@ export function ResourceCollection<Row extends DataTableRow>({
   const selectedMemberHref = displayedDetail
     ? profile.rowHref?.(displayedDetail)
     : undefined;
-  const selectedBiosetExperimentIds = displayedSelectedIds.flatMap((id) => {
-    const row = displayedRows.find(
-      (candidate) => String(candidate[profile.idField]) === id,
-    );
-    const experimentId = experimentIdFromRow(row ?? null);
+  const selectedBiosetExperimentIds = collection.selectedIds.flatMap((id) => {
+    const selectedRow =
+      selectedRowsById[id] ??
+      displayedRows.find((row) => String(row[profile.idField]) === id);
+    const experimentId = experimentIdFromRow(selectedRow ?? null);
     return experimentId ? [experimentId] : [];
   });
+  const hasBiosetSelection =
+    profile.resource === "bioset" &&
+    (collection.isAllPagesSelected || selectedBiosetExperimentIds.length > 0);
+
+  const openBiosetResults = async () => {
+    setBiosetActionError(null);
+    if (!collection.isAllPagesSelected) {
+      window.open(
+        biosetResultsHref(selectedBiosetExperimentIds),
+        "_blank",
+        "noopener,noreferrer",
+      );
+      return;
+    }
+    if (collection.total > maxExportRows) {
+      setBiosetActionError(
+        `This selection contains ${collection.total.toLocaleString()} Biosets. Narrow the results to ${maxExportRows.toLocaleString()} or fewer and try again.`,
+      );
+      return;
+    }
+    const resultsWindow = window.open("about:blank", "_blank");
+    if (!resultsWindow) {
+      setBiosetActionError(
+        "Allow pop-ups to open the selected Bioset results.",
+      );
+      return;
+    }
+    resultsWindow.opener = null;
+    try {
+      const result = await repository.exportAll(profile.resource, {
+        rql: effectiveRql,
+        keyword: requestState.keyword,
+        fields: ["exp_id"],
+        sort:
+          state.sort === "unsorted"
+            ? undefined
+            : {
+                field: state.sort.split(":")[0],
+                direction: state.sort.endsWith(":desc") ? "desc" : "asc",
+              },
+      });
+      const experimentIds = result.rows.flatMap((row) => {
+        const experimentId = experimentIdFromRow(row);
+        return experimentId ? [experimentId] : [];
+      });
+      if (experimentIds.length === 0) {
+        resultsWindow.close();
+        setBiosetActionError(
+          "No experiments are associated with this selection.",
+        );
+        return;
+      }
+      resultsWindow.location.replace(biosetResultsHref(experimentIds));
+    } catch (error) {
+      resultsWindow.close();
+      setBiosetActionError(
+        error instanceof Error
+          ? error.message
+          : "The selected Bioset results could not be loaded.",
+      );
+    }
+  };
 
   const exportRows = async (
     format: "csv" | "txt",
     selectedIds?: readonly string[],
     fields: readonly string[] | null = null,
+    isAllPagesSelected = false,
   ) => {
     setExportError(null);
-    if (selectedIds && selectedIds.length === 0) return;
-    if (!selectedIds && collection.isRefreshing) {
+    const ids = isAllPagesSelected ? undefined : selectedIds;
+    if (ids && ids.length === 0) return;
+    if (!ids && collection.isRefreshing) {
       setExportError(
         "Wait for the current results to finish loading before exporting.",
       );
       return;
     }
-    if (!selectedIds?.length && collection.total > maxExportRows) {
+    if (!ids?.length && collection.total > maxExportRows) {
       setExportError(
         `This export matches ${collection.total.toLocaleString()} rows. Narrow the results to ${maxExportRows.toLocaleString()} rows or fewer and try again.`,
       );
@@ -231,16 +301,16 @@ export function ResourceCollection<Row extends DataTableRow>({
     }
     try {
       if (onExport) {
-        await onExport({ format, selectedIds, fields, rql: effectiveRql });
+        await onExport({ format, selectedIds: ids, fields, rql: effectiveRql });
         return;
       }
       const selectedFields = fields
         ? [...fields]
         : profile.columns.map((column) => column.id);
       const allFields = profile.columns.map((column) => column.id);
-      const result = selectedIds?.length
+      const result = ids?.length
         ? await repository.selected(profile.resource, {
-            ids: [...selectedIds],
+            ids: [...ids],
             fields: selectedFields,
           })
         : await repository.exportAll(profile.resource, {
@@ -256,7 +326,7 @@ export function ResourceCollection<Row extends DataTableRow>({
                   },
           });
       const exportedRows =
-        hasLoadedKeyword && !selectedIds
+        hasLoadedKeyword && !ids
           ? result.rows.filter((row) =>
               matchesLoadedKeyword(row, normalizedLoadedKeyword),
             )
@@ -278,7 +348,7 @@ export function ResourceCollection<Row extends DataTableRow>({
 
   const detailContent = (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto bg-background text-foreground shadow-md">
+      <div className="bg-background text-foreground min-h-0 flex-1 overflow-y-auto shadow-md">
         {collection.detailError ? (
           <Alert variant="destructive" className="m-4">
             <AlertTitle>Could not load record details</AlertTitle>
@@ -324,13 +394,13 @@ export function ResourceCollection<Row extends DataTableRow>({
             >
               {profile.label}
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Browse {profile.label.toLowerCase()} records.
             </p>
           </div>
           {profile.guideUrl && (
             <a
-              className="text-sm text-primary underline underline-offset-2"
+              className="text-primary text-sm underline underline-offset-2"
               href={profile.guideUrl}
               target="_blank"
               rel="noreferrer"
@@ -387,6 +457,12 @@ export function ResourceCollection<Row extends DataTableRow>({
           <AlertDescription>{exportError}</AlertDescription>
         </Alert>
       )}
+      {biosetActionError && (
+        <Alert variant="destructive">
+          <AlertTitle>Could not open Bioset results</AlertTitle>
+          <AlertDescription>{biosetActionError}</AlertDescription>
+        </Alert>
+      )}
 
       {collection.error ? (
         <Alert variant="destructive">
@@ -427,47 +503,44 @@ export function ResourceCollection<Row extends DataTableRow>({
               }
               searchType={profile.resource}
               guideUrl={profile.guideUrl}
-               enabledActions={
-                 profile.resource === "strain" && selectedGenomesHref
-                   ? ["genomes"]
-                   : profile.resource === "protein_structure" &&
-                       selectedStructureHref
-                     ? ["structure"]
-                     : profile.resource === "bioset" &&
-                         selectedBiosetExperimentIds.length > 0
-                       ? ["biosets"]
-                       : undefined
-               }
-               disabledActions={
-                 profile.resource === "strain" && !selectedGenomesHref
-                   ? { genomes: "No genomes are associated with this strain" }
-                   : profile.resource === "protein_structure"
-                     ? {
-                         genome: selectedGenomeId
-                           ? undefined
-                           : "No genome is associated with this structure",
-                         feature: selectedFeatureId
-                           ? undefined
-                           : "No feature is associated with this structure",
-                         structure: selectedStructureHref
-                           ? undefined
-                           : "A structure accession is required",
-                       }
-                     : undefined
-               }
-               onAction={(actionId) => {
-                 if (actionId === "download") {
-                   void exportRows("csv", displayedSelectedIds);
-                 } else if (
-                   actionId === "biosets" &&
-                   selectedBiosetExperimentIds.length > 0
-                 ) {
-                   window.open(
-                     biosetResultsHref(selectedBiosetExperimentIds),
-                     "_blank",
-                     "noopener,noreferrer",
-                   );
-                 } else if (actionId === "genome" && selectedGenomeId) {
+              enabledActions={
+                profile.resource === "strain" && selectedGenomesHref
+                  ? ["genomes"]
+                  : profile.resource === "protein_structure" &&
+                      selectedStructureHref
+                    ? ["structure"]
+                    : hasBiosetSelection
+                      ? ["biosets"]
+                      : undefined
+              }
+              disabledActions={
+                profile.resource === "strain" && !selectedGenomesHref
+                  ? { genomes: "No genomes are associated with this strain" }
+                  : profile.resource === "protein_structure"
+                    ? {
+                        genome: selectedGenomeId
+                          ? undefined
+                          : "No genome is associated with this structure",
+                        feature: selectedFeatureId
+                          ? undefined
+                          : "No feature is associated with this structure",
+                        structure: selectedStructureHref
+                          ? undefined
+                          : "A structure accession is required",
+                      }
+                    : undefined
+              }
+              onAction={(actionId) => {
+                if (actionId === "download") {
+                  void exportRows(
+                    "csv",
+                    displayedSelectedIds,
+                    null,
+                    collection.isAllPagesSelected,
+                  );
+                } else if (actionId === "biosets" && hasBiosetSelection) {
+                  void openBiosetResults();
+                } else if (actionId === "genome" && selectedGenomeId) {
                   window.open(
                     genomeHref(selectedGenomeId),
                     "_blank",
@@ -497,10 +570,7 @@ export function ResourceCollection<Row extends DataTableRow>({
                     "_blank",
                     "noopener,noreferrer",
                   );
-                } else if (
-                  actionId === "experiment" &&
-                  selectedExperimentId
-                ) {
+                } else if (actionId === "experiment" && selectedExperimentId) {
                   window.open(
                     experimentHref(selectedExperimentId),
                     "_blank",
@@ -551,7 +621,20 @@ export function ResourceCollection<Row extends DataTableRow>({
             }
             onPageChange={collection.setPageIndex}
             onSortingChange={collection.setSorting}
-            onRowSelectionChange={collection.setSelection}
+            onRowSelectionChange={(selection) => {
+              collection.setSelection(selection);
+              setSelectedRowsById((current) => {
+                const next: Record<string, Row> = {};
+                for (const id of Object.keys(selection)) {
+                  const selectedRow =
+                    (displayedRows.find(
+                      (row) => String(row[profile.idField]) === id,
+                    ) as Row | undefined) ?? current[id];
+                  if (selectedRow) next[id] = selectedRow;
+                }
+                return next;
+              });
+            }}
             onDownloadAll={(format, fields) =>
               exportRows(format, undefined, fields)
             }

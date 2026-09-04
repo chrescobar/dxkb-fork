@@ -231,7 +231,9 @@ function maybeSolrCount(
   const core = segments[1];
   const query = decodeURIComponent(new URL(request.url).search);
   if (core === "serology") {
-    const isAmbiguous = query.includes("eq(sample_identifier,ambiguous-serology)");
+    const isAmbiguous = query.includes(
+      "eq(sample_identifier,ambiguous-serology)",
+    );
     const hasTestTypeFilter = query.includes("eq(test_type,");
     const requestedTestType = ambiguousSerologyFixtures
       .map((fixture) => fixture.test_type)
@@ -261,9 +263,13 @@ function maybeSolrCount(
     };
   }
   if (core === "experiment") {
-    const docs = query.includes("eq(exp_id,2000000)")
-      ? [experimentRecordFixture]
-      : [];
+    const experimentId = query.match(/eq\(exp_id,([^)&]+)\)/)?.[1];
+    const docs =
+      experimentId && experimentId !== "*"
+        ? experimentId === experimentRecordFixture.exp_id
+          ? [experimentRecordFixture]
+          : []
+        : [experimentRecordFixture];
     if (request.headers.get("accept") === "application/json") return docs;
     return { response: { numFound: docs.length, docs } };
   }
@@ -281,7 +287,9 @@ function maybeSolrCount(
     return { response: { numFound: docs.length, docs } };
   }
   if (core === "surveillance") {
-    const isAmbiguous = query.includes("eq(sample_identifier,ambiguous-sample)");
+    const isAmbiguous = query.includes(
+      "eq(sample_identifier,ambiguous-sample)",
+    );
     const hasTestTypeFilter = query.includes("eq(pathogen_test_type,");
     const requestedTestType = ambiguousSurveillanceFixtures
       .flatMap((fixture) => fixture.pathogen_test_type)

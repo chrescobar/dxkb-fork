@@ -1,0 +1,49 @@
+src/components/views/resource-collection.tsx
+  s_a3628793c39641::t_c874906246f077 527-545
+  s_a3628793c39641::t_665c99efd87dd8 218-220,223-228
+src/components/views/__tests__/resource-collection.test.tsx
+  s_a3628793c39641::t_83964891115dde 493-529
+src/components/views/resource-child-collection.tsx
+  s_e9f4cd944875d8::t_661eb3707352f8 97-100,105
+  s_e9f4cd944875d8::t_ec9123ba2b5ddf 101-104
+src/lib/experiment-view/query.ts
+  s_96d6e04a775635::t_bc0debdcb2437e 59-63
+  s_96d6e04a775635::t_0d82d7dac3eb0b 42
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_e9f4cd944875d8::t_e94b2b1324b80d 97-110,117,120-122
+  s_e9f4cd944875d8::t_0515f751a66b92 9-10,12,14
+  s_e9f4cd944875d8::t_d4ba19a2ec1fff 30,35,43-68
+  s_e9f4cd944875d8::t_4c18e769d5f919 111-116,118-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "86acdae42c0abd252bb50baf0d59568b0060a815",
+  "prompts": {},
+  "sessions": {
+    "s_96d6e04a775635": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f92a162b9ffeJTQM9015NT1tob",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a3628793c39641": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f92aa6e51ffefplc7ib4lvXpYf",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e9f4cd944875d8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f92a799b2ffepZMAD3vt7oYAKR",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

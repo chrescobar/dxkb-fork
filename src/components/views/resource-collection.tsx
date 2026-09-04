@@ -348,7 +348,7 @@ export function ResourceCollection<Row extends DataTableRow>({
 
   const detailContent = (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="bg-background text-foreground min-h-0 flex-1 overflow-y-auto shadow-md">
+      <div className="min-h-0 flex-1 overflow-y-auto bg-background text-foreground shadow-md">
         {collection.detailError ? (
           <Alert variant="destructive" className="m-4">
             <AlertTitle>Could not load record details</AlertTitle>
@@ -394,13 +394,13 @@ export function ResourceCollection<Row extends DataTableRow>({
             >
               {profile.label}
             </h1>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Browse {profile.label.toLowerCase()} records.
             </p>
           </div>
           {profile.guideUrl && (
             <a
-              className="text-primary text-sm underline underline-offset-2"
+              className="text-sm text-primary underline underline-offset-2"
               href={profile.guideUrl}
               target="_blank"
               rel="noreferrer"

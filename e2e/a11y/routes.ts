@@ -426,7 +426,7 @@ export const routes: RouteEntry[] = [
       { nameSuffix: "biosets", path: "/experiment/2000000?tab=biosets" },
     ],
     prepare: async (page) => {
-      await page.getByRole("heading", { level: 1, name: "RNA response experiment" }).waitFor();
+      await page.getByRole("heading", { level: 1, name: "2000000" }).waitFor();
     },
   },
 

@@ -40,20 +40,33 @@ describe("legacy search route", () => {
     ).rejects.toThrow("NEXT_REDIRECT:/experiment?keyword=RNA+sequencing");
   });
 
-  it("preserves and encodes other query values, including repeated values", async () => {
+  it("normalizes the keyword while preserving other query values", async () => {
     await expect(
       GlobalSearch({
         searchParams: Promise.resolve({
           type: "experiment",
-          q: "host/path + treatment",
+          q: " host/path + treatment ",
           source: "legacy search",
           filter: ["human", "mouse"],
         }),
       }),
     ).rejects.toThrow(
-      "NEXT_REDIRECT:/experiment?keyword=host%2Fpath+%2B+treatment&source=legacy+search&filter=human&filter=mouse",
+      "NEXT_REDIRECT:/experiment?keyword=host+path+++treatment&source=legacy+search&filter=human&filter=mouse",
     );
   });
+
+  it.each(["experiment", "bioset"])(
+    "quotes ID-like keywords before redirecting %s searches",
+    async (type) => {
+      await expect(
+        GlobalSearch({
+          searchParams: Promise.resolve({ type, q: "EC 1.1.1.1" }),
+        }),
+      ).rejects.toThrow(
+        `NEXT_REDIRECT:/experiment?keyword=EC+%221.1.1.1%22${type === "bioset" ? "&tab=biosets" : ""}`,
+      );
+    },
+  );
 
   it("maps the legacy Bioset search type to the canonical Biosets tab", async () => {
     await expect(

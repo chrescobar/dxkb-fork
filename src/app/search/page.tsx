@@ -10,6 +10,7 @@ function firstValue(value: string | string[] | undefined): string {
 function experimentRedirect(
   params: SearchParamsRecord,
   searchtype: string,
+  query: string,
 ): string {
   const destination = new URLSearchParams();
   const tabs = Array.isArray(params.tab) ? params.tab : [params.tab];
@@ -24,9 +25,12 @@ function experimentRedirect(
       destination.set("tab", "biosets");
       continue;
     }
-    const destinationName = name === "q" ? "keyword" : name;
+    if (name === "q") {
+      destination.set("keyword", query);
+      continue;
+    }
     for (const item of Array.isArray(value) ? value : [value]) {
-      destination.append(destinationName, item);
+      destination.append(name, item);
     }
   }
   if (biosetsRequested && !destination.has("tab")) {
@@ -44,10 +48,6 @@ export default async function GlobalSearch({
   const params = await searchParams;
   const keyword = firstValue(params.q);
   const searchtype = firstValue(params.type);
-
-  if (searchtype === "experiment" || searchtype === "bioset") {
-    redirect(experimentRedirect(params, searchtype));
-  }
 
   // The first step is to get the search phrase in a friendly format.
   // This requires a handful of replacements to make sure we don't break the API
@@ -97,6 +97,10 @@ export default async function GlobalSearch({
   }
 
   // Now that we have the entire query formatted properly, let's figure out where to send it...
+  if (searchtype === "experiment" || searchtype === "bioset") {
+    redirect(experimentRedirect(params, searchtype, query));
+  }
+
   if (searchtype === "everything") {
     return <SearchResults query={query} />;
   } else if (

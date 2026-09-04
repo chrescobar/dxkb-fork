@@ -46,6 +46,20 @@ export function experimentStructuralRql(
   return clauses.length === 1 ? clauses[0] : `and(${clauses.join(",")})`;
 }
 
+export function biosetStructuralRql(
+  state: CollectionState,
+): string | undefined {
+  if (state.rql) return undefined;
+  const clauses = Object.entries(state.filters).flatMap(([field, selected]) => {
+    const predicates = selected.map((value) => eq("bioset", field, value));
+    return predicates.length === 0
+      ? []
+      : [predicates.length === 1 ? predicates[0] : `or(${predicates.join(",")})`];
+  });
+  if (clauses.length === 0) return undefined;
+  return clauses.length === 1 ? clauses[0] : `and(${clauses.join(",")})`;
+}
+
 export function experimentBiosetRql(experimentId: string): string {
   return eq("bioset", "exp_id", experimentId);
 }

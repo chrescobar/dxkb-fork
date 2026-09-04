@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { DataRepository } from "@/lib/data-api";
-import { experimentCollectionProfile } from "@/lib/experiment-view/profile";
+import {
+  biosetCollectionProfile,
+  experimentCollectionProfile,
+} from "@/lib/experiment-view/profile";
 import { featureCollectionProfile } from "@/lib/feature-view/profile";
 import { genomeCollectionProfile } from "@/lib/genome-view/profile";
 import { strainCollectionProfile } from "@/lib/strain-view/profile";
@@ -586,17 +589,14 @@ describe("ResourceCollection Genome integration contracts", () => {
 
     render(
       <ResourceCollection
-        profile={{
-          resource: "bioset",
-          label: "Biosets",
-          idField: "bioset_id",
-          columns: [{ id: "bioset_id", label: "Bioset ID" }],
-          defaultSort: "bioset_id:asc",
-        }}
+        profile={biosetCollectionProfile}
         repository={{ exportAll } as unknown as DataRepository}
         state={{
           keyword: "expression",
-          filters: {},
+          filters: {
+            bioset_type: ["Differential Expression", "Pathway Analysis"],
+            organism: ["Escherichia coli"],
+          },
           page: 2,
           sort: "bioset_id:asc",
         }}
@@ -609,7 +609,8 @@ describe("ResourceCollection Genome integration contracts", () => {
     expect(actionBarProps).toMatchObject({ enabledActions: ["biosets"] });
     await user.click(screen.getByRole("button", { name: "Biosets action" }));
     expect(exportAll).toHaveBeenCalledWith("bioset", {
-      rql: "eq(exp_id,*)",
+      rql:
+        'and(eq(exp_id,*),and(or(eq(bioset_type,"Differential%20Expression"),eq(bioset_type,"Pathway%20Analysis")),eq(organism,"Escherichia%20coli")))',
       keyword: "expression",
       fields: ["exp_id"],
       sort: { field: "bioset_id", direction: "asc" },

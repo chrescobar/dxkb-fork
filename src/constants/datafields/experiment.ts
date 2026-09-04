@@ -99,6 +99,7 @@ export const experimentFields = {
     facet: false,
     facet_hidden: true,
     search: true,
+    sortable: false,
   },
   public_repository: {
     label: "Public Repository",

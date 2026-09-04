@@ -1,4 +1,6 @@
 import {
+  biosetCollectionProfile,
+  biosetStructuralRql,
   biosetViewRecordSchema,
   experimentBiosetCollectionRql,
   experimentBiosetRql,
@@ -46,6 +48,7 @@ describe("Experiment view", () => {
 
   it("excludes multi-valued fields from sorts and retains scalar sorts", () => {
     const multiValuedFields = [
+      "experimenters",
       "organism",
       "taxon_id",
       "strain",
@@ -78,6 +81,24 @@ describe("Experiment view", () => {
     });
     expect(experimentStructuralRql(state)).toBe(
       "and(eq(taxon_lineage_ids,561),or(eq(exp_type,RNA),eq(exp_type,Proteomics)))",
+    );
+  });
+
+  it("builds Bioset facet predicates for collection requests", () => {
+    const state = {
+      filters: {
+        bioset_type: ["Differential Expression", "Pathway Analysis"],
+        organism: ["Escherichia coli"],
+      },
+      page: 1,
+      sort: "bioset_id:asc",
+    };
+
+    expect(biosetCollectionProfile.buildStructuralRql?.(state)).toBe(
+      biosetStructuralRql(state),
+    );
+    expect(biosetStructuralRql(state)).toBe(
+      'and(or(eq(bioset_type,"Differential%20Expression"),eq(bioset_type,"Pathway%20Analysis")),eq(organism,"Escherichia%20coli"))',
     );
   });
 

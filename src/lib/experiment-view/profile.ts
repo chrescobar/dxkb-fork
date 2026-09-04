@@ -4,7 +4,7 @@ import { biosetFields } from "@/constants/datafields/bioset";
 import { experimentFields } from "@/constants/datafields/experiment";
 import type { DataField } from "@/constants/datafields/types";
 import { experimentHref } from "@/lib/views/hrefs";
-import { experimentStructuralRql } from "./query";
+import { biosetStructuralRql, experimentStructuralRql } from "./query";
 import type { ExperimentViewRecord } from "./schema";
 
 function tableColumn(definition: DataField): DataTableColumn {
@@ -71,6 +71,7 @@ export const biosetCollectionProfile: ResourceCollectionProfile<
   detailFields: biosetDetailFields,
   defaultSort: "bioset_id:asc",
   basePredicate: "eq(bioset_id,*)",
+  buildStructuralRql: biosetStructuralRql,
   guideUrl:
     "https://www.bv-brc.org/docs/quick_references/organisms_taxon/experiments.html",
   facets: biosetFacets,

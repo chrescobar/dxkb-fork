@@ -1,0 +1,54 @@
+src/lib/taxonomy-view/actions.ts
+  s_6246b989713717::t_694c36eb8f2b41 26-28
+src/components/taxonomy/__tests__/taxonomy-tree-panel.test.tsx
+  s_c70f8779471752::t_ee835c67b5e1b8 74
+  s_6246b989713717::t_68d436a2c848e0 107,114-115
+  s_c70f8779471752::t_14ea2ec4867107 108,110-113,116-129,137-141
+  s_c70f8779471752::t_fd1228385baa67 109
+src/app/(views)/feature/feature-collection.tsx
+  s_6246b989713717::t_d8ef9d6f89609b 5
+  s_6246b989713717::t_04e9b4c5b9f722 25
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_c70f8779471752::t_8e1a977ad9b4bb 82-87
+  s_c70f8779471752::t_69da4aa2453b65 68
+  s_c70f8779471752::t_b0db402c6f21eb 12
+  s_6246b989713717::t_efe93b65e57c1d 14
+  s_6246b989713717::t_5d3e40d7607fb4 44-48,50
+  s_c70f8779471752::t_b9d33bed21f263 36,38,43,49,51-52
+src/lib/feature-view/query.ts
+  s_6246b989713717::t_f2ca94d6f8802e 18-21
+src/lib/taxonomy-view/__tests__/taxonomy-view.test.ts
+  s_6246b989713717::t_27b57f38aa6ec0 88,91
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_6246b989713717::t_71bfa4e5bba30a 4
+  s_6246b989713717::t_ace8c1684a400b 31-45
+src/components/views/__tests__/resource-collection.test.tsx
+  s_6246b989713717::t_7f4aeb0d14794a 329,335
+src/components/views/taxonomy-service-chooser.tsx
+  s_c70f8779471752::t_23f6e114285c09 38-51
+  s_c70f8779471752::t_bc7a83718a665c 19,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "eb89c8870e7f532f70cecedf68cf95eb57289615",
+  "prompts": {},
+  "sessions": {
+    "s_6246b989713717": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f795f9978ffe3b0aEixo8jMMrN",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c70f8779471752": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f7968866fffe25oPtmaU0VtcnW",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,234 @@
+src/components/views/strain-copy-dialog.tsx
+  s_26f35969df5c24::t_521907981f7c89 1-92
+src/app/(views)/genome/genome-collection.tsx
+  s_6246b989713717::t_9c0ec8ab04410b 24,40-45,67-77,83-84,88-106,108-109,118,126-129,136-140,149-153,158-159,163
+  s_6246b989713717::t_52bc6913b19d64 114-117
+  s_6246b989713717::t_04d3f1affa4fda 125
+  s_6246b989713717::t_20f1907ab8d4db 25-29,32-39
+  s_6246b989713717::t_11718b73819753 146
+  s_6246b989713717::t_8a7c2eeac1276d 3-18,21
+  s_6246b989713717::t_181794e757e6d0 148
+  s_6246b989713717::t_c16ae97576fe02 46-66
+  s_6246b989713717::t_3fecdefb4cae37 30-31,110-113
+  s_6246b989713717::t_9d807675b109f5 107
+  s_6246b989713717::t_33d3b1a34a72f6 20
+  s_6246b989713717::t_0241615f353b49 86
+  s_6246b989713717::t_7aed5ece4aaaf1 119-124,130-135,141-145,147
+  s_6246b989713717::t_2acb4557f9d06a 85,87
+src/lib/views/__tests__/hrefs.test.ts
+  s_6246b989713717::t_57c463fd3187fe 198-199,201-207
+  s_6246b989713717::t_ebc490337fae9e 16
+  s_6246b989713717::t_40e41a6c6385a8 200
+src/lib/services/workspace/adapters/http-workspace-repository.ts
+  s_f2e6355a4ed4d0::t_d14810f170d6d9 57-58
+  s_f2e6355a4ed4d0::t_67e3f7420ba899 223-250
+  s_f2e6355a4ed4d0::t_7bb0ac95c4c839 62-64
+  s_f2e6355a4ed4d0::t_8333d4c921bf56 52-56,59-61,65-81
+  s_f2e6355a4ed4d0::t_5fb26154178373 18-22,24,27
+src/lib/services/workspace/workspace-repository.ts
+  s_f2e6355a4ed4d0::t_a417c892be4079 87-92
+  s_f2e6355a4ed4d0::t_8a08953e4221de 41-55
+src/components/views/resource-collection.tsx
+  s_6246b989713717::t_a08673fd6b6b5e 159-164
+  s_6246b989713717::t_d29009ebae1d0d 3
+  s_6246b989713717::t_144e05c754db76 172-174
+  s_6246b989713717::t_0d8e7fed7f5b7e 5-7
+  s_6246b989713717::t_59f99b22cedaac 770-771
+  s_6246b989713717::t_3174a765e97912 981-988,998,1025-1027
+  s_6246b989713717::t_5727ef627131c4 989-994,996-997,999-1024
+  s_6246b989713717::t_5180fe8893db0f 390
+  s_6246b989713717::t_9d106cec84d434 396
+  s_6246b989713717::t_e84ea86323b7e0 809-815
+  s_6246b989713717::t_0a43c2bddef3b5 16-19,25-26
+  s_6246b989713717::t_3fecdefb4cae37 21-24,169-171,175-177,223-225,336-338,414,418-424,496,608,654,660,765-769,772-791,793-807,816-827,829-830,832-840,852-854
+  s_6246b989713717::t_9ddaeb5648d9be 52
+  s_6246b989713717::t_8081c57ad55a50 63-74
+  s_6246b989713717::t_4f7c217048b275 304-335,339-355,358-389,391-395,397-413,415-417,425-430
+  s_6246b989713717::t_326e2c026e95b2 356-357
+  s_44fd40cb76557f::t_6421cfb97a27e5 792
+  s_6246b989713717::t_126fde94458a49 262-266
+  s_6246b989713717::t_959385fffd5873 995
+  s_6246b989713717::t_44f32e58d1b8c3 850-851,855-856
+src/lib/strain-view/actions.ts
+  s_6246b989713717::t_ee4f7fbc988c81 1-25
+src/components/views/strain-service-chooser.tsx
+  s_6246b989713717::t_621fede7bf1bda 34
+  s_6246b989713717::t_43f438815b571d 77
+  s_6246b989713717::t_3fecdefb4cae37 52-57,140-143,150-153,158-164,167
+  s_26f35969df5c24::t_06f61569bc1f4e 1-32,35-38,45-49,51,58-60,62-74,80-87,89-139,144-149,154-157,165-166,168-172
+  s_6246b989713717::t_bc15694aabab94 61
+  s_6246b989713717::t_caedd89fbc3f18 75-76,78-79
+  s_6246b989713717::t_4e4b43c2aa6a6e 33
+  s_6246b989713717::t_fa0ea3ad3b212e 50
+  s_6246b989713717::t_0b04776abcf62b 88
+  s_6246b989713717::t_d1d27197679748 39-44
+src/lib/services/workspace/id-group.ts
+  s_f2e6355a4ed4d0::t_af7c6852330dbe 35-37,43-45
+  s_f2e6355a4ed4d0::t_6f61fd5bf63cb0 1-34,38-42,46-65
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  s_f2e6355a4ed4d0::t_b5d33fdacf7e17 134
+  s_f2e6355a4ed4d0::t_8a60f2d5c2719d 330-335,337,339,345-397
+  s_f2e6355a4ed4d0::t_d23271a5594d7b 42-43
+  s_f2e6355a4ed4d0::t_c6f52eb22cc8a9 237,241-258
+  s_f2e6355a4ed4d0::t_d026042ac599aa 62-63
+  s_f2e6355a4ed4d0::t_50244fe7fef9fb 18-22,25,28
+  s_f2e6355a4ed4d0::t_e09e0cf5c9374e 104
+  s_f2e6355a4ed4d0::t_5f371f1490d353 306
+  s_f2e6355a4ed4d0::t_42bf85d0f2ea84 398
+src/components/views/__tests__/resource-collection.test.tsx
+  s_6246b989713717::t_656cc4f2c3e299 581-584
+  s_6246b989713717::t_591ffab1ce42fb 598
+  s_6246b989713717::t_48630d4b255a92 557
+  s_6246b989713717::t_6667d26a0f7abb 603
+  s_6246b989713717::t_9c97a80592b315 628,631-632
+  s_6246b989713717::t_3fecdefb4cae37 47-49,158-160,200-209,848
+  s_6246b989713717::t_813302164e59f3 602
+  s_6246b989713717::t_809b3df8bb19fa 561-562,567-572,575-576
+  s_6246b989713717::t_f8006107ca8ef0 28-46,50-56
+  s_6246b989713717::t_da272c2d759062 579-580,585-586,590
+src/components/views/__tests__/strain-copy-dialog.test.tsx
+  s_26f35969df5c24::t_6b8bd27af0df0f 1-47,51-52
+  s_26f35969df5c24::t_d703cd890858fe 48-50
+src/lib/strain-view/__tests__/strain-view.test.ts
+  s_6246b989713717::t_113db7a62a0865 2
+  s_6246b989713717::t_5f9fa49c5305b5 82-92
+src/components/views/resource-export.ts
+  s_6246b989713717::t_f0aa3f7550d1e4 6
+  s_6246b989713717::t_16ab61e5cf24ac 23,28-29,34-35,40-49
+src/lib/services/workspace/adapters/__tests__/in-memory-workspace-repository.test.ts
+  s_f2e6355a4ed4d0::t_ea30aad9264e67 219-221
+  s_f2e6355a4ed4d0::t_76b6c2f9a2e713 258
+  s_f2e6355a4ed4d0::t_af7c6852330dbe 176-178,216-218,293-296
+  s_f2e6355a4ed4d0::t_5fd6dc3862daf1 257
+  s_f2e6355a4ed4d0::t_c7bd563cb34223 179-181
+  s_f2e6355a4ed4d0::t_0cb752e502019c 158-175,182-215,222-256,259-273
+src/lib/views/hrefs.ts
+  s_6246b989713717::t_1d15fe2fecfb40 45-55,61-62,65-66
+src/components/workspace/selection-to-group-dialog.tsx
+  s_6246b989713717::t_da95be7219d264 122,141-143,172
+  s_6246b989713717::t_da93f1d0b9ffd0 19
+  s_6246b989713717::t_7c84afeb98730c 173
+  s_6246b989713717::t_048cf8bf81ab63 120-121
+  s_6246b989713717::t_b2fb76d287f375 240
+  s_6246b989713717::t_dfe27a650b1c85 167
+  s_f3766e8c1f82e4::t_9cc4746fe4cd6b 1-18,20-54,57-103,105-119,161,174-239,241-251
+  s_6246b989713717::t_3fecdefb4cae37 55-56,123-140,144-160,162-166,168-171
+  s_6246b989713717::t_07d4857e2a135e 104
+src/components/views/__tests__/resource-export.test.ts
+  s_6246b989713717::t_e14f38a130681f 1-32
+src/components/search/__tests__/search-action-bar.test.tsx
+  s_6246b989713717::t_aa827656e38cea 240-241,245,256
+  s_6246b989713717::t_543f3b19d73366 217,222
+  s_6246b989713717::t_a36ff2e9a6ddd4 242-244,246-255,257-262,264-268
+  s_6246b989713717::t_3fecdefb4cae37 227-237,277-279,283-285,370-372
+  s_6246b989713717::t_739cc990b8f59a 263
+  s_6246b989713717::t_9a4315d82acda2 238-239
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_6246b989713717::t_6f8bbd1edd99f3 54-58,61-62
+  s_6246b989713717::t_aafd3cd5a9c9b1 59
+  s_6246b989713717::t_52c14e8157b558 69-72
+  s_6246b989713717::t_994512958479e4 49-52
+  s_6246b989713717::t_b588bc9319b7b7 65-68,73-75,77-79,86-87,91-92,94
+  s_6246b989713717::t_8ad8981b968da7 24-39,43-48,53,60,63-64,80-85,93,95-97
+  s_6246b989713717::t_3fecdefb4cae37 40-42,76,88-90
+docs/architecture.md
+  s_6246b989713717::t_1c8f9bcf22e59a 80
+src/components/workspace/workspace-mini-browser-table.tsx
+  s_6246b989713717::t_dfe27a650b1c85 61,79,86-87,116,130
+  s_6246b989713717::t_b955e5af4b7c5e 65
+  s_6246b989713717::t_637ca0c2148251 68
+src/lib/services/workspace/adapters/__tests__/http-workspace-repository.test.ts
+  s_f2e6355a4ed4d0::t_af7c6852330dbe 154,452-462
+  s_f2e6355a4ed4d0::t_894eb85275fab8 317-451,463-497
+src/components/views/__tests__/strain-service-chooser.test.tsx
+  s_6246b989713717::t_3b01f38a9be7ac 20-21,23,30
+  s_6246b989713717::t_9830150235a94e 22
+  s_6246b989713717::t_e1fdf602b5e002 45-59
+  s_6246b989713717::t_03d107c9d3d485 70
+  s_6246b989713717::t_3fecdefb4cae37 82-84,130-132,137-139
+  s_6246b989713717::t_4ebadae395467d 1
+  s_26f35969df5c24::t_c465678a7cf10c 2-19,24-29,31-44,60-69,71-81,85-129,133-136,140-143
+src/lib/strain-view/index.ts
+  s_6246b989713717::t_4e716f8dc854d2 1
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_6246b989713717::t_63ff23152d8b85 359-363
+  s_6246b989713717::t_3fecdefb4cae37 75-83,85-86,534
+src/components/workspace/__tests__/selection-to-group-dialog.test.tsx
+  s_6246b989713717::t_6ab10ff28fc73d 7-14,21-25
+  s_f3766e8c1f82e4::t_6ca30b84f095df 1-6,26-92,96-102,104-126,130-133,137-149
+  s_f3766e8c1f82e4::t_ddc272018606e0 103
+  s_6246b989713717::t_95073eef27a70f 15-20
+  s_f3766e8c1f82e4::t_9a75d972af5f9f 93-95,127-129,134-136
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_6246b989713717::t_62a209bc645963 24-51
+src/components/search/search-action-bar.tsx
+  s_6246b989713717::t_ce763d6517758e 359
+  s_6246b989713717::t_7f91e10f0e0a85 389-394,400-404
+  s_6246b989713717::t_3fecdefb4cae37 161,395-399
+  s_6246b989713717::t_4903cb05b7f4f5 5
+  s_6246b989713717::t_b32a32b4ccf5bb 305
+  s_6246b989713717::t_7c2851254bee50 413-422,424-426
+  s_6246b989713717::t_08006f7900b0bc 423
+  s_6246b989713717::t_cb4b057c6eca54 3,6-10
+  s_6246b989713717::t_69dd993dfa86d2 406
+  s_6246b989713717::t_549d3591397b8a 410-412,427-433
+  s_6246b989713717::t_d0dc1211c9123b 316
+  s_6246b989713717::t_46d9c90dae6bfb 360-361,380-381
+  s_6246b989713717::t_5a69253414025e 334-335,388
+  s_6246b989713717::t_21654130212f3e 18
+  s_6246b989713717::t_7696ef87677982 382-387
+  s_6246b989713717::t_d153c3e7b312fc 405
+src/app/(views)/genome/__tests__/genome-collection.test.tsx
+  s_6246b989713717::t_3fecdefb4cae37 17-21,73-78
+  s_6246b989713717::t_5b8c3eed8224cc 1-16,22-30,34-72,79-102,104-106
+  s_6246b989713717::t_6c54fd1663ce9d 31-33
+  s_6246b989713717::t_b4717761ba9a68 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ca36b1e09c77da83212f3822312782a67dc1a72a",
+  "prompts": {},
+  "sessions": {
+    "s_26f35969df5c24": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f79249891ffem0G6O0lR7rZvTH",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_44fd40cb76557f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49facbd4-93d5-41f7-9916-ecf059eed94c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_6246b989713717": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f795f9978ffe3b0aEixo8jMMrN",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f2e6355a4ed4d0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f79286968fferQAZHmt8GQ0OoJ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f3766e8c1f82e4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f790fd306ffe0BVju3YmdGvFi7",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

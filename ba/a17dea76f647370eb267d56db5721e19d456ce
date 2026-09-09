@@ -1,0 +1,115 @@
+src/app/(views)/taxonomy/page.tsx
+  s_dc688528fe3294::t_7fda9dbe644530 4,15
+src/components/views/resource-export.ts
+  s_dc688528fe3294::t_1543f2610a1134 3-10,13,27,36,45-47
+src/lib/views/collection-state.ts
+  s_dc688528fe3294::t_c02df50b752f94 32-43
+src/lib/views/__tests__/view-registry.test.ts
+  s_dc688528fe3294::t_58af4f75afc488 5-6,20-22,25
+src/components/views/resource-collection.tsx
+  s_dc688528fe3294::t_5239b75b35eff1 76-88,90-91,635-645,759
+  s_dc688528fe3294::t_7b236f1bd0b8e6 646-667,684,686-758
+  s_dc688528fe3294::t_e3e263ca68b887 46,298,336
+  s_dc688528fe3294::t_2296fab9830622 14,89
+  s_dc688528fe3294::t_c02df50b752f94 21,326,343,397,463
+  s_dc688528fe3294::t_f4ce3bddc95493 12,51
+src/components/search/search-action-bar.tsx
+  s_dc688528fe3294::t_49464eef465192 56-60,62-63,106,173,210,362,394,421,424-426,430,441
+  s_dc688528fe3294::t_2296fab9830622 311
+src/lib/services/workspace/id-group.ts
+  s_dc688528fe3294::t_e4f1c852bf1f5f 12
+src/lib/taxonomy-view/actions.ts
+  s_dc688528fe3294::t_e3e263ca68b887 7-11,18
+src/components/views/strain-collection-actions.tsx
+  s_dc688528fe3294::t_5a19e67015e868 1-136,138-238
+  s_dc688528fe3294::t_1543f2610a1134 137
+src/components/views/strain-service-chooser.tsx
+  s_dc688528fe3294::t_2442d3feb77a5e 26-52,61,154-157,159-164
+  s_dc688528fe3294::t_246cec29b767c5 81,84,158
+src/app/(views)/genome/child-tabs.ts
+  s_dc688528fe3294::t_a285808a7ba5dc 1-48
+src/lib/views/legacy-redirect.ts
+  s_dc688528fe3294::t_afb4f27b9b35e2 9-37,39-41,44-54
+  s_dc688528fe3294::t_e81dc6dbf4dc1c 60-63
+  s_dc688528fe3294::t_752eae11b79181 38,42-43
+  s_dc688528fe3294::t_92342bd10f67a7 96-100
+  s_dc688528fe3294::t_75ae8b2c752979 8
+src/components/views/__tests__/resource-export.test.ts
+  s_dc688528fe3294::t_c2495a11871eba 10,18-29
+  s_dc688528fe3294::t_7526c98e2d84e5 30
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_dc688528fe3294::t_905379099e0982 62
+  s_dc688528fe3294::t_44c0e2666f9e4f 67
+  s_dc688528fe3294::t_8dd1a5d614ed9a 29
+src/lib/views/hrefs.ts
+  s_dc688528fe3294::t_e81dc6dbf4dc1c 177-178
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_dc688528fe3294::t_131404b19a8a6f 61,64
+  s_dc688528fe3294::t_c95c5fe297ad64 37
+  s_dc688528fe3294::t_03ad37679d6ff0 104,122,133
+  s_dc688528fe3294::t_992aa43f26b688 29-30
+src/lib/views/__tests__/rql.test.ts
+  s_dc688528fe3294::t_58af4f75afc488 1
+src/lib/views/__tests__/hrefs.test.ts
+  s_dc688528fe3294::t_221d3c32517885 35,269-273,276-277,281
+  s_dc688528fe3294::t_e81dc6dbf4dc1c 64-72
+src/app/all-term-search-results.tsx
+  s_dc688528fe3294::t_58c17781207e9f 38
+  s_dc688528fe3294::t_905379099e0982 541
+  s_dc688528fe3294::t_992aa43f26b688 542
+src/lib/views/view-registry.ts
+  s_dc688528fe3294::t_a894aaa8918abd 3-5
+src/app/(views)/epitope/[epitopeId]/epitope-member.tsx
+  s_dc688528fe3294::t_8dd1a5d614ed9a 15
+  s_dc688528fe3294::t_ba0648b1891d77 37
+src/app/search/typesearch.tsx
+  s_dc688528fe3294::t_18cfb09cab6d02 39,275
+src/lib/views/view-types.ts
+  s_dc688528fe3294::t_e7d544dba20606 13-15
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_dc688528fe3294::t_ba0648b1891d77 54
+  s_dc688528fe3294::t_8dd1a5d614ed9a 5
+src/app/(views)/genome/genome-collection.tsx
+  s_dc688528fe3294::t_47e9717e91b0b2 18
+  s_dc688528fe3294::t_03ad37679d6ff0 22-23,106,121,129,135-137
+  s_dc688528fe3294::t_371ed37751cab7 107,115,130,143
+  s_dc688528fe3294::t_d8c740a65d36b8 26-39,82,91-94
+src/lib/views/__tests__/view-types.test.ts
+  s_dc688528fe3294::t_58af4f75afc488 3,5
+src/app/(views)/protein-structure/protein-structure-member.tsx
+  s_dc688528fe3294::t_8dd1a5d614ed9a 12
+  s_dc688528fe3294::t_ba0648b1891d77 174-176
+src/lib/views/child-resources.ts
+  s_dc688528fe3294::t_371ed37751cab7 55-65
+src/app/(views)/feature/[featureId]/feature-overview.tsx
+  s_dc688528fe3294::t_8dd1a5d614ed9a 5
+  s_dc688528fe3294::t_ba0648b1891d77 76
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_dc688528fe3294::t_6f7da2722ee157 26-45
+src/hooks/views/use-resource-collection.ts
+  s_dc688528fe3294::t_c02df50b752f94 6
+  s_dc688528fe3294::t_e81dc6dbf4dc1c 89-97
+src/components/views/resource-child-collection.tsx
+  s_dc688528fe3294::t_e81dc6dbf4dc1c 14,146-148
+  s_dc688528fe3294::t_ff7360dc97f24f 95
+  s_dc688528fe3294::t_a04a01068883c8 69-70
+  s_dc688528fe3294::t_c02df50b752f94 186
+src/app/(views)/taxonomy/loading.tsx
+  s_dc688528fe3294::t_7fda9dbe644530 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "baa17dea76f647370eb267d56db5721e19d456ce",
+  "prompts": {},
+  "sessions": {
+    "s_dc688528fe3294": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cda88815-675c-4f1b-9c52-16174637cca1",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

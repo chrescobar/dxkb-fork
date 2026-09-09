@@ -1,0 +1,36 @@
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_99a901aaff853d::t_e1b4f0f5f928bb 130,505-526
+  s_99a901aaff853d::t_c360c1fd1826bd 710-712
+  s_99a901aaff853d::t_134dfe32f1f4ba 127-128
+  s_99a901aaff853d::t_768ff0d0efd00a 124
+  s_99a901aaff853d::t_4e92a4ad8e66fb 132-164,166-171
+  s_99a901aaff853d::t_7a4c203ee95162 129
+  s_99a901aaff853d::t_0cea82209d7888 131
+src/components/shared/data-table.tsx
+  s_99a901aaff853d::t_e75c2cb07bd1ab 1568
+  s_99a901aaff853d::t_0052a9aa436405 1729,1731
+  s_99a901aaff853d::t_d5f2452a091abf 1665
+  s_99a901aaff853d::t_02f600656fd956 278
+  s_99a901aaff853d::t_1a3d7389dd7fbb 1539-1542
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_99a901aaff853d::t_d950e8e742c791 35-37,41-43,48-57,59-129
+  s_99a901aaff853d::t_d4f187a2cb7cc4 58
+  s_99a901aaff853d::t_53e9c414782664 38-40
+  s_99a901aaff853d::t_2b89ee75a83249 44-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "76d5644f4ba806b7ca7dc12c4d2f17fda911452f",
+  "prompts": {},
+  "sessions": {
+    "s_99a901aaff853d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f784a8d4bffeR0qnbOu2y7Xf5h",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

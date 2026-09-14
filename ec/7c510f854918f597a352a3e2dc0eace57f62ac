@@ -1,0 +1,108 @@
+src/app/(views)/genome/genome-collection.tsx
+  s_223825491bbd79::t_12bcd5876e1725 98-99,103-105
+src/components/views/__tests__/resource-collection.test.tsx
+  s_bcb437f2ef4410::t_04f4cd9a0ba1e7 493-499,502
+  s_bcb437f2ef4410::t_e877776b8f68b7 409,413,417,421-422,425,431
+  s_bcb437f2ef4410::t_c171a87154f52c 378-383
+  s_bcb437f2ef4410::t_83631c9d9b3c03 532
+  s_bcb437f2ef4410::t_7452f7bdec2bc0 384-389
+  s_bcb437f2ef4410::t_6bd8a52320b1a8 426-430
+src/app/services/(genomics)/blast/__tests__/database-selector.test.tsx
+  s_a5f055dc2fd68f::t_5a1111baae72d4 1
+  s_b278299c27731f::t_f8488fc36371c7 31,33-34
+  s_a5f055dc2fd68f::t_65987ca38e97ab 16
+  s_a5f055dc2fd68f::t_524370429b7534 73-90
+  s_b278299c27731f::t_2fd0a812984917 2-7,9,11-15,17,27-30,32,35-51,93-118,120-124
+  s_a5f055dc2fd68f::t_f1f5f396e080c7 19
+  s_b278299c27731f::t_ea58271dd17f41 10
+  s_a5f055dc2fd68f::t_42e925b5d0feda 54-58
+  s_b278299c27731f::t_924458fef759d8 119
+  s_a5f055dc2fd68f::t_e69819f5eb70f5 18,20-26
+  s_a5f055dc2fd68f::t_01887b8db21291 8
+  s_a5f055dc2fd68f::t_b45875a6daa79e 52-53,59-72,91-92
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_95ce9641c69865::t_623c8de0708c03 8,137,139,155-157
+  s_2cef09c0f94c6c::t_52c1adbd55d6da 23,30,178,198,216,218,232,499,513,533,547,594
+src/components/views/__tests__/selection-service-chooser.test.tsx
+  s_f92f0f965d3478::t_5a06872ba4b25d 137-153
+src/components/views/selection-service-chooser.tsx
+  s_f92f0f965d3478::t_b9b39468f250b9 136-137,140-146
+src/components/taxonomy/tax-id-selector.tsx
+  s_a5f055dc2fd68f::t_fb6c5b6749cfb3 113-118
+src/app/(views)/genome/__tests__/genome-collection.test.tsx
+  s_223825491bbd79::t_6f25d831369f44 232-247
+src/components/views/resource-collection.tsx
+  s_bcb437f2ef4410::t_f79df033efef27 625-629
+e2e/pages/taxon-page.ts
+  s_95ce9641c69865::t_e9a3376d315638 30-42
+src/app/services/(genomics)/blast/database-selector.tsx
+  s_b278299c27731f::t_3c326c593a98a8 4
+  s_b278299c27731f::t_a6765aeb3bd38f 25-29,37
+  s_b278299c27731f::t_c2cad1d4e75dd2 44
+  s_b278299c27731f::t_99370169c6f23c 30-33
+  s_b278299c27731f::t_dafd3c2cafae19 34-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ec7c510f854918f597a352a3e2dc0eace57f62ac",
+  "prompts": {},
+  "sessions": {
+    "s_223825491bbd79": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f98613fffesSID09MXURAaqk",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_2cef09c0f94c6c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f85cb98ffemWwB5RTPPTlFyc",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_95ce9641c69865": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f4cf323ffeaLDqYaLUJJ5U9k",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_a5f055dc2fd68f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f30bb4bffeJYCM4o9QTad4TY",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b278299c27731f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f789ae2ffe5nh0QbZbJl8jjk",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bcb437f2ef4410": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f6f47a8ffedMBek9dRRUl2eE",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f92f0f965d3478": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5f43b462ffe6Lc3nq9eoFJ8qs",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

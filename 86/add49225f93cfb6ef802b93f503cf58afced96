@@ -1,0 +1,25 @@
+src/components/workspace/file-viewer/viewers/__tests__/structure-viewer.test.tsx
+  s_99e8d744587c5c::t_f6d25fb3177463 210-270
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  s_99e8d744587c5c::t_b2b8afd28b888a 23-25
+  s_99e8d744587c5c::t_97dc83507f4f2d 55
+  s_99e8d744587c5c::t_59ff792a5c88d5 107
+  s_99e8d744587c5c::t_67c8366e2aa0e8 26-41
+  s_99e8d744587c5c::t_d00dc5f685ec2d 132-139,150-153,155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "86add49225f93cfb6ef802b93f503cf58afced96",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

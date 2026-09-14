@@ -1,0 +1,81 @@
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_99e8d744587c5c::t_264dc43e954fb2 5-9,14-20,47-64,75-76,79,85-87,90,94,98,109,112-113,121,124,135-150,153,155,166-190,193,196,202,204,212,216,232-233,241-242,245
+src/app/api/data/[resource]/route.ts
+  s_99e8d744587c5c::t_f3265dcabf2c46 143-151
+src/lib/interactions/types.ts
+  s_99e8d744587c5c::t_0c6d4ba8b295a6 3-5
+src/lib/interactions/schema.ts
+  s_99e8d744587c5c::t_fabb5ae1896451 1-38
+docs/architecture.md
+  s_99e8d744587c5c::t_8f76b4f82db80b 86-88
+e2e/tests/organisms/interactions.spec.ts
+  s_99e8d744587c5c::t_ed6d23cb0b0f72 1-2,132
+  s_99e8d744587c5c::t_e5cfec8a59902f 89,99-108,121-124,126-131,133-144,151-154,161-171,176
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_99e8d744587c5c::t_4c86e14e8033dd 121-123,125
+src/components/organisms/taxon-views/interactions.tsx
+  s_99e8d744587c5c::t_d1e71a046238d5 4,10
+src/lib/data-api/query-options.ts
+  s_99e8d744587c5c::t_f082287ae3db62 3-8,20-24
+src/components/interactions/interactions-graph.tsx
+  s_99e8d744587c5c::t_3b69eced7e79e2 26
+  s_99e8d744587c5c::t_2bb9ba1948603f 6-10
+  s_99e8d744587c5c::t_c7adc69c2dab4d 50,54-57,59,65,70-71
+  s_99e8d744587c5c::t_8308d933726c4a 80,82-83,86,94
+  s_99e8d744587c5c::t_3b4ddffb70dea4 175
+  s_99e8d744587c5c::t_07435e2a6aa385 172-174,176-186
+src/lib/views/__tests__/interaction-predicates.test.ts
+  s_99e8d744587c5c::t_0ee891c90bce77 107-109
+  s_99e8d744587c5c::t_3cf98e78d01276 1-20,24-38,40-106,110-112
+  s_99e8d744587c5c::t_9ee520f65c2c38 21-23
+  s_99e8d744587c5c::t_2cc299ed8925ea 39
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_99e8d744587c5c::t_8c0e1b4de68965 15,22,33,35,48,52,56,70,76,81,85,99-102,105-125,129
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_0df4f3045d0656 121-141
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_99e8d744587c5c::t_fe324a5e88ab2a 141-151,199-248
+  s_99e8d744587c5c::t_e0387b9f8e0df4 140,249
+src/components/views/resource-child-collection.tsx
+  s_99e8d744587c5c::t_c4f4a46cd9f6e0 270
+  s_99e8d744587c5c::t_47790631fa310d 266
+  s_99e8d744587c5c::t_86eccbb659af7c 94-100
+  s_99e8d744587c5c::t_051c115afcf44f 234-235,238-241
+  s_99e8d744587c5c::t_98c813540d475e 134-150
+src/lib/interactions/use-interactions.ts
+  s_99e8d744587c5c::t_66f07c79f0577a 79-82
+  s_99e8d744587c5c::t_e5ef377aaf98d3 1-2,4-78,83-94,96-101,104,106,108-110,112-115,117
+  s_99e8d744587c5c::t_693cd6a8ac686c 102-103,105,107
+src/components/interactions/interactions-subview-shell.tsx
+  s_99e8d744587c5c::t_614776604ee2f7 12,16-19,25-29,51,62
+src/lib/views/child-resources.ts
+  s_99e8d744587c5c::t_b36d7cdbaae5fc 79-85,87,90-96
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_99e8d744587c5c::t_9a3d821646e00d 1-11,19-20,58-215
+  s_99e8d744587c5c::t_b63832f5641e0b 12-18,21-33,42-57
+  s_99e8d744587c5c::t_e7695a6c44f14f 34-41
+e2e/fixtures/overrides/interactions.ts
+  s_99e8d744587c5c::t_5920f35810b803 71-74
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_99e8d744587c5c::t_884b9142beeeba 7-29,31-35,38-40,42,45-59,62-66,69-74,76-85,88,90-94,97,100-102,104-113,115-116,119,121-126,129,132-134,137-143,145,147-149,152-160,162-165,167-170
+  s_99e8d744587c5c::t_e53c9f8ac26e83 86-87,114,161
+  s_99e8d744587c5c::t_b4f11467c5e8d0 60-61,75
+.github/workflows/pnpm-a11y.yml
+  s_99e8d744587c5c::t_056b64cec0b52b 53-56,108-111,163-166,218-221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "77cdbe156eb21690bc98aa57e37b5827a4653bcf",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

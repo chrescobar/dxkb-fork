@@ -1,0 +1,19 @@
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_9a2c5fe0c21667::t_26c9a179ca58fb 145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "a570888d68019de56012f6ae18e585ed4a784944",
+  "prompts": {},
+  "sessions": {
+    "s_9a2c5fe0c21667": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5ebeaac7ffeuqTuBx8Uy9LrQf",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

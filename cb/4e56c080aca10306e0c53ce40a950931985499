@@ -1,0 +1,62 @@
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_99e8d744587c5c::t_076a837a25253f 817-829,831-834,843-846,848,853,855,859-860
+  s_aacb44ad711837::t_d47ce8fd2a701c 758-760
+  s_831161bba05fce::t_936156d5b0947d 746,749,755,772,815
+  s_99e8d744587c5c::t_4ef8b919e0d332 734-744,750,754,763,766-767,769,771,780,783-784,786,788,790,793,795,798,801-802,804,806-808,811,813
+src/components/services/list-data-utils.ts
+  s_99e8d744587c5c::t_6b4560b2d34b9e 117-119,126,143
+src/components/services/list-data.tsx
+  s_99e8d744587c5c::t_b4a5f02dead6aa 519-526
+  s_99e8d744587c5c::t_0bcbbad23c1ff2 502
+  s_99e8d744587c5c::t_f3821f0a3623b3 28
+  s_99e8d744587c5c::t_47c984d9432ca8 8,12-13,23-27
+  s_99e8d744587c5c::t_0e3a572e29aafb 459,472-477,479,504-518,527-537
+  s_99e8d744587c5c::t_d924818277eaf2 460-471,478,480-501,503
+  s_99e8d744587c5c::t_9ba35477b794cd 583
+src/components/shared/data-table.tsx
+  s_99e8d744587c5c::t_5c48f7b7fa43fb 924-933
+  s_99e8d744587c5c::t_de1d66e74948e1 1049-1080
+src/components/services/__tests__/list-data-download-selected.test.tsx
+  s_99e8d744587c5c::t_36a99c58f264e9 146-163
+  s_99e8d744587c5c::t_0e3f0abcd282c6 144,378-394
+  s_99e8d744587c5c::t_91d99bb7660a65 199,244-249,253-256,281-283,287-290
+  s_99e8d744587c5c::t_1cbae90facdc78 75,82-86,94-99
+  s_99e8d744587c5c::t_7416272be9d840 1-74,76-81,87-93,100-136,142-143,164-198,200-243,250-252,257-280,284-286,291-307,395
+  s_99e8d744587c5c::t_2a0ea851da00ef 137-141
+  s_99e8d744587c5c::t_0dffd13cd3bf1d 308-377
+  s_99e8d744587c5c::t_4e6f7b3c4a473a 145
+src/components/views/resource-export.ts
+  s_99e8d744587c5c::t_0f30fd5bd2104a 58-62,70-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "cb4e56c080aca10306e0c53ce40a950931985499",
+  "prompts": {},
+  "sessions": {
+    "s_831161bba05fce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ada4fe37-a486-4e6b-894d-691381534acb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    },
+    "s_aacb44ad711837": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fe5030014ffe8rUCVd0noAcPF2",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

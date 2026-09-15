@@ -1,0 +1,96 @@
+src/lib/strain-view/fields.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 1-37
+src/lib/genome-view/profile.ts
+  s_99e8d744587c5c::t_63969ba183b06b 2,6-8
+src/lib/experiment-view/profile.ts
+  s_99e8d744587c5c::t_972cea450c4bd9 3,7-12
+src/lib/serology-view/fields.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 1-7
+src/lib/feature-view/fields.ts
+  s_99e8d744587c5c::t_cb57c62a8c0fc2 9-11,14-18
+  s_99e8d744587c5c::t_63969ba183b06b 1-8,12-13,19-24
+src/lib/experiment-view/query.ts
+  s_99e8d744587c5c::t_972cea450c4bd9 9,11,16
+src/lib/taxonomy-view/query.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 9,11
+src/lib/surveillance-view/query.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 9,11,16
+docs/architecture.md
+  s_99e8d744587c5c::t_387521835d440a 81
+  s_99e8d744587c5c::t_6c155467143e03 82-91
+src/lib/feature-view/query.ts
+  s_99e8d744587c5c::t_63969ba183b06b 9,11
+src/lib/protein-structure-view/profile.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 3,7-10
+src/lib/protein-feature-view/fields.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 1-22
+src/lib/protein-feature-view/profile.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 3,7-9
+src/lib/strain-view/query.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 9,11,16
+src/lib/strain-view/profile.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 2,6-8
+src/lib/taxonomy-view/profile.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 3,7-9
+src/lib/views/__tests__/field-metadata.test.ts
+  s_99e8d744587c5c::t_3d80ae3ac53115 2,6-9,26-27,30-36,38-48,50-52,59,69-70,76-77,83-84,92-93,100-101,107-109,115-116,122-123,125-131,151,160,190
+  s_99e8d744587c5c::t_54e7f2bd670ba6 89-91,96,132-146,330-333,337-338,340-344
+  s_99e8d744587c5c::t_b6a69a56de6874 1,3-5,10-25,28-29,37,49,53-58,60-68,71-75,78-82,85-88,94-95,97-99,102-106,110-114,117-121,124,147-150,152-159,161-189,191-329,334-336,339,345-366
+src/lib/taxonomy-view/fields.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 1-7
+src/lib/genome-view/query.ts
+  s_99e8d744587c5c::t_63969ba183b06b 10,12
+src/lib/experiment-view/fields.ts
+  s_99e8d744587c5c::t_972cea450c4bd9 1-12
+src/lib/feature-view/profile.ts
+  s_99e8d744587c5c::t_63969ba183b06b 3,7-9
+src/lib/epitope-view/fields.ts
+  s_99e8d744587c5c::t_7fe959ac8e73d4 1-12
+src/lib/views/field-metadata.ts
+  s_99e8d744587c5c::t_41dd9c93c4b756 15,25-26,42-47,55,57-59,77-81,88-90,101-108,110-111,117,138-140
+  s_99e8d744587c5c::t_031da3936db054 1-14,16-24,27-41,48-54,56,60-76,82-87,91-100,109,112-116,118-137,141-142
+src/lib/genome-view/fields.ts
+  s_99e8d744587c5c::t_63969ba183b06b 1-7
+src/lib/surveillance-view/profile.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 3,7-9
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_99e8d744587c5c::t_acc027ac432715 11-23,37,42,46,49-50,54,57,61,67,70-71,75,78,81-83,85-87,99-107,109-119,197-198,201-205,210-211,214-216,218-253
+  s_99e8d744587c5c::t_6a89ab86e41192 217
+  s_99e8d744587c5c::t_2cd680c244fd17 1-10,24-36,38-41,43-45,47-48,51-53,55-56,58-60,62-66,68-69,72-74,76-77,79-80,84,88-98,108,120-196,199-200,206-209,212-213,254-462
+src/lib/protein-feature-view/query.ts
+  s_99e8d744587c5c::t_f1037fcdc68236 9,11,16-20
+src/lib/views/child-resources.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 6,8-27
+src/lib/protein-structure-view/fields.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 1-26
+src/lib/epitope-view/profile.ts
+  s_99e8d744587c5c::t_7fe959ac8e73d4 3,11
+  s_99e8d744587c5c::t_721396230534b7 7-9
+src/lib/serology-view/profile.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 3,7-9
+src/lib/epitope-view/query.ts
+  s_99e8d744587c5c::t_721396230534b7 11,16
+  s_99e8d744587c5c::t_7fe959ac8e73d4 9
+src/lib/serology-view/query.ts
+  s_99e8d744587c5c::t_f1037fcdc68236 9,11,16
+src/lib/surveillance-view/fields.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 1-7
+src/lib/protein-structure-view/query.ts
+  s_99e8d744587c5c::t_f1037fcdc68236 1,9,11,16-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b53533e8c76c244713af1f0a3bc4f8782c7f158e",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

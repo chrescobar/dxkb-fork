@@ -1,0 +1,45 @@
+src/components/views/overview-card.tsx
+  s_99e8d744587c5c::t_990f5631ac86f8 16-23
+  s_99e8d744587c5c::t_d857f7e1733f09 1-15,35-37,42-45,48-52,58-63,66-119
+  s_99e8d744587c5c::t_d329097bad2b80 24-34,38-41,46-47,53-57,64-65
+src/app/(views)/serology/[sampleId]/serology-overview.tsx
+  s_99e8d744587c5c::t_038053cec53572 1-6,32,34-35,51-63
+src/components/views/index.ts
+  s_99e8d744587c5c::t_6ee07495bc28c9 6
+src/components/views/__tests__/overview-card.test.tsx
+  s_99e8d744587c5c::t_ce81266a2754c5 1-27,39,41-69,81-122,132-219
+  s_99e8d744587c5c::t_95c0c3923f35ae 124-131
+  s_99e8d744587c5c::t_bf92dbbfa9aa16 123
+  s_99e8d744587c5c::t_aeb9b1b55579d3 70
+  s_99e8d744587c5c::t_8af4445ea748d3 71-80
+  s_99e8d744587c5c::t_c6281386ff4803 40
+  s_99e8d744587c5c::t_90b00234383e7b 28-38
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_99e8d744587c5c::t_8a413673e44fe9 2-6,18-69
+src/app/(views)/experiment/[experimentId]/experiment-overview.tsx
+  s_99e8d744587c5c::t_933fd4098ff138 3-8,31-48,50-62,93-221
+src/app/(views)/genome/[genomeId]/genome-overview.tsx
+  s_99e8d744587c5c::t_8175477c715b40 2-6,23-30,38-121
+src/app/(views)/surveillance/[sampleId]/surveillance-overview.tsx
+  s_99e8d744587c5c::t_84b112b46550f4 1-6,42,44-45,78-90
+docs/architecture.md
+  s_99e8d744587c5c::t_064e2841c856e8 81
+src/app/(views)/feature/[featureId]/feature-overview.tsx
+  s_99e8d744587c5c::t_1a24dc2aa199d3 2-6,11,23-31,38-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e8d1eb096be611df26f1e66bdc91b7dbdb463f22",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

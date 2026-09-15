@@ -1,0 +1,37 @@
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_99e8d744587c5c::t_8a413673e44fe9 2-6,18-69
+src/components/views/overview-card.tsx
+  s_99e8d744587c5c::t_d857f7e1733f09 1-96
+src/app/(views)/surveillance/[sampleId]/surveillance-overview.tsx
+  s_99e8d744587c5c::t_84b112b46550f4 1-6,42,44-45,78-90
+src/app/(views)/genome/[genomeId]/genome-overview.tsx
+  s_99e8d744587c5c::t_8175477c715b40 2-6,23-30,38-121
+src/components/views/index.ts
+  s_99e8d744587c5c::t_6ee07495bc28c9 6
+docs/architecture.md
+  s_99e8d744587c5c::t_011b1800d816dd 81
+src/app/(views)/feature/[featureId]/feature-overview.tsx
+  s_99e8d744587c5c::t_1a24dc2aa199d3 2-6,11,23-31,38-112
+src/app/(views)/serology/[sampleId]/serology-overview.tsx
+  s_99e8d744587c5c::t_038053cec53572 1-6,32,34-35,51-63
+src/components/views/__tests__/overview-card.test.tsx
+  s_99e8d744587c5c::t_ce81266a2754c5 1-198
+src/app/(views)/experiment/[experimentId]/experiment-overview.tsx
+  s_99e8d744587c5c::t_933fd4098ff138 3-8,31-48,50-62,93-221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "554131fdafb06de54cf1a471326b55f687398ce0",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

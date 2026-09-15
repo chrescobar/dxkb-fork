@@ -1,0 +1,52 @@
+src/lib/experiment-view/query.ts
+  s_99e8d744587c5c::t_fdad7c5f38706c 38-40,46
+  s_99e8d744587c5c::t_653f56fb467186 3,10
+src/lib/views/structural-rql.ts
+  s_99e8d744587c5c::t_e7b7aa97839145 1-55
+src/lib/protein-structure-view/query.ts
+  s_99e8d744587c5c::t_3a00fb0d4fda8f 43-46,50-51
+  s_99e8d744587c5c::t_b5a7cd94aad336 3,10
+src/lib/views/__tests__/structural-rql.test.ts
+  s_99e8d744587c5c::t_03fdda8d13924e 95-106
+  s_99e8d744587c5c::t_33fcd1edf739b6 225
+  s_99e8d744587c5c::t_882c64c4387631 1-94,107-224,226-291
+src/lib/protein-feature-view/query.ts
+  s_99e8d744587c5c::t_2d86795b991482 40
+  s_99e8d744587c5c::t_0ff6fdbe39e597 3,10
+src/lib/taxonomy-view/query.ts
+  s_99e8d744587c5c::t_6d33771efe6572 33
+  s_99e8d744587c5c::t_c7eb037a902abb 3,10
+src/lib/serology-view/query.ts
+  s_99e8d744587c5c::t_4453f7ed762da0 39
+  s_99e8d744587c5c::t_5907a2eaaefaa8 3,10
+src/lib/genome-view/query.ts
+  s_99e8d744587c5c::t_fb4d0e34792225 1,8
+  s_99e8d744587c5c::t_4b3ec76ed41a6f 48-61,65-68
+docs/architecture.md
+  s_99e8d744587c5c::t_2e49770548d1bb 79
+src/lib/strain-view/query.ts
+  s_99e8d744587c5c::t_138ca7ce3fbb63 59-62,66-67
+  s_99e8d744587c5c::t_cbd5eca9a0ea43 3,10
+src/lib/epitope-view/query.ts
+  s_99e8d744587c5c::t_63290af041deb8 34-37,41-42
+  s_99e8d744587c5c::t_fd6d9bf94ea66d 10
+src/lib/surveillance-view/query.ts
+  s_99e8d744587c5c::t_88361cdbcd7ae7 39
+  s_99e8d744587c5c::t_73031679f23b73 3,10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0ed3ffbe25be613239dbf41803b66647d7975c87",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

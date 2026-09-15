@@ -1,0 +1,38 @@
+src/lib/rate-limit.ts
+  s_99e8d744587c5c::t_3fb09fbba798f1 28-40,54
+  s_99e8d744587c5c::t_afdfd048d19123 75
+  s_99e8d744587c5c::t_e509e6446520e8 76-83
+  s_99e8d744587c5c::t_33646ec2d71d56 27
+src/lib/__tests__/rate-limit.test.ts
+  s_99e8d744587c5c::t_7d6b33371c7190 2
+  s_99e8d744587c5c::t_048ddfb21addb1 52
+  s_99e8d744587c5c::t_517342759650e2 38-51,53-56
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_c80ccd6e3b11b4 19-48
+  s_99e8d744587c5c::t_2a8844e720df61 3-4
+  s_99e8d744587c5c::t_1111c5e93c550a 313-355
+  s_99e8d744587c5c::t_8ebfbc063a6ec5 203-312
+src/app/api/data/[resource]/route.ts
+  s_99e8d744587c5c::t_e78d43196269ff 9
+  s_99e8d744587c5c::t_3e4c064b222cec 179-191
+  s_99e8d744587c5c::t_3e86aea3515b56 194
+  s_99e8d744587c5c::t_9369b5819c7ad1 249,264
+  s_99e8d744587c5c::t_29ccaf2bb310cd 250-251,265-270,272-273,275-276
+  s_99e8d744587c5c::t_264855c5f07647 27-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "709e4d177600a531cfd4dea98d485c3ec051bddf",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

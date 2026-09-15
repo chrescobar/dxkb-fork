@@ -1,0 +1,39 @@
+src/lib/views/__tests__/collection-state.test.ts
+  s_99e8d744587c5c::t_3d9be1ec770bec 4,7,9-10
+  s_99e8d744587c5c::t_f144f7a277422a 240-400
+src/hooks/views/use-collection-url-state.ts
+  s_99e8d744587c5c::t_27c6166473628b 12-13,22,28
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_99e8d744587c5c::t_22c1289d59b408 91-95
+  s_99e8d744587c5c::t_4cc6505eefc99b 6-8,10-18,27-47
+  s_99e8d744587c5c::t_4d1dfe64eb853b 48
+src/lib/views/collection-state.ts
+  s_99e8d744587c5c::t_a32d0da0832174 282-311,313-335,342
+  s_99e8d744587c5c::t_8ca86dc43b9eb3 312
+  s_99e8d744587c5c::t_cd31be245d5fa2 198-219
+src/components/organisms/landing-shell/__tests__/landing-shell-client.test.tsx
+  s_99e8d744587c5c::t_be468dbb54fc66 134
+  s_99e8d744587c5c::t_45b09508b5e2d9 15-24,27-37
+  s_99e8d744587c5c::t_ebd54653bf42c9 99-133,135-159
+  s_99e8d744587c5c::t_8b4111fe3e742a 38
+src/hooks/views/__tests__/collection-state.test.ts
+  s_99e8d744587c5c::t_e08829b7e0e172 105-129
+docs/architecture.md
+  s_99e8d744587c5c::t_8353e85cd1802f 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "da0341e452f628da7e1f46bcd709bcab8c2dc0ed",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

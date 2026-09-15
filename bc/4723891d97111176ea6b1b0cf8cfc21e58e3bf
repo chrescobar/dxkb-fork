@@ -1,0 +1,58 @@
+src/lib/__tests__/rerun-utility.test.ts
+  s_99e8d744587c5c::t_166e9bbd349042 270,279-281,336-338,340
+src/components/jobs/jobs-browser.tsx
+  s_99e8d744587c5c::t_37d3c2eabbc050 344-346,348
+src/components/views/__tests__/resource-collection.test.tsx
+  s_99e8d744587c5c::t_024ab7e1fe5d9a 2791,2818,2910
+  s_99e8d744587c5c::t_459c4889ace752 2784-2790,2792-2817,2819-2909,2911-2927
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_99e8d744587c5c::t_f40e8a1c4ccc86 286-322
+  s_99e8d744587c5c::t_76c36a0c22aa86 23-25,29-30,34-35,37-63,117-123,137,149
+  s_99e8d744587c5c::t_de1ed3013b7abf 323
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_99e8d744587c5c::t_81f40945ca836b 56,58,64,66,160-181,183
+  s_99e8d744587c5c::t_f88cb174edf89b 182
+src/app/api/data/[resource]/route.ts
+  s_99e8d744587c5c::t_d5b15b7841cafc 18-26,154-162,164,168
+src/components/views/resource-child-collection.tsx
+  s_99e8d744587c5c::t_0bc061090ab370 136-153
+src/components/views/__tests__/selection-service-chooser.test.tsx
+  s_99e8d744587c5c::t_17b5a4b57ff439 31-34,710-771
+  s_99e8d744587c5c::t_154defb75a2788 772
+src/lib/utils.ts
+  s_99e8d744587c5c::t_2f7226bf5d9c4e 10-42
+src/components/views/selection-service-chooser.tsx
+  s_99e8d744587c5c::t_de1a161c0bfe10 16,127-132,297-300
+src/lib/rerun-utility.ts
+  s_99e8d744587c5c::t_a4e118f104b17c 75-83,88,146-149,157
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_3e0cf174fad405 124-126,136-139,142,145-147
+src/components/views/resource-collection.tsx
+  s_99e8d744587c5c::t_5c203f0d31e6a2 33,286-292,296-299,610-612,651-653,778,966-969
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_99e8d744587c5c::t_c8479a7a0caba8 248-304
+src/lib/__tests__/utils.test.ts
+  s_99e8d744587c5c::t_ef2bf8cf84ff81 1-7,72-129
+  s_99e8d744587c5c::t_c2074cff433503 130
+src/components/interactions/interactions-graph.tsx
+  s_99e8d744587c5c::t_4a5ead4c342492 19
+  s_99e8d744587c5c::t_32a8a2f76c40f9 7,71,127-150
+.claude/rules/testing.md
+  s_99e8d744587c5c::t_976520158dd9e6 65-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "bc4723891d97111176ea6b1b0cf8cfc21e58e3bf",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

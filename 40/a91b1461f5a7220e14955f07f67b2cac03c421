@@ -1,0 +1,60 @@
+src/lib/views/__tests__/compound-sample-page.test.ts
+  s_99e8d744587c5c::t_d88f8b0f45e13e 1-7
+src/lib/experiment-view/server.ts
+  s_99e8d744587c5c::t_0a1910e5e7dccf 2,10
+src/lib/serology-view/server.ts
+  s_99e8d744587c5c::t_1404643a6c628d 2-3
+  s_99e8d744587c5c::t_5b8a183262d3b1 36
+docs/architecture.md
+  s_99e8d744587c5c::t_efac96065ab0e5 55
+src/lib/surveillance-view/server.ts
+  s_99e8d744587c5c::t_4b1e7b74a01e3f 42
+  s_99e8d744587c5c::t_64f888f4d6b6ee 2-3
+src/lib/surveillance-view/__tests__/surveillance-view.test.ts
+  s_99e8d744587c5c::t_c4fd8fb56f452e 1-6
+src/lib/protein-structure-view/__tests__/server.test.ts
+  s_99e8d744587c5c::t_351704fa3caa4f 89-107
+  s_99e8d744587c5c::t_a4f8870524cc47 1-5
+  s_99e8d744587c5c::t_f4dac3270474e9 7-8,14-17,19,30-32,50-58,70-88
+  s_99e8d744587c5c::t_ac8bc1362029f8 9,13,18,24-25
+src/lib/data-api/__tests__/server-repository.test.ts
+  s_99e8d744587c5c::t_d466b0ffaee4a0 38-45
+  s_99e8d744587c5c::t_e559377233e2be 1-6
+  s_99e8d744587c5c::t_9c43ba600b0ea6 10
+  s_99e8d744587c5c::t_3bce1084e6bc0f 8-9,11-31,33-37,46-147
+  s_99e8d744587c5c::t_cba9bfce8bfa2e 7
+  s_99e8d744587c5c::t_da0a2519a7e47c 32
+src/lib/data-api/server-repository.ts
+  s_99e8d744587c5c::t_d651524e98c52d 34-46,48-50,59-65
+  s_99e8d744587c5c::t_72ff99481e8e0f 1-3,5-33,47,51-58,66-74
+  s_99e8d744587c5c::t_3fea7cbc4e92fb 4
+src/lib/protein-structure-view/server.ts
+  s_99e8d744587c5c::t_4afd91d58ccd1c 31
+  s_99e8d744587c5c::t_7d8182254c7e3f 2
+  s_99e8d744587c5c::t_98e440fd7df048 1,14-24,28-30,32-34,43,47
+  s_99e8d744587c5c::t_f16c514aad8f16 35-42
+src/lib/serology-view/__tests__/serology-view.test.ts
+  s_99e8d744587c5c::t_2bd4f232c45afd 1-6
+src/lib/genome-view/server.ts
+  s_99e8d744587c5c::t_bf229496a5af80 2,7
+src/lib/feature-view/server.ts
+  s_99e8d744587c5c::t_cfb2e9be67a01f 2,15
+src/lib/epitope-view/server.ts
+  s_99e8d744587c5c::t_94f6049d21957e 2,6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "40a91b1461f5a7220e14955f07f67b2cac03c421",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

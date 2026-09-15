@@ -1,0 +1,44 @@
+docs/architecture.md
+  s_99e8d744587c5c::t_54ace9fd24aefa 79,85-87
+src/components/views/__tests__/resource-collection-actions.test.tsx
+  s_99e8d744587c5c::t_7eced24365a68a 1-113,116-120,122,127-128,134-164,167-179,181-195,197,199-231,233-234,236-237,241-242,246,249-252,254-255,261-262
+  s_99e8d744587c5c::t_778d5fe07cb711 129-133,165-166,180,196,198,257
+  s_99e8d744587c5c::t_ccd36c44f19018 114-115,121,123-126,232,235,238-240,243-245,247-248,253,256,258-260
+src/components/views/__tests__/resource-collection.test.tsx
+  s_99e8d744587c5c::t_53389dfff56cef 3381-3383,3386
+  s_99e8d744587c5c::t_6f45b510726361 3171-3173
+  s_99e8d744587c5c::t_68d381f5b50fc5 3437-3481
+  s_99e8d744587c5c::t_2c25790a3d2fef 4,2962-2965,2967-3112,3114-3170,3174-3203,3205-3380,3384-3385,3387-3398,3400-3436,3482
+  s_99e8d744587c5c::t_3eecce6ffdf29c 2966,3113,3204,3399
+src/components/views/resource-collection.tsx
+  s_99e8d744587c5c::t_c0f72e328ea7fb 226-228,230-239,271
+  s_99e8d744587c5c::t_3272ef92c19db5 10,345-367,374-376,527,585
+  s_99e8d744587c5c::t_164b354ece2e8a 215-223
+  s_99e8d744587c5c::t_7eac0afd847b85 72
+  s_99e8d744587c5c::t_aeebe727a086f0 3
+  s_99e8d744587c5c::t_3eecce6ffdf29c 73
+  s_99e8d744587c5c::t_52c4f013d8b9bc 214
+src/components/views/resource-collection-actions.tsx
+  s_99e8d744587c5c::t_972362409146c8 390
+  s_99e8d744587c5c::t_99563523f4c3bf 1-2,4-247,252-270,275-286,290,292-308,311-371,373-389,391-394,396-430,445,447-455,462-486,490-597,601,606-666,708-712,715
+  s_99e8d744587c5c::t_beda21956da76f 3,395,431-444,446,456-461,487-489,598-600,602-605,667-707,713-714
+  s_99e8d744587c5c::t_492ae0ec7f0c3b 291,310,372
+  s_99e8d744587c5c::t_c47bf93215ef47 248-251
+  s_99e8d744587c5c::t_616bb6e0953fde 271-274,287-289,309
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "80ec2735185d82edabf90531e55b756986dd25cf",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

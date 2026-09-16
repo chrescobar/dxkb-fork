@@ -1,0 +1,55 @@
+src/lib/views/child-resources.ts
+  s_99e8d744587c5c::t_67b4bf72b8a0e4 13-19
+src/lib/views/__tests__/collection-state.test.ts
+  s_99e8d744587c5c::t_0c84bb7163a5e5 58-59,130,135
+src/lib/experiment-view/query.ts
+  s_99e8d744587c5c::t_b5df869820688c 8-11,34
+src/lib/views/structural-rql.ts
+  s_99e8d744587c5c::t_068097a8794935 5-19
+src/lib/protein-structure-view/query.ts
+  s_99e8d744587c5c::t_b5df869820688c 8-11,38
+src/lib/strain-view/query.ts
+  s_99e8d744587c5c::t_b5df869820688c 8-11,34
+src/lib/views/collection-state.ts
+  s_99e8d744587c5c::t_a970f4acca17ab 1,85
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_99e8d744587c5c::t_7ef0e24a1908e9 486-489,494-495
+  s_99e8d744587c5c::t_d90e2ee9773e07 490-493,498,500
+src/lib/views/field-metadata.ts
+  s_99e8d744587c5c::t_fcab0bc5888285 61
+docs/architecture.md
+  s_99e8d744587c5c::t_76d840b814eb46 79-81
+src/lib/epitope-view/query.ts
+  s_99e8d744587c5c::t_b5df869820688c 8-11,34
+e2e/a11y/routes.ts
+  s_99e8d744587c5c::t_67b4bf72b8a0e4 15
+src/lib/views/__tests__/structural-rql.test.ts
+  s_99e8d744587c5c::t_87e48151d19069 12-16,33-36,114-131,150-163,178-191
+  s_99e8d744587c5c::t_69fd77ea2e0108 192-193
+src/lib/taxonomy-view/query.ts
+  s_99e8d744587c5c::t_0f08af2e8cec0b 16-19
+src/components/views/__tests__/resource-collection.test.tsx
+  s_99e8d744587c5c::t_a09d4869d4e885 411-412,580-581,917-918
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_99e8d744587c5c::t_4afd97e01f6073 669-670
+src/components/views/resource-collection.tsx
+  s_99e8d744587c5c::t_33e7a2743674c5 82-86,88,320-328
+src/lib/genome-view/query.ts
+  s_99e8d744587c5c::t_0f08af2e8cec0b 8-11,52-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d010ae504e5249f3959b8b57dd778d3885300120",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

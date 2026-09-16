@@ -1,0 +1,20 @@
+e2e/tests/metadata-link-navigation.spec.ts
+  s_99e8d744587c5c::t_c32545cb076d93 1-9,11,15,29-55,57-58,69-70,72,74-82
+  s_99e8d744587c5c::t_437efb15ac9204 10,12-14,16-28,56,59-68,71,73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1d30fc730eb732433b6a504278d115fd134aace7",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

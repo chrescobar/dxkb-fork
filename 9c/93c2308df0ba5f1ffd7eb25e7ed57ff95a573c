@@ -1,0 +1,98 @@
+src/lib/experiment-view/profile.ts
+  s_99e8d744587c5c::t_972cea450c4bd9 3,7-12
+src/lib/protein-structure-view/fields.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 1-26
+src/lib/epitope-view/fields.ts
+  s_99e8d744587c5c::t_7fe959ac8e73d4 1-12
+src/lib/epitope-view/query.ts
+  s_99e8d744587c5c::t_7fe959ac8e73d4 9
+  s_99e8d744587c5c::t_721396230534b7 11,16
+src/lib/protein-structure-view/query.ts
+  s_99e8d744587c5c::t_f1037fcdc68236 1,9,11,16-20
+src/lib/surveillance-view/profile.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 3,7-9
+src/lib/protein-structure-view/profile.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 3,7-10
+src/lib/taxonomy-view/profile.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 3,7-9
+src/lib/experiment-view/query.ts
+  s_99e8d744587c5c::t_972cea450c4bd9 9,11,16
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_99e8d744587c5c::t_f0e144a5839c15 4,145-164,206-218,296-297,303-306,310-322,325,327-329
+  s_99e8d744587c5c::t_acc027ac432715 12-24,38,43,47,50-51,55,58,62,68,71-72,76,79,82-84,86-88,100-108,110-120,219-220,223-227,232-233,236-238,240-275
+  s_99e8d744587c5c::t_2cd680c244fd17 1-3,5-11,25-37,39-42,44-46,48-49,52-54,56-57,59-61,63-67,69-70,73-75,77-78,80-81,85,89-99,109,121-144,165-205,221-222,228-231,234-235,276-295,298-302,307-309,323-324,326,330-505
+  s_99e8d744587c5c::t_6a89ab86e41192 239
+src/lib/serology-view/profile.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 3,7-9
+src/lib/protein-feature-view/fields.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 1-22
+src/lib/views/child-resources.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 6,8-27
+src/lib/experiment-view/fields.ts
+  s_99e8d744587c5c::t_972cea450c4bd9 1-12
+src/lib/genome-view/query.ts
+  s_99e8d744587c5c::t_63969ba183b06b 10,12
+src/lib/strain-view/fields.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 1-37
+src/lib/feature-view/profile.ts
+  s_99e8d744587c5c::t_63969ba183b06b 3,7-9
+src/lib/feature-view/fields.ts
+  s_99e8d744587c5c::t_cb57c62a8c0fc2 9-11,14-18
+  s_99e8d744587c5c::t_63969ba183b06b 1-8,12-13,19-24
+src/lib/genome-view/fields.ts
+  s_99e8d744587c5c::t_63969ba183b06b 1-7
+src/lib/serology-view/query.ts
+  s_99e8d744587c5c::t_f1037fcdc68236 9,11,16
+src/lib/taxonomy-view/fields.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 1-7
+docs/architecture.md
+  s_99e8d744587c5c::t_6c155467143e03 82,84,88,90,92
+  s_99e8d744587c5c::t_002c30f51a7159 81,83,85-87,89,91
+src/lib/surveillance-view/fields.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 1-7
+src/lib/strain-view/profile.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 2,6-8
+src/lib/genome-view/profile.ts
+  s_99e8d744587c5c::t_63969ba183b06b 2,6-8
+src/lib/protein-feature-view/query.ts
+  s_99e8d744587c5c::t_f1037fcdc68236 9,11,16-20
+src/lib/feature-view/query.ts
+  s_99e8d744587c5c::t_63969ba183b06b 9,11
+src/lib/views/field-metadata.ts
+  s_99e8d744587c5c::t_41dd9c93c4b756 15,48-53,61,63-65,89-93,100-102,113-120,122-123,129,150-152
+  s_99e8d744587c5c::t_031da3936db054 1-14,16-23,33-47,54-60,62,66-77,87-88,94-99,103-112,121,124-128,130-149,153-154
+  s_99e8d744587c5c::t_5c41e485009e44 24-32,78-86
+src/lib/surveillance-view/query.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 9,11,16
+src/lib/serology-view/fields.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 1-7
+src/lib/epitope-view/profile.ts
+  s_99e8d744587c5c::t_721396230534b7 7-9
+  s_99e8d744587c5c::t_7fe959ac8e73d4 3,11
+src/lib/views/__tests__/field-metadata.test.ts
+  s_99e8d744587c5c::t_b6a69a56de6874 1,3-5,10-25,28-29,37,49,53-58,60-68,71-75,78-82,85-88,94-95,97-99,102-106,110-114,117-121,124,147-150,152-159,161-189,191-329,334-336,339,345-366
+  s_99e8d744587c5c::t_3d80ae3ac53115 2,6-9,26-27,30-36,38-48,50-52,59,69-70,76-77,83-84,92-93,100-101,107-109,115-116,122-123,125-131,151,160,190
+  s_99e8d744587c5c::t_54e7f2bd670ba6 89-91,96,132-146,330-333,337-338,340-344
+src/lib/protein-feature-view/profile.ts
+  s_99e8d744587c5c::t_f594866b61cfe5 3,7-9
+src/lib/strain-view/query.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 9,11,16
+src/lib/taxonomy-view/query.ts
+  s_99e8d744587c5c::t_aba65d4b96b24e 9,11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9c93c2308df0ba5f1ffd7eb25e7ed57ff95a573c",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

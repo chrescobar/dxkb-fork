@@ -1,0 +1,61 @@
+src/lib/experiment-view/profile.ts
+  s_99e8d744587c5c::t_fb74096beecbc3 7-12
+src/lib/surveillance-view/tabs.ts
+  s_99e8d744587c5c::t_fc5a02625fe6af 3
+src/lib/serology-view/tabs.ts
+  s_99e8d744587c5c::t_34f8665e94dee5 3
+src/lib/data-api/__tests__/validation.test.ts
+  s_99e8d744587c5c::t_f551eeb6c3af68 211-216
+  s_99e8d744587c5c::t_f079b496aecce8 29
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_99e8d744587c5c::t_44508dc76e8309 7
+src/lib/genome-view/profile.ts
+  s_99e8d744587c5c::t_5cb6864f5424e7 6-8
+src/lib/data-api/client.ts
+  s_99e8d744587c5c::t_b87cb507018172 164
+src/hooks/views/use-resource-collection.ts
+  s_99e8d744587c5c::t_5ef8a8feaf64cf 121
+docs/architecture.md
+  s_99e8d744587c5c::t_01ef4ce96764d2 92
+src/lib/data-api/__tests__/client.test.ts
+  s_99e8d744587c5c::t_b9f230f602629f 120
+  s_99e8d744587c5c::t_5c10ce6c1c74e7 105
+src/lib/strain-view/profile.ts
+  s_99e8d744587c5c::t_a0f26c734a659b 6-8
+src/lib/epitope-view/profile.ts
+  s_99e8d744587c5c::t_1517c5d111d552 7-9
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_99e8d744587c5c::t_07c339f9cae3b0 165,168
+src/lib/protein-structure-view/profile.ts
+  s_99e8d744587c5c::t_31a42ed729d7df 7-9
+src/lib/feature-view/profile.ts
+  s_99e8d744587c5c::t_4fec7e41e68af9 8-9
+src/lib/taxonomy-view/profile.ts
+  s_99e8d744587c5c::t_0c2dfd74aac368 8-9
+src/lib/data-api/validation.ts
+  s_99e8d744587c5c::t_5bbe96ba5abb8f 71
+src/lib/data-api/index.ts
+  s_99e8d744587c5c::t_ce8a2fb8aa63cf 1
+src/lib/surveillance-view/profile.ts
+  s_99e8d744587c5c::t_3cd139a12277ae 7-9
+src/lib/serology-view/profile.ts
+  s_99e8d744587c5c::t_4404e94ab27307 7-9
+src/lib/protein-feature-view/profile.ts
+  s_99e8d744587c5c::t_9126d0cab26014 7-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2359b3f74e1703d7445e96c6d74efb01bdda4300",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

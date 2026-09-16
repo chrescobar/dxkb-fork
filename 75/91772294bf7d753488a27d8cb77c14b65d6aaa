@@ -1,0 +1,28 @@
+.claude/rules/testing.md
+  s_99e8d744587c5c::t_e8762fc0c3d6af 94
+  s_99e8d744587c5c::t_0d5132d366a1b0 43
+e2e/a11y/README.md
+  s_99e8d744587c5c::t_e8762fc0c3d6af 16,19-22
+  s_99e8d744587c5c::t_cf95ccabfec13c 85-92
+  s_99e8d744587c5c::t_1cb1c3396a5522 23
+package.json
+  s_99e8d744587c5c::t_46e62f99e6ab36 32
+.github/workflows/pnpm-a11y.yml
+  s_99e8d744587c5c::t_46e62f99e6ab36 72-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "7591772294bf7d753488a27d8cb77c14b65d6aaa",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

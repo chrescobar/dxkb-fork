@@ -1,0 +1,31 @@
+src/app/search/__tests__/page.test.tsx
+  s_99e8d744587c5c::t_3bc7be82fa6715 126-178
+docs/architecture.md
+  s_99e8d744587c5c::t_2263f61c403425 114
+src/app/search/page.tsx
+  s_99e8d744587c5c::t_990328108cac0f 8
+  s_99e8d744587c5c::t_00b0c4015d4164 105-110,112-124
+  s_99e8d744587c5c::t_709c7ce73e7978 111
+  s_99e8d744587c5c::t_32f9f8e11ea19e 2,5-7,11-17,21-23,25-47
+  s_99e8d744587c5c::t_2e461e758b854e 56
+src/app/search/__tests__/search-type-routing.test.ts
+  s_99e8d744587c5c::t_990328108cac0f 1-157
+src/app/search/search-type-routing.ts
+  s_99e8d744587c5c::t_41e1a7fe41d378 1-202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "41769b9368683292f384a5abfe475d1aad2589be",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

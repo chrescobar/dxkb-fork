@@ -1,0 +1,101 @@
+e2e/fixtures/overrides/catchall.ts
+  s_99e8d744587c5c::t_d836b968566463 43-49
+  s_99e8d744587c5c::t_e014f38102086d 502-510
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_99e8d744587c5c::t_be68ef15eff842 50,248,314,360,405,502,548,579
+  s_99e8d744587c5c::t_f3590fe1c6c250 7-9,11-13,24-26,28-30
+  s_99e8d744587c5c::t_cf65c9ce1f6663 10,16-23,27
+  s_99e8d744587c5c::t_b18ae261b8f75e 31
+e2e/fixtures/overrides/journey.ts
+  s_99e8d744587c5c::t_a61997d63a329c 9-12,15-18,20-22
+e2e/tests/organisms/serology.spec.ts
+  s_99e8d744587c5c::t_951fa8b8bf3301 40
+  s_99e8d744587c5c::t_30a4f941afac9b 2
+e2e/tests/services/services-smoke.spec.ts
+  s_99e8d744587c5c::t_7cadee64f9af37 52
+  s_99e8d744587c5c::t_e5fe16fb53b8b8 6
+e2e/scripts/har-overrides.ts
+  s_99e8d744587c5c::t_9f7cedbe30099b 174-175
+e2e/tests/surveillance-view.spec.ts
+  s_99e8d744587c5c::t_7f5d75fa133709 1-4
+  s_99e8d744587c5c::t_d1a570096f01d7 13-16
+e2e/tests/domains-and-motifs-view.spec.ts
+  s_99e8d744587c5c::t_9fe9cd2148881b 1-4,10-14,20
+  s_99e8d744587c5c::t_921e83ee3bdbd1 37
+e2e/tests/public.spec.ts
+  s_99e8d744587c5c::t_ee1d917eed6b06 4,14
+src/lib/e2e-fixtures/__tests__/transport-parity.test.ts
+  s_99e8d744587c5c::t_705e07c44908e1 3-17,30-33,38-43,64-98,110-114,116,118,131-135,137-138,151-155,157-158,171-175,177-178,191-198,200-201,214-218,220-221,234-237,240-241
+e2e/tests/resource-collection-pagination.spec.ts
+  s_99e8d744587c5c::t_2245194bfe19ad 3-24
+  s_99e8d744587c5c::t_a894b8cd5d7624 162
+e2e/tests/epitope-view.spec.ts
+  s_99e8d744587c5c::t_9dde0476353681 1-5,14-18
+e2e/tests/visual/visual.spec.ts
+  s_99e8d744587c5c::t_e295886be5a87d 16
+  s_99e8d744587c5c::t_b1e15b69d8b43d 6
+e2e/tests/serology-view.spec.ts
+  s_99e8d744587c5c::t_99cf73f91d9374 1-4
+  s_99e8d744587c5c::t_b9626ddeb96971 13
+e2e/tests/jobs-lifecycle.spec.ts
+  s_99e8d744587c5c::t_093e5d8334ce44 363
+e2e/tests/organisms/interactions.spec.ts
+  s_99e8d744587c5c::t_8f568797b3ea9b 4
+  s_99e8d744587c5c::t_cb0acb149c6d3a 16,148
+e2e/tests/organisms/bacteria.spec.ts
+  s_99e8d744587c5c::t_a20ca1d33f64ce 2-6
+  s_99e8d744587c5c::t_330be7ee3c8540 17,76-77
+e2e/tests/organisms/viruses.spec.ts
+  s_99e8d744587c5c::t_b67d8b206ca536 21-22
+  s_99e8d744587c5c::t_6e97b389d438ae 2-6
+e2e/tests/workspace-browse.spec.ts
+  s_99e8d744587c5c::t_ed20013333bbbe 361
+e2e/tests/protein-structure-view.spec.ts
+  s_99e8d744587c5c::t_337883ec1e7f78 1-4
+  s_99e8d744587c5c::t_409a962e1b39cc 30-31
+e2e/tests/taxonomy-view.spec.ts
+  s_99e8d744587c5c::t_f7ab2f71c65720 2-5,12-14
+e2e/tests/organisms/all.spec.ts
+  s_99e8d744587c5c::t_6248982d9cba17 4
+  s_99e8d744587c5c::t_3cd958d9d5b0de 23,31
+  s_99e8d744587c5c::t_a6cf21ec00b934 2-3,5-7
+  s_99e8d744587c5c::t_7954870f16b562 24-30
+e2e/tests/workspace-viewer.spec.ts
+  s_99e8d744587c5c::t_9cf62406bb21f0 101
+e2e/tests/services/genome-assembly.spec.ts
+  s_99e8d744587c5c::t_f7e89919357f91 199
+e2e/tests/viewer-3d.spec.ts
+  s_99e8d744587c5c::t_7056175ca73443 5
+  s_99e8d744587c5c::t_459019b0441c20 35,132
+e2e/tests/workspace-upload.spec.ts
+  s_99e8d744587c5c::t_b23aaa7b378519 69
+e2e/README.md
+  s_99e8d744587c5c::t_9a4b0208e4aeda 134-137
+  s_99e8d744587c5c::t_5ccd9956987340 61,65,67,70-72
+e2e/tests/taxonomy-map.spec.ts
+  s_99e8d744587c5c::t_3b4d0236b16bab 2,9
+e2e/tests/experiment-view.spec.ts
+  s_99e8d744587c5c::t_49f10c72fcd436 1-5,13-19
+e2e/tests/genome-view.spec.ts
+  s_99e8d744587c5c::t_a04fb315c8af14 2-14,21
+  s_99e8d744587c5c::t_ca8cd0a62b8d22 179
+e2e/tests/taxonomy-tree.spec.ts
+  s_99e8d744587c5c::t_e1e2c1794d8806 2-5
+  s_99e8d744587c5c::t_300ee3a233363b 75-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "38302454eb839663a6226c1bfcdc051f6ed9c5b9",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

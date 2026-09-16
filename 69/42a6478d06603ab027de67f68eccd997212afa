@@ -1,0 +1,48 @@
+src/lib/e2e-fixtures/envelopes.ts
+  s_99e8d744587c5c::t_24646a2ebb0567 1-79
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_99e8d744587c5c::t_c9b28e84c56635 1-139
+src/lib/e2e-fixtures/__tests__/transport-parity.test.ts
+  s_99e8d744587c5c::t_ba486e34b5c679 1-158
+e2e/tests/a11y/deep-tier.spec.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 6,62,79,104,117,130,147,162,181,196,221,249,293,305,326,437,482
+e2e/README.md
+  s_99e8d744587c5c::t_273901cebb3b9b 63-73
+e2e/fixtures/overrides/index.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 32-47
+e2e/tests/a11y/reduced-motion.spec.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 13,47,84
+docs/architecture.md
+  s_99e8d744587c5c::t_273901cebb3b9b 28
+src/app/api/e2e-mock/[...path]/route.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 3-14,68,72,82-83,86-87,94,101,106,111,114,117-118,125,131-132,134,136,142,144,147,149,156,163,168,170,172,175-176,183,199,201,203,207
+e2e/fixtures/overrides/journey.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 15-17
+e2e/tests/a11y/keyboard.spec.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 15,56,92,143,204,232,293
+src/lib/e2e-fixtures/__tests__/envelopes.test.ts
+  s_99e8d744587c5c::t_cf9dc1465c29ca 1-63
+src/lib/e2e-fixtures/records.ts
+  s_99e8d744587c5c::t_5af3f1ac0f532b 1-569
+e2e/fixtures/overrides/catchall.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 2-23,26-48,50,52,54,83,85,87,89,91,93,95,97,99,108,110,113-123,144,150,155,157-159,163,166,168,170-177,179,182,184,186-188,190,192,194-202,204,207,209,211-213,223,228,233,235-237,241,248,253,255-257,261-262,270,275,285,290,292-294,298-299,307,312,319,324,326-328,332-333,341,346,353,358,360-362,366,368,373,375-377,381,388,393,395-397,401,406,411,413-415,419,424,426-428,432,437,444-471,500-506,511-519,522
+  s_99e8d744587c5c::t_5cc36aff51ffad 520-521
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_99e8d744587c5c::t_273901cebb3b9b 6,85,91,160,212,287
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6942a6478d06603ab027de67f68eccd997212afa",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

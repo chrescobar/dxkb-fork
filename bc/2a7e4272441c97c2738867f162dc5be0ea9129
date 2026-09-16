@@ -1,0 +1,34 @@
+src/lib/data-api/resources.ts
+  s_99e8d744587c5c::t_ce110024cac4c4 142
+  s_99e8d744587c5c::t_80c5085e013d72 7,23,47,72,138-141,202
+src/lib/data-api/__tests__/validation.test.ts
+  s_99e8d744587c5c::t_29e8473be9ccfc 9,78-105
+  s_99e8d744587c5c::t_2af6ff7d3e5df0 106-107
+docs/architecture.md
+  s_99e8d744587c5c::t_befa2f6ca228c5 87
+src/components/services/__tests__/list-data-download-selected.test.tsx
+  s_99e8d744587c5c::t_58f968325280f9 306-312,314,316-324,328,335-337,339-343
+  s_99e8d744587c5c::t_cfb3e13f6154ff 313
+src/lib/data-api/types.ts
+  s_99e8d744587c5c::t_8e5c816d2cd2c3 8
+src/lib/data-api/index.ts
+  s_99e8d744587c5c::t_80c5085e013d72 18
+src/lib/data-api/schemas.ts
+  s_99e8d744587c5c::t_f4a660152a0581 51-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "bc2a7e4272441c97c2738867f162dc5be0ea9129",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

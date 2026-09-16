@@ -1,0 +1,21 @@
+.github/workflows/pnpm-a11y.yml
+  s_99e8d744587c5c::t_2bafd206a7e5df 71-80,89-91
+  s_99e8d744587c5c::t_702eaa0bbfcf6d 92-94
+  s_99e8d744587c5c::t_ef349d9a1e976a 95-96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b9b70e4f48f51991a2903d9c33652c46cc02d4d9",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

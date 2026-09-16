@@ -1,0 +1,21 @@
+src/components/filterbar/__tests__/facet-panel.test.tsx
+  s_99e8d744587c5c::t_cf95ccabfec13c 7-17
+src/lib/data-api/__tests__/repository.test.ts
+  s_99e8d744587c5c::t_51de2767a421bb 409-550
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "86a8c22b0a2708d2fc94caea3a99471163c7f416",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

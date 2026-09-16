@@ -1,0 +1,47 @@
+src/app/search/page.tsx
+  s_99e8d744587c5c::t_7e61fa98c0edce 125-132
+docs/architecture.md
+  s_99e8d744587c5c::t_fb183394c104c0 114
+src/app/search/__tests__/search-type-routing.test.ts
+  s_99e8d744587c5c::t_6cafdf440d05e3 1-7,12,14,33-41,77-148
+  s_99e8d744587c5c::t_30526457df2a3e 8-11,13
+  s_99e8d744587c5c::t_6bed3a87cd4f5e 149
+src/app/search/typesearch.tsx
+  s_99e8d744587c5c::t_8bf0d754652182 21,35
+src/constants/search-menu.tsx
+  s_99e8d744587c5c::t_8bf0d754652182 1-17,32-75
+  s_99e8d744587c5c::t_b1e4060d18e710 18-31
+e2e/a11y/routes.ts
+  s_99e8d744587c5c::t_c54d1fc7ca75ce 216-227
+src/app/search/search-type-routing.ts
+  s_99e8d744587c5c::t_86d5a51d402647 68-75
+  s_99e8d744587c5c::t_d06765b98e15f7 144-153
+  s_99e8d744587c5c::t_b47409c269393f 116-117
+  s_99e8d744587c5c::t_b867ee4c3570cf 28-32
+e2e/a11y/baseline.generated.ts
+  s_3daacbbce694b9::t_34f8cd9793cf95 90-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1de9e59e0a9cec8c74a366b955f4d887bcf4ddb5",
+  "prompts": {},
+  "sessions": {
+    "s_3daacbbce694b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a8cf54db93e1be33e",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

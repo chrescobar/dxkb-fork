@@ -1,0 +1,23 @@
+src/app/search/typesearch.tsx
+  s_99e8d744587c5c::t_b40b2c402d5f84 3,5,15,17-19,23-26,29-38,40-41,43-49,51,61,74,77,83,91,96,137,143-144,146-148,150-152,154-155,171,179-230,232,234,236-237,244-259
+  s_99e8d744587c5c::t_cfb3e13f6154ff 172
+  s_99e8d744587c5c::t_19d9e9a5fbee98 260
+src/app/search/__tests__/search-type-routing.test.ts
+  s_99e8d744587c5c::t_2a7aa7316d44a4 7,252-272
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "455d3a781c7d993e23892ceb2e28a1271cb1df8b",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

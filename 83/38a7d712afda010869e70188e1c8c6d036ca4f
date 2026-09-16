@@ -1,0 +1,70 @@
+src/components/detail-panel/__tests__/info-panel-search.test.tsx
+  s_99e8d744587c5c::t_22466ba16059e7 349,369-387
+  s_99e8d744587c5c::t_5fc50ef14e73a8 198-348,388
+  s_99e8d744587c5c::t_eeadff7e311d94 350-368
+src/constants/datafields/genome_feature.ts
+  s_99e8d744587c5c::t_2a16136ca790db 29
+docs/architecture.md
+  s_99e8d744587c5c::t_e9e03657112856 121
+  s_99e8d744587c5c::t_1d85c602891a3c 125
+  s_99e8d744587c5c::t_208a61abe90716 117-120,122-124,126
+src/constants/datafields/epitope.ts
+  s_99e8d744587c5c::t_e3df841714224f 47
+src/constants/datafields/genome_sequence.ts
+  s_99e8d744587c5c::t_763267ff3c9303 33-35,48-50
+  s_99e8d744587c5c::t_c6cf15a1b8931d 38-47
+src/constants/datafields/strain.ts
+  s_99e8d744587c5c::t_bd514c82fbe629 9
+src/components/detail-panel/detail-key-value.tsx
+  s_99e8d744587c5c::t_f68b97365693d2 35
+  s_99e8d744587c5c::t_c56dc127a7447f 9-14
+src/components/detail-panel/__tests__/detail-key-value.test.tsx
+  s_99e8d744587c5c::t_6656204445054b 1-89
+src/components/detail-panel/info-panel.tsx
+  s_99e8d744587c5c::t_556527fb59521e 105-106,112-133,136-137,144-167
+  s_99e8d744587c5c::t_abba6159db6040 29-33,36,67-84,86-89,93-94,102-104,108-111,134-135,142-143,168-169
+  s_99e8d744587c5c::t_e0b096259f5f81 37-66
+  s_99e8d744587c5c::t_f42994e7997f3e 85
+  s_99e8d744587c5c::t_52fe6160d01278 997-1004,1006-1014,1022-1025
+  s_99e8d744587c5c::t_ad636196d91b83 138-141
+  s_99e8d744587c5c::t_5d1883c7ae9731 90-92,95-101
+  s_99e8d744587c5c::t_1cf33b509153a1 107
+  s_99e8d744587c5c::t_24c4ba5865bc9d 991-996,1016-1021,1026-1037,1039-1042,1044,1048-1049,1056
+  s_99e8d744587c5c::t_7f87327cf1b889 1
+  s_99e8d744587c5c::t_59dbb0fbe126c7 34-35
+src/components/detail-panel/__tests__/info-panel-links.test.tsx
+  s_99e8d744587c5c::t_592fde3103a510 96,118,171-187
+  s_99e8d744587c5c::t_390daf42d729d3 66-68,71-73,75-95
+  s_99e8d744587c5c::t_19cf327ef0950c 1-2,4-65,69-70,74,97-117,141-143,148-149,153-163,188
+  s_99e8d744587c5c::t_94a7dec25f026b 3
+  s_99e8d744587c5c::t_fdc1df7316f062 144-147,150-152,164-165,169-170
+  s_99e8d744587c5c::t_5e11c1d1bf7cf5 119-140
+  s_99e8d744587c5c::t_1cb97e1f96af32 166-168
+src/constants/datafields/protein_feature.ts
+  s_99e8d744587c5c::t_4e6e8134b32bff 66
+src/constants/datafields/__tests__/metadata-links.test.ts
+  s_99e8d744587c5c::t_8dcb0e5446748f 2-90,97-127,141-142
+  s_99e8d744587c5c::t_b391712e9b6132 1
+  s_99e8d744587c5c::t_dd32cf0654fd86 91-96
+  s_99e8d744587c5c::t_b6ece9c0038ced 128-140
+src/constants/datafields/genome.ts
+  s_99e8d744587c5c::t_aad23aff409121 496
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_99e8d744587c5c::t_f5ece0f4552872 438-440
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8338a7d712afda010869e70188e1c8c6d036ca4f",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

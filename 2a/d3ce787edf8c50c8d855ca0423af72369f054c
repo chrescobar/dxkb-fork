@@ -1,0 +1,25 @@
+src/lib/e2e-fixtures/__tests__/transport-parity.test.ts
+  s_99e8d744587c5c::t_288af4685fd30f 6-9,21-22,42-63,119-158,160,170,175-179,181-182,186,206,216,221-225,227-229,232,242,247-255,257-260,263,275-277,282-290,292-298,301,311-313,318-326,328-334,337,347,352-356,358-360
+e2e/fixtures/overrides/catchall.ts
+  s_99e8d744587c5c::t_36ec1d2f190a28 448-452,454,470-471
+e2e/README.md
+  s_99e8d744587c5c::t_8a7132a5639e18 65
+  s_99e8d744587c5c::t_c2ca88f39ba084 72
+  s_99e8d744587c5c::t_bcf200ecae294d 134-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2ad3ce787edf8c50c8d855ca0423af72369f054c",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

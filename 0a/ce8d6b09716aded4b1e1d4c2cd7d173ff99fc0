@@ -1,0 +1,28 @@
+src/components/genome/__tests__/genome-detail-panel-member.test.tsx
+  s_99e8d744587c5c::t_991cc810dadf79 2-5,7-9,16,19-53,55,60-70,72,74-87,90-99,101,103,105-110
+e2e/tests/legacy-search-list.spec.ts
+  s_99e8d744587c5c::t_baae45a727a47c 80,98,118
+  s_99e8d744587c5c::t_b7fb379c8d4af2 134-205
+src/lib/data-api/__tests__/repository.test.ts
+  s_99e8d744587c5c::t_05b67b92184f6a 648-737
+src/components/services/__tests__/list-data-genome-amr.test.tsx
+  s_99e8d744587c5c::t_c10b369ccba70b 47-49
+  s_99e8d744587c5c::t_1990551f1d1fba 114-117,119-120,123
+  s_99e8d744587c5c::t_bcdb5a5e53c123 1-46,50-113,118,121-122,124-271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0ace8d6b09716aded4b1e1d4c2cd7d173ff99fc0",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

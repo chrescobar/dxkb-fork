@@ -1,0 +1,46 @@
+src/components/services/list-data.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 3,11-17,24,27-28,37-42,45,169-171,173-178,180-181,183-188,191-192,194-195,197-205,210-233,238-240,242,256-258,274,276,291-294,305-316,328-331,333,349-354,356,363-368,373-375,377-381,392,465
+src/components/genome/__tests__/genome-detail-panel.test.ts
+  s_99e8d744587c5c::t_0bc5ad11654ed4 1
+src/components/filterbar/__tests__/facet-panel.test.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 6-8,17-48,50,52-60,66-70,74,87-89,99-107,115,117-121,126
+src/components/filterbar/__tests__/filter-utils.test.ts
+  s_99e8d744587c5c::t_0bc5ad11654ed4 1-2,4-9,11,16-23,26,31-32,35,44-47,51,60-65,69,71-73,76-79,82-88,96-114
+  s_99e8d744587c5c::t_7957629b2f04b7 115
+src/components/filterbar/facet-panel.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 6-7,9-11,13-15,18-24,26,36-38,40-44,47,50-54,71,87,91-95
+src/components/filterbar/filter-utils.ts
+  s_99e8d744587c5c::t_0bc5ad11654ed4 18-30,39,64-75
+src/components/filterbar/filter-bar.tsx
+  s_99e8d744587c5c::t_4cf5b92fcc7e9e 2,8,21-22,123
+src/app/search/typesearch.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 172
+src/components/genome/__tests__/genome-detail-panel-member.test.tsx
+  s_99e8d744587c5c::t_74a5835a489b78 1-73
+src/components/services/__tests__/list-data-download-selected.test.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 20,35-40,42-49,55,309
+src/components/services/__tests__/list-data.test.ts
+  s_99e8d744587c5c::t_0bc5ad11654ed4 4,6,63-66,68-112,141-146,148-185,188-190,192-199,201,203,207-213,217-218,220,224,226,228,231-233,236,241-242,244,246,249-251,254
+src/components/services/__tests__/list-data-integration.test.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 2,4-9,15-16,19-20,30-33,36-38,40-51,53-55,57,59-61,63,65-84,86-87,89,91-94,108-110,114-120,122-128,132,134-136,141-143,145-150,154-156,163-165,167-168,170,173-178,180,183-184,186,188-190,192-194,201-202,204-205,207,209-215,221-222,224,226,229,253,257,260,262-271,273-277,280-282,284-287,289-312,314-318,321-329,331-363,365-366,368-380,382-384,387
+src/components/genome/genome-detail-panel.tsx
+  s_99e8d744587c5c::t_0bc5ad11654ed4 6-14,18-19,27,33,35-42,48,52,54-61,63-65,76-83,91
+src/components/services/list-data-utils.ts
+  s_99e8d744587c5c::t_0bc5ad11654ed4 17-18,24-29,34,55-59,68-74,82-84,94-109,149-154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2d5f7e3ee8e608c42d8c352e3f7753cfdd467142",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

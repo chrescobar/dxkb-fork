@@ -1,0 +1,34 @@
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_2787274394bbde 3-6,15
+src/app/api/taxonomy-tree/[operation]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_a3d3992481f890 234,280
+src/app/api/workspace/view/__tests__/route.test.ts
+  s_99e8d744587c5c::t_2787274394bbde 2-5,17
+src/lib/e2e-fixtures/__tests__/transport-parity.test.ts
+  s_99e8d744587c5c::t_2787274394bbde 1-4,70
+src/app/api/e2e-mock/[...path]/__tests__/full-transport.test.ts
+  s_99e8d744587c5c::t_16506c450c94a8 10,65
+src/app/api/structure/__tests__/route.test.ts
+  s_99e8d744587c5c::t_2787274394bbde 1-4,8
+src/app/api/workspace/preview/__tests__/route.test.ts
+  s_99e8d744587c5c::t_2787274394bbde 2-5,39
+src/test-helpers/api-route-helpers.ts
+  s_99e8d744587c5c::t_334af02b585740 100-102
+  s_99e8d744587c5c::t_b38d0d2b485b37 91-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "699ba4d60f40927d2976bc1ed7ee191004febc10",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

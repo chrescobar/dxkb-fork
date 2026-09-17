@@ -1,0 +1,31 @@
+src/app/api/taxonomy-tree/[operation]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_11c677e2e05914 11,26,33
+src/app/api/services/app-service/jobs/[id]/stderr/__tests__/route.test.ts
+  s_99e8d744587c5c::t_f9029b4cf3847a 32,47,66
+src/app/api/services/app-service/jobs/[id]/stdout/__tests__/route.test.ts
+  s_99e8d744587c5c::t_f9029b4cf3847a 32,47,66
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_d30a1990c4bc1d 9-14,16,20-71,73-90,123-129,131-134,138-142,145-160,163-165,167,169-184,186-191,194-206,209-230,233,235-237,239-250,256-258,262-266,268,280,288-289,293,299-314,317-324,326-361,377-382,384,391-393,395,405,409-414,416,420,432,436,443,447,453-454,456
+src/test-helpers/api-route-helpers.ts
+  s_99e8d744587c5c::t_f9029b4cf3847a 82-96
+src/app/api/services/app-service/jobs/[id]/kill/__tests__/route.test.ts
+  s_99e8d744587c5c::t_f9029b4cf3847a 32,47,59,71
+src/app/api/services/app-service/jobs/[id]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_f9029b4cf3847a 32,51,65,78,93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fa4e8cf7b072cf1da05d4f9412a38b86ae2d54b0",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

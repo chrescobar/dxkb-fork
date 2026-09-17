@@ -1,0 +1,42 @@
+src/components/views/overview-group-fields.ts
+  s_99e8d744587c5c::t_177b02e9e8d9ed 1,3-76
+  s_99e8d744587c5c::t_ec4845c3b2e781 2
+src/app/(views)/serology/[sampleId]/serology-overview.tsx
+  s_99e8d744587c5c::t_a557efc5ab77b0 1,29-41
+src/components/views/__tests__/overview-section.test.tsx
+  s_99e8d744587c5c::t_b0a4a177ac623a 1-150
+src/test-helpers/overview.ts
+  s_99e8d744587c5c::t_2a78e01423054f 1-64
+src/components/views/__tests__/overview-group-fields.test.ts
+  s_99e8d744587c5c::t_ad332181741c53 32-37,70,73,150
+  s_99e8d744587c5c::t_1dbf1ebf6b8412 173
+  s_99e8d744587c5c::t_e48cb3db3cce53 1-31,38-69,71-72,74-149,151-172,174-190
+src/components/views/overview-section.tsx
+  s_99e8d744587c5c::t_2a6cf9db5d116c 1-83,85-88
+  s_99e8d744587c5c::t_ec4845c3b2e781 84
+src/components/views/index.ts
+  s_99e8d744587c5c::t_9cc7ca98f0eaee 7-8
+src/app/(views)/serology/[sampleId]/__tests__/serology-overview.test.tsx
+  s_99e8d744587c5c::t_ad332181741c53 33-34,37,42
+  s_99e8d744587c5c::t_42a62ee325d699 1-32,35-36,38-41,43-97
+src/app/(views)/surveillance/[sampleId]/surveillance-overview.tsx
+  s_99e8d744587c5c::t_4fe2c34ceaabf1 1,32-40,56-62,65,72
+src/app/(views)/surveillance/[sampleId]/__tests__/surveillance-overview.test.tsx
+  s_99e8d744587c5c::t_319331ca18e10c 1-137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d1c240829ed463c7427f32aa8d87c7d00df028e7",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+docs/architecture.md
+  s_99e8d744587c5c::t_2accded332ec71 26,69,71
+  s_99e8d744587c5c::t_35738d8449b63b 65-68,70,72-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0ae84c4a086911f7316d4581f0f724d065c8ef44",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

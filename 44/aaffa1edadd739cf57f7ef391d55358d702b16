@@ -1,0 +1,48 @@
+AGENTS.md
+  s_99e8d744587c5c::t_6d2bce0f43d88f 92
+.gitignore
+  s_99e8d744587c5c::t_11675bd6c13bf3 72-73,81
+playwright.config.ts
+  s_99e8d744587c5c::t_550d02e03905a8 30
+playwright.a11y.meta.config.ts
+  s_99e8d744587c5c::t_55998d9b0510c6 1-42
+.claude/rules/testing.md
+  s_99e8d744587c5c::t_550d02e03905a8 94
+.github/workflows/pnpm-e2e.yml
+  s_99e8d744587c5c::t_9ae814662e9c67 158
+eslint.config.mjs
+  s_99e8d744587c5c::t_4f4fd3bdc33517 23
+playwright.a11y.config.ts
+  s_99e8d744587c5c::t_550d02e03905a8 11-21,26-29,39-40,42-46
+tsconfig.json
+  s_99e8d744587c5c::t_11675bd6c13bf3 45-46
+package.json
+  s_99e8d744587c5c::t_4f4fd3bdc33517 32
+  s_99e8d744587c5c::t_8e16720db611c2 35
+e2e/tests/a11y/coverage.meta.spec.ts
+  s_99e8d744587c5c::t_57d9d92254c39e 125-128
+.github/workflows/pnpm-a11y.yml
+  s_99e8d744587c5c::t_550d02e03905a8 60-61,63-70,72-75,95-98,146-147,195-196,244-245
+e2e/a11y/README.md
+  s_99e8d744587c5c::t_fe87d0cbebe31c 16,20-25
+  s_99e8d744587c5c::t_0f407e420f6c5b 27-42,131-138
+  s_99e8d744587c5c::t_c35448cdefa656 26
+e2e/a11y/baseline.generated.ts
+  s_99e8d744587c5c::t_7de1244a5d7e9f 112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "44aaffa1edadd739cf57f7ef391d55358d702b16",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+e2e/a11y/README.md
+  s_99e8d744587c5c::t_794e45653268b1 27,38-39,150-153,155
+playwright.a11y.config.ts
+  s_99e8d744587c5c::t_794e45653268b1 61-63
+e2e/auth/storage-state.ts
+  s_99e8d744587c5c::t_794e45653268b1 8,11-12
+e2e/a11y/scan-keys.ts
+  s_99e8d744587c5c::t_794e45653268b1 59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8d1e186d8c2d3c003957d6c4b8107084019b7dce",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

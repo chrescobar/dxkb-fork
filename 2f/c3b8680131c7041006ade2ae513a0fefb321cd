@@ -1,0 +1,40 @@
+.claude/rules/testing.md
+  s_99e8d744587c5c::t_8c380e427529fe 115
+e2e/a11y/baseline.generated.ts
+  s_99e8d744587c5c::t_9a73c460b8a8ba 49-53
+src/app/api/e2e-mock/[...path]/route.ts
+  s_99e8d744587c5c::t_2e29d7543b50af 997-1000
+  s_99e8d744587c5c::t_7f7fbd43dde6c8 782-787,793-798,875-878,893,897-900,907-916
+  s_99e8d744587c5c::t_25fec5c6fe4878 20,103,1019
+  s_99e8d744587c5c::t_03837049f09b01 21-25,47-64,87-101
+  s_99e8d744587c5c::t_2087f56bd235da 102,887,919,921,926-967,969-970,973-975,1010-1018,1021-1026,1030,1032-1035,1040-1060,1070,1080
+  s_99e8d744587c5c::t_9f39f45ae2cc4d 920,922-925,968,971-972,1009,1020,1027-1029
+src/lib/e2e-fixtures/records.ts
+  s_99e8d744587c5c::t_ce0dbf941026e1 3,5,8-14,608-615
+src/app/api/e2e-mock/[...path]/__tests__/query.test.ts
+  s_99e8d744587c5c::t_ce0dbf941026e1 139
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_08ddcf743868ed 652,671,789
+  s_99e8d744587c5c::t_9f39f45ae2cc4d 966,990,1004
+  s_99e8d744587c5c::t_b1ba357db3f406 904-965,967-989,991-1003,1005-1146
+e2e/README.md
+  s_99e8d744587c5c::t_8c380e427529fe 88-91,94-96
+docs/architecture.md
+  s_99e8d744587c5c::t_8c380e427529fe 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2fc3b8680131c7041006ade2ae513a0fefb321cd",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": null
+    }
+  }
+}

@@ -1,0 +1,27 @@
+src/lib/data-api/server-repository.ts
+  s_99e8d744587c5c::t_960a6443fd44e6 30-38,41-42
+src/lib/__tests__/rate-limit.test.ts
+  s_99e8d744587c5c::t_1559f4b990759c 110,113,117-124,129-133,139-142
+  s_99e8d744587c5c::t_85ddba944923fb 168-170
+src/lib/rate-limit.ts
+  s_99e8d744587c5c::t_59d734767e3fea 61-75
+docs/architecture.md
+  s_99e8d744587c5c::t_3be086e01eefa5 76
+  s_99e8d744587c5c::t_0f2fe0b6e3463b 86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8aef8a99a35b6fd6093d559296a3cbc409c62ef4",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+src/app/api/taxonomy-tree/[operation]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_67ad7dfdc99a6c 1-297
+src/lib/data-api/__tests__/taxonomy-tree.test.ts
+  s_99e8d744587c5c::t_8d1ddcaa4cdd1e 372
+  s_99e8d744587c5c::t_e1dd3092afcd15 326-331
+  s_99e8d744587c5c::t_40c96e9a7aa96b 1-100,102-325,332-371,373-384
+  s_99e8d744587c5c::t_a8037e69c86b05 101
+src/app/api/taxonomy-tree/[operation]/route.ts
+  s_99e8d744587c5c::t_ea28147469164f 19-21
+  s_99e8d744587c5c::t_06f2f0c80df12d 141
+  s_99e8d744587c5c::t_83510a5507ff5c 1-18,22-140,142-152
+src/lib/data-api/taxonomy-tree.ts
+  s_99e8d744587c5c::t_47277c560bd367 143-147,163-169
+  s_99e8d744587c5c::t_49a9de5882b1f8 179
+  s_99e8d744587c5c::t_65d166d936ef9c 11-15,28-29
+  s_99e8d744587c5c::t_7cd96f3b1a2abc 174
+  s_99e8d744587c5c::t_6753018e457a45 1-10,16-27,30-142,148-162,170-173,178,180-215
+  s_99e8d744587c5c::t_a8037e69c86b05 175-177
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8e7cf4f44188f02e339f72a4930ef6e917e8c20e",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

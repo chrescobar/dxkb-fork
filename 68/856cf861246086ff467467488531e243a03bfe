@@ -1,0 +1,54 @@
+e2e/fixtures/overrides/workspace.ts
+  s_99e8d744587c5c::t_32f3f04486c3ba 1-4,253,273-277,283,295-297,333-334,336-347,350,356,365,394,404,413,456,485,487-490,494
+e2e/a11y/routes.ts
+  s_99e8d744587c5c::t_7ba6b5f1413b04 231-238,245-250,252-253
+  s_99e8d744587c5c::t_372727842708e3 16
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_99e8d744587c5c::t_708c33c328478f 3,21-25,100-103,150-216
+eslint.config.mjs
+  s_99e8d744587c5c::t_69004d1e2aadbc 78-115
+  s_99e8d744587c5c::t_d6f836a259000f 77
+e2e/fixtures/overrides/catchall.ts
+  s_99e8d744587c5c::t_43a7227835a696 20,122-126,527
+src/lib/e2e-fixtures/__tests__/envelopes.test.ts
+  s_99e8d744587c5c::t_77dbb5519dea33 2-3,6-7,68-99
+  s_99e8d744587c5c::t_a9961b74aa45f9 100
+src/app/api/e2e-mock/[...path]/route.ts
+  s_99e8d744587c5c::t_eabe1a5f500640 763-765,771,777
+  s_99e8d744587c5c::t_6dc4cf341ae522 11-12,770,776
+  s_99e8d744587c5c::t_7bff12fde90b01 4,7-8,18,64
+  s_99e8d744587c5c::t_f64ca8f35304f1 766-769,772-775,778,833-835
+e2e/fixtures/overrides/interactions.ts
+  s_99e8d744587c5c::t_4fce567590837b 1-4,20-26,29,44
+  s_99e8d744587c5c::t_ffbe3e15a033ed 5-9,36-40,49-53
+src/lib/e2e-fixtures/envelopes.ts
+  s_99e8d744587c5c::t_fc51e742b1957b 80-147
+src/lib/e2e-fixtures/records.ts
+  s_99e8d744587c5c::t_6dc4cf341ae522 984-1006
+  s_99e8d744587c5c::t_55d5ae3697e311 570-983
+src/app/api/e2e-mock/[...path]/identity.ts
+  s_99e8d744587c5c::t_43a7227835a696 2,100
+src/__tests__/e2e-fixtures-import-boundary.test.ts
+  s_99e8d744587c5c::t_97f3d3cebee0b0 72,74-81
+  s_99e8d744587c5c::t_9a2e101ed31fec 1-71,73,82-101
+e2e/README.md
+  s_99e8d744587c5c::t_d5c947a8a6d9db 67-70
+e2e/a11y/baseline.generated.ts
+  s_99e8d744587c5c::t_a62c70785932d3 31,49-58,63-65,94-97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "68856cf861246086ff467467488531e243a03bfe",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

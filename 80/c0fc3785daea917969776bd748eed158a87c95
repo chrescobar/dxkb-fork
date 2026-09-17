@@ -1,0 +1,54 @@
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_99e8d744587c5c::t_27fd538bbf5ae2 7-10,19-24,45,57
+src/app/workspace/__tests__/catch-all-redirects.test.ts
+  s_99e8d744587c5c::t_55515fe4417a2d 1-90
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_99e8d744587c5c::t_24085ea3943f01 4,12-18
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_00a74b662334c9 1-2,1122-1125,1133,1135,1137,1139,1144-1163,1180,1182,1186-1214
+  s_99e8d744587c5c::t_044c2661c1fcc3 1215-1216
+e2e/README.md
+  s_99e8d744587c5c::t_355ef2b5c528c7 88
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_99e8d744587c5c::t_59c17a19c3b84b 106-127,132-133
+  s_99e8d744587c5c::t_a0bff866323659 128-131
+src/app/workspace/home/[[...path]]/page.tsx
+  s_99e8d744587c5c::t_24085ea3943f01 4,12-18
+docs/architecture.md
+  s_99e8d744587c5c::t_936e98e24d1827 16-26
+src/app/api/e2e-mock/[...path]/route.ts
+  s_99e8d744587c5c::t_28270bf536ba70 88,90-104,106-109,111-117,121-128,130,134-135,139-157,952,967,1055,1071,1082,1105
+src/app/(views)/epitope/[epitopeId]/page.tsx
+  s_99e8d744587c5c::t_27fd538bbf5ae2 9-12,23-28,45,57
+src/app/workspace/[username]/page.tsx
+  s_99e8d744587c5c::t_24085ea3943f01 6,18
+src/app/(views)/epitope/[epitopeId]/__tests__/page.test.tsx
+  s_99e8d744587c5c::t_a0bff866323659 6-11,32-41,68-73,76-82,86-99,118-121,125-130,135-149,153-161
+  s_99e8d744587c5c::t_59c17a19c3b84b 102-117
+  s_99e8d744587c5c::t_29ffd2d9fa0fca 100-101
+e2e/tests/viewer-3d.spec.ts
+  s_99e8d744587c5c::t_37424c9b0a30c6 60-78
+.claude/rules/testing.md
+  s_99e8d744587c5c::t_355ef2b5c528c7 115
+src/app/(views)/experiment/[experimentId]/page.tsx
+  s_99e8d744587c5c::t_d32e45891f05f5 23-26
+  s_99e8d744587c5c::t_27fd538bbf5ae2 8-11,27-31,48,61
+src/app/(views)/feature/[featureId]/page.tsx
+  s_99e8d744587c5c::t_624814958c87e0 8-11,20-25,49,61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "80c0fc3785daea917969776bd748eed158a87c95",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+vitest.config.mts
+  s_99e8d744587c5c::t_48f8453755d538 54-58,67-73
+  s_99e8d744587c5c::t_e914546032a200 62-66,75-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "f2e8e6ab74485404c1ffbb4c4b8dae434e2459f5",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

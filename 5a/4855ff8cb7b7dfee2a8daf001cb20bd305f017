@@ -1,0 +1,31 @@
+src/app/api/e2e-mock/[...path]/route.ts
+  s_99e8d744587c5c::t_ef70178b299698 111-119
+docs/architecture.md
+  s_99e8d744587c5c::t_ef70178b299698 25-28
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_fc6ecea1f50e61 1202-1205,1215-1218
+e2e/README.md
+  s_99e8d744587c5c::t_ef70178b299698 88
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_99e8d744587c5c::t_ef70178b299698 21-26
+src/app/(views)/experiment/[experimentId]/page.tsx
+  s_99e8d744587c5c::t_ef70178b299698 28-33
+src/app/workspace/__tests__/catch-all-redirects.test.ts
+  s_99e8d744587c5c::t_51a7d2cb729851 28-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "5a4855ff8cb7b7dfee2a8daf001cb20bd305f017",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

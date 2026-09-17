@@ -1,0 +1,20 @@
+src/app/viewer/structure/[[...path]]/__tests__/page.test.tsx
+  s_99e8d744587c5c::t_8ff3da52a98a95 1-9,11-15,17-27,29-37,39-41,47-48,57-59,61,63,65-66,68,70,72-73,75,77-84,86-87,90,96-104,106,109-118,120-126
+  s_99e8d744587c5c::t_9eaa6e96f792c8 10,16,28,38,42-46,49-56,60,62,64,67,69,71,74,76,85,88-89,91-95,105,107-108,119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "083860a4a0098d145d58e6f04dca019e2ca1f105",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

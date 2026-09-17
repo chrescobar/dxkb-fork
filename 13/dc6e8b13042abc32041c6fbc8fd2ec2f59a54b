@@ -1,0 +1,52 @@
+src/components/views/resource-collection.tsx
+  s_99e8d744587c5c::t_640bbd4b58cf28 334-338
+docs/architecture.md
+  s_99e8d744587c5c::t_7da4281aa8a7d1 133-134
+src/components/taxonomy/__tests__/taxonomy-tree-panel.test.tsx
+  s_99e8d744587c5c::t_db830b00b50ca3 1-2
+  s_99e8d744587c5c::t_ce29fb8bd392d0 18-20,30-33,36-38,43-50,54
+  s_99e8d744587c5c::t_e0d3240b096314 169-229,234-246,248-249,251-255,276-282
+  s_99e8d744587c5c::t_0deae52366fab3 230-233,265-267
+  s_99e8d744587c5c::t_f430fe99cba0cb 247,250,256-264,268-275
+  s_99e8d744587c5c::t_5d5525004e82d5 39-42,51-53
+src/components/views/resource-collection-actions.tsx
+  s_99e8d744587c5c::t_99d070b7147511 462
+  s_99e8d744587c5c::t_080f56287684af 434-447
+src/components/views/__tests__/resource-workspace.test.tsx
+  s_99e8d744587c5c::t_5d5525004e82d5 113-115
+  s_99e8d744587c5c::t_7bd999ec91484c 317-319
+  s_99e8d744587c5c::t_64f6d4bb6648c0 1-7,12-30,60-61,63,67-69,81-88,91-112,116-132,135,144-157,165-172,179,186-196,222-316,320-322
+  s_99e8d744587c5c::t_811763d84f29c2 323
+src/components/views/resource-workspace.tsx
+  s_99e8d744587c5c::t_8ac1559b0ac478 19-23,26-58,87-89,93-95,99-102,107-108,113,115-139,143-145,147-149,152
+  s_99e8d744587c5c::t_24a9f29ede89fb 114
+src/components/views/__tests__/resource-collection-actions.test.tsx
+  s_99e8d744587c5c::t_2cab485ff9326e 20-32
+  s_99e8d744587c5c::t_3f3ac532d8653a 34,36-37,43-44,46-55,63-78,82-85
+  s_99e8d744587c5c::t_f7d5bceb09039c 103-145
+  s_99e8d744587c5c::t_5d5525004e82d5 79-81,225
+  s_99e8d744587c5c::t_b3abf06fc9e4d4 216-224,226-245
+  s_99e8d744587c5c::t_2b3fa2d8384975 253
+  s_99e8d744587c5c::t_4bca747b56445e 148,150
+  s_99e8d744587c5c::t_f48686c3a796a4 448-472,474-552
+  s_99e8d744587c5c::t_0deae52366fab3 2-8,262,409-411,473
+  s_99e8d744587c5c::t_dff071d6ee7dc0 286-287,295-296,299
+  s_99e8d744587c5c::t_df7bbaae9983f6 1
+  s_99e8d744587c5c::t_d5db87baeda90c 350-408,412-416
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "13dc6e8b13042abc32041c6fbc8fd2ec2f59a54b",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

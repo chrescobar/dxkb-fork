@@ -1,0 +1,74 @@
+src/app/(views)/surveillance/[sampleId]/__tests__/page.test.tsx
+  s_99e8d744587c5c::t_306ebcb7ab878f 122-124,136,161-163,167-169
+  s_99e8d744587c5c::t_68d2e0943d9a47 33-36,38-53,72,89,99,120,130,140-145,152,157,176,182,186
+  s_99e8d744587c5c::t_1433fbca2fdd10 69
+  s_99e8d744587c5c::t_e051756d542ae2 37
+src/app/api/e2e-mock/[...path]/route.ts
+  s_99e8d744587c5c::t_e1d802b242ded8 94-100,102-105,111,944-948,1044,1066-1070,1075-1076
+src/lib/views/compound-sample-page.ts
+  s_99e8d744587c5c::t_09f1f9499bc56a 10-11,19
+  s_99e8d744587c5c::t_be7b60b24730fd 3,12-16,22,30
+src/lib/views/route-params.ts
+  s_99e8d744587c5c::t_28ed7409c8afc0 1-76
+src/lib/views/__tests__/compound-sample-page.test.ts
+  s_99e8d744587c5c::t_d7875d190f32fc 92,107-111,123-127,145-149,167-171,180-182,184-194,211,222
+  s_99e8d744587c5c::t_306ebcb7ab878f 195-210,212-221,223-230
+  s_99e8d744587c5c::t_65c39d7ea5a934 183
+src/app/(views)/serology/[sampleId]/__tests__/page.test.tsx
+  s_99e8d744587c5c::t_306ebcb7ab878f 127-129
+  s_99e8d744587c5c::t_ff06a7982d031f 33-36,38-53,71,84,94-96,112,122-125,137,142,144,148,155,159,163
+  s_99e8d744587c5c::t_e051756d542ae2 37
+src/app/(views)/surveillance/[sampleId]/page.tsx
+  s_99e8d744587c5c::t_306ebcb7ab878f 27-31,51-55
+src/lib/protein-structure-view/mode.ts
+  s_99e8d744587c5c::t_d4007a35ca1aa2 87-94
+src/app/api/workspace/resolve-download.ts
+  s_99e8d744587c5c::t_d4007a35ca1aa2 15-17,35-37,40-43
+src/app/viewer/structure/[[...path]]/page.tsx
+  s_99e8d744587c5c::t_7d349e1bf375be 9,24,29
+  s_99e8d744587c5c::t_656cc9f54de08c 23,25-27
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_99e8d744587c5c::t_306ebcb7ab878f 77
+  s_99e8d744587c5c::t_0856ef8ddabbff 1,159-161
+  s_99e8d744587c5c::t_7605864d480cf3 150-158,162-167,169-172,178,180,187,195-201
+  s_99e8d744587c5c::t_2107262ea190db 168,173-177,179,181-186,188-192
+  s_99e8d744587c5c::t_37586bc82545c9 247-251
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_7107365a330cf7 2,1117-1144,1146-1147,1149,1151,1153-1167,1169
+  s_99e8d744587c5c::t_306ebcb7ab878f 1098-1116
+src/app/api/e2e-mock/[...path]/__tests__/full-transport.test.ts
+  s_99e8d744587c5c::t_65c39d7ea5a934 29-30,127-128
+  s_99e8d744587c5c::t_1319341be0b67c 26-28,31-32,43,54,70,91,123-126,129-130,153
+src/lib/views/__tests__/route-params.test.ts
+  s_99e8d744587c5c::t_d7e59b3d9c18cc 1-66
+src/app/(views)/serology/[sampleId]/page.tsx
+  s_99e8d744587c5c::t_09f1f9499bc56a 27,47
+src/lib/e2e-fixtures/records.ts
+  s_99e8d744587c5c::t_37586bc82545c9 588-591,611-617,661-666
+src/app/api/e2e-mock/[...path]/__tests__/query.test.ts
+  s_99e8d744587c5c::t_306ebcb7ab878f 79-84,92,97,107
+  s_99e8d744587c5c::t_155bef9e44b18f 3,28,30,34,37-43,106,108-121,129
+e2e/README.md
+  s_99e8d744587c5c::t_ad164c949e3392 88
+docs/architecture.md
+  s_99e8d744587c5c::t_953eabf236a15d 11-22
+src/app/api/e2e-mock/[...path]/query.ts
+  s_99e8d744587c5c::t_1aeb427dd9e66d 6,8-10,12-20,22-25,27,29-32,35-38,40-47,58,60,62,76-80,82,87,120,123,128
+  s_99e8d744587c5c::t_65c39d7ea5a934 33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "673c51564353d68d4ea5977547cb1334c2a263f3",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

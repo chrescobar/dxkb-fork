@@ -1,0 +1,22 @@
+e2e/tests/a11y/coverage.meta.spec.ts
+  s_99e8d744587c5c::t_91bdede52134b2 14,240-241,243-244,246-248,250-254,256,262-265,269-284,292-296,303,307
+e2e/a11y/scan-keys.ts
+  s_99e8d744587c5c::t_91bdede52134b2 13-23,58-102
+  s_99e8d744587c5c::t_fb81de3e54e038 103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "260e50c0088972079552b21e698556a9a0206096",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_99e8d744587c5c::t_a7b1e49446b28a 259-262
+src/lib/data-api/server-policy.ts
+  s_99e8d744587c5c::t_1fe00ed994fe7d 1-157
+src/lib/epitope-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 6
+src/lib/feature-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 15
+src/lib/data-api/server-repository.ts
+  s_99e8d744587c5c::t_26a028ddc9cc38 3-7,10-11,13-18,20-25,28-35,37-44,46-47,49-50,52-56,58
+src/lib/genome-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 7
+src/lib/surveillance-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 42
+src/app/api/taxonomy-tree/[operation]/route.ts
+  s_99e8d744587c5c::t_74828ccb7ac907 110-126
+  s_99e8d744587c5c::t_ccc95de3f83921 8
+src/lib/data-api/__tests__/server-repository.test.ts
+  s_99e8d744587c5c::t_8cc59edb2f275c 37-43,45-46,63-65,81-83,90,96-99,110-132,140-143,161-164,184-186
+src/lib/protein-structure-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 36
+  s_99e8d744587c5c::t_8f469341bceadf 19-23
+src/app/api/data/[resource]/route.ts
+  s_99e8d744587c5c::t_8af0f59a12b5f9 11-15
+  s_99e8d744587c5c::t_09635c2662a8f9 171-190,197-201,204-205
+src/app/api/taxonomy-tree/[operation]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_60d70ac60029d8 1-6
+docs/architecture.md
+  s_99e8d744587c5c::t_a7b1e49446b28a 75-76,84
+  s_99e8d744587c5c::t_6f0919cbd531ca 85
+src/lib/serology-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 36
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_99e8d744587c5c::t_60d70ac60029d8 1-6
+src/lib/data-api/__tests__/server-policy.test.ts
+  s_99e8d744587c5c::t_27f7e55814399e 1-166,170-186,190-283
+  s_99e8d744587c5c::t_847928b82a1aba 167-169,187-189
+src/lib/experiment-view/server.ts
+  s_99e8d744587c5c::t_77a3259feb770f 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b0bb07534e7bd5f7cdb5b101f3941462992c065a",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

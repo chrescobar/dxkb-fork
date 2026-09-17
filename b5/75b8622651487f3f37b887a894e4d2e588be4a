@@ -1,0 +1,29 @@
+e2e/a11y/teardown.ts
+  s_99e8d744587c5c::t_ac568bcea86864 3-8,10-16,18,37-40
+e2e/scripts/update-baseline.ts
+  s_99e8d744587c5c::t_4f4fd3bdc33517 4-6,10,104-105,109
+e2e/a11y/setup.ts
+  s_99e8d744587c5c::t_ac568bcea86864 1-17
+e2e/a11y/report.ts
+  s_99e8d744587c5c::t_ac568bcea86864 13-42,45,47-50
+e2e/a11y/README.md
+  s_99e8d744587c5c::t_8ca39011bcccce 44-50,61-62
+playwright.a11y.config.ts
+  s_99e8d744587c5c::t_fec3262f417d7a 24-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b575b8622651487f3f37b887a894e4d2e588be4a",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

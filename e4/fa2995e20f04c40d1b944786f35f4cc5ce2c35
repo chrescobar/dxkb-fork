@@ -1,0 +1,23 @@
+e2e/a11y/routes.ts
+  s_99e8d744587c5c::t_001efd0f9124b0 9-14,23-26
+  s_99e8d744587c5c::t_22a9e925114eaf 595-598,608
+  s_99e8d744587c5c::t_23a4e24817b117 593-594,599-607
+  s_99e8d744587c5c::t_f39e5725959d69 15-22
+  s_99e8d744587c5c::t_f8ae04a6bc8d63 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e4fa2995e20f04c40d1b944786f35f4cc5ce2c35",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

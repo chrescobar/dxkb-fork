@@ -1,0 +1,37 @@
+src/components/detail-panel/metadata-link-policy.ts
+  s_99e8d744587c5c::t_eaf75b8cd56edc 45-47
+  s_99e8d744587c5c::t_94ef144c6ea840 1-44,48-80
+src/components/detail-panel/info-panel.tsx
+  s_99e8d744587c5c::t_eaf75b8cd56edc 21,869,895-899
+  s_99e8d744587c5c::t_1310d76e1cab08 20
+src/components/detail-panel/__tests__/metadata-link-policy.test.ts
+  s_99e8d744587c5c::t_eaf75b8cd56edc 96-148
+  s_99e8d744587c5c::t_ce4a8b49b25c29 1-95
+src/components/detail-panel/detail-key-value.tsx
+  s_99e8d744587c5c::t_a3a98a8a7ecd67 11-14
+src/components/detail-panel/metadata-link.tsx
+  s_99e8d744587c5c::t_7448a2e13be839 1-122
+docs/architecture.md
+  s_99e8d744587c5c::t_20287571bf9fa2 157-161
+src/components/detail-panel/__tests__/metadata-link.test.tsx
+  s_99e8d744587c5c::t_eaf75b8cd56edc 98-163
+  s_99e8d744587c5c::t_ce4a8b49b25c29 1-97
+e2e/tests/metadata-link-navigation.spec.ts
+  s_99e8d744587c5c::t_1b89c819ce4f0b 12-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c750afb57f6bc97f560b6e43ad69bbde1de6ec7c",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

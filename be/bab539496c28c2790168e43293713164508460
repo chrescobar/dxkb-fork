@@ -1,0 +1,25 @@
+e2e/auth/storage-state.ts
+  s_99e8d744587c5c::t_586b707b5d4f75 19-32
+AGENTS.md
+  s_99e8d744587c5c::t_62998010732297 93,97
+playwright.config.ts
+  s_99e8d744587c5c::t_8ee1b617e9436b 21-31
+.claude/rules/testing.md
+  s_99e8d744587c5c::t_b203e1aba58fff 109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "bebab539496c28c2790168e43293713164508460",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

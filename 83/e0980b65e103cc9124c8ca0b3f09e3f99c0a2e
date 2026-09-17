@@ -1,0 +1,42 @@
+src/components/views/__tests__/overview-card.test.tsx
+  s_99e8d744587c5c::t_6b7dcbddc11518 110-112,122-124,169-173,179-182,221-227
+src/app/(views)/experiment/[experimentId]/experiment-overview.tsx
+  s_99e8d744587c5c::t_b4577fcb73495c 2,4,7,21-31,33-54,84-140,143-177
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_99e8d744587c5c::t_7d51ddb32c014a 1-2,12-18,21-44,46-71
+src/app/(views)/feature/[featureId]/feature-overview.tsx
+  s_99e8d744587c5c::t_70a84e89433ac4 1,3,5,15-32,36,39-100
+src/app/(views)/epitope/[epitopeId]/__tests__/epitope-overview.test.tsx
+  s_99e8d744587c5c::t_5680cc2e8a0a1b 1-126
+src/components/views/__tests__/overview-section.test.tsx
+  s_99e8d744587c5c::t_b9bc4c6633491e 2,7,132
+src/app/(views)/genome/[genomeId]/genome-overview.tsx
+  s_99e8d744587c5c::t_21ea2860ba507b 1,3,5,11-26,31-33,40-88
+  s_99e8d744587c5c::t_ec4845c3b2e781 27
+src/app/(views)/feature/[featureId]/__tests__/feature-overview.test.tsx
+  s_99e8d744587c5c::t_11cdbe96a7c721 1-14,19-97,101-157
+  s_99e8d744587c5c::t_6b7dcbddc11518 15-18,98-100
+src/app/(views)/experiment/[experimentId]/__tests__/experiment-overview.test.tsx
+  s_99e8d744587c5c::t_f7d730c76c6d89 1-58,62-79,81-94,96-125,129-144,152-200
+  s_99e8d744587c5c::t_6b7dcbddc11518 59-61,80,95,126-128,145-151
+src/app/(views)/genome/[genomeId]/__tests__/genome-overview.test.tsx
+  s_99e8d744587c5c::t_3146eaf8d86380 1-151
+src/test-helpers/overview.ts
+  s_99e8d744587c5c::t_b9bc4c6633491e 14,33,49,62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "83e0980b65e103cc9124c8ca0b3f09e3f99c0a2e",
+  "prompts": {},
+  "sessions": {
+    "s_99e8d744587c5c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fe1b78cf-995d-4d7a-a22e-5fb601920e5d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

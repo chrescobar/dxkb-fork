@@ -1,0 +1,627 @@
+src/lib/auth/__tests__/protected-layouts.test.ts
+  s_ca1e9323a57881::t_f9f64d5ed19f64 1-36,44
+  s_ca1e9323a57881::t_076424ca8d960f 37-43
+src/components/views/selection-service-chooser.tsx
+  s_915feb028a8781::t_5259429e98e3d9 14,16-17
+  s_915feb028a8781::t_eab6cd1e7882ce 153
+  s_915feb028a8781::t_3979a20df2033e 49-62
+  s_915feb028a8781::t_86b7e7c0207a59 116-145,148-152,154-166
+  s_915feb028a8781::t_8d4b78bc5fe1b7 15,20
+  s_915feb028a8781::t_f3dcfb44dbdf3c 179-192
+  s_915feb028a8781::t_9e94c65c4c89d2 221-231,237
+src/app/services/(phylogenomics)/viral-genome-tree/viral-genome-tree-parameters.tsx
+  s_11860dc06ffcda::t_0b2ae91d6fb344 30
+  s_11860dc06ffcda::t_04d79bf961e968 16
+  s_11860dc06ffcda::t_61726f6f9b15c5 126-141,143-146
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-input-cards.tsx
+  s_44469e58be3e99::t_1106a2924f78d5 6-7
+  s_44469e58be3e99::t_9aea71222d3f1a 104-113
+  s_44469e58be3e99::t_c4d1514b2af8fd 129-132
+src/app/workspace/shared/layout.tsx
+  s_ca1e9323a57881::t_73eaf3c1723208 2-10
+  s_ca1e9323a57881::t_e49b698e2581dd 1
+docs/architecture.md
+  s_ca1e9323a57881::t_fa6e978d785a43 66
+  s_ca1e9323a57881::t_96ac5bf273f9bf 53-54
+  s_ca1e9323a57881::t_eed301263966c2 60
+src/app/viewer/structure/layout.tsx
+  s_ca1e9323a57881::t_199ce91cc5c881 4,9-10
+  s_ca1e9323a57881::t_42ec4c2371eeec 2
+src/lib/auth/server/__tests__/page-auth.test.ts
+  s_ca1e9323a57881::t_707aa9d54c8be6 14
+  s_ca1e9323a57881::t_75572548f91207 11-13
+  s_ca1e9323a57881::t_e34dc9abbce18e 15-17
+src/components/services/selected-libraries-card.tsx
+  s_44469e58be3e99::t_f795dd1dccaf75 1-68
+src/components/navbars/mobile-sheet-navigation.tsx
+  s_97b51f9b6dafb5::t_f00058976dc381 1-44,47-48,50-52,54-56,58-79,81-92,94-95,97-111,113-150,152-166,168-190
+  s_44469e58be3e99::t_3811709362fc9f 96
+  s_97b51f9b6dafb5::t_94f09aa8764ce8 45-46,49,53,57,80,93,112,151,167
+src/app/search/page.tsx
+  s_8f8938eb09802c::t_e4f704a5217675 5
+  s_8f8938eb09802c::t_e9be83df5678ad 58
+src/lib/auth/__tests__/provider.test.tsx
+  s_ca1e9323a57881::t_74e043eb33ddb1 157-161,165,169
+  s_ca1e9323a57881::t_24337a732c28a8 9,14
+  s_ca1e9323a57881::t_41e3bc6b1c8e55 2
+src/components/services/read-library-input-section.tsx
+  s_44469e58be3e99::t_40bcab2aab00a7 1-92
+src/components/views/use-resource-collection-export.ts
+  s_f0eb7c5d718fd4::t_b0122eff29ad67 4-7
+  s_f0eb7c5d718fd4::t_29168514a4210c 23
+  s_f0eb7c5d718fd4::t_5225cb26386015 55
+  s_f0eb7c5d718fd4::t_d34c5ec3aa7a60 40
+  s_f0eb7c5d718fd4::t_61722e195509c2 1-3,8-22,24-39,41-54,56-126
+src/components/taxonomy/taxonomy-suggestion-content.tsx
+  s_29736c5c3947fe::t_401d6c7bb1ce79 2-10,13-25,27-32,34-39,41-49,51-59,61-67
+  s_29736c5c3947fe::t_d56187ca1dd7e1 11-12
+  s_29736c5c3947fe::t_1ff9994a7b8a74 1
+  s_29736c5c3947fe::t_d93b57fe5222c0 26,33,40,50,60
+src/lib/auth/provider.tsx
+  s_ca1e9323a57881::t_03b0bae0fa2110 24
+  s_ca1e9323a57881::t_952cd48537f900 3-4
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_61b783403e59a3::t_f645f6bf56c12a 58
+  s_61b783403e59a3::t_f2a6569a57e06e 74,76,79-83,86,89-92,95-98
+src/components/services/__tests__/output-folder.test.tsx
+  s_29736c5c3947fe::t_fb6e438ce0c8b0 212
+  s_29736c5c3947fe::t_43267e567f124e 177-211,213-224
+src/components/shared/data-table-header.tsx
+  s_b709b3bff6cd53::t_35e6165bcf0cc5 1-48,50-78,80-200
+  s_30aa1b4cd4143f::t_6b2f5b76c42d46 49,79
+src/components/services/__tests__/service-output-fields.test.tsx
+  s_11860dc06ffcda::t_c9caa176a1c220 28-33
+  s_11860dc06ffcda::t_828fe0611846b7 1-22,26-27,34-82
+  s_11860dc06ffcda::t_618bd6a8c031c8 23-25
+src/components/services/__tests__/read-library-input-section.test.tsx
+  s_44469e58be3e99::t_4add9077834d95 14-16
+  s_44469e58be3e99::t_47f355530a9c7c 1-13,17-97
+src/app/services/(protein-tools)/msa-snp-analysis/validate-genome-group.ts
+  s_11860dc06ffcda::t_beebc0921ddd3b 1-43
+src/components/services/list-data.tsx
+  s_30aa1b4cd4143f::t_9e540efc73a8f8 300-310
+  s_30aa1b4cd4143f::t_cd478f95f76596 12,20
+src/app/services/(protein-tools)/msa-snp-analysis/msa-snp-analysis-cards.tsx
+  s_f0eb7c5d718fd4::t_255f6088082ed7 1-57
+src/components/views/use-resource-collection-row-resolution.ts
+  s_f0eb7c5d718fd4::t_b0122eff29ad67 37-39,41-50,92-93
+  s_f0eb7c5d718fd4::t_ba9b3242f54ee2 1-25,27-36,40,51-71,73-91,94-120,122-144
+  s_f0eb7c5d718fd4::t_f0b87885595650 72
+  s_f0eb7c5d718fd4::t_0f633c09b26eb7 121
+  s_f0eb7c5d718fd4::t_20678d76e4981b 26
+src/components/services/anchored-suggestion-portal.tsx
+  s_29736c5c3947fe::t_0580f856739a4f 3-10,12-67,69-82,84-86,88-93
+  s_29736c5c3947fe::t_d93b57fe5222c0 87
+src/lib/services/workspace/path-utils.ts
+  s_896ac0b8f832c6::t_f58858c2d8f847 321
+  s_896ac0b8f832c6::t_3b7e9625636bce 70,104-105,156,344-346
+  s_896ac0b8f832c6::t_637c8c58122bc5 183-320,322-342
+  s_896ac0b8f832c6::t_fe648d20ed7017 8,11-33
+  s_896ac0b8f832c6::t_1cc466f12e9bf7 34
+src/components/services/__tests__/genome-suggestion-list.test.tsx
+  s_29736c5c3947fe::t_fe766f66fdbce0 30
+  s_29736c5c3947fe::t_332bdc33694743 1-29,31-42,46-52
+  s_29736c5c3947fe::t_d93b57fe5222c0 43-45
+src/components/views/__tests__/use-resource-collection-row-resolution.test.tsx
+  s_f0eb7c5d718fd4::t_37599a3f69c73f 111
+  s_f0eb7c5d718fd4::t_4ae2f48f6957ee 134-135
+  s_f0eb7c5d718fd4::t_eb4f323564571d 145
+  s_f0eb7c5d718fd4::t_cbac742b594341 32-33,35-38
+  s_f0eb7c5d718fd4::t_8dafda140ea0f5 1-31,34,39-42,44-48,52-53,57-62,66-69,72-73,75-99,104-110,112-128,131-133,136-144,146-153
+  s_f0eb7c5d718fd4::t_b0122eff29ad67 49-51,70-71
+  s_f0eb7c5d718fd4::t_346c221022e07c 54-56
+  s_f0eb7c5d718fd4::t_f48e9163fcee7a 63-65
+  s_f0eb7c5d718fd4::t_c9c631164fff3c 74
+  s_97b51f9b6dafb5::t_f5de6615c05c1c 100-103
+  s_f0eb7c5d718fd4::t_7be6101de0ed56 129-130
+  s_f0eb7c5d718fd4::t_89a8839ba2d755 43
+src/components/taxonomy/taxon-name-selector.tsx
+  s_29736c5c3947fe::t_488011b49e6b75 9
+  s_29736c5c3947fe::t_99fa310152195e 5
+  s_29736c5c3947fe::t_a10c3fedb48201 305-310,312-324
+  s_29736c5c3947fe::t_d93b57fe5222c0 269,295,304,330
+src/app/workspace/home/layout.tsx
+  s_ca1e9323a57881::t_f8ee0933151038 2-10
+  s_ca1e9323a57881::t_69b75ea1f8d48a 1
+src/components/views/__tests__/resource-collection-taxonomy-actions.test.tsx
+  s_bb91abbfe642f1::t_b57153d6a23a94 331-333
+  s_915feb028a8781::t_9db9ecd3a63beb 295-330,337-344
+  s_c80dca41d94d90::t_a574643dbf4d4c 334-336
+src/app/services/(metagenomics)/taxonomic-classification/taxonomic-classification-input-cards.tsx
+  s_c80dca41d94d90::t_055fa555c72787 180-183
+  s_c80dca41d94d90::t_456cc6a64d67b4 3,7
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_3429887452b20f::t_0fb14ed4b8c5f2 10-12,16,59,108,128-140
+src/components/filterbar/filter-bar.tsx
+  s_fc58673ac2d712::t_497f5e54fb5d76 58-60
+  s_fc58673ac2d712::t_4f0486663f6fcc 94-106
+  s_fc58673ac2d712::t_bcc13d449a03cf 35-36
+  s_fc58673ac2d712::t_2fa9941ee5f78c 167-169
+src/app/services/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-cards.tsx
+  s_44469e58be3e99::t_be7ee011b994dc 7-8
+  s_44469e58be3e99::t_6f42c5f730937b 69-78
+  s_44469e58be3e99::t_a69ab19228d94e 103-106
+  s_44469e58be3e99::t_e270251b526336 11
+src/components/views/__tests__/use-resource-collection-export.test.tsx
+  s_f0eb7c5d718fd4::t_65add23032eb51 17-18,20-23
+  s_f0eb7c5d718fd4::t_c291a93b50407a 12-13
+  s_f0eb7c5d718fd4::t_b895bb56a1f270 1-11,14-16,19,24-53,56-61,65,67-84,87-102,104-118,120-130,132-134,137-146
+  s_f0eb7c5d718fd4::t_41c573612a33c7 66,103
+  s_f0eb7c5d718fd4::t_e30bf52529557a 54-55,85-86
+  s_f0eb7c5d718fd4::t_b0122eff29ad67 62-64
+  s_f0eb7c5d718fd4::t_a41ca5aed5dd67 119
+  s_f0eb7c5d718fd4::t_d61849d4abf325 131
+  s_f0eb7c5d718fd4::t_831bb30b8529cc 135-136
+src/app/services/(protein-tools)/meta-cats/meta-cats-input-sections.tsx
+  s_11860dc06ffcda::t_12b1552272f7b2 1-27
+src/proxy.ts
+  s_ca1e9323a57881::t_2c6df5a7446574 45-48
+  s_ca1e9323a57881::t_2ee4bdc1876381 2-5
+src/components/workspace/workspace-breadcrumbs.tsx
+  s_896ac0b8f832c6::t_bc1ca2e64b91cd 54
+  s_896ac0b8f832c6::t_985e63987480d4 7-8,15,30-36,43-50,53,55-57,59-60,62-63,65-68,70,72,74-75
+  s_896ac0b8f832c6::t_3b7e9625636bce 58,64,73,81
+src/components/taxonomy/taxonomy-selection.ts
+  s_8f8938eb09802c::t_5f6d82dfd5829c 1-2,4-60
+  s_8f8938eb09802c::t_d58680b2e911a3 3
+src/app/services/(metagenomics)/layout.tsx
+  s_ca1e9323a57881::t_d4d554f6b868b0 2-10
+  s_ca1e9323a57881::t_c709f531700154 1
+src/components/views/overview-section.tsx
+  s_88b9524194117b::t_811c351a068600 2-3
+src/components/shared/file-table.tsx
+  s_88b9524194117b::t_931f2c9b9aa5ea 72
+src/components/taxonomy/tax-id-selector.tsx
+  s_29736c5c3947fe::t_d93b57fe5222c0 151,188,198,223
+  s_29736c5c3947fe::t_249fcd50f8e164 199-204,206-217
+  s_b709b3bff6cd53::t_9c2cd158e797bf 5
+  s_29736c5c3947fe::t_c86b7741ad5f82 9
+src/components/views/use-selection-service-launch.ts
+  s_915feb028a8781::t_482acad9644f84 340-345
+  s_915feb028a8781::t_db75ed14f681e6 329-331
+  s_915feb028a8781::t_d8d6e7c4f72208 1-13,15-321,325-328,332-339,346-347
+  s_915feb028a8781::t_0a1cd1d5b1b859 14
+  s_915feb028a8781::t_656c651e88252a 322-324
+src/components/services/__tests__/selected-libraries-card.test.tsx
+  s_44469e58be3e99::t_93afccb5a9936a 1-38
+src/app/services/(protein-tools)/msa-snp-analysis/__tests__/validate-genome-group.test.ts
+  s_11860dc06ffcda::t_25f563c2181535 1-69
+src/components/workspace/workspace-browser.tsx
+  s_896ac0b8f832c6::t_99e18a9dcbe6fd 27,29-31
+  s_c80dca41d94d90::t_fb0e02a9ec85ba 422-434,438-439,443-450,453-465
+  s_896ac0b8f832c6::t_eaf7b70a5a8c47 374-376,378,393-412,414,416-421,451-452,466-478
+  s_896ac0b8f832c6::t_ab5ce01a44644c 330-336,341-347
+  s_896ac0b8f832c6::t_c48cd637caab9d 435-437,440-441
+  s_896ac0b8f832c6::t_67be42901db816 442
+src/app/services/(utilities)/layout.tsx
+  s_ca1e9323a57881::t_442124fe9407fb 1
+  s_ca1e9323a57881::t_4d7c027841ecc4 2-10
+src/app/services/(viral-tools)/layout.tsx
+  s_ca1e9323a57881::t_be8850b41ad7e7 1
+  s_ca1e9323a57881::t_4ba19415f37735 2-10
+src/components/shared/data-table.tsx
+  s_30aa1b4cd4143f::t_6b2f5b76c42d46 40,307-308,1079
+  s_b709b3bff6cd53::t_f98728cd5ab90f 893-901
+  s_b709b3bff6cd53::t_b019fd34fdbacc 869-872
+  s_b709b3bff6cd53::t_c54c6c19c0ab08 836-844
+  s_b709b3bff6cd53::t_33aae19c6cb55e 124
+  s_b709b3bff6cd53::t_0d6152f735ef86 44-46
+src/components/views/entity-view-shell.tsx
+  s_61b783403e59a3::t_9d73dfbd2a34c4 57-60
+  s_61b783403e59a3::t_e4d2e2039047fe 4
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_88b9524194117b::t_9e23b1080e197c 13
+src/components/services/single-genome-selector.tsx
+  s_29736c5c3947fe::t_72abc9439ae843 5
+  s_29736c5c3947fe::t_22af2f9c9e99d0 272-299,301-302
+  s_29736c5c3947fe::t_d93b57fe5222c0 235,265,305
+  s_29736c5c3947fe::t_0f87a8cf52251b 300
+  s_29736c5c3947fe::t_7f21ae452fccc1 9-10
+src/components/views/resource-collection-actions.tsx
+  s_e66995536bd5c0::t_c390a11dc82df7 561-563,570-571
+  s_bb91abbfe642f1::t_a6ac8346920bd4 536-537
+  s_88b9524194117b::t_88b27b4115f284 49-50
+  s_bb91abbfe642f1::t_7e98e11711e06b 619-621,641-642
+src/components/views/__tests__/collection-selection-actions.test.tsx
+  s_c80dca41d94d90::t_967ec77acbe4d6 194
+  s_915feb028a8781::t_9db9ecd3a63beb 188-193,195-212
+  s_88b9524194117b::t_dfeb9f7034d202 57-59
+  s_88b9524194117b::t_4988f403b24675 69
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_88b9524194117b::t_a504ef74746317 1024
+  s_88b9524194117b::t_18ccabb1863814 1107
+  s_88b9524194117b::t_50c1fe51c3eb2b 1016
+  s_88b9524194117b::t_aa51a991e66dee 1035
+  s_88b9524194117b::t_380af33c034a4e 19-27
+  s_88b9524194117b::t_92e46fbc6f622c 1046,1057,1072,1080,1088,1096
+  s_88b9524194117b::t_a7b1afc750ca71 1115
+  s_88b9524194117b::t_042d85b1c8d3c8 1008
+src/components/services/service-output-fields.tsx
+  s_11860dc06ffcda::t_4c874008110c8b 1-51
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_11860dc06ffcda::t_389a27b300dcf7 70-74
+  s_11860dc06ffcda::t_54250bb8fc8725 458-473,475-478
+  s_11860dc06ffcda::t_46a00afd7879ad 40
+  s_11860dc06ffcda::t_3d48fe5c1b1e1d 823,826
+  s_f0eb7c5d718fd4::t_c2b685b5f59337 975
+  s_11860dc06ffcda::t_7662c71bca598d 916,919
+  s_11860dc06ffcda::t_5dfee3b1a6906a 531
+src/lib/auth/__tests__/routes.test.ts
+  s_ca1e9323a57881::t_6f61b62df0b445 9,11-12
+  s_ca1e9323a57881::t_50ad67bfe586cc 33,39-43
+  s_ca1e9323a57881::t_29303536c1aadd 44-45
+doctor.config.json
+  s_c80dca41d94d90::t_d8e7e1544bb6dd 5-57
+src/app/jobs/layout.tsx
+  s_ca1e9323a57881::t_c9ef4782d2b42e 4,9-10
+  s_ca1e9323a57881::t_175610bb2dee17 2
+src/components/views/overview-card.tsx
+  s_88b9524194117b::t_eaddff0feb37ef 3-6
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_b89e4cdc506f67::t_045406d0c6b557 30-33,165-167,190-192,210-212,222-225,280-282,391-394,401
+  s_b89e4cdc506f67::t_88591288674082 332-364,368-371,375-390,398-399
+  s_b89e4cdc506f67::t_0ea038ab00bf3e 395-397
+  s_b89e4cdc506f67::t_308b8b2c2e574b 400,402
+src/app/settings/layout.tsx
+  s_ca1e9323a57881::t_a84a4af23804d6 3
+  s_ca1e9323a57881::t_ee1ff3745450c5 9
+  s_ca1e9323a57881::t_31b0503394451a 10-11
+src/components/navbars/__tests__/mobile-sheet-navigation.test.tsx
+  s_97b51f9b6dafb5::t_8aeeb7205bb594 23,27-35
+  s_97b51f9b6dafb5::t_e479f709ce8e65 1,3-22,24-26,36-40,43,46-52
+  s_97b51f9b6dafb5::t_6cb823dba4809e 2
+  s_97b51f9b6dafb5::t_82647c5abc787d 41-42,44-45
+src/components/taxonomy/taxonomy-tree.tsx
+  s_c80dca41d94d90::t_21e46b73ac2e28 257-260
+  s_8f8938eb09802c::t_64248d5a834273 221,237-242,244
+  s_8f8938eb09802c::t_c9714acab3cd42 218-220
+  s_8f8938eb09802c::t_546eeddc36365c 222
+src/app/services/(utilities)/fastq-utilities/page.tsx
+  s_44469e58be3e99::t_08e6f4b20638b1 216-220
+  s_44469e58be3e99::t_b3d4931962de22 22
+  s_44469e58be3e99::t_0a584b23ed88ff 6,17
+src/app/search/legacy-keyword-normalization.ts
+  s_8f8938eb09802c::t_e364ac669b50e0 1-32
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_3429887452b20f::t_244b30997f4253 2,6-7,12,17,63-69
+src/components/organisms/landing-shell/organism-tab-collection-options.ts
+  s_88b9524194117b::t_0e89921a94a6f6 1-37
+src/components/views/collection-selection-action-ids.ts
+  s_88b9524194117b::t_1c91b064eca9d8 1-49
+src/app/services/(genomics)/layout.tsx
+  s_ca1e9323a57881::t_fd8e160b3f0324 2-10
+  s_ca1e9323a57881::t_91e1dbcddcda84 1
+src/components/shared/data-table-controls.tsx
+  s_b709b3bff6cd53::t_a5eb97ec968b3d 1-50,53-62,64-70,72-76,78-101,103-128,130-174
+  s_30aa1b4cd4143f::t_6b2f5b76c42d46 51-52,63,71,77,102,129
+src/components/filterbar/__tests__/filter-bar.test.tsx
+  s_fc58673ac2d712::t_fbea4c79b2dbb4 261
+  s_fc58673ac2d712::t_4c06c430f7218f 170-172
+  s_fc58673ac2d712::t_d0b95fe36b5d31 163,220-224,245-260,262-281
+  s_fc58673ac2d712::t_839fd4763e8c8a 57-60,66
+  s_fc58673ac2d712::t_a37c25e9816064 225-244
+src/app/(views)/protein-structure/__tests__/protein-structure-member.test.tsx
+  s_b89e4cdc506f67::t_045406d0c6b557 47,71,84-93,95-96
+  s_b89e4cdc506f67::t_cfed1df7f382f4 102-108
+src/components/views/resource-collection.tsx
+  s_f0eb7c5d718fd4::t_a5757b3af4124b 210
+  s_f0eb7c5d718fd4::t_c93001e27a990c 425
+  s_f0eb7c5d718fd4::t_4401339586d206 10-11
+  s_f0eb7c5d718fd4::t_f807eecc9bb6e2 22
+  s_f0eb7c5d718fd4::t_585240266b6de0 62,65-66
+  s_f0eb7c5d718fd4::t_5a736d2292cdb9 199-209,211-236
+src/components/navbars/__tests__/mobile-workspace-section.test.tsx
+  s_97b51f9b6dafb5::t_a81f633410e9f0 1-22,24-30,32,34,36-60,64-71,75-76
+  s_97b51f9b6dafb5::t_96ee1e185c2eb5 23
+  s_97b51f9b6dafb5::t_727172b9509447 31
+  s_97b51f9b6dafb5::t_94f09aa8764ce8 33,61-63,72-74
+  s_11860dc06ffcda::t_c524559be2cd16 35
+src/components/services/output-folder.tsx
+  s_29736c5c3947fe::t_fee4dec3ab022d 3
+  s_29736c5c3947fe::t_4710df824cff7f 61-66
+  s_29736c5c3947fe::t_87fdb568d24bca 125
+  s_29736c5c3947fe::t_a9c48dd56909ee 12
+  s_29736c5c3947fe::t_d93b57fe5222c0 37-40,132-133
+  s_29736c5c3947fe::t_ef21d80ebf459f 134-136
+src/app/services/(phylogenomics)/layout.tsx
+  s_ca1e9323a57881::t_33846c71af7f72 2-10
+  s_ca1e9323a57881::t_87b5beae549602 1
+src/components/workspace/workspace-file-table.tsx
+  s_896ac0b8f832c6::t_39ef2f7eb38db0 168,170-175,179,183,188
+  s_896ac0b8f832c6::t_312ac98e2dae4f 13-15
+src/app/workspace/page.tsx
+  s_ca1e9323a57881::t_101c42d379138b 6
+  s_ca1e9323a57881::t_bcfe1aea66b427 2
+src/components/views/overview-group-fields.ts
+  s_88b9524194117b::t_5bf96ae6b5c75a 2-5
+src/components/services/use-list-data-export.ts
+  s_30aa1b4cd4143f::t_f2de14d7f697df 12
+  s_30aa1b4cd4143f::t_3dd640a08d4415 1-11,13-167
+src/app/workspace/[username]/layout.tsx
+  s_ca1e9323a57881::t_7b54e180650012 1
+  s_ca1e9323a57881::t_117c53f3b2f95d 2-10
+src/components/taxonomy/__tests__/taxonomy-suggestion-content.test.tsx
+  s_29736c5c3947fe::t_d93b57fe5222c0 22-24
+  s_29736c5c3947fe::t_0c0bdddeecbe89 1-21,25-52
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_b89e4cdc506f67::t_ddcf8cc24698b8 869-879
+  s_b89e4cdc506f67::t_527957950f8d43 320-390,392-540
+  s_b89e4cdc506f67::t_c4cd95b46c16dc 707-709
+  s_b89e4cdc506f67::t_045406d0c6b557 391,886,914,927
+  s_8f8938eb09802c::t_5ab45f15e4baeb 777-781
+src/components/services/genome-suggestion-list.tsx
+  s_29736c5c3947fe::t_12fa6e564b8ed7 1-17,19-31,33-37,39-43,45-48,50-64,66-67,69,71,73-79,81-83,85-91
+  s_29736c5c3947fe::t_bae4a2bdfe10dd 32
+  s_29736c5c3947fe::t_d93b57fe5222c0 38,44,49,65,80,84
+  s_29736c5c3947fe::t_7f8297193cae9e 18
+  s_29736c5c3947fe::t_25fc7d875b16c4 68
+  s_29736c5c3947fe::t_4ca5a74238995a 70,72
+src/components/navbars/mobile-navbar.tsx
+  s_97b51f9b6dafb5::t_a121fc23354658 27,30
+  s_97b51f9b6dafb5::t_0e0adc37b82fc4 91-96
+  s_97b51f9b6dafb5::t_94f09aa8764ce8 9
+src/__tests__/proxy.test.ts
+  s_ca1e9323a57881::t_6e10b3219f3292 83-87
+  s_ca1e9323a57881::t_076424ca8d960f 91-93
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_11860dc06ffcda::t_4cb54a8d400622 6
+  s_11860dc06ffcda::t_a1a4b22ed1cda8 271,309
+  s_11860dc06ffcda::t_6d6fddd232db4f 265-270,272-278,283-284,304-308,310-331
+  s_11860dc06ffcda::t_62e9beae2369e9 30
+  s_11860dc06ffcda::t_28722dab7da2f4 461
+  s_11860dc06ffcda::t_ab03e5ddf090d4 34
+  s_11860dc06ffcda::t_cfdc4a3cd6581b 599-600
+  s_11860dc06ffcda::t_3e8ca8247c14ee 1162
+  s_11860dc06ffcda::t_45c5ee32685fc7 303
+  s_11860dc06ffcda::t_520f89d3a18dee 1140-1155,1157-1160
+  s_11860dc06ffcda::t_057c454325d3c4 45-49
+  s_11860dc06ffcda::t_179b544e81e2e1 279-282,285-302
+  s_11860dc06ffcda::t_f9c7fd2fa16ca1 87-88
+  s_11860dc06ffcda::t_d0bc6f1c47e33d 84
+  s_11860dc06ffcda::t_ba614b9a456e59 1035,1038
+  s_11860dc06ffcda::t_04b77ff31142f2 752,755
+src/components/organisms/landing-shell/__tests__/landing-shell-client.test.tsx
+  s_88b9524194117b::t_155dca2000d131 15-16
+src/components/views/index.ts
+  s_88b9524194117b::t_364f17ee79842f 8
+src/app/services/(protein-tools)/layout.tsx
+  s_ca1e9323a57881::t_c62b489b117cd2 2-10
+  s_ca1e9323a57881::t_a564c9b0a5bdb6 1
+src/components/workspace/selection-to-group-dialog.tsx
+  s_bb91abbfe642f1::t_750539265ecfa9 124,126-132,134
+src/components/views/overview-value-policy.ts
+  s_88b9524194117b::t_786d6a7cb51165 1-64
+src/components/services/__tests__/use-list-data-export.test.tsx
+  s_30aa1b4cd4143f::t_f2de14d7f697df 20-22,36
+  s_8f8938eb09802c::t_25cb6f98b53bf3 1-19,23-35,37-142
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_b89e4cdc506f67::t_b278780548cd07 183-202,204-220
+  s_b89e4cdc506f67::t_045406d0c6b557 203
+src/hooks/services/use-output-name-validation.ts
+  s_29736c5c3947fe::t_7003b5b6346973 48
+  s_29736c5c3947fe::t_8234870c25c393 42-47
+  s_29736c5c3947fe::t_d93b57fe5222c0 10,36-37,89
+  s_29736c5c3947fe::t_29ee34de43a65d 1-9,11-35,38-41,49-88,90-102
+src/components/shared/data-table-footer.tsx
+  s_b709b3bff6cd53::t_a23b658ac92d31 5-10
+  s_b709b3bff6cd53::t_9e793edd461dd1 115
+  s_b709b3bff6cd53::t_7ae00596f7e9ba 26
+  s_b709b3bff6cd53::t_6a0962ed860b8f 11-12,14,16-18,20-25,27-34
+  s_30aa1b4cd4143f::t_6b2f5b76c42d46 66,92,108,126
+  s_b709b3bff6cd53::t_de3ce7b418e4cc 1-4,35-52,60-62,64-65,67-91,93-107,109-114,116-125,127-134
+  s_b709b3bff6cd53::t_bc0b33fed9c7d7 53-59,63
+  s_b709b3bff6cd53::t_b8cca861335165 13,15,19
+src/app/(views)/protein-structure/protein-structure-member.tsx
+  s_b89e4cdc506f67::t_9405539083a33c 276
+  s_b89e4cdc506f67::t_045406d0c6b557 37-39,45,65,72,77,83,130,136,227,236,277
+  s_b89e4cdc506f67::t_b183b81a824136 43-44,46-64,66-71,73-76,78-82,84-129,131-135,137-194
+src/lib/auth/routes.ts
+  s_ca1e9323a57881::t_05ef17250037ba 1-2
+  s_ca1e9323a57881::t_40d8584756f946 3-12,16-21
+  s_ca1e9323a57881::t_ac67cc78667c0a 15
+src/components/views/__tests__/overview-card.test.tsx
+  s_88b9524194117b::t_a98d9c072fd3f1 3,7
+src/lib/services/workspace/__tests__/path-utils.test.ts
+  s_896ac0b8f832c6::t_d8f41b59b07905 12-14
+  s_896ac0b8f832c6::t_a83f6196cdeefa 240-363
+  s_896ac0b8f832c6::t_09aaea4d7aef6d 4
+src/components/workspace/workspace-browser-presentation.tsx
+  s_c80dca41d94d90::t_cae7e16aed72a6 130-139,173-184,190,192,205
+  s_c80dca41d94d90::t_6896d2c91b9ba5 62-74,77-85
+  s_896ac0b8f832c6::t_ed93e53762958e 1-61,75-76,86-112,114-115,117-129,140-172,185-189,191,193-200,202,204,206-218
+  s_c80dca41d94d90::t_aa19c183ee83bb 113,116
+  s_c80dca41d94d90::t_0e9adba7304108 201,203
+src/components/views/collection-selection-actions.tsx
+  s_bb91abbfe642f1::t_cabefddfbb4801 242,245-246
+  s_bb91abbfe642f1::t_e106da68712333 258,261-262
+  s_bb91abbfe642f1::t_4a3fdc6a83fb5b 289-292
+src/components/taxonomy/__tests__/taxonomy-selection.test.ts
+  s_8f8938eb09802c::t_3c5eff9ba6bb62 1-76
+src/components/services/genome-name-selector.tsx
+  s_29736c5c3947fe::t_d93b57fe5222c0 164,190,230,232
+  s_8f8938eb09802c::t_ef632cdb868463 8
+  s_29736c5c3947fe::t_ee4ec371dcd7c7 192-208
+src/components/navbars/mobile-workspace-section.tsx
+  s_97b51f9b6dafb5::t_94f09aa8764ce8 40,54,69,94-95
+  s_97b51f9b6dafb5::t_378230478d6332 1-39,41-53,55-68,70-93,96-112
+src/app/search/__tests__/legacy-keyword-normalization.test.ts
+  s_8f8938eb09802c::t_f6ec3baea951b6 1-5,7-32
+  s_8f8938eb09802c::t_ed90ac999bca11 6
+src/components/shared/use-data-table-download.ts
+  s_b709b3bff6cd53::t_5049d780a6d183 31-47
+  s_30aa1b4cd4143f::t_6b2f5b76c42d46 25-27,122
+  s_b709b3bff6cd53::t_30aff18729b826 29,85-86
+  s_b709b3bff6cd53::t_bb97bbad50a1a5 53-84,87-105
+  s_b709b3bff6cd53::t_c306321694a185 1-24,28,30,48-52,106-121,123-133
+src/components/organisms/metadata-distributions/_shared/chart-legend-pill.tsx
+  s_b89e4cdc506f67::t_c0132250af9f74 92,94
+  s_b89e4cdc506f67::t_045406d0c6b557 84-86,108-109
+  s_b89e4cdc506f67::t_12cb83715fe6bf 90-91
+  s_b89e4cdc506f67::t_068c41547feb53 74-77,79
+  s_b89e4cdc506f67::t_245d29fe7534cd 78
+  s_b89e4cdc506f67::t_9041edec1c6f1a 5-43
+src/components/views/collection-copy-dialog.tsx
+  s_bb91abbfe642f1::t_c842d341a89567 85,87-93,95
+src/lib/auth/server/page-auth.ts
+  s_ca1e9323a57881::t_5f92d6f95e632a 1-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4ad7d2f3da4998ffa4d9cfe44b653201d43d0117",
+  "prompts": {},
+  "sessions": {
+    "s_11860dc06ffcda": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3acd722effeuj1s7yU7HQe8dH",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_29736c5c3947fe": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3af6e233ffeGPLXy5KQ0qmDXD",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_30aa1b4cd4143f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3af6e21dffehe9aww5vFFZ6NO",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_3429887452b20f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b15a8afffepVM6LweM5deEkr",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_44469e58be3e99": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3acd721affeV5nxGMq2q2p9im",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_61b783403e59a3": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b15a884ffeAfkRDUmRB1EGCU",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_88b9524194117b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b0b412dffetoYi44CymCSyc4",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_896ac0b8f832c6": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3af6e259ffe3q42HRDGO55Xmm",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8f8938eb09802c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3af6e2ccffeUtO5ta06XKpLgQ",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_915feb028a8781": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3afc97c0ffeaxv0jBPSsWs8Np",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_97b51f9b6dafb5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3acd7245ffe6Z6ityGYRnYBOK",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b709b3bff6cd53": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3af6e20bffei57YIEJ4MW1Qg0",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_b89e4cdc506f67": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3af6e248ffe2OYOapFgPv4nNT",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bb91abbfe642f1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3afc97dfffeQIW8uO92guoY8B",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_c80dca41d94d90": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b6cc961ffe4sH3qo0Y7liVA0",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ca1e9323a57881": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3abfc036ffeygzHufLyt84M2Q",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_e66995536bd5c0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3afc97aaffes3GM1xrIdP5u4M",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_f0eb7c5d718fd4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3acd7256ffefGVAaRqyofC1hR",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_fc58673ac2d712": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b15a899ffeMOGWEz1pL3tPKl",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

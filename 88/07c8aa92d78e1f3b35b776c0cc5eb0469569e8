@@ -1,0 +1,26 @@
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_c80dca41d94d90::t_15b02a526c8868 49-50
+src/components/phylogeny/viral-tree-picker.tsx
+  s_c80dca41d94d90::t_d43a7026e8426d 5,448-451,453-457,460
+  s_c80dca41d94d90::t_b2330fd4449291 452
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_c80dca41d94d90::t_15cfd550178e0f 481
+src/components/views/resource-collection.tsx
+  s_c80dca41d94d90::t_68c3474fb8c09b 158-160,163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "8807c8aa92d78e1f3b35b776c0cc5eb0469569e8",
+  "prompts": {},
+  "sessions": {
+    "s_c80dca41d94d90": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3b6cc961ffe4sH3qo0Y7liVA0",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

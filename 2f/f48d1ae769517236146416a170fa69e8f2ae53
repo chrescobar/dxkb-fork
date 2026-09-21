@@ -1,0 +1,23 @@
+src/components/workspace/file-viewer/viewers/zoomable-image.tsx
+  s_83fc206472da46::t_b1221deaad8c85 39-41
+  s_83fc206472da46::t_41fb4906f022e4 29-31
+  s_83fc206472da46::t_bfba9a56b17ff7 49-51
+pnpm-lock.yaml
+  s_83fc206472da46::t_ef554260607a42 1-158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2ff48d1ae769517236146416a170fa69e8f2ae53",
+  "prompts": {},
+  "sessions": {
+    "s_83fc206472da46": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a127487ffe4eaWsZuXQo6O8v",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

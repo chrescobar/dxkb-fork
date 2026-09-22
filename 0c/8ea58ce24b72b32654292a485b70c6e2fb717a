@@ -1,0 +1,58 @@
+src/app/search/legacy-keyword-normalization.ts
+  s_51da00bf6f26c1::t_4e085430dc8349 15-16,19,32,35-37
+  s_51da00bf6f26c1::t_60ed83a527b0a6 4-5,7-8,10-12,17-18,20,23,27,38-39
+  s_51da00bf6f26c1::t_cd8e57e33a390c 21-22,24-26,28-30
+  s_51da00bf6f26c1::t_f01e546f4261d0 33-34,41-47
+src/components/views/resource-collection.tsx
+  s_51da00bf6f26c1::t_15cc6c1c983fbd 215
+  s_51da00bf6f26c1::t_d09d1c7deef2c9 10-13
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_51da00bf6f26c1::t_93401e1029563d 585,587
+  s_51da00bf6f26c1::t_66cd926f3ee039 547,554,557-563
+src/components/views/__tests__/resource-collection.test.tsx
+  s_51da00bf6f26c1::t_b062edf56a53eb 839-842
+  s_51da00bf6f26c1::t_e5501189b24e3b 925,935
+src/components/views/__tests__/use-resource-collection-export.test.tsx
+  s_51da00bf6f26c1::t_0ff41d314f9d7d 38
+  s_51da00bf6f26c1::t_f5741aa2141245 82,84-90,93-96,102-108,111-114,123,129,137,139
+src/components/views/use-resource-collection-export.ts
+  s_51da00bf6f26c1::t_86a7b1cb3d54b2 76,82
+  s_51da00bf6f26c1::t_6e368e0a116a5d 59
+  s_51da00bf6f26c1::t_3b19c6b4ba9d30 43
+  s_51da00bf6f26c1::t_da06bc6b880649 105-108,111-113
+  s_51da00bf6f26c1::t_89838e65105d96 21-31
+  s_51da00bf6f26c1::t_b1f41fdafe3a29 84-86
+  s_51da00bf6f26c1::t_8de9b10277dfca 117-122
+docs/architecture.md
+  s_51da00bf6f26c1::t_3e4e61f886e894 139
+src/components/workspace/workspace-toolbar.tsx
+  s_2717eddeedae90::t_b4b7d2b483f86d 189-202,204-217
+  s_2717eddeedae90::t_0cc9fe7532acfc 67-88
+src/app/search/__tests__/legacy-keyword-normalization.test.ts
+  s_51da00bf6f26c1::t_00e7b3fd2fbb2e 59-65,67-72
+  s_51da00bf6f26c1::t_d3dfd21214560f 66,73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0c8ea58ce24b72b32654292a485b70c6e2fb717a",
+  "prompts": {},
+  "sessions": {
+    "s_2717eddeedae90": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f36757f3effe4UmA6lX4rXtnxF",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_51da00bf6f26c1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f36850e9affe3R41qN13fQQ1hH",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

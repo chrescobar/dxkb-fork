@@ -1,0 +1,25 @@
+src/components/ui/logo.tsx
+  s_9cc82a895d0bd7::t_18612ac8aa327b 37-41
+src/app/(views)/experiment/experiment-bioset-collection.tsx
+  s_9cc82a895d0bd7::t_46a969e04d32c9 45-49
+src/components/ui/theme-content.tsx
+  s_9cc82a895d0bd7::t_46a969e04d32c9 30-34
+e2e/a11y/settle.ts
+  s_9cc82a895d0bd7::t_137938903f8c16 50-77,88-90,92,94-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "1f9d0c76a8f1eca8ca143b1121a7e938213bb1e9",
+  "prompts": {},
+  "sessions": {
+    "s_9cc82a895d0bd7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b770f088-553c-45ca-9044-18a6c49f82c2",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

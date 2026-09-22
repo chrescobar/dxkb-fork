@@ -1,0 +1,30 @@
+e2e/a11y/routes.ts
+  s_36b6929dfb129c::t_a0b3f5a9468e2c 657-665
+e2e/tests/a11y/deep-tier.spec.ts
+  s_36b6929dfb129c::t_29aa6afa92894c 58
+e2e/scripts/__tests__/a11y-teardown.test.ts
+  s_36b6929dfb129c::t_390d2e380be1df 6-20
+  s_36b6929dfb129c::t_c8a82296d59ae0 40-48,51-55
+e2e/a11y/report.ts
+  s_36b6929dfb129c::t_e99da508c3b351 10
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_36b6929dfb129c::t_8c6a06294b464a 49
+e2e/a11y/teardown.ts
+  s_36b6929dfb129c::t_5885a10449e267 36-37,42-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "decfd4de5fbb1ad6f5476af807d12cf241bcff68",
+  "prompts": {},
+  "sessions": {
+    "s_36b6929dfb129c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f35927f8cffeHwFVXBYRBHQj3e",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

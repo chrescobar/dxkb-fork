@@ -1,0 +1,27 @@
+.github/workflows/pnpm-a11y.yml
+  s_78b838a8bdfb0f::t_faecb64904a5f1 29,105,156,207,258
+.github/workflows/pnpm-e2e.yml
+  s_78b838a8bdfb0f::t_8f5d72f5a7bd7f 31,104
+patches/archaeopteryx@2.3.2.patch
+  s_78b838a8bdfb0f::t_97577a79509b86 236
+.github/workflows/sync-linux-snapshots.yml
+  s_78b838a8bdfb0f::t_d6e57ce089e105 17
+pnpm-lock.yaml
+  s_78b838a8bdfb0f::t_99520a00dbe6eb 182,292,12658
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "18c11d7ba083c544223973e54575cad299a0de5f",
+  "prompts": {},
+  "sessions": {
+    "s_78b838a8bdfb0f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3a0d96a0ffek6x2yehbHuX300",
+        "model": "gpt56sol"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

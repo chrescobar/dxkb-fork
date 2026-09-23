@@ -1,0 +1,24 @@
+package.json
+  s_557bc1bebc3bec::t_90f442c1c28a6a 112,124
+eslint.config.mjs
+  s_557bc1bebc3bec::t_1c321782f2332f 5
+  s_557bc1bebc3bec::t_0b90b86ae393ce 49,56-57
+  s_557bc1bebc3bec::t_ea5aea13728e95 50-55
+  s_557bc1bebc3bec::t_7163b17055d2a0 48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "4d84c4b7a9a2d89975d21dc9f620c47ac6881004",
+  "prompts": {},
+  "sessions": {
+    "s_557bc1bebc3bec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cb5c563a-14dc-4e49-a8cb-74c4b0332c1f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

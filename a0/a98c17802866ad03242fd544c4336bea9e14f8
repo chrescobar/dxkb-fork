@@ -1,0 +1,54 @@
+src/app/(views)/protein-structure/protein-structure-member.tsx
+  h_dbd94c95afa702 65,72,77,83,130,136,227,236,277
+src/components/navbars/mobile-sheet-navigation.tsx
+  h_dbd94c95afa702 45-46,49,53,57,80,93,112,151,167
+src/components/navbars/mobile-workspace-section.tsx
+  h_dbd94c95afa702 94-95
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  h_dbd94c95afa702 391,886,914,927
+src/components/services/anchored-suggestion-portal.tsx
+  h_dbd94c95afa702 88
+src/components/services/genome-name-selector.tsx
+  h_dbd94c95afa702 164,190,230,232
+src/components/services/genome-suggestion-list.tsx
+  h_dbd94c95afa702 38,44,49,65,83,87
+src/components/services/output-folder.tsx
+  h_dbd94c95afa702 133
+src/components/services/single-genome-selector.tsx
+  h_dbd94c95afa702 235,265,305
+src/components/shared/data-table-controls.tsx
+  h_dbd94c95afa702 69,77,83,108,135
+src/components/shared/data-table-footer.tsx
+  h_dbd94c95afa702 73,99,115,133
+src/components/shared/data-table-header.tsx
+  h_dbd94c95afa702 63,125
+src/components/shared/data-table.tsx
+  h_dbd94c95afa702 1085
+src/components/taxonomy/tax-id-selector.tsx
+  h_dbd94c95afa702 151,188,198,223
+src/components/taxonomy/taxon-name-selector.tsx
+  h_dbd94c95afa702 269,295,304,330
+src/components/taxonomy/taxonomy-suggestion-content.tsx
+  h_dbd94c95afa702 26,33,40,50,60
+src/components/views/overview-section.tsx
+  h_dbd94c95afa702 81
+src/components/views/resource-collection.tsx
+  h_dbd94c95afa702 258
+src/components/workspace/selection-to-group-dialog.tsx
+  h_dbd94c95afa702 212
+src/components/workspace/workspace-breadcrumbs.tsx
+  h_dbd94c95afa702 58,64,73,81
+src/components/workspace/workspace-mini-browser-table.tsx
+  h_dbd94c95afa702 61,79,86-87,116,130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "a0a98c17802866ad03242fd544c4336bea9e14f8",
+  "prompts": {},
+  "humans": {
+    "h_dbd94c95afa702": {
+      "author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

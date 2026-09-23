@@ -1,0 +1,25 @@
+e2e/a11y/README.md
+  s_c2bbc331bb373e::t_4f5ac4a646c335 70,123-125
+e2e/a11y/routes.ts
+  s_c2bbc331bb373e::t_4f5ac4a646c335 619,625,658
+e2e/tests/a11y/deep-tier.spec.ts
+  s_c2bbc331bb373e::t_4f5ac4a646c335 137,154,171,192,211
+e2e/a11y/settle.ts
+  s_c2bbc331bb373e::t_4f5ac4a646c335 15-20,162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ba29be808863d0937b37c6e9e09a9feac897758a",
+  "prompts": {},
+  "sessions": {
+    "s_c2bbc331bb373e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "afb8271e-ea1e-42a9-938c-75d6e2852a06",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

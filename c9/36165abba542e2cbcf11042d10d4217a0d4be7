@@ -1,0 +1,135 @@
+src/components/ui/carousel.tsx
+  s_557bc1bebc3bec::t_5007d0235a4481 192
+  s_557bc1bebc3bec::t_6e23e0dd36f419 222
+src/components/organisms/taxon-breadcrumb.tsx
+  s_557bc1bebc3bec::t_691d90d4895f41 45
+  s_557bc1bebc3bec::t_abb7b97c81ca6c 30
+eslint.config.mjs
+  s_557bc1bebc3bec::t_d4a62cadecd23a 107-120
+  s_557bc1bebc3bec::t_cf2628350bc4a9 77
+  s_557bc1bebc3bec::t_e02c93c37c614b 63-64,67-72,74-76,78-79,94-106,121-125
+  s_557bc1bebc3bec::t_663a4b53fd2461 80-93
+  s_557bc1bebc3bec::t_33fe073b0a7b1b 13-26
+src/components/navbars/mobile-sheet-navigation.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 89
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 107
+src/app/(footer)/contact/components/contact-form.tsx
+  s_557bc1bebc3bec::t_39a0826bf24fdd 77
+src/components/navbars/mobile-navbar.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 109
+src/components/jobs/jobs-action-bar.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 104
+src/components/organisms/data-summary/data-summary.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 59
+src/components/workspace/workspace-action-bar.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 231
+src/components/services/selected-items-table.tsx
+  s_557bc1bebc3bec::t_14d7e658c0b403 56
+src/components/views/resource-filter-bar.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 167
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 73,121
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 47
+src/components/heros/help-hero.tsx
+  s_557bc1bebc3bec::t_d9ec1b90c8c4d4 11
+src/components/workspace/workspace-table-rows.tsx
+  s_557bc1bebc3bec::t_88e69d207eebd7 144
+  s_557bc1bebc3bec::t_8e70135abd95cd 46
+  s_557bc1bebc3bec::t_d8ac948bb04461 37-39
+  s_557bc1bebc3bec::t_a3977c1fca9ba6 135-137
+  s_557bc1bebc3bec::t_5eaf55c16048bf 175
+src/components/taxonomy/taxonomy-tree-columns.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 175
+src/components/search/search-action-bar.tsx
+  s_557bc1bebc3bec::t_810f7c56900eb0 105
+src/components/organisms/geo-distribution/map-tooltip.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 40,55
+src/components/shared/file-table.tsx
+  s_557bc1bebc3bec::t_26c20581d499da 188
+src/components/ui/calendar.tsx
+  s_557bc1bebc3bec::t_9831345f2ce710 170
+  s_557bc1bebc3bec::t_307974ed82f654 97
+  s_557bc1bebc3bec::t_a730d5bf828ec2 161
+  s_557bc1bebc3bec::t_2cb574fa94d40a 86
+src/components/detail-panel/detail-header.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 12
+src/components/ui/table.tsx
+  s_557bc1bebc3bec::t_a014048baffa25 58-61,69
+  s_557bc1bebc3bec::t_3c183ca88cc257 62-65
+  s_557bc1bebc3bec::t_8571f1bffe22cf 70
+src/components/workspace/workspace-item-details.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 140
+src/components/jobs/jobs-browser.tsx
+  s_557bc1bebc3bec::t_a0a2379911d601 80
+src/components/filterbar/facet-panel.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 62,70,86
+src/app/globals.css
+  s_557bc1bebc3bec::t_685ed4de4e24bd 34-43
+  s_557bc1bebc3bec::t_09d2e942a7560b 97-101
+src/components/ui/navigation-menu.tsx
+  s_557bc1bebc3bec::t_810f7c56900eb0 90,119
+src/app/(footer)/help/components/help-topics.tsx
+  s_557bc1bebc3bec::t_39a0826bf24fdd 35,38,41,44,47,77,80,83,86,89,121,124,127,130,133
+src/app/services/(genomics)/blast/blast-sections.tsx
+  s_557bc1bebc3bec::t_d7f12916223f41 57
+src/components/interactions/interactions-graph-skeleton.tsx
+  s_557bc1bebc3bec::t_bc22db27d52d35 56
+src/components/jobs/jobs-detail-panel.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 78
+  s_557bc1bebc3bec::t_9865411cab7a18 103
+src/components/navbars/theme-switcher-navbar.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 134
+eslint-suppressions.json
+  s_557bc1bebc3bec::t_fa9434006256ab 1-76,78-252,254-744,746-929,931-938
+  s_557bc1bebc3bec::t_ac98cd6b0d8aca 77,253,745,930
+src/components/ui/sonner.tsx
+  s_557bc1bebc3bec::t_952b07b02149dc 14
+AGENTS.md
+  s_557bc1bebc3bec::t_14e06f3031d2f9 58
+  s_557bc1bebc3bec::t_af820dc6c7dd15 52-56,59
+  s_557bc1bebc3bec::t_bcc5dff4bf460c 57
+src/components/navbars/desktop-navbar.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 61
+src/components/footers/footer.tsx
+  s_557bc1bebc3bec::t_6f5f4a58b6e1d4 108
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 227
+src/components/shared/data-table-controls.tsx
+  s_557bc1bebc3bec::t_6b50cbeb9e028b 77
+src/components/organisms/genera-grid/genera-card.tsx
+  s_557bc1bebc3bec::t_9865411cab7a18 41
+src/components/filterbar/selected-filters.tsx
+  s_557bc1bebc3bec::t_108deb928d6892 19
+src/components/phylogeny/viral-tree-picker.tsx
+  s_557bc1bebc3bec::t_429cd25873d5e3 415
+  s_557bc1bebc3bec::t_dfa81067941920 368,372
+  s_557bc1bebc3bec::t_2dc4f43f15cd65 434
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_557bc1bebc3bec::t_415d26010b0f36 200-206
+  s_557bc1bebc3bec::t_81e6bf95e81fff 192
+  s_557bc1bebc3bec::t_e8202100437ea2 170-173
+src/components/ui/dropdown-menu.tsx
+  s_557bc1bebc3bec::t_0295e02ef92a17 119
+src/components/shared/data-table.tsx
+  s_557bc1bebc3bec::t_c68bf1710c459e 243
+src/components/views/entity-view-shell.tsx
+  s_557bc1bebc3bec::t_df02ca4aa34a29 65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c936165abba542e2cbcf11042d10d4217a0d4be7",
+  "prompts": {},
+  "sessions": {
+    "s_557bc1bebc3bec": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cb5c563a-14dc-4e49-a8cb-74c4b0332c1f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

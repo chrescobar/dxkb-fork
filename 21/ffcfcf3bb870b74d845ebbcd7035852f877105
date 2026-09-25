@@ -1,0 +1,37 @@
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-parameters-card.tsx
+  s_174beafc28b373::t_dc42a8d2c907cb 63-67,71,116-120,124,195,229,252
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-input-cards.tsx
+  s_174beafc28b373::t_c2e06e102c4e96 155
+src/app/services/(genomics)/genome-assembly/assembly-sections.tsx
+  s_174beafc28b373::t_778f92a0b6ed79 420,439
+docs/architecture.md
+  s_174beafc28b373::t_6efd1b2d670a38 174
+src/app/services/(metagenomics)/taxonomic-classification/taxonomic-classification-parameters-card.tsx
+  s_174beafc28b373::t_c2e06e102c4e96 53,61,78,98,103,107,160-164,181,220,245,272,300,316-320,325,338-342,347
+src/app/services/(genomics)/similar-genome-finder/advanced-options-section.tsx
+  s_174beafc28b373::t_fd3d289d810f50 57,90,123
+src/app/services/(genomics)/primer-design/primer-input-section.tsx
+  s_174beafc28b373::t_778f92a0b6ed79 157,180
+src/app/services/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-cards.tsx
+  s_174beafc28b373::t_c2e06e102c4e96 138-142,146,199,227,250
+src/app/services/(genomics)/genome-annotation/genome-annotation-parameters.tsx
+  s_174beafc28b373::t_fd3d289d810f50 174
+src/components/taxonomy/tax-id-selector.tsx
+  s_174beafc28b373::t_fd3d289d810f50 13,49,156
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "21ffcfcf3bb870b74d845ebbcd7035852f877105",
+  "prompts": {},
+  "sessions": {
+    "s_174beafc28b373": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6defa24e-f5b6-4c0a-86af-5af3660508e9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

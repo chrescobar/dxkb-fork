@@ -1,0 +1,24 @@
+src/hooks/services/workspace/use-workspace-directory.ts
+  s_61450c2181c60c::t_dc88c85bbcaec5 3
+  s_61450c2181c60c::t_0a6f26215e8c11 232-242,244-245
+src/components/workspace/workspace-table-columns.tsx
+  s_61450c2181c60c::t_d91d424008b1f1 180
+  s_61450c2181c60c::t_73fefd9bc940d5 3
+  s_61450c2181c60c::t_0ece13f63cc6db 55-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b1c369045af411ec5328771d12c3f2de5febfcda",
+  "prompts": {},
+  "sessions": {
+    "s_61450c2181c60c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "46e4a0cf-919c-454d-b2f4-0b6b133442f5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

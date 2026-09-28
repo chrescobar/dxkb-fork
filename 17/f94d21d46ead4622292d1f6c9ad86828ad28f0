@@ -1,0 +1,65 @@
+src/app/workspace/public/page.tsx
+  s_cbd6a95c8d2220::t_4d3f9d1950bb1d 2,5-6
+src/app/workspace/public/[username]/page.tsx
+  s_cbd6a95c8d2220::t_4d3f9d1950bb1d 2,13
+src/lib/auth/__tests__/routes.test.ts
+  s_cbd6a95c8d2220::t_a310ccd01e9175 20-25,28-36,39-42
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_cbd6a95c8d2220::t_b78d6365e8c2c5 108-113
+src/app/workspace/public/[username]/[...path]/page.tsx
+  s_cbd6a95c8d2220::t_4d3f9d1950bb1d 2,13
+src/app/workspace/layout.tsx
+  s_cbd6a95c8d2220::t_936743c9f04c7d 6,9-13,19
+src/app/workspace/[username]/[folder]/[[...path]]/page.tsx
+  s_cbd6a95c8d2220::t_4d3f9d1950bb1d 2,17
+e2e/README.md
+  s_cbd6a95c8d2220::t_15047091456a6d 40
+src/lib/auth/__tests__/protected-layouts.test.ts
+  s_cbd6a95c8d2220::t_262b3f2c507d73 23,27-28,41-47,49-51,70,77-94
+  s_cbd6a95c8d2220::t_3394c6d55c8e57 95
+src/components/navbars/navbar-links.ts
+  s_cbd6a95c8d2220::t_ef690c4e5dac48 258-259,264-265
+  s_cbd6a95c8d2220::t_97265dac3d5a29 238-240,280,282
+docs/architecture.md
+  s_cbd6a95c8d2220::t_15047091456a6d 35,60
+  s_cbd6a95c8d2220::t_63d1bc8f30ef5a 149
+e2e/a11y/routes.ts
+  s_cbd6a95c8d2220::t_faf62c4dd307c7 628
+src/proxy.ts
+  s_cbd6a95c8d2220::t_6b346edc175baa 7-10,22-25
+src/app/workspace/[username]/home/[[...path]]/page.tsx
+  s_cbd6a95c8d2220::t_4d3f9d1950bb1d 3,12
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_cbd6a95c8d2220::t_5d159c3b6e9cc4 1,188-221
+  s_cbd6a95c8d2220::t_a4a6aa0337c712 222
+e2e/tests/public.spec.ts
+  s_cbd6a95c8d2220::t_3c6e593ba02320 36-48
+src/__tests__/proxy.test.ts
+  s_cbd6a95c8d2220::t_5d159c3b6e9cc4 180-208
+  s_cbd6a95c8d2220::t_a310ccd01e9175 125,127-136,140-142
+src/constants/datafields/genome.ts
+  s_cbd6a95c8d2220::t_97265dac3d5a29 148-159
+src/lib/views/legacy-redirect.ts
+  s_cbd6a95c8d2220::t_3aa2ae7e8fd2fb 74-106,110-111
+src/app/workspace/[username]/page.tsx
+  s_cbd6a95c8d2220::t_73a8fd97fac8f5 3,16
+src/components/navbars/__tests__/mobile-workspace-section.test.tsx
+  s_cbd6a95c8d2220::t_262b3f2c507d73 70-73
+  s_cbd6a95c8d2220::t_b78d6365e8c2c5 29-32,64-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "17f94d21d46ead4622292d1f6c9ad86828ad28f0",
+  "prompts": {},
+  "sessions": {
+    "s_cbd6a95c8d2220": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "28ce1600-6fd3-4af5-866b-58a1b90a8ec2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

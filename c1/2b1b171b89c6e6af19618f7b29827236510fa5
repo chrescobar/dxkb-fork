@@ -1,0 +1,155 @@
+.github/workflows/pnpm-build.yml
+  s_065122cc5dec08::t_7ec0bc9a438a7b 14
+e2e/a11y/settle.ts
+  s_065122cc5dec08::t_9cd1b3e3fe60d5 32-50,60-65,88-93
+src/components/views/entity-view-shell.tsx
+  s_065122cc5dec08::t_c950e865632384 4-5,46,93
+.claude/rules/testing.md
+  s_065122cc5dec08::t_ce1262ba909964 35
+.github/workflows/pnpm-a11y.yml
+  s_065122cc5dec08::t_a9d152f787a825 14
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_065122cc5dec08::t_c950e865632384 4-5,47,91
+src/test-helpers/react.ts
+  s_065122cc5dec08::t_1a83ad5082f179 4-8,33-38
+  s_065122cc5dec08::t_943b7ec64e05f5 39-43
+  s_065122cc5dec08::t_e616352307ef64 44-45
+src/components/workspace/__tests__/workspace-shell.test.tsx
+  s_065122cc5dec08::t_a1ab937a38b236 70-71
+  s_065122cc5dec08::t_1425096316cd3d 2,4-17,24-34,36-45,66-68,88-115,139-140
+  s_065122cc5dec08::t_abd6d3f66742b0 78-85
+  s_065122cc5dec08::t_f3318d54c291db 3,35,46-65,69,72-77,86-87,119,129-135
+  s_065122cc5dec08::t_8f28ed6db79133 18-23
+  s_065122cc5dec08::t_0fe39b7740f434 1,116-118,120-128,136-138
+src/components/jobs/jobs-shell.tsx
+  s_065122cc5dec08::t_c83fd88d462dba 12-13,28-30,80-94,97,115
+  s_065122cc5dec08::t_c2406332c67211 47-54
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_065122cc5dec08::t_08401a3b702fa5 9,131-143
+  s_065122cc5dec08::t_68d9fdc9fb7af8 144-145
+src/constants/jobs-panels.ts
+  s_065122cc5dec08::t_814f859db5301b 1-4
+src/contexts/workspace-panel-context.tsx
+  s_065122cc5dec08::t_332b0434e7f453 3,18
+src/components/workspace/workspace-browser.tsx
+  s_065122cc5dec08::t_c52fad9dbea78d 10,42,97,108-113
+  s_065122cc5dec08::t_f765e7093439ce 330,342
+AGENTS.md
+  s_065122cc5dec08::t_e241d1fbefe576 99-101
+src/types/workspace-browser.ts
+  s_065122cc5dec08::t_f17025f92c3cad 1-2,5
+.github/workflows/pnpm-typecheck.yml
+  s_065122cc5dec08::t_2d171c79523e42 14
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_065122cc5dec08::t_8e4b79c36aee2b 8-9,12-14,162-197
+  s_065122cc5dec08::t_e4c3d09fa02e5c 198
+src/lib/ui-preferences/provider.tsx
+  s_065122cc5dec08::t_1a83ad5082f179 1-8,10-43,45-110
+  s_065122cc5dec08::t_943b7ec64e05f5 9,44
+src/lib/ui-preferences/__tests__/server.test.ts
+  s_065122cc5dec08::t_922e1dd25d7d55 3-4,7,10-18,37-58
+  s_065122cc5dec08::t_814f859db5301b 1-2,5-6,8-9,19-36,59-60
+src/test-helpers/resizable.ts
+  s_065122cc5dec08::t_f3318d54c291db 41-42
+  s_065122cc5dec08::t_1398f5ac40e981 1-5,10-36,43-55
+  s_065122cc5dec08::t_67527c4c9173de 6-9
+  s_065122cc5dec08::t_a1ab937a38b236 37-40
+src/lib/ui-preferences/cookie.ts
+  s_065122cc5dec08::t_5bfb1455dbf51f 1-53
+src/lib/ui-preferences/server.ts
+  s_065122cc5dec08::t_5bfb1455dbf51f 1-2,5,10,13
+  s_065122cc5dec08::t_e8b51c82f0324a 3-4,6-9,11-12
+src/lib/ui-preferences/__tests__/cookie.test.ts
+  s_065122cc5dec08::t_7a88c32f610880 34-38
+  s_065122cc5dec08::t_b01b4112265fca 46-63
+  s_065122cc5dec08::t_814f859db5301b 1-33,39-45,64-108
+src/app/workspace/layout.tsx
+  s_065122cc5dec08::t_1800223f13837f 1,22
+src/components/filterbar/filter-bar.tsx
+  s_065122cc5dec08::t_d99073e9a65794 15,58
+src/components/views/resource-filter-bar.tsx
+  s_065122cc5dec08::t_d99073e9a65794 18,46
+docs/architecture.md
+  s_065122cc5dec08::t_9796f130b2a3a3 104
+  s_065122cc5dec08::t_7ff4bde5028ab7 212,218-219
+  s_065122cc5dec08::t_4f89e418f5407d 201-211,213-217,220
+  s_065122cc5dec08::t_e041e4799e57f4 138
+src/components/workspace/workspace-browser-presentation.tsx
+  s_065122cc5dec08::t_f765e7093439ce 26,31-32
+  s_065122cc5dec08::t_408fcd2128ca51 45
+src/hooks/use-view-nav-collapsed.ts
+  s_065122cc5dec08::t_5487df55f3182e 1-21
+src/hooks/__tests__/use-view-nav-collapsed.test.tsx
+  s_065122cc5dec08::t_065205d4533cd4 1-33
+.github/workflows/pnpm-test.yml
+  s_065122cc5dec08::t_2837454ee32382 14
+src/lib/ui-preferences/__tests__/provider.test.tsx
+  s_065122cc5dec08::t_814f859db5301b 1-54,63,68,72-86
+  s_065122cc5dec08::t_403f8d9512c77b 55-62,64-67,69-71
+src/components/views/__tests__/resource-workspace.test.tsx
+  s_065122cc5dec08::t_8f28ed6db79133 34-37
+  s_065122cc5dec08::t_2a641b5834ed2f 231-269
+  s_065122cc5dec08::t_8b461481a098ff 4-9,32
+src/components/workspace/workspace-shell.tsx
+  s_065122cc5dec08::t_d3c9cdec3b835c 46-49
+  s_065122cc5dec08::t_9562fd036e4df4 3,5-7,43-45,53-62,138,140-151,156,175
+  s_065122cc5dec08::t_750e55155ec414 22-26
+src/app/layout.tsx
+  s_065122cc5dec08::t_c950e865632384 12-13,37-40,52-58
+src/components/organisms/landing-shell/landing-nav-skeleton.tsx
+  s_065122cc5dec08::t_b7419b57c56b62 1-18
+src/app/organisms/loading.tsx
+  s_065122cc5dec08::t_b7419b57c56b62 2,16
+src/components/views/resource-workspace.tsx
+  s_065122cc5dec08::t_5c67aa05de1498 11,47-49,98-105,130-131,146-147,150,194
+  s_065122cc5dec08::t_3a4c5f6a0734fa 148-149
+.github/workflows/pnpm-e2e.yml
+  s_065122cc5dec08::t_bf9d43b6648c08 14
+src/lib/ui-preferences/definitions.ts
+  s_065122cc5dec08::t_5bfb1455dbf51f 1-3,6-29,38-47,52-89,113-137
+  s_065122cc5dec08::t_c511ca96a63612 4-5,30-37,90-112
+  s_065122cc5dec08::t_6765094368cc94 48-51
+src/constants/workspace-sort.ts
+  s_065122cc5dec08::t_f17025f92c3cad 1-7
+e2e/tests/ui-preferences.spec.ts
+  s_065122cc5dec08::t_c57ab153f3ae45 2-5,85,94,98-112,115,142,160,192
+  s_065122cc5dec08::t_a17131cfa84689 1,33-84,187,193,199
+  s_065122cc5dec08::t_758dc050441a1a 24
+  s_065122cc5dec08::t_a88093f294375a 7-16,86-93,95-97,113-114,116-132,134,136,138-141,143-144,146-147,149-151,153-154,156-159,161-162,164,166-182,188-191,194-198,200-204,206-207
+  s_065122cc5dec08::t_75c2e647ef4897 17-23,25-32,133,148,152,163,165,183-186,205
+  s_065122cc5dec08::t_473807ec08e6c4 6,135,137,145,155
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_065122cc5dec08::t_74b4d1add79280 10,27-35,235-238,240-241,243-244,247,252-255
+  s_065122cc5dec08::t_3a389e7350ace3 296
+  s_065122cc5dec08::t_8671fd76607193 273,275,298-300,302
+  s_065122cc5dec08::t_bb3202fd9722e7 234,239,242,245-246,248-251,256,267
+  s_065122cc5dec08::t_9458bb312a0912 257-266
+  s_065122cc5dec08::t_c03ef7c88dec12 11-12,57-60,64,68-78,268-272,274,276-295,297,301,303
+src/components/jobs/__tests__/jobs-shell.test.tsx
+  s_065122cc5dec08::t_60e8efffb5b4b3 10-13
+  s_065122cc5dec08::t_24de41a136a213 1,59-73,80-82
+  s_065122cc5dec08::t_8f28ed6db79133 15-20
+  s_065122cc5dec08::t_20fea69d23f6fe 74-79
+  s_065122cc5dec08::t_6727b9c7b2929a 2-9,14,21-58,83-84
+.github/workflows/pnpm-lint.yml
+  s_065122cc5dec08::t_081dde27b67714 14
+src/app/search/typesearch.tsx
+  s_065122cc5dec08::t_09e9f835206304 55-57
+  s_065122cc5dec08::t_d99073e9a65794 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c12b1b171b89c6e6af19618f7b29827236510fa5",
+  "prompts": {},
+  "sessions": {
+    "s_065122cc5dec08": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e040d73c-7a00-44b6-93e3-5216bce41f21",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

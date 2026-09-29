@@ -1,0 +1,136 @@
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 88,92,96,100
+src/components/views/__tests__/resource-collection-taxonomy-actions.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 175-176
+src/components/views/entity-view-shell.tsx
+  s_51e931ec2a3422::t_6cfb1ad0e3d17a 8
+  s_51e931ec2a3422::t_d2ee0ddfd44686 59-63
+src/lib/url.ts
+  s_51e931ec2a3422::t_3caf85392f0f59 12-95
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_51e931ec2a3422::t_7d31c05b28ae75 15,24,36,51,60,72,80,102,122,134,185
+src/__tests__/proxy.test.ts
+  s_51e931ec2a3422::t_ba6993f30fc291 83-89,100
+  s_51e931ec2a3422::t_7d31c05b28ae75 164-173,208
+docs/architecture.md
+  s_51e931ec2a3422::t_2dfcd5edd5aa85 149
+src/components/navbars/navbar-links.ts
+  s_51e931ec2a3422::t_18d898f94afc6b 1-2,287
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_51e931ec2a3422::t_49838e09b90270 89
+src/components/search/command-palette.tsx
+  s_51e931ec2a3422::t_2bfeddec88b473 19,109
+src/hooks/views/use-collection-url-state.ts
+  s_51e931ec2a3422::t_d2ee0ddfd44686 15,30-35,39-41,44,48,54
+src/components/search/__tests__/command-palette.test.tsx
+  s_51e931ec2a3422::t_7e561d08e0bea7 300
+src/app/(views)/serology/[sampleId]/__tests__/page.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 105
+e2e/pages/serology-page.ts
+  s_51e931ec2a3422::t_b0117b91df293d 2,91,94
+src/app/search/__tests__/search-type-routing.test.ts
+  s_51e931ec2a3422::t_7e561d08e0bea7 165
+src/lib/auth/server/route.ts
+  s_51e931ec2a3422::t_18d898f94afc6b 5,35
+src/lib/views/legacy-redirect.ts
+  s_51e931ec2a3422::t_99bdb95bddfff4 1-5,222,228,236,241-243
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_51e931ec2a3422::t_7d31c05b28ae75 82,91,105
+src/components/views/__tests__/resource-collection-navigation-actions.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 238,361,410
+src/lib/auth/server/__tests__/page-auth.test.ts
+  s_51e931ec2a3422::t_ba6993f30fc291 47,56,67
+src/components/navbars/__tests__/mobile-workspace-section.test.tsx
+  s_51e931ec2a3422::t_ba6993f30fc291 66
+src/lib/services/workspace/__tests__/path-utils.test.ts
+  s_51e931ec2a3422::t_6a8c5a0cc7352e 196-203
+src/lib/views/compound-sample-page.ts
+  s_51e931ec2a3422::t_6cfb1ad0e3d17a 3,83-85
+src/app/(views)/genome/[genomeId]/__tests__/genome-overview.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 74-77
+src/components/views/collection-selection-actions.tsx
+  s_51e931ec2a3422::t_18d898f94afc6b 19,313-315
+AGENTS.md
+  s_51e931ec2a3422::t_2dfcd5edd5aa85 52-56
+src/lib/surveillance-view/__tests__/surveillance-view.test.ts
+  s_51e931ec2a3422::t_f801bf54364b93 98
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 248,398
+src/constants/search-info.ts
+  s_51e931ec2a3422::t_2bfeddec88b473 1,24,26,31
+src/lib/protein-structure-view/mode.ts
+  s_51e931ec2a3422::t_6cfb1ad0e3d17a 1,65
+src/lib/views/search-params.ts
+  s_51e931ec2a3422::t_6cfb1ad0e3d17a 1,33
+src/hooks/views/__tests__/collection-state.test.ts
+  s_51e931ec2a3422::t_49838e09b90270 84,126-148
+src/lib/taxonomy-view/__tests__/taxonomy-view.test.ts
+  s_51e931ec2a3422::t_f801bf54364b93 95,98
+src/constants/search-info.test.ts
+  s_51e931ec2a3422::t_7e561d08e0bea7 38,54,57,64,71,80,89,100,103,106
+src/app/(views)/surveillance/[sampleId]/__tests__/page.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 110
+src/lib/views/legacy-hash-adapter.tsx
+  s_51e931ec2a3422::t_99bdb95bddfff4 5,36-37,39-45,49-50,52,54-55
+src/lib/views/hrefs.ts
+  s_51e931ec2a3422::t_eda7a511feb42e 6,30,45,64,66,83,107,109-110,126,141,152,171,173,193-194
+src/lib/auth/server/page-auth.ts
+  s_51e931ec2a3422::t_18d898f94afc6b 3,24
+e2e/pages/surveillance-page.ts
+  s_51e931ec2a3422::t_b0117b91df293d 2,130,133
+src/app/search/typesearch.tsx
+  s_51e931ec2a3422::t_2bfeddec88b473 18,98
+src/app/search/__tests__/page.test.tsx
+  s_51e931ec2a3422::t_7e561d08e0bea7 103
+src/proxy.ts
+  s_51e931ec2a3422::t_99bdb95bddfff4 39-45
+  s_51e931ec2a3422::t_18d898f94afc6b 7,50-52,54-59,63
+src/lib/serology-view/__tests__/serology-view.test.ts
+  s_51e931ec2a3422::t_f801bf54364b93 92
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_51e931ec2a3422::t_b0117b91df293d 15,184,231,265
+e2e/tests/surveillance-view.spec.ts
+  s_51e931ec2a3422::t_b0117b91df293d 63
+src/app/search/search-type-routing.ts
+  s_51e931ec2a3422::t_2bfeddec88b473 7,175
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_51e931ec2a3422::t_6cfb1ad0e3d17a 10,75
+src/components/taxonomy/taxonomy-tree.tsx
+  s_51e931ec2a3422::t_6cfb1ad0e3d17a 27,139
+src/app/(views)/protein-structure/__tests__/page.test.tsx
+  s_51e931ec2a3422::t_49838e09b90270 53
+src/lib/genome-view/profile.ts
+  s_51e931ec2a3422::t_eda7a511feb42e 2,25
+src/lib/views/__tests__/hrefs.test.ts
+  s_51e931ec2a3422::t_3a485dfd4fefa6 68,80,94,118,125,150,156,173,197,203,205,207
+src/components/views/__tests__/collection-selection-actions.test.tsx
+  s_51e931ec2a3422::t_f801bf54364b93 205
+  s_51e931ec2a3422::t_ba6993f30fc291 40,44,46-50,130-143
+  s_51e931ec2a3422::t_79168d0bbac2d0 144-145
+src/components/search/__tests__/search-bar.test.tsx
+  s_51e931ec2a3422::t_7e561d08e0bea7 129,143,154
+src/lib/__tests__/url.test.ts
+  s_51e931ec2a3422::t_ff3d8c8bd60f5d 1-6,33-112
+src/lib/services/workspace/path-utils.ts
+  s_51e931ec2a3422::t_6a8c5a0cc7352e 9,167-169,172
+e2e/pages/sign-in-page.ts
+  s_51e931ec2a3422::t_b0117b91df293d 7,57
+src/app/search/page.tsx
+  s_51e931ec2a3422::t_2bfeddec88b473 11,41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "5b1a08a7c6aee186d56b2b151b1a56552e158cae",
+  "prompts": {},
+  "sessions": {
+    "s_51e931ec2a3422": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b5929fa-b6e0-4d96-ab07-053404b94522",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

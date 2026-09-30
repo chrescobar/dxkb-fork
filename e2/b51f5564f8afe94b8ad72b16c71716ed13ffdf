@@ -1,0 +1,63 @@
+src/components/jobs/jobs-browser.tsx
+  s_033b2d797859b3::t_ab836c05ceccf0 171-172,176
+src/hooks/services/jobs/use-jobs-url-state.ts
+  s_033b2d797859b3::t_ab836c05ceccf0 4,28-32,37-40,43,62-71
+  s_033b2d797859b3::t_da2dc008f14589 47,53-54,61
+src/hooks/views/use-child-collection-url-state.ts
+  s_033b2d797859b3::t_eee22ba2cfa08b 7,41,89
+src/components/interactions/__tests__/graph-toolbar.test.tsx
+  s_033b2d797859b3::t_98e890232cf28e 1-10,15-35,91-132
+  s_033b2d797859b3::t_45983e95306b66 133-134
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_033b2d797859b3::t_2a7a86f9c89d72 554-557
+e2e/tests/jobs.spec.ts
+  s_033b2d797859b3::t_b060aeb88f30b8 109-131
+src/app/(views)/genome/child-tabs.ts
+  s_033b2d797859b3::t_9e71ba28c9b78e 3,7
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_033b2d797859b3::t_9e71ba28c9b78e 557
+docs/architecture.md
+  s_033b2d797859b3::t_a4682efab1114f 113
+  s_033b2d797859b3::t_54dbf2aecace1e 224
+src/components/views/resource-filter-bar.tsx
+  s_033b2d797859b3::t_728f1a147c251f 57,61
+src/hooks/use-debounced-draft.ts
+  s_033b2d797859b3::t_728f1a147c251f 20-24,30-36,53-54,56,58,63,67-69
+  s_033b2d797859b3::t_1953dbed5d15fb 70
+src/lib/views/__tests__/child-collection-state.test.ts
+  s_033b2d797859b3::t_6943dfd6ea59e4 123,135-151
+  s_033b2d797859b3::t_10c6aa11e51dd5 3
+  s_033b2d797859b3::t_695187c373e4b0 152
+src/lib/views/child-collection-state.ts
+  s_033b2d797859b3::t_fa6e33882aeaf9 12,14-18,20-37,39-40
+  s_033b2d797859b3::t_b718bb38b23431 74,91,99
+src/components/interactions/graph-toolbar.tsx
+  s_033b2d797859b3::t_eef388171578ad 37-40,42,45-46,50-52,60-61,63,66,71
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_033b2d797859b3::t_a1fb21fd3e7bc3 85-143
+src/components/views/resource-child-collection.tsx
+  s_033b2d797859b3::t_9e71ba28c9b78e 19-22,54
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_033b2d797859b3::t_061325d4debc56 115,121-125,128,139,144
+src/hooks/services/jobs/__tests__/use-jobs-url-state.test.tsx
+  s_033b2d797859b3::t_0d966d750bb2f8 38-39,42-82,87,97,153
+  s_033b2d797859b3::t_18c22cada8e16c 124-138
+src/hooks/__tests__/use-debounced-draft.test.tsx
+  s_033b2d797859b3::t_30315ef28d9c0d 113-159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e2b51f5564f8afe94b8ad72b16c71716ed13ffdf",
+  "prompts": {},
+  "sessions": {
+    "s_033b2d797859b3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "63caf5e6-84dd-4ec1-a95d-cb9f1a2ff25b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

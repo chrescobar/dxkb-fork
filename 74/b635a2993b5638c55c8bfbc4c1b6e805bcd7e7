@@ -1,0 +1,131 @@
+src/components/shared/file-table.tsx
+  s_065122cc5dec08::t_c7c1349cb9f4fd 392
+  s_065122cc5dec08::t_f79854ecba9e4d 479-480
+  s_065122cc5dec08::t_3a44d7667aa077 6,48-49,89-90,365,380-391,393-400,416,423-440,449-452,462-478,481-484
+  s_065122cc5dec08::t_577aad1a9afcef 485
+src/components/views/resource-filter-bar.tsx
+  s_065122cc5dec08::t_97e23c3abe684d 17,19-22,28-32,47,58-70,144-148
+src/components/filterbar/__tests__/filter-bar.test.tsx
+  s_065122cc5dec08::t_e2febc5bb4acbe 21,41-47,272,286,292-358
+  s_065122cc5dec08::t_9c00a3553d34bd 359
+src/components/workspace/workspace-file-table.tsx
+  s_065122cc5dec08::t_f79854ecba9e4d 247
+src/components/shared/__tests__/file-table.test.tsx
+  s_065122cc5dec08::t_feadba6e2d1ae0 102,121,131,141
+  s_065122cc5dec08::t_8e755cb4657f58 1-101,103-120,122-130,132-140,142-177
+src/components/shared/data-table.tsx
+  s_065122cc5dec08::t_da8ced1301cded 412-416
+  s_065122cc5dec08::t_76d227f2d581cf 555-556,725,750-753,757-764
+  s_065122cc5dec08::t_9b79a3bbfb8cbc 411,417-423,472-473,568-570,573,720,723-724,726-727,748-749,754-756,765
+  s_065122cc5dec08::t_dee730d058b190 550-553,719,721
+src/lib/table-layout.ts
+  s_065122cc5dec08::t_ceb9ab5d69aca9 1-15,18,26-37,46-92
+  s_065122cc5dec08::t_3ee83eee78f95c 16-17,19-25,38-45
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_065122cc5dec08::t_64cecf86214e11 1391-1475
+  s_065122cc5dec08::t_e82683cda303ad 1318-1359,1476
+  s_065122cc5dec08::t_869e0e856cac88 1360-1390
+src/lib/auth/types.ts
+  s_065122cc5dec08::t_0834cb0eb32379 38,42-43,45-46
+  s_065122cc5dec08::t_77fadccc1b447e 39-41,44
+src/hooks/use-recent-workspace-folders.ts
+  s_065122cc5dec08::t_5d5636dc347bf4 1-16
+src/lib/__tests__/table-layout.test.ts
+  s_065122cc5dec08::t_3b7aafe2c3eded 1-24,54-89
+  s_065122cc5dec08::t_1d6b1f8486bd54 25-53
+src/hooks/__tests__/use-recent-workspace-folders.test.tsx
+  s_065122cc5dec08::t_72d7fdc7a185f4 1-51
+e2e/tests/jobs-preferences.spec.ts
+  s_065122cc5dec08::t_01cfeebc8769d9 32-40,42,48-50,52-53
+  s_065122cc5dec08::t_cf21dbb6d34d18 46
+  s_065122cc5dec08::t_e6fc3132045890 41,43-45,47,51
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_065122cc5dec08::t_c30fe25b46a05b 16-29,56-58,61,64,264-329,372
+  s_065122cc5dec08::t_80efe067c8fb63 11,330-371,373
+  s_065122cc5dec08::t_87aece0d499d3b 1-4
+src/lib/browser-storage.ts
+  s_065122cc5dec08::t_72d7fdc7a185f4 1-5,11-12,14-15,17-27,29,31-42
+  s_065122cc5dec08::t_ec2cdc699a1c0c 6-10,13,16,28,30
+src/app/api/auth/profile/route.ts
+  s_065122cc5dec08::t_487d3700656365 11-16,18-33,89,114-118,120-121
+src/hooks/__tests__/use-table-layout.test.tsx
+  s_065122cc5dec08::t_3b7aafe2c3eded 1-42
+src/lib/recent-workspace-folders.ts
+  s_065122cc5dec08::t_5d5636dc347bf4 1-2,8-9,22-28,30,34-49,61-62,64-67,69-73,75-78,85
+src/components/services/list-data.tsx
+  s_065122cc5dec08::t_59450263f849e1 14-20,126-148,350-354,356-364
+src/hooks/use-table-layout.ts
+  s_065122cc5dec08::t_ceb9ab5d69aca9 1-15,19-39
+  s_065122cc5dec08::t_da8ced1301cded 16-18
+src/components/services/__tests__/list-data-integration.test.tsx
+  s_065122cc5dec08::t_efe17b10f45f68 543-573
+  s_065122cc5dec08::t_a2202379245665 419-421
+  s_065122cc5dec08::t_76187bcc9e185e 16,19,393-404,406-407,409-418,422-542
+  s_065122cc5dec08::t_dee730d058b190 405,408
+  s_065122cc5dec08::t_e17aa38f32c795 574
+src/components/views/__tests__/resource-collection.test.tsx
+  s_065122cc5dec08::t_d8cbef80f57061 1531-1572,1605
+  s_065122cc5dec08::t_3b7aafe2c3eded 11,1470-1482,1490-1527,1603
+  s_065122cc5dec08::t_289cf8e97f9576 10,1483-1489,1528-1530,1573-1602,1604
+  s_065122cc5dec08::t_af1523b3a20c10 1606
+src/components/filterbar/filter-bar.tsx
+  s_065122cc5dec08::t_97e23c3abe684d 14,16-19,62,96-108,167,169-173
+src/lib/auth/server/__tests__/profile-settings.test.ts
+  s_065122cc5dec08::t_7c8f32e562ab0a 1-36
+docs/auth-api.md
+  s_065122cc5dec08::t_80efe067c8fb63 80
+  s_065122cc5dec08::t_89c3985b476dbc 81
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_065122cc5dec08::t_d6eda3a16ae055 10,35-47,61,89,107,130,152,169,194,225,250,302-381,386
+src/test-helpers/storage.ts
+  s_065122cc5dec08::t_802bea30b2122f 1-10
+src/components/views/resource-collection.tsx
+  s_065122cc5dec08::t_74eb1f86d6981f 405-410
+  s_065122cc5dec08::t_ceb9ab5d69aca9 21,24-27,116-124,126-130
+  s_065122cc5dec08::t_97e23c3abe684d 306
+e2e/pages/jobs-list-page.ts
+  s_065122cc5dec08::t_68e7556a6f24f3 60-65,67-76,87-116
+  s_065122cc5dec08::t_cf21dbb6d34d18 84-85
+  s_065122cc5dec08::t_9e1e8da8402acd 7-8
+  s_065122cc5dec08::t_e6fc3132045890 66,77-83,86
+src/lib/auth/server/profile-settings.ts
+  s_065122cc5dec08::t_141369b591a775 1-24
+AGENTS.md
+  s_065122cc5dec08::t_eaab7d1e81ffaf 101-102
+src/lib/__tests__/browser-storage.test.ts
+  s_065122cc5dec08::t_802bea30b2122f 1-32,69,71-77,80,94-95
+  s_065122cc5dec08::t_ec2cdc699a1c0c 33-68,70,78-79,81-93,96-109
+src/hooks/use-storage-item.ts
+  s_065122cc5dec08::t_72d7fdc7a185f4 1-19
+src/components/jobs/jobs-browser.tsx
+  s_065122cc5dec08::t_f79854ecba9e4d 449
+docs/architecture.md
+  s_065122cc5dec08::t_4d08691262ea2e 223
+  s_065122cc5dec08::t_eaab7d1e81ffaf 113,208,220
+  s_065122cc5dec08::t_da8ced1301cded 219,221
+  s_065122cc5dec08::t_f6ef4098a196cf 222
+src/components/navbars/mobile-navbar.tsx
+  s_065122cc5dec08::t_74ad281e2bc382 27,59-61
+src/components/navbars/workspace-dropdown-content.tsx
+  s_065122cc5dec08::t_862eb9334b5a29 10,13,32-34
+src/components/settings/preferences-form.tsx
+  s_065122cc5dec08::t_e0061ad49bb262 43,51-56
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_065122cc5dec08::t_063a3a1d763683 7,232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "74b635a2993b5638c55c8bfbc4c1b6e805bcd7e7",
+  "prompts": {},
+  "sessions": {
+    "s_065122cc5dec08": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e040d73c-7a00-44b6-93e3-5216bce41f21",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

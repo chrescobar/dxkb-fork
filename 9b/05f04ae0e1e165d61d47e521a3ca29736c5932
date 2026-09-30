@@ -1,0 +1,186 @@
+src/lib/views/__tests__/child-collection-state.test.ts
+  s_065122cc5dec08::t_a53a6672cb50c4 1-2,4-50,74-123,132-144
+  s_065122cc5dec08::t_03ef43b0492c6c 3,51-73,124-131
+src/components/views/resource-filter-bar.tsx
+  s_065122cc5dec08::t_b5fc0f969f5b7e 10,13,53-61
+AGENTS.md
+  s_065122cc5dec08::t_f5124ba04e930b 102
+.claude/rules/testing.md
+  s_065122cc5dec08::t_b1e226d5181117 68
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_065122cc5dec08::t_7f6025d4869b0b 141
+  s_065122cc5dec08::t_e78a93567ea4a8 107-140,142-144
+docs/architecture.md
+  s_065122cc5dec08::t_f9dc60c1c4148d 224
+  s_065122cc5dec08::t_4cf390d437a984 113
+  s_065122cc5dec08::t_5f13b4cece5075 115,209
+  s_065122cc5dec08::t_89b4861b05ce65 225
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_065122cc5dec08::t_caee4727af4110 111
+src/components/organisms/taxon-views/experiments.tsx
+  s_065122cc5dec08::t_caee4727af4110 27
+src/hooks/services/jobs/__tests__/use-jobs-url-state.test.tsx
+  s_065122cc5dec08::t_81da33d07ad2a9 49-91
+  s_065122cc5dec08::t_e9ddcb499ebc98 1-2,92-99
+  s_065122cc5dec08::t_f508024a996b57 3-48,100-102
+src/lib/jobs/jobs-url-state.ts
+  s_065122cc5dec08::t_d4f2c69a2f2844 98-113
+  s_065122cc5dec08::t_c55369da9d5d1a 4-7
+  s_065122cc5dec08::t_0c55133cca258a 1-3,8-37,40-97,114-131
+  s_065122cc5dec08::t_59769c5931b71b 38-39
+src/hooks/views/use-child-collection-url-state.ts
+  s_065122cc5dec08::t_e54bf467c9f1b6 3,56-58,68-69
+  s_065122cc5dec08::t_45f9a330064d5d 1-2,4-14,28-31,38-55,59-66,79-88,91-96,98-99
+  s_065122cc5dec08::t_6831b052495788 67
+  s_065122cc5dec08::t_531d9697ff2302 89-90,97
+  s_065122cc5dec08::t_8862c963b5e061 15-27,32-37,70-78
+src/app/(views)/experiment/[experimentId]/experiment-member.tsx
+  s_065122cc5dec08::t_caee4727af4110 30
+src/components/views/__tests__/resource-child-collection-history.test.tsx
+  s_065122cc5dec08::t_db8d8857d40575 1-53,56-86,91-117
+  s_065122cc5dec08::t_b9d68ab65390d3 54-55,87-90
+src/components/interactions/interactions-subview-shell.tsx
+  s_065122cc5dec08::t_7684bafa459858 36-37
+  s_065122cc5dec08::t_3d26a686100ec6 12-15,40,60
+  s_065122cc5dec08::t_5b759a0c1b4722 7,35,38-39,41,69,77
+src/components/jobs/__tests__/jobs-date-filter.test.tsx
+  s_065122cc5dec08::t_ef4de17ad6c535 137-187
+  s_065122cc5dec08::t_3c30fe246f26b5 40-41,126
+  s_065122cc5dec08::t_7ca6f9c4170a35 1-3,8-9,24,27-31,33-35,42-44,46-51,128,136
+  s_065122cc5dec08::t_47825fe6567452 4-7,10-23,25-26,32,36-39,45,52-125,127,129-135
+src/hooks/services/jobs/use-jobs-url-state.ts
+  s_065122cc5dec08::t_d4f2c69a2f2844 3,5,12-21,37-38,43-49
+  s_065122cc5dec08::t_59e2d26c357964 1-2,4,6-11,22-34,50-55
+  s_065122cc5dec08::t_8c6a57b0ee847b 39-42
+  s_065122cc5dec08::t_ebd431b31b17d1 35-36
+e2e/pages/jobs-list-page.ts
+  s_065122cc5dec08::t_132895644c4397 86-87
+  s_065122cc5dec08::t_7451ae961dea8e 55,126-130,138-141,145-146,148,156-157
+  s_065122cc5dec08::t_bb8cdd358b5bd3 16,23-27
+  s_065122cc5dec08::t_c78313a2a4534e 77,81
+  s_065122cc5dec08::t_86012de1e77751 3
+  s_065122cc5dec08::t_201d98686a4d59 63-65,68,72-76,78-80,82-85,88-125,131-137
+  s_065122cc5dec08::t_9fbc36d5b5ad2a 7-8,31-33
+  s_065122cc5dec08::t_ae0c92ead55088 44-45,49-54
+  s_065122cc5dec08::t_13df6bf06f27c1 142-144,147,149-155
+  s_065122cc5dec08::t_e0c721a95c1f0f 56,158
+src/components/organisms/taxon-views/sfvt.tsx
+  s_065122cc5dec08::t_caee4727af4110 60
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_065122cc5dec08::t_caee4727af4110 90,100
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_065122cc5dec08::t_0910d980c37872 4-5,7-13,36,552-599
+  s_065122cc5dec08::t_b1f63c2e9f3ddc 600
+src/app/(views)/epitope/[epitopeId]/epitope-member.tsx
+  s_065122cc5dec08::t_caee4727af4110 30
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_065122cc5dec08::t_3abe719d7626f5 352-356,358-364
+  s_065122cc5dec08::t_e471fec47ecc2f 19-25,142
+  s_065122cc5dec08::t_7684bafa459858 310-312,333-335
+  s_065122cc5dec08::t_81cba0ded840be 337-351,357
+  s_065122cc5dec08::t_03b76fdf765000 336
+e2e/tests/genome-view.spec.ts
+  s_065122cc5dec08::t_a1bc0046dddc7c 8,215-219,222,224,226-230,232-233,235,237-238,242-245,247,249-255,265-266,271-272,274,279-283
+  s_065122cc5dec08::t_e80963e7ca37fc 257,263,268,275
+  s_065122cc5dec08::t_331c84e910eeb0 231,234,236,246,248,273
+  s_065122cc5dec08::t_fa6c7bffeac1f4 220-221,223,225,239-241,259-262,267,270,276-277
+  s_065122cc5dec08::t_5196515ebb90e1 256
+  s_065122cc5dec08::t_debbec9037fbe8 258
+  s_065122cc5dec08::t_9f5c9e006178be 264
+  s_065122cc5dec08::t_09c14e504123f6 269
+  s_065122cc5dec08::t_cee8fcb2c341d5 278
+  s_065122cc5dec08::t_0a0a04078f2bd9 284
+src/components/jobs/jobs-date-filter.tsx
+  s_065122cc5dec08::t_9dbf4ff55aa853 21,90-144,151-169,188,193,200,205
+  s_065122cc5dec08::t_15c880705df4c2 4,46-47,58,60
+src/components/views/entity-view-shell.tsx
+  s_065122cc5dec08::t_cd8edc52f72d79 55
+  s_065122cc5dec08::t_eb5eca91472d45 9,56
+e2e/README.md
+  s_065122cc5dec08::t_a57f4062c7bcbf 35
+src/hooks/views/__tests__/use-child-collection-url-state.test.tsx
+  s_065122cc5dec08::t_11b13ed0637bc3 112-170,173-209
+  s_065122cc5dec08::t_e54bf467c9f1b6 60-61
+  s_065122cc5dec08::t_8862c963b5e061 171-172
+  s_065122cc5dec08::t_cfde0af27fc17d 59,62-78
+  s_065122cc5dec08::t_bdce8b00732110 1-58,79-111,210-228
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_065122cc5dec08::t_cd8edc52f72d79 64
+  s_065122cc5dec08::t_eb5eca91472d45 6,65
+src/components/views/resource-child-collection.tsx
+  s_065122cc5dec08::t_01357d79963ebc 253
+  s_065122cc5dec08::t_6a44adc7ec8dc9 4,19,47-51,96,103,201-252
+e2e/tests/jobs.spec.ts
+  s_065122cc5dec08::t_8069be3228ad21 41-46,48-61,69-87,89-108
+  s_065122cc5dec08::t_ae0c92ead55088 47,88
+  s_065122cc5dec08::t_7451ae961dea8e 6,62-68
+src/app/(views)/genome/genome-collection.tsx
+  s_065122cc5dec08::t_caee4727af4110 155-156,161
+e2e/support/url-params.ts
+  s_065122cc5dec08::t_2d10e453ebf7a3 1-24
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_065122cc5dec08::t_7684bafa459858 12,20,34,67,79,144-176
+e2e/pages/index.ts
+  s_065122cc5dec08::t_a1bc0046dddc7c 14
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_065122cc5dec08::t_1e8fda21d8c74b 243,362-516
+  s_065122cc5dec08::t_1346bf04b30aad 2,8,22,29,36,155,182-183,185,187,191
+  s_065122cc5dec08::t_aa06504943abdd 242,304,332
+  s_065122cc5dec08::t_6081844bd2bcc2 254,522,557,611,694,746,775,853,880,934,985,1014
+  s_065122cc5dec08::t_e471fec47ecc2f 35
+  s_065122cc5dec08::t_dfef0cbe8b431d 240-241,245-250,313,345,644,650,652-654,656,658,660-664,667,675-679,683-687
+  s_065122cc5dec08::t_2976d7430f37bd 639-643,655
+  s_065122cc5dec08::t_e879e03d8b0609 244
+src/hooks/__tests__/use-debounced-draft.test.tsx
+  s_065122cc5dec08::t_e9ddcb499ebc98 1-139
+src/lib/jobs/__tests__/jobs-url-state.test.ts
+  s_065122cc5dec08::t_74586bd92b1b27 55-57
+  s_065122cc5dec08::t_c6168ab0c52152 3-4,6-37,65-66
+  s_065122cc5dec08::t_8402625e850de4 1-2,5,38-54,58-64
+e2e/pages/genome-member-page.ts
+  s_065122cc5dec08::t_fa6c7bffeac1f4 19-27,36-39
+  s_065122cc5dec08::t_331c84e910eeb0 72-75
+  s_065122cc5dec08::t_e576513edca707 44-58
+  s_065122cc5dec08::t_ebf266e4b2af47 1-18,28-35,40-43,59-71,76-101
+src/app/(views)/genome/child-tabs.ts
+  s_065122cc5dec08::t_caee4727af4110 6,17-18,27,35,42,49
+src/components/organisms/landing-shell/__tests__/landing-shell-client.test.tsx
+  s_065122cc5dec08::t_e78a93567ea4a8 111-130,132-134
+  s_065122cc5dec08::t_7f6025d4869b0b 131
+src/components/organisms/taxon-views/sequences.tsx
+  s_065122cc5dec08::t_caee4727af4110 12
+src/lib/views/child-collection-state.ts
+  s_065122cc5dec08::t_eb5eca91472d45 31-51,60-61,74
+  s_065122cc5dec08::t_c2b67ae982c2b0 1-30,52-59,62-73,75-119
+src/hooks/use-debounced-draft.ts
+  s_065122cc5dec08::t_ebd431b31b17d1 1-53
+src/hooks/views/__tests__/collection-state.test.ts
+  s_065122cc5dec08::t_d51f20be28e1e0 132-163
+src/components/jobs/jobs-browser.tsx
+  s_065122cc5dec08::t_b5fc0f969f5b7e 23-24,172
+  s_065122cc5dec08::t_390ff11f2fb64c 47-50,155-165,169-171,173-186,191,193-195,282-285,289-290,294-295,298-300,303,305-306,310-311,315-316,320-321,328-333
+src/test-helpers/history-navigation.ts
+  s_065122cc5dec08::t_e471fec47ecc2f 7-9
+  s_065122cc5dec08::t_2c535be4723959 18-23
+  s_065122cc5dec08::t_e286928839a150 1-6,10-17,24-47
+src/hooks/views/use-collection-url-state.ts
+  s_065122cc5dec08::t_cd8edc52f72d79 16,30-35
+src/app/(views)/experiment/experiment-bioset-collection.tsx
+  s_065122cc5dec08::t_caee4727af4110 86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9b05f04ae0e1e165d61d47e521a3ca29736c5932",
+  "prompts": {},
+  "sessions": {
+    "s_065122cc5dec08": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e040d73c-7a00-44b6-93e3-5216bce41f21",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+src/hooks/services/jobs/use-jobs-url-state.ts
+  s_033b2d797859b3::t_38c84ba2ec2426 4,31-33,42-52
+docs/architecture.md
+  s_033b2d797859b3::t_409715352a6f82 224
+src/hooks/services/jobs/__tests__/use-jobs-url-state.test.tsx
+  s_033b2d797859b3::t_9c236b996702f8 124-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "7c4f33e1584293aa3058740a9ed061e0bcb21350",
+  "prompts": {},
+  "sessions": {
+    "s_033b2d797859b3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "63caf5e6-84dd-4ec1-a95d-cb9f1a2ff25b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

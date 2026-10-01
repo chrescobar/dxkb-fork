@@ -1,0 +1,32 @@
+src/components/views/use-resource-collection-export.ts
+  s_a3df487de747cf::t_616f21d432a08c 19,49,118-126,129
+src/components/views/__tests__/use-resource-collection-export.test.tsx
+  s_a3df487de747cf::t_48eefe860c7312 19,21,24,160,162-164,170,177-183,185,190-214,216,225
+src/components/views/use-resource-collection-row-resolution.ts
+  s_a3df487de747cf::t_31a3438646dd82 36,49-54,56-83,86,89,166,200-202
+src/components/views/__tests__/use-resource-collection-row-resolution.test.tsx
+  s_a3df487de747cf::t_9099ae50fe23a4 37,39,42,205-206,212,222-248,252,270,276-277,279-280,283-286
+src/components/views/resource-collection-actions.tsx
+  s_a3df487de747cf::t_7138f2825a1c44 56
+  s_a3df487de747cf::t_f0cfb8f7cffa35 444,529,636-638,640
+docs/architecture.md
+  s_a3df487de747cf::t_c9d05a3a72ea96 129
+src/components/views/__tests__/resource-collection-bioset-actions.test.tsx
+  s_a3df487de747cf::t_8dec044215b007 442,452,468,478
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "22893de32641766525254d39dcaa5d43d0000f37",
+  "prompts": {},
+  "sessions": {
+    "s_a3df487de747cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1222fc82-a22e-4b43-a5c4-7e85d1d38f67",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

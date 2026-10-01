@@ -1,0 +1,143 @@
+e2e/tests/resource-collection-selection.spec.ts
+  s_f5a099eb890535::t_32eba92a639b33 1-88
+docs/architecture.md
+  s_f5a099eb890535::t_9daafc0e168f40 129
+e2e/tests/surveillance-view.spec.ts
+  s_f5a099eb890535::t_0c6b871983efa7 52,57-58,62
+src/hooks/views/use-resource-collection.ts
+  s_f5a099eb890535::t_d043bee6fd3823 180-184
+  s_f5a099eb890535::t_9958d6edaccadc 25-28,91-98,100-106,112-119,167-168,171-174,187
+  s_f5a099eb890535::t_0f3fca68a88f3d 177-179
+  s_f5a099eb890535::t_85ff73b42a8093 30-34,57
+src/components/views/__tests__/resource-collection.test.tsx
+  s_f5a099eb890535::t_183dd402a227a2 2-3,1118-1137,1796-1857
+  s_f5a099eb890535::t_4c004697c0c664 638,643,667-694
+  s_f5a099eb890535::t_8f9835e246c8a4 1138-1156
+  s_f5a099eb890535::t_9ebad95bd130ac 1059-1082,1113,1116-1117
+  s_f5a099eb890535::t_4745a43c4cab61 1770,1773,1775
+  s_f5a099eb890535::t_0f9884af3b73fe 215-223
+  s_f5a099eb890535::t_057eb03fc901b2 1771-1772
+  s_f5a099eb890535::t_b7d8ad9fc800b8 695,1858
+  s_f5a099eb890535::t_496adcc97184ef 80-84,86-92,1083-1112,1114-1115
+  s_f5a099eb890535::t_d8a19797e36720 14,1753-1769,1774,1776-1795
+  s_f5a099eb890535::t_1169af94a33569 696
+e2e/tests/resource-collection-pagination.spec.ts
+  s_f5a099eb890535::t_78d1b18a6aba10 182-264
+  s_f5a099eb890535::t_510ff037e9edef 122,174
+src/components/views/use-resource-collection-export.ts
+  s_f5a099eb890535::t_0f3fca68a88f3d 46,62,81
+  s_f5a099eb890535::t_331204d3707762 41-45
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_f5a099eb890535::t_496adcc97184ef 224-267,307-329
+  s_f5a099eb890535::t_dad61b25c5f531 268-306
+src/components/filterbar/facet-panel.tsx
+  s_f5a099eb890535::t_f62a76e8a032dd 5,9,19-22,62,64,77-95
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_f5a099eb890535::t_0d81fb8ecb8c12 585,605
+src/components/shared/data-table.tsx
+  s_f5a099eb890535::t_f9d64a8bdbc715 204-209
+  s_f5a099eb890535::t_977a0172bcaf3f 1023-1024
+src/components/views/use-resource-collection-row-resolution.ts
+  s_f5a099eb890535::t_0f3fca68a88f3d 32,86
+  s_f5a099eb890535::t_2789f9cfda6d2c 35-42,114-116,132-137,143
+  s_f5a099eb890535::t_331204d3707762 27-31
+src/components/views/__tests__/resource-child-collection-history.test.tsx
+  s_f5a099eb890535::t_370c79fa871cd4 50,53,60,100,113,115
+e2e/tests/resource-collection-facets.spec.ts
+  s_f5a099eb890535::t_c2867ba2ae9019 175-176,191,225-228
+  s_f5a099eb890535::t_cc183b180e5f9c 1-174,177-190,192-224,229-239
+e2e/pages/resource-collection-page.ts
+  s_f5a099eb890535::t_4e0489b5a21ab7 46-49,59-96
+  s_f5a099eb890535::t_307ce914524d14 50-58
+src/lib/__tests__/table-layout.test.ts
+  s_f5a099eb890535::t_d8a19797e36720 7,181-196
+  s_f5a099eb890535::t_b7d8ad9fc800b8 197-198
+e2e/tests/taxonomy-view.spec.ts
+  s_f5a099eb890535::t_0bd918e79929d5 1,27-77
+  s_f5a099eb890535::t_d04793c9e1ddfb 78-79
+src/components/views/__tests__/fixtures/resource-collection-result.ts
+  s_f5a099eb890535::t_ac9937dc5caf9f 19,22-23,30
+  s_f5a099eb890535::t_d043bee6fd3823 25
+  s_f5a099eb890535::t_0f3fca68a88f3d 26
+e2e/tests/genome-view.spec.ts
+  s_f5a099eb890535::t_955d4cdbfcb8ba 182,192-194,202
+src/components/views/resource-filter-bar.tsx
+  s_f5a099eb890535::t_9709dfb501b149 19,81-82
+  s_f5a099eb890535::t_fdfe87d95b6f50 10,34-44,60-63,175-226,232-242
+  s_f5a099eb890535::t_b7d8ad9fc800b8 243-245
+src/components/views/__tests__/use-resource-collection-row-resolution.test.tsx
+  s_f5a099eb890535::t_0f3fca68a88f3d 22,123
+  s_f5a099eb890535::t_1fae2c454774ba 133-181
+src/components/views/__tests__/resource-collection-taxonomy-actions.test.tsx
+  s_f5a099eb890535::t_1fae2c454774ba 4,468-557
+  s_f5a099eb890535::t_d67b860321931e 558
+src/lib/table-layout.ts
+  s_f5a099eb890535::t_9709dfb501b149 119-133
+  s_f5a099eb890535::t_69406816462892 118
+e2e/tests/legacy-search-list.spec.ts
+  s_f5a099eb890535::t_c2867ba2ae9019 161-164
+  s_f5a099eb890535::t_2efe4bda97cc55 133-160,165-174
+src/components/filterbar/__tests__/facet-panel.test.tsx
+  s_f5a099eb890535::t_f541006b2d7ea9 157,180,184-185,187,189
+  s_f5a099eb890535::t_dad61b25c5f531 158-179,181-183,186,188,190-194
+  s_f5a099eb890535::t_ae5d83f5b12da6 6-9,11,94,123-156,195-208,222,225
+e2e/tests/epitope-view.spec.ts
+  s_f5a099eb890535::t_0c6b871983efa7 58,62-63,67
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_f5a099eb890535::t_1a94e337df4017 438-442,444-468,470-478,480-503,505-507
+  s_f5a099eb890535::t_86d6febfbbd41e 443,469,479,504
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_f5a099eb890535::t_dad61b25c5f531 555-574,635-636
+src/components/views/__tests__/resource-collection-bioset-actions.test.tsx
+  s_f5a099eb890535::t_1fae2c454774ba 403-441
+src/components/views/__tests__/use-resource-collection-export.test.tsx
+  s_f5a099eb890535::t_0f3fca68a88f3d 36,145
+e2e/pages/taxonomy-collection-page.ts
+  s_f5a099eb890535::t_1540b607243739 65
+  s_f5a099eb890535::t_0bd918e79929d5 56-64,66-73
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_f5a099eb890535::t_b7d8ad9fc800b8 747,786
+  s_f5a099eb890535::t_4c004697c0c664 787-841
+  s_f5a099eb890535::t_33f6a190ac947d 597-600
+  s_f5a099eb890535::t_8f9835e246c8a4 842-908
+  s_f5a099eb890535::t_a99bb97f30a168 41-49,53-54,468-596,601-746,748-785
+  s_f5a099eb890535::t_5240a91b71c1dc 909-1022
+  s_f5a099eb890535::t_057eb03fc901b2 50-52
+  s_f5a099eb890535::t_0275efd674476c 65,89,139,161,176,331,362,421
+e2e/pages/genome-member-page.ts
+  s_f5a099eb890535::t_f03ff033c7721b 31-42
+src/components/views/resource-collection.tsx
+  s_f5a099eb890535::t_9709dfb501b149 22-23,29,142-158,173
+  s_f5a099eb890535::t_fdfe87d95b6f50 82-85,345-359
+  s_f5a099eb890535::t_2789f9cfda6d2c 281
+  s_f5a099eb890535::t_85ff73b42a8093 97-100,115
+  s_f5a099eb890535::t_d043bee6fd3823 484
+  s_f5a099eb890535::t_0f3fca68a88f3d 243,256
+src/components/views/resource-collection-actions.tsx
+  s_f5a099eb890535::t_2789f9cfda6d2c 301-305,532-537,611-616
+  s_f5a099eb890535::t_58cd57d5fd82e3 53
+src/__tests__/react-compiler-config.test.ts
+  s_f5a099eb890535::t_1b5f55fe0bd3ee 19-27
+  s_f5a099eb890535::t_bfd43b7903a7c9 64-72
+src/components/views/__tests__/resource-collection-actions.test.tsx
+  s_f5a099eb890535::t_ac9937dc5caf9f 14,165,185
+src/components/views/__tests__/resource-child-collection-paging.test.tsx
+  s_f5a099eb890535::t_d9b8a46ae9be78 1-2,83-87,97-101,103,121,140,146-148
+  s_f5a099eb890535::t_4ec5d3d303e6b6 3-82,88-96,102,104-120,122-139,141-145,149-155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "a67884452369cb3ea796bf64b1f27cecb70433ad",
+  "prompts": {},
+  "sessions": {
+    "s_f5a099eb890535": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "054d2e2d-d98f-4141-837e-af1e788e44dd",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

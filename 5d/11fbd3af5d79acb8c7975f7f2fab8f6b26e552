@@ -1,0 +1,63 @@
+e2e/fixtures/overrides/catchall.ts
+  s_a3df487de747cf::t_8495a8a58a7219 471-477,479-499
+  s_a3df487de747cf::t_a33602ea3ccd73 478
+  s_a3df487de747cf::t_d6b7c64e2e40cf 470
+e2e/pages/genome-member-page.ts
+  s_a3df487de747cf::t_824930f9d8fb7c 32-38,41-61
+src/components/views/__tests__/resource-collection-bioset-actions.test.tsx
+  s_a3df487de747cf::t_52ae050dff6942 3,442-481
+  s_a3df487de747cf::t_a8bcc8adc44790 482-483
+src/components/views/resource-collection-actions.tsx
+  s_a3df487de747cf::t_a45f6d03464254 53-56,620-621,623,636-640
+e2e/pages/taxonomy-collection-page.ts
+  s_a3df487de747cf::t_c0c58c1b1f1217 74-83
+e2e/tests/resource-collection-facets.spec.ts
+  s_a3df487de747cf::t_ed3b117bc16450 137-141,176,178,180,188-189,223-225,229,231
+src/components/views/use-resource-collection-export.ts
+  s_a3df487de747cf::t_fd8f859736c3f0 16-19,47-48,91-94,96,126-131
+src/components/views/__tests__/resource-collection-taxonomy-actions.test.tsx
+  s_a3df487de747cf::t_e6a7fedddfb405 565
+  s_a3df487de747cf::t_52ae050dff6942 4-7,561-564,566-583
+  s_a3df487de747cf::t_533b72261dd53d 526
+  s_a3df487de747cf::t_0555e82ed25882 584
+e2e/tests/resource-collection-pagination.spec.ts
+  s_a3df487de747cf::t_ed3b117bc16450 229,235,239,241
+e2e/tests/resource-collection-selection.spec.ts
+  s_a3df487de747cf::t_ed3b117bc16450 74,77,81
+src/components/views/__tests__/use-resource-collection-row-resolution.test.tsx
+  s_a3df487de747cf::t_52ae050dff6942 2,4-7,185-220,242-257
+  s_a3df487de747cf::t_91e38abde0de11 258
+src/components/views/__tests__/use-resource-collection-export.test.tsx
+  s_a3df487de747cf::t_52ae050dff6942 2,158-199
+  s_a3df487de747cf::t_e6670ca09e32e1 200
+docs/architecture.md
+  s_a3df487de747cf::t_5f30250112c843 129
+e2e/tests/taxonomy-view.spec.ts
+  s_a3df487de747cf::t_5e97d2fd5dd168 69-77,79-80
+  s_a3df487de747cf::t_656cfd5dc5fc7a 38-40,42
+src/components/views/use-resource-collection-row-resolution.ts
+  s_a3df487de747cf::t_fd8f859736c3f0 5-10,35-36,49-65,161-162,165,175-179
+e2e/fixtures/overrides/index.ts
+  s_a3df487de747cf::t_40c67f0178f80d 44
+e2e/tests/genome-view.spec.ts
+  s_a3df487de747cf::t_5845bb6fb6dd9f 7,12,33-35,42-44,46,96,120,168-170,214,226-228
+e2e/pages/resource-collection-page.ts
+  s_a3df487de747cf::t_2feccabb8d4d72 69-78,85-114,123-130,135-139,145-149,155-169
+  s_a3df487de747cf::t_4327eb0364ae81 170
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "5d11fbd3af5d79acb8c7975f7f2fab8f6b26e552",
+  "prompts": {},
+  "sessions": {
+    "s_a3df487de747cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1222fc82-a22e-4b43-a5c4-7e85d1d38f67",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

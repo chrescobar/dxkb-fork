@@ -1,0 +1,20 @@
+src/app/workspace/__tests__/owner-redirects.test.ts
+  s_648d16f6ed402e::t_3b4e62d479941f 1-2,4-5,7,13
+  s_648d16f6ed402e::t_cd9e3a027e246f 44-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ca49774875c2fbfa26bff1bc87f0dfd31d2370ca",
+  "prompts": {},
+  "sessions": {
+    "s_648d16f6ed402e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f52f8c6e-974f-4aea-b7d6-3b89f14bc2e1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

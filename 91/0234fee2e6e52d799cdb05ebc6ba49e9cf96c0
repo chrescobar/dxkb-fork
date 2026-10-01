@@ -1,0 +1,40 @@
+src/components/workspace/workspace-browser.tsx
+  s_648d16f6ed402e::t_74b9b38ab79be8 152-154
+src/lib/services/workspace/mini-browser-items.ts
+  s_648d16f6ed402e::t_dc304207c642d5 38-42,44
+src/app/workspace/[username]/home/[[...path]]/page.tsx
+  s_648d16f6ed402e::t_a130d1f420b411 5-8,16,20-21,27-40
+  s_648d16f6ed402e::t_dfb068e80095d4 41-42
+src/app/workspace/__tests__/catch-all-redirects.test.ts
+  s_648d16f6ed402e::t_8a3815efc41a69 83-98
+src/components/workspace/workspace-object-selector.tsx
+  s_648d16f6ed402e::t_74b9b38ab79be8 14,100
+src/lib/services/workspace/path-utils.ts
+  s_648d16f6ed402e::t_d600f9645f2903 352-357,362-363
+src/lib/services/workspace/__tests__/path-utils.test.ts
+  s_648d16f6ed402e::t_586604d9b314cb 442-456
+src/lib/services/workspace/__tests__/mini-browser-items.test.ts
+  s_648d16f6ed402e::t_e20a459971a237 58-65
+src/app/workspace/home/[[...path]]/page.tsx
+  s_648d16f6ed402e::t_7bbf837882246d 3-6,24-26
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_648d16f6ed402e::t_7bbf837882246d 3-6,24-26
+src/app/workspace/page.tsx
+  s_648d16f6ed402e::t_be2fbe2cf3d390 3-6,9-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "910234fee2e6e52d799cdb05ebc6ba49e9cf96c0",
+  "prompts": {},
+  "sessions": {
+    "s_648d16f6ed402e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f52f8c6e-974f-4aea-b7d6-3b89f14bc2e1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}

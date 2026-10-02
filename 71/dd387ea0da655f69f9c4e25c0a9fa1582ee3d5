@@ -1,0 +1,55 @@
+src/components/ui/dropdown-menu.tsx
+  s_6fc3825e074a6a::t_29b08a8c8ba552 200-223,227-228,234-252,257,259-262,267-268,271-289
+docs/architecture.md
+  s_6fc3825e074a6a::t_2d0e363ab70e7c 197
+src/components/navbars/mobile-navbar.tsx
+  s_6fc3825e074a6a::t_554af9376e282b 139
+src/components/theme-provider.tsx
+  s_6fc3825e074a6a::t_5546017fe7f134 3-4,6-11,18,23,28-43
+  s_6fc3825e074a6a::t_3bfa87d09cbb72 44
+src/components/ui/__a11y__/dropdown-menu.a11y.test.tsx
+  s_6fc3825e074a6a::t_bf09b29cb17d20 10-11,45-59
+  s_6fc3825e074a6a::t_a58bd2b2cde7f7 60-63
+src/components/ui/button-variants.ts
+  s_6fc3825e074a6a::t_a459913e948dcc 25-26
+src/styles/__tests__/themes.test.ts
+  s_6fc3825e074a6a::t_32ba1b27bdabd8 1-37
+src/components/navbars/desktop-navbar.tsx
+  s_6fc3825e074a6a::t_554af9376e282b 175
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_6fc3825e074a6a::t_7ff4b336e0fc65 67-79,105,151-156
+  s_6fc3825e074a6a::t_0f1f1aed78c1eb 157-159
+src/components/navbars/__tests__/theme-menu-options.test.tsx
+  s_6fc3825e074a6a::t_19c7a47d55c8ef 18
+  s_6fc3825e074a6a::t_ab2767954bb2b0 1-17,19-114
+src/components/navbars/theme-menu-options.tsx
+  s_6fc3825e074a6a::t_f360e91cd34a26 1-67,72-89,91-95
+  s_6fc3825e074a6a::t_ca412d3f702043 69-71
+  s_6fc3825e074a6a::t_59fd257dfb76d8 68
+  s_6fc3825e074a6a::t_aa8a3aa0ded804 90
+src/components/navbars/theme-switcher-navbar.tsx
+  s_6fc3825e074a6a::t_47f82097e4c5b6 3,5-15,18-19,23-24,26-29,32-33,35-37
+AGENTS.md
+  s_6fc3825e074a6a::t_3df7ba7558ffa2 61
+src/styles/themes.ts
+  s_6fc3825e074a6a::t_c83ae8053601c7 1-41
+src/components/navbars/user-avatar-dropdown.tsx
+  s_6fc3825e074a6a::t_554af9376e282b 14-16,19,36,130-138
+  s_6fc3825e074a6a::t_1e7a995588be1b 139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "71dd387ea0da655f69f9c4e25c0a9fa1582ee3d5",
+  "prompts": {},
+  "sessions": {
+    "s_6fc3825e074a6a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f102f27d-c9b0-42de-936b-5b946afb416a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

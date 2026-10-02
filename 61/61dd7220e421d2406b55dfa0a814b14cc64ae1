@@ -1,0 +1,33 @@
+src/components/theme-provider.tsx
+  s_6fc3825e074a6a::t_2f091abd18e9a2 15-28,33-74
+src/components/__tests__/theme-provider.test.tsx
+  s_6fc3825e074a6a::t_79183f6f1725aa 1-5,8,10-12,15,21-49,51,53-56,58,60-63,65-67
+  s_6fc3825e074a6a::t_9e32c418fcc08d 6-7,9,13-14,16-20,50,52,57,59,64
+docs/architecture.md
+  s_6fc3825e074a6a::t_8a1f0496cca311 197,220
+src/components/navbars/__tests__/user-avatar-theme-submenu.test.tsx
+  s_6fc3825e074a6a::t_be9e1a2e7207c8 1-41,62-69,71,73-101,105-110,112-113,115-120,122-126,130,168
+  s_6fc3825e074a6a::t_a93c3f331e3b88 46-48
+  s_6fc3825e074a6a::t_26c89c4dffd164 42-43,50-53,70,72,114,121
+  s_6fc3825e074a6a::t_9d19879bb6410d 131-142,147,161,167
+  s_6fc3825e074a6a::t_2fae268a8c7f49 54-61,102-104,127-129,143-146,148-160,162-166
+  s_6fc3825e074a6a::t_80f6cc0df6d834 44-45,49,111
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_6fc3825e074a6a::t_445403e31436aa 78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "6161dd7220e421d2406b55dfa0a814b14cc64ae1",
+  "prompts": {},
+  "sessions": {
+    "s_6fc3825e074a6a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f102f27d-c9b0-42de-936b-5b946afb416a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

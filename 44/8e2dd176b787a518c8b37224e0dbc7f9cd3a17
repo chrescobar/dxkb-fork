@@ -1,0 +1,53 @@
+docs/architecture.md
+  s_ef2b0cf393c42f::t_6b059a9a98afd8 61
+  s_ef2b0cf393c42f::t_1c9a55d698fe1b 73
+  s_ef2b0cf393c42f::t_850b4a56d2c336 74
+README.md
+  s_ef2b0cf393c42f::t_56cdea726488e0 44
+.env.e2e.test
+  s_ef2b0cf393c42f::t_2bc023cf0b8384 19-22
+src/lib/__tests__/app-service.test.ts
+  s_ef2b0cf393c42f::t_248442ed554feb 328-331,360-361,363
+  s_ef2b0cf393c42f::t_25b683b6fa66a0 332-333,347,350-358,362
+src/lib/env.ts
+  s_ef2b0cf393c42f::t_bef97298385e36 12-13,24-25,27-39
+  s_ef2b0cf393c42f::t_6fe6b7cf441319 14-23,26
+src/app/api/services/app-service/submit/route.ts
+  s_ef2b0cf393c42f::t_532998254c8e7d 17
+src/lib/app-service.ts
+  s_ef2b0cf393c42f::t_f2c8465656a08a 1
+  s_ef2b0cf393c42f::t_7313f3800d88cc 173,175-176,180
+src/lib/__tests__/env.test.ts
+  s_ef2b0cf393c42f::t_69757be77e7aed 1
+  s_ef2b0cf393c42f::t_bfcf90846ae5ba 30-35,40,46-69
+  s_ef2b0cf393c42f::t_7b767574c046ca 36-39,41-45
+src/lib/auth/server/adapters/__tests__/bvbrc-identity.test.ts
+  s_ef2b0cf393c42f::t_e044bf254026aa 23
+  s_ef2b0cf393c42f::t_3faa9e531c64b5 290
+  s_ef2b0cf393c42f::t_8595c37e37c51c 313-319,321-322
+  s_ef2b0cf393c42f::t_65a7ef962a7d15 304-312,320
+src/app/api/services/app-service/submit/__tests__/route.test.ts
+  s_ef2b0cf393c42f::t_287e2499439ad5 109,117
+.example.env
+  s_ef2b0cf393c42f::t_1948c35708d8de 8-21
+  s_ef2b0cf393c42f::t_4e68fbad7b19e9 22-25
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_ef2b0cf393c42f::t_4d25a4bc19ee8f 137-140
+  s_ef2b0cf393c42f::t_c18ecb4d52714b 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "448e2dd176b787a518c8b37224e0dbc7f9cd3a17",
+  "prompts": {},
+  "sessions": {
+    "s_ef2b0cf393c42f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "66605d66-4643-43f2-a60b-4f79be0765b9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

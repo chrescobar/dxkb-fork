@@ -1,0 +1,60 @@
+e2e/tests/jobs-lifecycle.spec.ts
+  s_096d27726f1b2c::t_08bc82918737b6 139
+src/lib/jobs/__tests__/icons.test.tsx
+  s_096d27726f1b2c::t_2c50a748e12817 1-14
+src/components/ui/button-variants.ts
+  s_096d27726f1b2c::t_83593a01887066 29-31,33
+src/lib/jobs/formatting.ts
+  s_096d27726f1b2c::t_97cfecab44bab3 2,19-25,27,32-47
+  s_096d27726f1b2c::t_9f9e2413add24e 48
+src/components/jobs/jobs-browser.tsx
+  s_096d27726f1b2c::t_4d7823ea0fa344 42
+  s_096d27726f1b2c::t_ba7a6405e5d0ba 340-342
+src/lib/jobs/constants.ts
+  s_096d27726f1b2c::t_b5d8b7a15956d6 8,23,28
+  s_096d27726f1b2c::t_f8b16ff9bacb0e 24,29
+src/lib/jobs/icons.ts
+  s_096d27726f1b2c::t_fb4ee2c2dc2312 1-32
+src/components/jobs/__tests__/job-status-pill.test.tsx
+  s_096d27726f1b2c::t_d869509071c940 241-262,265-291
+  s_096d27726f1b2c::t_7bc90c10d0f8e4 138-147,149-160,162-163,165,176-180
+  s_096d27726f1b2c::t_497ae5043df165 134-135,148,161,181-182
+  s_096d27726f1b2c::t_2c50a748e12817 136,164,166-175,239
+  s_096d27726f1b2c::t_08bc82918737b6 211,238
+  s_096d27726f1b2c::t_ade7f81d33ebc8 263-264
+  s_096d27726f1b2c::t_0e8b816905c4bc 137,240
+src/components/jobs/job-status-pill.tsx
+  s_096d27726f1b2c::t_8d962f722dfff3 39-40,54,63
+  s_096d27726f1b2c::t_77726c448e0368 53
+  s_096d27726f1b2c::t_d3d3c7d5b40eb0 111
+  s_096d27726f1b2c::t_ae0be34866377d 19-23,102,133-144,148-151,153-161,163-166
+  s_096d27726f1b2c::t_b5d8b7a15956d6 18,52
+  s_096d27726f1b2c::t_6e689ae007ac1c 5,43-47,57-61
+  s_096d27726f1b2c::t_d9b0502bd5fe1b 152,162
+src/components/jobs/jobs-detail-panel.tsx
+  s_096d27726f1b2c::t_f8b16ff9bacb0e 95-96
+src/lib/jobs/__tests__/formatting.test.ts
+  s_096d27726f1b2c::t_d869509071c940 6,101-137
+  s_096d27726f1b2c::t_2fd33374961fb2 138
+src/components/jobs/jobs-toolbar.tsx
+  s_096d27726f1b2c::t_efadd5ce37fdca 12
+  s_096d27726f1b2c::t_e132fb850937bf 186,190,198,206,214
+  s_096d27726f1b2c::t_25896e68ba9ec1 81-83
+  s_096d27726f1b2c::t_b5d8b7a15956d6 14,201
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8b08acb3f2b39866032681babcb8bb29f0a1d878",
+  "prompts": {},
+  "sessions": {
+    "s_096d27726f1b2c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "61c35b30-0d3f-4548-962e-95aa498202d9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

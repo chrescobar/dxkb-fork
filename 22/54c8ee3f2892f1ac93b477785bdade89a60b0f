@@ -1,0 +1,21 @@
+src/components/jobs/__tests__/job-status-pill.test.tsx
+  s_2cfa194c937962::t_19c61038757149 272-298
+src/components/jobs/job-status-pill.tsx
+  s_2cfa194c937962::t_19c61038757149 17,135-139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2254c8ee3f2892f1ac93b477785bdade89a60b0f",
+  "prompts": {},
+  "sessions": {
+    "s_2cfa194c937962": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2e1dee40-c20a-4d0c-996a-79b94a3fed41",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

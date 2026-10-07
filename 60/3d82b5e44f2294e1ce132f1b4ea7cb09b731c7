@@ -1,0 +1,148 @@
+src/app/services/(genomics)/blast/database-selector.tsx
+  s_3e56320a7170c9::t_4d2bc27475b061 88-90
+  s_3e56320a7170c9::t_367473e1249ed1 53-56
+  s_3e56320a7170c9::t_49d09627ea121d 75-78,82-86,91-94,101-103,105-111,113-120
+  s_3e56320a7170c9::t_f0f23a50d60f6b 4,10,21,24,29-35,37-52,57-74,121-126
+  s_3e56320a7170c9::t_2b235e2006e926 221-230,232-238,240
+  s_3e56320a7170c9::t_95a424563ea078 79-81,87,96-100,104,112
+  s_3e56320a7170c9::t_b45cfe2212e6cb 255
+  s_3e56320a7170c9::t_1eed17e0e9077c 11-18
+  s_3e56320a7170c9::t_418757585e42e5 36,252
+  s_3e56320a7170c9::t_67145dd77d95ca 95
+  s_3e56320a7170c9::t_4af3450d9e8b29 127
+src/lib/services/workspace/picker-views.ts
+  s_effa99a55c0c60::t_e23ad5134f3b1f 1-152,167-339
+  s_effa99a55c0c60::t_8b55c578f1e25b 153-166
+src/app/services/(genomics)/blast/__tests__/database-selector.test.tsx
+  s_3e56320a7170c9::t_07799e1fca3235 176
+  s_3e56320a7170c9::t_45847728d9414e 122,124-137,142-146,149-151
+  s_3e56320a7170c9::t_fbebc55994ed05 177-191,199
+  s_3e56320a7170c9::t_9f42e2b47e9f62 167,169-174
+  s_3e56320a7170c9::t_58e06db5a6104b 192-198
+  s_3e56320a7170c9::t_87d613cc6df448 53-56
+  s_3e56320a7170c9::t_575a27cc82f002 138-140,147-148
+  s_3e56320a7170c9::t_7ae34152f1845b 5
+  s_3e56320a7170c9::t_00c87e64ad802f 57-121,123,141,152-166,168,175,200-202
+  s_3e56320a7170c9::t_1d72c911ad94a4 2
+src/components/workspace/workspace-mini-browser-table.tsx
+  s_effa99a55c0c60::t_824c3e2e0d668b 20,29-34,37-38,46,48-49,52-53,60,75,79,120-127,130,134,137,140,143
+src/components/workspace/upload-dialog.tsx
+  s_effa99a55c0c60::t_f7a5275713bc6a 4
+  s_effa99a55c0c60::t_7d98649ccba653 5,26-33
+src/components/services/__tests__/fasta-textarea.test.tsx
+  s_3e56320a7170c9::t_f39fa79bfd6d01 1-77
+src/lib/services/workspace/__tests__/picker-views.test.ts
+  s_effa99a55c0c60::t_0e4324a2282172 1-4,6-414,429-430
+  s_effa99a55c0c60::t_48c0f1b802eacb 5,415-428
+src/components/workspace/upload-panel.tsx
+  s_effa99a55c0c60::t_7d98649ccba653 1-151,166,191,226,245,255-256,287-288,308-310
+  s_effa99a55c0c60::t_7108b13b920bb7 156,159,164,189,196-197,219,222,228,231,235,238,241,252,259,290-294
+  s_effa99a55c0c60::t_a726247f4a8427 152-154
+  s_effa99a55c0c60::t_e1c8e8c4275e4b 155,157-158,160-163,165,167-188,190,192-195,198-218,220-221,223-225,227,229-230,232-234,236-237,239-240,242-244,246-251,253-254,257-258,260-286,289,295-307
+src/components/ui/checkbox.tsx
+  s_3e56320a7170c9::t_8f27a3883da390 8-13
+  s_3e56320a7170c9::t_bfa5554494beee 19
+src/app/api/services/genome/search/__tests__/route.test.ts
+  s_3e56320a7170c9::t_74533d21a9d2fd 71-108
+src/components/services/genome-name-selector.tsx
+  s_3e56320a7170c9::t_40566dd7206842 240-242
+  s_3e56320a7170c9::t_f97af379359340 97
+  s_3e56320a7170c9::t_f4a1dd51910a37 166
+  s_3e56320a7170c9::t_5ab9e908fd2219 68,73-76
+  s_3e56320a7170c9::t_2265dd2bab9081 45-49
+  s_3e56320a7170c9::t_22a537416ca679 219-220,226,229
+  s_3e56320a7170c9::t_45a01f459f985a 206,215-218,221-225,227-228
+  s_3e56320a7170c9::t_018c4c29b7120c 171-188
+  s_3e56320a7170c9::t_b8a36debf79867 3,5
+src/components/ui/tanstack-form.tsx
+  s_3e56320a7170c9::t_d01e6918bddf82 79
+  s_3e56320a7170c9::t_a42eb8fdbd3600 38-42,56-66
+src/components/workspace/__tests__/workspace-picker-dialog.test.tsx
+  s_effa99a55c0c60::t_edf72e8717cf3c 1,3-118,120-198,202-214,218-298,301,304,322,326-330,334,347-348,350-356,364-365,368,370,375-377,390-403,405,408-412,431-454
+  s_effa99a55c0c60::t_16b0b5ced9c3b9 199-201,215-217
+  s_effa99a55c0c60::t_c63935062771c5 2,299-300,302-303,305-321,323-325,331-333,335-346,349,357-363,366-367,369,371-374,378-389,404,406-407,413-430
+  s_effa99a55c0c60::t_c6186e7326fee8 119
+src/components/workspace/workspace-picker-dialog.tsx
+  s_effa99a55c0c60::t_27ac568c3dc741 270,272,360,377
+  s_effa99a55c0c60::t_b8322035f3e106 299-301
+  s_effa99a55c0c60::t_a726247f4a8427 356,380,478
+  s_effa99a55c0c60::t_ef1acbb78f1d03 1-2,4,6-54,58-75,84-96,98-100,103-128,140-199,211-212,226-234,236-239,241-244,248,250-251,257,259,262,264,282,286-287,294,296,452-460,464-473,476-477,487,489-494,497-502
+  s_effa99a55c0c60::t_f7a5275713bc6a 3,5,55-57,76-83,97,101-102,129-139,200-210,213-225,235,240,245-247,249,252-256,258,260-261,263,265-269,271,273-281,283-285,288-293,295,297-298,302-355,357-359,361-376,378-379,381-451,461-463,474-475,483,485-486,488,495-496
+  s_effa99a55c0c60::t_efe5fc26b0baa8 479-482,484
+src/components/workspace/workspace-mini-browser.tsx
+  s_effa99a55c0c60::t_71a1f2dba01994 3,17,102-103,134-150
+docs/architecture.md
+  s_effa99a55c0c60::t_157055a0796e9f 107
+src/components/ui/table.tsx
+  s_3e56320a7170c9::t_06d2ccf885df65 66-69
+  s_3e56320a7170c9::t_e5b03520b0b001 63-65
+  s_3e56320a7170c9::t_7e32d61943073f 70
+src/app/globals.css
+  s_3e56320a7170c9::t_903051bf4c73e7 638-641,643
+src/components/services/__tests__/genome-name-selector.test.tsx
+  s_3e56320a7170c9::t_6895342323e434 13-16
+  s_3e56320a7170c9::t_01130b22fd2a1b 1-12,17-101
+src/components/services/selected-items-table.tsx
+  s_3e56320a7170c9::t_89e0bdec25dbbb 128
+  s_3e56320a7170c9::t_4c68a380565463 105
+  s_3e56320a7170c9::t_f233d54799c8b3 97
+  s_3e56320a7170c9::t_d147733fc2ea30 5,134
+src/components/ui/button-variants.ts
+  s_3e56320a7170c9::t_b4da3e4de7346a 64-65,69
+  s_3e56320a7170c9::t_0d27695c68a856 66-68
+src/components/services/fasta-textarea.tsx
+  s_3e56320a7170c9::t_5486a471fe40aa 87,89-92,107-119
+  s_3e56320a7170c9::t_56087b4ec8debf 6
+  s_3e56320a7170c9::t_4cb377392960e7 28-29
+  s_3e56320a7170c9::t_42f69b9c7eb5cc 44
+src/components/workspace/__tests__/upload-dialog.test.tsx
+  s_effa99a55c0c60::t_365d2408ae156e 54-57,60,64-71
+  s_effa99a55c0c60::t_baf58c709b3dab 1-53,58-59,61-63,72-82
+src/components/services/__tests__/output-folder-browse.test.tsx
+  s_effa99a55c0c60::t_2af24ca0a05e09 1-8,14,16-112
+  s_effa99a55c0c60::t_c6186e7326fee8 9-13,15
+src/components/services/output-folder.tsx
+  s_effa99a55c0c60::t_69c13418b78572 3,11,13,17-18,20,63-65,114-147
+src/app/api/services/genome/search/route.ts
+  s_3e56320a7170c9::t_fdb9dda52851f2 5-9,11
+src/components/workspace/workspace-mini-browser-view.tsx
+  s_effa99a55c0c60::t_c999ffd5bced0c 1-176
+src/components/workspace/picker-new-folder-page.tsx
+  s_effa99a55c0c60::t_23243df4c8b2d7 1-56,58,60-61,63-87,89-128
+  s_effa99a55c0c60::t_a726247f4a8427 57
+  s_effa99a55c0c60::t_27ac568c3dc741 59,62,88
+src/hooks/services/workspace/use-workspace-picker-listing.ts
+  s_effa99a55c0c60::t_f4ed99eba6e02c 1-77
+src/components/services/genome-suggestion-list.tsx
+  s_3e56320a7170c9::t_577f2a30f2ff7c 65
+AGENTS.md
+  s_3e56320a7170c9::t_26171357b2371b 67
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_3e56320a7170c9::t_a4981e52a1627b 38-40
+src/app/services/(genomics)/blast/input-source-card.tsx
+  s_3e56320a7170c9::t_a55a438e509131 2-6,96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "603d82b5e44f2294e1ce132f1b4ea7cb09b731c7",
+  "prompts": {},
+  "sessions": {
+    "s_3e56320a7170c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af07e7a7-7622-4635-8441-46814041b5cc",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_effa99a55c0c60": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88195e5e-3272-4ece-8198-1be4af97ba65",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

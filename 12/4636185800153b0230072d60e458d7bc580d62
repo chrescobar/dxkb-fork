@@ -1,0 +1,99 @@
+src/components/workspace/picker-prototypes/variant-b-resize-handle.tsx
+  s_effa99a55c0c60::t_1513331cb4b099 1-86
+src/components/services/output-folder.tsx
+  s_effa99a55c0c60::t_1c595950254b5f 3,12,19,122-125,128-130
+src/components/workspace/picker-prototypes/variant-b-utils.ts
+  s_effa99a55c0c60::t_835ddcf342faf1 74
+  s_effa99a55c0c60::t_47954192d623d5 55-58,62,64,67,70,72-73,75-77
+  s_effa99a55c0c60::t_449f8ac827936e 1-54,59-61,63,65-66,68-69,71,78-94
+src/components/workspace/picker-prototypes/variant-b-preview.tsx
+  s_effa99a55c0c60::t_edc2de56756e9f 11,206-207
+  s_effa99a55c0c60::t_13117ff462e77e 1-3,9-10,12-78,83-104,106-111,116-205,208-209,211-278
+  s_effa99a55c0c60::t_277c880d3967e7 105
+  s_effa99a55c0c60::t_274904971c5714 4-8,79-82,112-115,210
+src/components/workspace/picker-prototypes/variant-d-folder-tree.tsx
+  s_effa99a55c0c60::t_11fedb2d5403b3 624
+  s_effa99a55c0c60::t_483bf11960b861 1-82,84-153,155-160,162-207,213-271,279,281,283-301,303-318,320-566,568-623,625-720,722-794
+  s_effa99a55c0c60::t_a78a22bb4b1d8f 83
+  s_effa99a55c0c60::t_d02b087e12de18 154,161,208-212,272-278,280,282,319
+  s_effa99a55c0c60::t_8e55597c11d78f 302,567,721
+src/components/workspace/picker-prototypes/folder-picker-prototypes.tsx
+  s_effa99a55c0c60::t_5b8ebf20ee7e25 1-41
+src/components/workspace/picker-prototypes/types.ts
+  s_effa99a55c0c60::t_060315ba81ae71 1-19
+src/components/shared/prototype-switcher.tsx
+  s_effa99a55c0c60::t_a4e068a10f049d 1-82,84-94,98-124,126-142
+  s_effa99a55c0c60::t_76c1c5bd34d592 83,95-97,125
+src/app/services/(genomics)/blast/page.tsx
+  s_effa99a55c0c60::t_1c595950254b5f 11,182-183
+src/components/workspace/picker-prototypes/variant-d-sheet-tree.tsx
+  s_effa99a55c0c60::t_08b9b5fb73d12c 1-2,9,57,68,703
+  s_effa99a55c0c60::t_a5356eeb921d09 443,445-449
+  s_effa99a55c0c60::t_e639e200b0c3f0 3-8,11-56,58-67,69-151,153-179,184-442,444,450-577,579-624,626-702
+  s_effa99a55c0c60::t_377ebe883d3f15 625
+  s_effa99a55c0c60::t_d02b087e12de18 152,180-183
+  s_effa99a55c0c60::t_72f4d4a1d38d4b 10,578
+src/components/workspace/picker-prototypes/variant-a-current.tsx
+  s_effa99a55c0c60::t_92edec0cd7fac2 1-45
+src/components/workspace/picker-prototypes/variant-b-column-motion.ts
+  s_effa99a55c0c60::t_65cdc3ce43deab 4-7,9,14-16,19-29,49,73,123-125,132,155-156,160-163,166-169,181,207
+  s_effa99a55c0c60::t_b37db56c78c6f1 1-3,8,17-18,30-48,50-72,74-114,128,170,172-180,182-206,208-215
+  s_effa99a55c0c60::t_e5e88393b73fb6 116-118
+  s_effa99a55c0c60::t_d61150bd3d5f39 129
+  s_effa99a55c0c60::t_5170fe03071ed1 115,119-122
+  s_effa99a55c0c60::t_4e9c525153d06d 157-158
+  s_effa99a55c0c60::t_b34a89706e66da 10-13,126-127,130-131,133-154,159,164-165,171
+src/components/workspace/picker-prototypes/variant-c-popover.tsx
+  s_effa99a55c0c60::t_661d8fae903be8 3-8,10-91,94-106,112-280,303-368,382-425,427-556,558-602,604-788,797-799,829,831,919-923,928-936,947-951,962-1156,1160-1178
+  s_effa99a55c0c60::t_08b9b5fb73d12c 1-2,9,92-93,1179
+  s_effa99a55c0c60::t_313d6c59ebccd1 369-375,426,603,790,796,925-927
+  s_effa99a55c0c60::t_7c930dc932fcd2 107-111,800-814,816-828,830,832-918
+  s_effa99a55c0c60::t_1739808bbd10f0 376-381,789,791-795
+  s_effa99a55c0c60::t_8bf212e2e24e92 281-302,937-946,952-961
+  s_effa99a55c0c60::t_20e4e90e341b74 557,815
+  s_effa99a55c0c60::t_4fefb8d5982536 924,1157-1159
+src/components/workspace/picker-prototypes/variant-b-columns.tsx
+  s_effa99a55c0c60::t_08b9b5fb73d12c 1-2,11,56,80,925
+  s_effa99a55c0c60::t_80e893a1c66972 5-9,22,64,66,74,77,125-135,137,149,168,241-242,247,256,275,286-296,307,346,436-454,462,484,582-586,599-606
+  s_effa99a55c0c60::t_835ddcf342faf1 14,58-62,258-263,265-274,276-277,279,281-285,298-306,317,329,351,360,368,399,506,574-581,765-767,769-772,774-776,782-783,803,809,818
+  s_effa99a55c0c60::t_fa6f06df6058ef 326-328,635,640
+  s_effa99a55c0c60::t_a9690add315d0d 17,587-595
+  s_effa99a55c0c60::t_b34a89706e66da 513
+  s_effa99a55c0c60::t_fb79955db56cfc 3-4,10,21,23-55,57,63,65,67-73,75-76,78-79,81-124,136,138-148,150-167,169-240,243-246,248-255,257,264,278,280,297,308-316,318-325,330-345,347-350,352-359,361-367,369-398,405,408-435,455-461,463-465,467-483,485-505,607-634,636-639,641-718,725-744,749,754-764,768,777-781,784-802,804-808,810-811,813-817,819-821,823-842,856-907,909-924
+  s_effa99a55c0c60::t_e58a2489956103 596-598,843,845-855,908
+  s_effa99a55c0c60::t_20a4ec71013226 12-13,15-16,18-20,400-404,406-407,812
+  s_effa99a55c0c60::t_277c880d3967e7 466
+  s_effa99a55c0c60::t_006492993d984a 507-512,514-573,844
+  s_effa99a55c0c60::t_847a583725bd4f 722,724,745-748,750-753,773,822
+  s_effa99a55c0c60::t_aa2b1a2560dbf8 719-721,723
+src/components/workspace/picker-prototypes/NOTES.md
+  s_effa99a55c0c60::t_ca6d0538123c8b 24-37
+  s_effa99a55c0c60::t_939202fde120c4 1-23,38,61-68
+  s_effa99a55c0c60::t_16c2343a6665b6 39-50,60
+  s_effa99a55c0c60::t_e8d065ef394727 57-59
+  s_effa99a55c0c60::t_e52a254aa0a632 51-56
+src/components/workspace/picker-prototypes/variant-b-column.tsx
+  s_effa99a55c0c60::t_277c880d3967e7 221,225,441
+  s_effa99a55c0c60::t_835ddcf342faf1 44-45,75,191
+  s_effa99a55c0c60::t_30c9ef94970012 414
+  s_effa99a55c0c60::t_a9690add315d0d 8-15,193-195
+  s_effa99a55c0c60::t_20f028cf39d911 1-7,16-24,26-33,36-43,46-49,54-74,76-79,84-101,103-109,118-128,135-140,146-154,156-158,160-190,192,197,205-220,222-224,226-231,233-234,243-291,293-314,320-413,415-440,442-450
+  s_effa99a55c0c60::t_8142fcc9f765cf 25,34-35,50-53,80-83,102,110-117,129-134,196,198-204,232,235-242,292,315-319
+  s_effa99a55c0c60::t_fa6f06df6058ef 141-145,155,159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "124636185800153b0230072d60e458d7bc580d62",
+  "prompts": {},
+  "sessions": {
+    "s_effa99a55c0c60": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88195e5e-3272-4ece-8198-1be4af97ba65",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

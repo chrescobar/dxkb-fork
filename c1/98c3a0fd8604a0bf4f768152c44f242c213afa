@@ -1,0 +1,83 @@
+src/components/workspace/folder-picker/folder-picker-preview.tsx
+  s_effa99a55c0c60::t_21bca7a40ccf68 107-110
+  s_effa99a55c0c60::t_a64ee6465c47a7 137
+src/hooks/services/workspace/__tests__/use-workspace-picker-listing.test.tsx
+  s_effa99a55c0c60::t_4a6ae5a4b93bff 1-217
+src/lib/services/workspace/__tests__/picker-views.test.ts
+  s_effa99a55c0c60::t_8d302e707f727a 10,15,17-18,20,62-103,142-173,218-226,265-277,329-342,377-398,473-497,530-554,593-600,602-603,618-626
+src/components/services/__tests__/output-folder-browse.test.tsx
+  s_effa99a55c0c60::t_4f6d945c4fd237 1-2,37-38,46-49,56-57,73,97-145,164-178
+  s_effa99a55c0c60::t_6896864ec5d788 179
+src/components/ui/__tests__/tanstack-form.test.tsx
+  s_effa99a55c0c60::t_418575c9ca9c60 1-92
+e2e/pages/index.ts
+  s_effa99a55c0c60::t_0436390198082b 25
+src/components/workspace/folder-picker/__tests__/folder-picker-resize-handle.test.tsx
+  s_effa99a55c0c60::t_38c3912b790bed 1-175
+e2e/pages/folder-picker-dialog.ts
+  s_effa99a55c0c60::t_cf11fcb99a7c5e 1-4,8-57,78-115,117,119-139,143-153,155-158,162-172,174-183
+  s_effa99a55c0c60::t_15b9757f8ed560 173
+  s_effa99a55c0c60::t_ef0160b6f3c10f 58-77,116,118
+  s_effa99a55c0c60::t_44e2ee5614176b 140-142,154,159-161
+  s_effa99a55c0c60::t_c477eda58224ca 5-7
+e2e/README.md
+  s_effa99a55c0c60::t_31e920ef2a66c1 46,119
+src/components/workspace/folder-picker/__tests__/fixtures/picker-harness.tsx
+  s_effa99a55c0c60::t_f75e637d48b90a 54-61
+  s_effa99a55c0c60::t_692c269b4ec59a 32-35,39-40
+  s_effa99a55c0c60::t_b88d34a041d0f3 255,257
+  s_effa99a55c0c60::t_bd987aeeaa3bd8 48
+  s_effa99a55c0c60::t_ffa985dd150574 1-31,36-38,41-47,49-53,62-254,256,258-279
+src/components/workspace/folder-picker/__tests__/folder-picker-breadcrumb.test.tsx
+  s_effa99a55c0c60::t_7e9f746d748a07 113-124
+  s_effa99a55c0c60::t_e26b10f7783949 1-112,125-151
+e2e/tests/services/output-folder-picker.spec.ts
+  s_effa99a55c0c60::t_f2791fb14842cd 413-417,426-427,451,468,470
+  s_effa99a55c0c60::t_ef0160b6f3c10f 91-92,98-103,345,350
+  s_effa99a55c0c60::t_a7da5d73c04277 2-90,93-97,104-105,118-212,215-229,233-263,267,269-288,290-344,346-349,351-412,418-425,428-450,452-467,469,471-480
+  s_effa99a55c0c60::t_0436390198082b 1,106-117,213-214,230-232,264-266,268,289
+src/components/workspace/folder-picker/__tests__/folder-picker-info.test.tsx
+  s_effa99a55c0c60::t_a8d2543431d5ca 1-171
+e2e/a11y/scan-keys.ts
+  s_effa99a55c0c60::t_d1e02c03eecc80 42-44
+src/components/workspace/folder-picker/__tests__/folder-picker-upload.test.tsx
+  s_effa99a55c0c60::t_254d4607b85d74 85,88
+  s_effa99a55c0c60::t_fa8204bc179973 1-84,86-87,89-190
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog.test.tsx
+  s_effa99a55c0c60::t_4a04137e739bed 1,4,6-16,19,24,26-29,32-36,39-41,43-50,52,54-55,57-60,62-125,139,142-144,152,167,169-170,172,174-175,185-190,194-223,228,232-257,261-264,268-271,277-289,293,295,297,299-305,307,309-319,321-322,329,337-340,343,346-350,355-366,387,394-396,398-399,401-410,413-414,416,418-419,422-423,425,427-428,431-433,435,438,440-442,446,451-452,454-457,459-463,466-469,471-473,475-478,484-485,488-491,508-556
+src/components/workspace/folder-picker/__tests__/folder-picker-keyboard.test.tsx
+  s_effa99a55c0c60::t_5816c6f7c1f9b8 1-21,23,27-28,36-85,87-88,90-248,250-270
+  s_effa99a55c0c60::t_b88d34a041d0f3 22,24-26,29-35,86,89,249
+src/components/workspace/folder-picker/__tests__/folder-picker-columns.test.tsx
+  s_effa99a55c0c60::t_513289d0b3c758 1-255
+src/components/workspace/folder-picker/__tests__/folder-picker-new-folder.test.tsx
+  s_effa99a55c0c60::t_edc524fd1a0f0c 185
+  s_effa99a55c0c60::t_a7505aa1d29c84 1-184,186-260
+e2e/tests/a11y/deep-tier.spec.ts
+  s_effa99a55c0c60::t_d1e02c03eecc80 26,125-201
+  s_effa99a55c0c60::t_2df237cca0265d 202-203
+src/components/workspace/upload-panel.tsx
+  s_effa99a55c0c60::t_d0a8780990f8f2 42-43
+src/components/workspace/folder-picker/__tests__/folder-picker-motion.test.ts
+  s_effa99a55c0c60::t_263ab663a6a0b6 59,392-398
+  s_effa99a55c0c60::t_860400c8d29498 1-52,54-58,60-391,399-522
+  s_effa99a55c0c60::t_19a27283d71aa8 53
+src/components/workspace/folder-picker/__tests__/folder-picker-utils.test.ts
+  s_effa99a55c0c60::t_e1112b79641df1 1-105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c198c3a0fd8604a0bf4f768152c44f242c213afa",
+  "prompts": {},
+  "sessions": {
+    "s_effa99a55c0c60": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88195e5e-3272-4ece-8198-1be4af97ba65",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+src/components/workspace/folder-picker/folder-picker-breadcrumb.tsx
+  s_8eab3ae787a0ae::t_b79b3375e44e93 3,22-24,40-47,50,52,54
+src/app/services/(genomics)/blast/database-selector.tsx
+  s_8d2c9c8977a5ef::t_995142808a87eb 75
+  s_8d2c9c8977a5ef::t_95aa5af17835b2 171
+src/app/services/(genomics)/blast/__tests__/database-selector.test.tsx
+  s_8d2c9c8977a5ef::t_eeebf8efcfaca9 207,228,248
+src/components/taxonomy/__tests__/tax-id-selector.test.tsx
+  s_8d2c9c8977a5ef::t_e819603fb5cdd1 1-62
+src/components/taxonomy/taxon-name-selector.tsx
+  s_8d2c9c8977a5ef::t_76a2e75233e6be 7,270,292
+src/components/workspace/upload-dialog.tsx
+  s_8eab3ae787a0ae::t_ce59644af5f903 23-35
+src/components/services/genome-name-selector.tsx
+  s_8d2c9c8977a5ef::t_76a2e75233e6be 6,195
+src/components/workspace/upload-panel.tsx
+  s_8eab3ae787a0ae::t_0c9e88862fd77e 195,217-218,221-222,228,232,242
+  s_8eab3ae787a0ae::t_ada0c38a6d5cb8 83-90,95,102-103
+  s_8eab3ae787a0ae::t_3a052f27169af7 116-117,123-128,132-142,147
+src/components/workspace/__tests__/upload-dialog.test.tsx
+  s_8eab3ae787a0ae::t_d7cbe6e0ce1ca0 123-158
+  s_8eab3ae787a0ae::t_960c4732c5e941 121,159-177,180-181,183-189,191-192
+  s_8eab3ae787a0ae::t_66c4522bea492f 4-6,15-17,79-120
+  s_8eab3ae787a0ae::t_420b36ff8bb508 27,178-179,182,190
+  s_8eab3ae787a0ae::t_c73d8e5854af57 122
+e2e/tests/services/output-folder-picker.spec.ts
+  s_8eab3ae787a0ae::t_ab153ebf74fd84 74-98,101-105,409-424,426-459
+  s_8eab3ae787a0ae::t_ba6e533e503e4c 425
+  s_8eab3ae787a0ae::t_c33194880fe99d 460
+src/app/services/(genomics)/blast/page.tsx
+  s_8d2c9c8977a5ef::t_ef70c05b50e5a1 167-171
+  s_8d2c9c8977a5ef::t_f181d3d958cd66 144-147,151-155
+e2e/tests/workspace-upload.spec.ts
+  s_8eab3ae787a0ae::t_385a00602d99b0 5,7,61-112
+  s_8eab3ae787a0ae::t_5ed81d60a0abe6 113
+src/components/taxonomy/tax-id-selector.tsx
+  s_8d2c9c8977a5ef::t_76a2e75233e6be 7,160,191
+  s_8d2c9c8977a5ef::t_007d9c868b2fd4 44-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "01d36fec96fbeda355f49b71700953fbdfe6841f",
+  "prompts": {},
+  "sessions": {
+    "s_8d2c9c8977a5ef": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6e9bc147-c0f2-4c30-a341-29f596021a35",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8eab3ae787a0ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9e538773-296a-4f9c-8087-0d863c289e74",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

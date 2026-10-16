@@ -1,10 +1,12 @@
+import { encodePathSegment } from "@/lib/url";
+import { downloadFormats, type DownloadRequest } from "./downloads";
 import {
   fastaContentType,
   maxFastaIds,
   type FastaRequest,
   type FastaResource,
 } from "./fasta";
-import { maxExportRows, maxRequestBytes } from "./types";
+import { maxExportRows, maxRequestBytes, sortKeys } from "./types";
 import type {
   CollectionRequest,
   CollectionResult,
@@ -105,9 +107,10 @@ function wait(ms: number, signal?: AbortSignal): Promise<void> {
 /**
  * `attempt`, retried when the gateway answers 429: after its `Retry-After`, or
  * an exponential backoff without one, up to `maxRateLimitRetries` times. Any
- * other error, and the last 429, is thrown as it came.
+ * other error, and the last 429, is thrown as it came. `startNativeDownload`
+ * shares it, so both download paths wait out a throttled request alike.
  */
-async function retryRateLimited<T>(
+export async function retryRateLimited<T>(
   attempt: () => Promise<T>,
   signal?: AbortSignal,
 ): Promise<T> {
@@ -160,7 +163,12 @@ function collectionParams(request: CollectionRequest): URLSearchParams {
   if (request.page) params.set("page", String(request.page));
   if (request.pageSize) params.set("pageSize", String(request.pageSize));
   if (request.sort)
-    params.set("sort", `${request.sort.field}:${request.sort.direction}`);
+    params.set(
+      "sort",
+      sortKeys(request.sort)
+        .map((key) => `${key.field}:${key.direction}`)
+        .join(","),
+    );
   for (const field of request.fields ?? []) params.append("field", field);
   for (const facet of request.facets ?? []) params.append("facet", facet);
   return params;
@@ -265,6 +273,40 @@ export class DataRepository {
       if (text) parts.push(text.endsWith("\n") ? text : `${text}\n`);
     }
     return new Blob(parts, { type: fastaContentType });
+  }
+
+  /**
+   * A table or FASTA file through `POST /api/data/<resource>/download`, held in
+   * memory as a `Blob` for the caller to save. For selections and queries of
+   * at most `maxBufferedDownloadRows`; a larger query, and any file of whole
+   * contigs, streams to disk through `startNativeDownload` instead
+   * (`usesNativeDownload`). A 429 is retried after its `Retry-After`,
+   * as in {@link exportAll}; any other failure throws the gateway's own
+   * `{error}` message. An empty `Blob` means nothing matched; the caller
+   * decides how to say so.
+   */
+  download(
+    resource: DataResource,
+    request: DownloadRequest,
+    signal?: AbortSignal,
+  ): Promise<Blob> {
+    return retryRateLimited(async () => {
+      const response = await fetch(
+        `${this.basePath}/${encodePathSegment(resource)}/download`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(request),
+          signal,
+        },
+      );
+      if (!response.ok) throw await responseError(response);
+      const blob = await response.blob();
+      return blob.type
+        ? blob
+        : new Blob([blob], { type: downloadFormats[request.format].contentType });
+    }, signal);
   }
 
   private post<T>(

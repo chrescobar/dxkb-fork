@@ -1,5 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { CancelledError } from "@tanstack/react-query";
 import { maxExportRows, type DataRepository } from "@/lib/data-api";
 import { biosetCollectionProfile } from "@/lib/experiment-view/profile";
 import type { useResourceCollection as useResourceCollectionHook } from "@/hooks/views/use-resource-collection";
@@ -23,6 +24,11 @@ vi.mock("next/navigation", async () =>
 );
 vi.mock("@tanstack/react-query", async () =>
   (await import("./fixtures/resource-collection-mocks")).reactQueryMock(),
+);
+vi.mock("@/hooks/views/use-collection-download", async () =>
+  (
+    await import("./fixtures/resource-collection-mocks")
+  ).collectionDownloadMock(),
 );
 vi.mock("@/lib/auth/provider", async () =>
   (await import("./fixtures/resource-collection-mocks")).authProviderMock(),
@@ -188,13 +194,10 @@ describe("ResourceCollection Bioset actions", () => {
       enabledActions: ["services", "biosets"],
       guideUrl: "https://example.test/guide",
     });
-    await user.click(screen.getByRole("button", { name: "Download action" }));
-    expect(selected).toHaveBeenCalledWith("bioset", {
-      ids: ["bioset-1"],
-      fields: ["bioset_id"],
-    });
+    // The Download tile heads the rail beside the Bioset actions.
+    expect(screen.getByRole("button", { name: /^DOWNLOAD/ })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Biosets action" }));
-    expect(selected).toHaveBeenCalledOnce();
+    expect(selected).not.toHaveBeenCalled();
     // A reserved `about:blank`, not the final href with `noopener,noreferrer`: the
     // spec makes `window.open` return null whenever `noopener` is set, so the handle
     // could not tell a blocked pop-up from an allowed one. Reserving keeps the
@@ -400,43 +403,104 @@ describe("ResourceCollection Bioset actions", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
-  it("does not resolve all matching Biosets while the rows and total belong to a previous query", async () => {
-    const user = userEvent.setup();
-    const { open } = reservedTab();
-    const exportAll = vi.fn(() =>
-      Promise.resolve({ rows: [{ exp_id: "00042" }, { exp_id: "00051" }] }),
-    );
-    useResourceCollection.mockReturnValue({
-      ...collectionResult(),
-      activeId: null,
-      detail: null,
-      isAllPagesSelected: true,
-      isPlaceholderData: true,
-      rows: [{ bioset_id: "bioset-2", exp_id: "00051" }],
-      selection: {},
-      selectedIds: [],
-      total: 2,
+  describe("while the rows and total belong to a previous query", () => {
+    function renderAllPagesBiosets(
+      overrides: Partial<ReturnType<typeof useResourceCollectionHook>>,
+      exportAll = vi.fn(() =>
+        Promise.resolve({ rows: [{ exp_id: "00042" }, { exp_id: "00051" }] }),
+      ),
+    ) {
+      useResourceCollection.mockReturnValue({
+        ...collectionResult(),
+        activeId: null,
+        detail: null,
+        isAllPagesSelected: true,
+        isPlaceholderData: true,
+        rows: [{ bioset_id: "bioset-2", exp_id: "00051" }],
+        selection: {},
+        selectedIds: [],
+        total: 2,
+        ...overrides,
+      });
+      render(
+        <ResourceCollection
+          profile={biosetCollectionProfile}
+          repository={{ exportAll } as unknown as DataRepository}
+          state={{ filters: {}, page: 1, sort: "bioset_id:asc" }}
+          baseRql="eq(exp_id,*)"
+          onStateChange={vi.fn()}
+        />,
+      );
+      return exportAll;
+    }
+
+    it("reserves the tab inside the click, then resolves all matching Biosets once the current query's total lands", async () => {
+      const user = userEvent.setup();
+      const { open, links, close } = reservedTab();
+      const currentTotal = Promise.withResolvers<number>();
+      // The previous query's total is over the row limit; this query's is not.
+      const exportAll = renderAllPagesBiosets({
+        total: maxExportRows + 1,
+        currentTotal: () => currentTotal.promise,
+      });
+
+      await user.click(screen.getByRole("button", { name: "Biosets action" }));
+      // Reserved before the wait: once it is over, the browser would no longer
+      // treat the open as user-initiated and would block it.
+      expect(open).toHaveBeenCalledWith("about:blank", "_blank");
+      expect(exportAll).not.toHaveBeenCalled();
+
+      currentTotal.resolve(2);
+
+      await waitFor(() => {
+        expect(links).toStrictEqual([
+          expect.objectContaining({
+            href: "https://www.bv-brc.org/view/BiosetResult/?in(exp_id,(00042,00051))",
+          }),
+        ]);
+      });
+      expect(exportAll).toHaveBeenCalledOnce();
+      expect(close).not.toHaveBeenCalled();
     });
 
-    render(
-      <ResourceCollection
-        profile={biosetCollectionProfile}
-        repository={{ exportAll } as unknown as DataRepository}
-        state={{ filters: {}, page: 1, sort: "bioset_id:asc" }}
-        baseRql="eq(exp_id,*)"
-        onStateChange={vi.fn()}
-      />,
-    );
-    await user.click(screen.getByRole("button", { name: "Biosets action" }));
+    it("applies the row limit to the current query's total and closes the reserved tab", async () => {
+      const user = userEvent.setup();
+      const { close, links } = reservedTab();
+      const exportAll = renderAllPagesBiosets({
+        total: 2,
+        currentTotal: () => Promise.resolve(maxExportRows + 1),
+      });
 
-    expect(
-      await screen.findByText(
-        "Wait for the current results to finish loading and try again.",
-      ),
-    ).toBeVisible();
-    expect(exportAll).not.toHaveBeenCalled();
-    // No blank tab is opened only to be closed again.
-    expect(open).not.toHaveBeenCalled();
+      await user.click(screen.getByRole("button", { name: "Biosets action" }));
+
+      expect(
+        await screen.findByText(
+          "This selection contains 10,001 Biosets. Narrow the results to 10,000 or fewer and try again.",
+        ),
+      ).toBeVisible();
+      expect(close).toHaveBeenCalledOnce();
+      expect(links).toHaveLength(0);
+      expect(exportAll).not.toHaveBeenCalled();
+    });
+
+    it("closes the reserved tab quietly when the query it waits for is replaced", async () => {
+      const user = userEvent.setup();
+      const { close, links } = reservedTab();
+      const exportAll = renderAllPagesBiosets({
+        currentTotal: () => Promise.reject(new CancelledError()),
+      });
+
+      await user.click(screen.getByRole("button", { name: "Biosets action" }));
+
+      await waitFor(() => {
+        expect(close).toHaveBeenCalledOnce();
+      });
+      expect(
+        screen.queryByText("Could not complete action"),
+      ).not.toBeInTheDocument();
+      expect(links).toHaveLength(0);
+      expect(exportAll).not.toHaveBeenCalled();
+    });
   });
 
   it("closes the reserved tab when the read stops at the export cap and more Biosets match", async () => {

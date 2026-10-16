@@ -8,6 +8,7 @@ import {
   collectionQueryOptions,
   type DataRepository,
   type DataResource,
+  type DataSort,
   type FacetBucket,
   memberQueryOptions,
 } from "@/lib/data-api";
@@ -40,6 +41,12 @@ export interface UseResourceCollectionOptions {
    */
   facetScope?: { structuralRql: string | undefined };
   serverKeywordMode?: "exact" | "prefix";
+  /**
+   * The order rows are read in while no column is sorted (`"unsorted"`), such
+   * as a legacy grid's default order. No column shows it as its sort, as
+   * legacy's do not. Unset leaves the order to the backend.
+   */
+  unsortedOrder?: DataSort;
   state: CollectionState;
   onStateChange: (state: CollectionState) => void;
 }
@@ -64,6 +71,7 @@ export function useResourceCollection<Row extends ResourceRow>({
   structuralRql,
   facetScope,
   serverKeywordMode,
+  unsortedOrder,
   state,
   onStateChange,
 }: UseResourceCollectionOptions) {
@@ -96,10 +104,18 @@ export function useResourceCollection<Row extends ResourceRow>({
       keywordMode: serverKeywordMode,
       page: state.page,
       pageSize: resourceCollectionPageSize,
-      sort: dataSort(state.sort),
+      sort: dataSort(state.sort) ?? unsortedOrder,
       fields: [...fields],
     }),
-    [fields, rql, serverKeywordMode, state.keyword, state.page, state.sort],
+    [
+      fields,
+      rql,
+      serverKeywordMode,
+      state.keyword,
+      state.page,
+      state.sort,
+      unsortedOrder,
+    ],
   );
   // Facet counts depend on the scope, not on the page or sort, and they are the
   // expensive part of a collection read (Genome's 38 facets are ~10 s of an
@@ -162,6 +178,13 @@ export function useResourceCollection<Row extends ResourceRow>({
     }),
     enabled: activeId !== null,
   });
+  // The loaded page already holds the selected row's columns, so the panel
+  // shows it at once and the member read fills in the detail-only fields when
+  // it returns. A row selected on another page has no stand-in and waits.
+  const pageRow =
+    activeId === null
+      ? undefined
+      : visibleRows.find((row) => String(row[idField]) === activeId);
   const activeSort = dataSort(state.sort);
   const sorting: SortingState = activeSort
     ? [{ id: activeSort.field, desc: activeSort.direction === "desc" }]
@@ -169,15 +192,26 @@ export function useResourceCollection<Row extends ResourceRow>({
 
   return {
     activeId,
-    detail:
-      detailQuery.data?.row ??
-      visibleRows.find((row) => String(row[idField]) === activeId) ??
-      null,
+    /**
+     * This query's total: the cached one, or, while the rows on screen are a
+     * previous query's placeholder, its own read's once that lands. It joins
+     * the read in flight rather than sending another, and rejects with
+     * `CancelledError` when the query is replaced before the read lands.
+     */
+    currentTotal: async () =>
+      (
+        await queryClient.query({
+          ...collectionQueryOptions<Row>(repository, resource, request),
+          staleTime: "static",
+        })
+      ).total,
+    detail: detailQuery.data?.row ?? pageRow ?? null,
     detailError: detailQuery.error,
     facets: facetQuery.data?.facets ?? emptyFacets,
     facetsError: facetQuery.error,
     isAllPagesSelected,
-    isDetailLoading: detailQuery.isLoading,
+    // Nothing to show yet: the member read is pending and no loaded row stands in.
+    isDetailLoading: detailQuery.isLoading && pageRow === undefined,
     // No counts to show yet, not even a previous scope's.
     isFacetsLoading: facetQuery.isLoading,
     // The counts on screen belong to the previous scope or facet set.

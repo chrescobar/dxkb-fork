@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import { CancelledError } from "@tanstack/react-query";
 import {
   SearchActionBar,
   type SearchActionId,
@@ -14,6 +15,12 @@ import {
   serializeRql,
   type DataResource,
 } from "@/lib/data-api";
+import type {
+  DownloadScope,
+  ResolvedCollectionDownloadSpec,
+} from "@/lib/data-api/downloads";
+import type { DataSort } from "@/lib/data-api/types";
+import { useCollectionDownload } from "@/hooks/views/use-collection-download";
 import { navigateReservedTab } from "@/lib/reserved-tab-navigation";
 import { formatUserFacingErrorMessage } from "@/lib/utils";
 import { genomeIdsFromStrains } from "@/lib/strain-view";
@@ -47,12 +54,12 @@ import {
   servicesOnlySelectionActionIds,
   strainSelectionActionIds,
 } from "./collection-selection-action-ids";
+import { CollectionDownloadAction } from "./collection-download/collection-download-action";
 import { CollectionSelectionActions } from "./collection-selection-actions";
 import type { SelectionServiceKind } from "./selection-service-chooser";
 import { TaxonomyServiceChooser } from "./taxonomy-service-chooser";
 import {
   exceedsReadLimit,
-  staleResultsMessage,
   type MatchingRowsRead,
 } from "./use-resource-collection-row-resolution";
 
@@ -101,7 +108,7 @@ const selectionActionsConfigByResource = {
   genome_feature: {
     searchType: "genome_feature",
     actionIds: featureSelectionActionIds,
-    // DWNLD, FEATURE and GENOME are enabled by default; FASTA and ID MAP stay
+    // FEATURE and GENOME are enabled by default; FASTA and ID MAP stay
     // disabled until a later PR wires them.
     extraEnabledActionIds: [],
     idField: "feature_id",
@@ -112,8 +119,8 @@ const selectionActionsConfigByResource = {
   genome_sequence: {
     searchType: "genome_sequence",
     actionIds: sequenceSelectionActionIds,
-    // DWNLD and GENOME are enabled by default; FEATURES is not, and FASTA and Browser
-    // stay disabled until a later PR wires them.
+    // GENOME is enabled by default; FEATURES is not, and FASTA and Browser stay
+    // disabled until a later PR wires them.
     extraEnabledActionIds: ["features"],
     idField: "genome_id",
     idKind: "genome",
@@ -142,8 +149,7 @@ const selectionActionsConfigByResource = {
   sequence_feature: {
     searchType: "sequence_feature",
     actionIds: copyAndServicesSelectionActionIds,
-    // DWNLD is enabled by default; VARIANT TYPES stays disabled until a later PR
-    // wires it.
+    // VARIANT TYPES stays disabled until a later PR wires it.
     extraEnabledActionIds: [],
     idField: "id",
     idKind: "genome",
@@ -153,7 +159,7 @@ const selectionActionsConfigByResource = {
   epitope: {
     searchType: "epitope",
     actionIds: copyAndServicesSelectionActionIds,
-    // DWNLD and EPITOPE are enabled by default.
+    // EPITOPE is enabled by default.
     extraEnabledActionIds: [],
     idField: "epitope_id",
     idKind: "genome",
@@ -163,7 +169,7 @@ const selectionActionsConfigByResource = {
   serology: {
     searchType: "serology",
     actionIds: copyAndServicesSelectionActionIds,
-    // DWNLD and SEROLOGY are enabled by default.
+    // SEROLOGY is enabled by default.
     extraEnabledActionIds: [],
     idField: "id",
     idKind: "genome",
@@ -174,8 +180,8 @@ const selectionActionsConfigByResource = {
   surveillance: {
     searchType: "surveillance",
     actionIds: copyAndServicesSelectionActionIds,
-    // DWNLD and SRVLNCE are enabled by default; MAP stays disabled until a later
-    // PR wires it.
+    // SRVLNCE is enabled by default; MAP stays disabled until a later PR wires
+    // it.
     extraEnabledActionIds: [],
     idField: "id",
     idKind: "genome",
@@ -186,7 +192,7 @@ const selectionActionsConfigByResource = {
   ppi: {
     searchType: "ppi",
     actionIds: interactionSelectionActionIds,
-    // DWNLD is enabled by default; FASTA stays disabled until a later PR wires it.
+    // FASTA stays disabled until a later PR wires it.
     extraEnabledActionIds: [],
     // One Interaction row names two interactors, and legacy's FEATURES and GROUP both
     // pool them.
@@ -198,8 +204,8 @@ const selectionActionsConfigByResource = {
   experiment: {
     searchType: "experiment",
     actionIds: servicesOnlySelectionActionIds,
-    // DWNLD and EXPRMNT are enabled by default; BIOSETS stays disabled until a
-    // later PR wires the experiment-side gene list.
+    // EXPRMNT is enabled by default; BIOSETS stays disabled until a later PR
+    // wires the experiment-side gene list.
     extraEnabledActionIds: [],
     idField: "exp_id",
     idKind: "genome",
@@ -209,8 +215,8 @@ const selectionActionsConfigByResource = {
   bioset: {
     searchType: "bioset",
     actionIds: servicesOnlySelectionActionIds,
-    // DWNLD is enabled by default; BIOSETS is dispatched by this component even
-    // though the shared config disables it.
+    // BIOSETS is dispatched by this component even though the shared config
+    // disables it.
     extraEnabledActionIds: ["biosets"],
     idField: "bioset_id",
     idKind: "genome",
@@ -300,13 +306,18 @@ export interface ResourceCollectionActionsSelection<Row extends DataTableRow> {
   /** Selected IDs a loaded keyword leaves visible. */
   displayedIds: readonly string[];
   isAllPagesSelected: boolean;
-  /** Rows matching the current query, which bounds the all-pages resolutions. */
+  /** Rows matching the query on screen, which bounds the all-pages resolutions. */
   total: number;
   /**
    * The rows and `total` belong to a previous query while this one loads, so an
-   * all-pages resolution waits: that total would size and scope it wrongly.
+   * all-pages resolution waits for `currentTotal` rather than being sized by it.
    */
   isPlaceholderData: boolean;
+  /**
+   * This query's total once its read lands. Rejects with `CancelledError` when
+   * the query is replaced first, which drops the action.
+   */
+  currentTotal: () => Promise<number>;
   /** The row behind a selected ID, remembered across pages by the shell. */
   rowById: (id: string) => Row | undefined;
 }
@@ -420,6 +431,17 @@ function resolveDisabledActions(
   return undefined;
 }
 
+/** What the shell knows about downloading its rows (`CollectionDownloadAction`). */
+export interface ResourceCollectionDownloadOptions {
+  spec: ResolvedCollectionDownloadSpec;
+  /** What *All results* downloads, and how many rows it covers. */
+  allResults: { scope: DownloadScope; total: number };
+  sort?: DataSort;
+  visibleColumnIds: readonly string[];
+  fileNameBase: string;
+  queryLabel?: string;
+}
+
 export interface ResourceCollectionActionsOptions<Row extends DataTableRow> {
   profile: ResourceCollectionActionsProfile<Row>;
   selection: ResourceCollectionActionsSelection<Row>;
@@ -442,8 +464,11 @@ export interface ResourceCollectionActionsOptions<Row extends DataTableRow> {
   resolveAllMatchingRows: (
     fields: readonly string[],
   ) => Promise<MatchingRowsRead>;
-  /** Run the collection's own export over the current selection (DWNLD). */
-  onExportSelection: () => void;
+  /**
+   * The Download tile's inputs, which the shell owns because it owns the
+   * query. Omitted, or with `spec.enabled` false, the rail has no tile.
+   */
+  download?: ResourceCollectionDownloadOptions;
   /** Report an action failure to the collection shell, which renders it. */
   onError: (message: string | null) => void;
 }
@@ -455,9 +480,11 @@ export interface ResourceCollectionActionsOptions<Row extends DataTableRow> {
  * before they can navigate.
  *
  * Kept out of `ResourceCollection` so adding a resource touches this file instead of
- * the generic query, export and table code. The shell keeps querying, URL and filter
- * state, loaded-keyword behaviour, table and detail rendering, and export; it passes
- * in the current selection and takes back only an error message.
+ * the generic query and table code. The shell keeps querying, URL and filter state,
+ * loaded-keyword behaviour, and table and detail rendering; it passes in the current
+ * selection and what the Download tile downloads, and takes back only an error
+ * message. The running download lives here (`useCollectionDownload`), in the shell's
+ * instance, for the same reason the Taxonomy chooser does.
  *
  * **A hook returning two slots, deliberately, not a component.** The shell renders
  * `ResourceWorkspace` only on the success path: a collection error (including one from
@@ -482,7 +509,7 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
   columnVisibility,
   resolveActionRows,
   resolveAllMatchingRows,
-  onExportSelection,
+  download,
   onError,
 }: ResourceCollectionActionsOptions<Row>): {
   /** The workspace's action-bar slot. Safe to remount; holds no state. */
@@ -516,6 +543,10 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
         ]
       : undefined;
 
+  /** The current query's total, waiting for it while `total` is a previous query's. */
+  const matchingTotal = async () =>
+    selection.isPlaceholderData ? selection.currentTotal() : selection.total;
+
   // Reachable only for `profile.resource === "taxonomy"`: `dispatchAction` gates
   // `runTaxonomyAction` on the resource, and `resolveAllMatchingRows` queries
   // `profile.resource`, so that gate is what keeps this pointed at the taxonomy core.
@@ -523,7 +554,7 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
     if (!selection.isAllPagesSelected) {
       return normalizeTaxonIds(selection.displayedIds);
     }
-    if (selection.total > maxTaxonomyActionIds) {
+    if ((await matchingTotal()) > maxTaxonomyActionIds) {
       throw new Error(taxonomyActionLimitMessage());
     }
     const { rows } = await resolveAllMatchingRows(["taxon_id"]);
@@ -533,12 +564,6 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
   const runTaxonomyAction = async (actionId: SearchActionId) => {
     onError(null);
     if (pendingTaxonomyActionRef.current) return;
-    // Before the ID limit and the tab reservation below, which would both act on
-    // a previous query's total.
-    if (selection.isAllPagesSelected && selection.isPlaceholderData) {
-      onError(staleResultsMessage);
-      return;
-    }
     if (actionId === "services") {
       // Opens an in-page dialog, so there is no tab to reserve.
       pendingTaxonomyActionRef.current = actionId;
@@ -547,15 +572,20 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
         setTaxonomyServiceIds(await resolveSelectedTaxonIds());
         setIsTaxonomyServiceOpen(true);
       } catch (error) {
-        onError(formatUserFacingErrorMessage(error, genericActionErrorMessage));
+        if (!(error instanceof CancelledError)) {
+          onError(
+            formatUserFacingErrorMessage(error, genericActionErrorMessage),
+          );
+        }
       }
       pendingTaxonomyActionRef.current = null;
       setLoadingActionIds([]);
       return;
     }
-    // Resolving an all-pages selection needs a network round-trip, after which
-    // browsers no longer treat window.open as user-initiated and block it. Reserve
-    // the tab inside the click and navigate it once the IDs are known.
+    // Resolving an all-pages selection needs a network round-trip (and, while the
+    // rows on screen are a previous query's, a wait for this query's total), after
+    // which browsers no longer treat window.open as user-initiated and block it.
+    // Reserve the tab inside the click and navigate it once the IDs are known.
     const resultsWindow = window.open("about:blank", "_blank");
     if (!resultsWindow) {
       onError(`Allow pop-ups to open the selected ${profile.label}.`);
@@ -581,7 +611,9 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
       }
     } catch (error) {
       resultsWindow.close();
-      onError(formatUserFacingErrorMessage(error, genericActionErrorMessage));
+      if (!(error instanceof CancelledError)) {
+        onError(formatUserFacingErrorMessage(error, genericActionErrorMessage));
+      }
     }
     pendingTaxonomyActionRef.current = null;
     setLoadingActionIds([]);
@@ -612,16 +644,13 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
       return;
     }
     if (pendingBiosetActionRef.current) return;
-    // Before the row limit and the tab reservation below, which would both act on
-    // a previous query's total.
-    if (selection.isPlaceholderData) {
-      onError(staleResultsMessage);
-      return;
-    }
-    const limitMessage = (count: string) =>
-      `This selection contains ${count} Biosets. Narrow the results to ${maxExportRows.toLocaleString()} or fewer and try again.`;
-    if (selection.total > maxExportRows) {
-      onError(limitMessage(selection.total.toLocaleString()));
+    const limitMessage = (count: number) =>
+      `This selection contains ${count.toLocaleString()} Biosets. Narrow the results to ${maxExportRows.toLocaleString()} or fewer and try again.`;
+    // With this query's total on screen, refuse before reserving a tab that would
+    // only be closed again. A previous query's is checked once this one's lands,
+    // inside the reserved tab's lifetime below.
+    if (!selection.isPlaceholderData && selection.total > maxExportRows) {
+      onError(limitMessage(selection.total));
       return;
     }
     const resultsWindow = window.open("about:blank", "_blank");
@@ -633,9 +662,11 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
     pendingBiosetActionRef.current = true;
     setLoadingActionIds(["biosets"]);
     try {
+      const total = await matchingTotal();
+      if (total > maxExportRows) throw new Error(limitMessage(total));
       const read = await resolveAllMatchingRows(["exp_id"]);
       if (exceedsReadLimit(read, maxExportRows)) {
-        throw new Error(limitMessage(read.total.toLocaleString()));
+        throw new Error(limitMessage(read.total));
       }
       const { rows } = read;
       const experimentIds = rows.flatMap((row) => {
@@ -657,12 +688,14 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
       // Through the shared formatter, not `error.message`: an `Error("")` here used
       // to hand the shell a falsy string, which its `{actionError && (...)}` guard
       // renders as nothing at all — a closed tab and no explanation.
-      onError(
-        formatUserFacingErrorMessage(
-          error,
-          "The selected Bioset results could not be loaded.",
-        ),
-      );
+      if (!(error instanceof CancelledError)) {
+        onError(
+          formatUserFacingErrorMessage(
+            error,
+            "The selected Bioset results could not be loaded.",
+          ),
+        );
+      }
     }
     pendingBiosetActionRef.current = false;
     setLoadingActionIds([]);
@@ -675,8 +708,6 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
       taxonomyActionIds.includes(actionId as (typeof taxonomyActionIds)[number])
     ) {
       void runTaxonomyAction(actionId);
-    } else if (actionId === "download") {
-      onExportSelection();
     } else if (actionId === "biosets" && targets.hasBiosetSelection) {
       void openBiosetResults();
     } else if (actionId === "genome" && targets.selectedGenomeId) {
@@ -724,46 +755,79 @@ export function useResourceCollectionActions<Row extends DataTableRow>({
     }
   };
 
-  return {
-    actionBar: selectionActionsConfig ? (
-      <CollectionSelectionActions
-        searchType={selectionActionsConfig.searchType}
-        label={profile.label}
-        singularLabel={selectionActionsConfig.singularLabel}
-        actionIds={selectionActionsConfig.actionIds}
-        extraEnabledActionIds={selectionActionsConfig.extraEnabledActionIds}
-        idField={selectionActionsConfig.idField}
-        idKind={selectionActionsConfig.idKind}
-        selectedCount={selection.count}
-        guideUrl={profile.guideUrl}
-        hasNoAssociatedGenomes={targets.knownSingleStrainHasNoGenomes}
-        disabledActions={resolveDisabledActions(profile.resource, targets)}
-        externalLoadingActionIds={loadingActionIds}
-        hasSelectableServices={selectionActionsConfig.hasSelectableServices}
-        columns={profile.columns}
-        columnVisibility={columnVisibility}
-        resolveActionRows={resolveActionRows}
-        onError={onError}
-        onOtherAction={dispatchAction}
-      />
+  const collectionDownload = useCollectionDownload();
+  // The tile heads the rail. It wraps the bar rather than living in it, so
+  // `SearchActionBar` and `CollectionSelectionActions` stay unaware of it.
+  const withDownloadTile = (actions: ReactNode) =>
+    download?.spec.enabled ? (
+      <div className="flex flex-col gap-1 max-md:flex-row">
+        <CollectionDownloadAction
+          label={profile.label}
+          spec={download.spec}
+          selection={{
+            count: selection.count,
+            ids: selection.displayedIds,
+            isAllPagesSelected: selection.isAllPagesSelected,
+          }}
+          allResults={download.allResults}
+          sort={download.sort}
+          isPlaceholderData={selection.isPlaceholderData}
+          visibleColumnIds={download.visibleColumnIds}
+          fileNameBase={download.fileNameBase}
+          queryLabel={download.queryLabel}
+          pending={collectionDownload.pending}
+          onDownload={(request, options) => {
+            collectionDownload.download(profile.resource, request, options);
+          }}
+        />
+        {actions}
+      </div>
     ) : (
-      // Reached only for a resource with no `selectionActionsConfigByResource`
-      // entry, which today means Taxonomy alone. `bioset` has an entry, so this
-      // branch can never see one — which is why it carries no Bioset fallback for
-      // `enabledActions` and no Bioset `disabledActions`: both `hasBiosetSelection`
-      // and `hasIncompleteBiosetSelection` require `profile.resource === "bioset"`
-      // and are therefore always false here. `CollectionSelectionActions` owns the
-      // Bioset bar, and `resolveDisabledActions` above owns its disabled reason.
-      <SearchActionBar
-        selectedCount={selection.count}
-        searchType={profile.resource}
-        guideUrl={profile.guideUrl}
-        enabledActions={enabledActionsByResource[profile.resource]}
-        loadingActionIds={loadingActionIds}
-        onError={onError}
-        onAction={dispatchAction}
-      />
-    ),
+      actions
+    );
+
+  const bar = selectionActionsConfig ? (
+    <CollectionSelectionActions
+      searchType={selectionActionsConfig.searchType}
+      label={profile.label}
+      singularLabel={selectionActionsConfig.singularLabel}
+      actionIds={selectionActionsConfig.actionIds}
+      extraEnabledActionIds={selectionActionsConfig.extraEnabledActionIds}
+      idField={selectionActionsConfig.idField}
+      idKind={selectionActionsConfig.idKind}
+      selectedCount={selection.count}
+      guideUrl={profile.guideUrl}
+      hasNoAssociatedGenomes={targets.knownSingleStrainHasNoGenomes}
+      disabledActions={resolveDisabledActions(profile.resource, targets)}
+      externalLoadingActionIds={loadingActionIds}
+      hasSelectableServices={selectionActionsConfig.hasSelectableServices}
+      columns={profile.columns}
+      columnVisibility={columnVisibility}
+      resolveActionRows={resolveActionRows}
+      onError={onError}
+      onOtherAction={dispatchAction}
+    />
+  ) : (
+    // Reached only for a resource with no `selectionActionsConfigByResource`
+    // entry, which today means Taxonomy alone. `bioset` has an entry, so this
+    // branch can never see one — which is why it carries no Bioset fallback for
+    // `enabledActions` and no Bioset `disabledActions`: both `hasBiosetSelection`
+    // and `hasIncompleteBiosetSelection` require `profile.resource === "bioset"`
+    // and are therefore always false here. `CollectionSelectionActions` owns the
+    // Bioset bar, and `resolveDisabledActions` above owns its disabled reason.
+    <SearchActionBar
+      selectedCount={selection.count}
+      searchType={profile.resource}
+      guideUrl={profile.guideUrl}
+      enabledActions={enabledActionsByResource[profile.resource]}
+      loadingActionIds={loadingActionIds}
+      onError={onError}
+      onAction={dispatchAction}
+    />
+  );
+
+  return {
+    actionBar: withDownloadTile(bar),
     actionDialogs:
       profile.resource === "taxonomy" ? (
         <TaxonomyServiceChooser

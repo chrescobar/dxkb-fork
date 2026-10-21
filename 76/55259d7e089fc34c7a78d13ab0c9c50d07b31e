@@ -1,0 +1,63 @@
+src/app/api/e2e-mock/[...path]/route.ts
+  s_cebc9677ecfc76::t_c5cd45e43b5745 14
+  s_cebc9677ecfc76::t_6d66fe4bc04dc5 916-920,926-935,938,942
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_cebc9677ecfc76::t_438973140e7b38 39
+  s_cebc9677ecfc76::t_98c9827854c407 589-604
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_cebc9677ecfc76::t_89e3caa6f417ea 2,38-44,57-96,100-102,122-126
+src/app/(auth)/sign-in/sign-in-view.tsx
+  s_cebc9677ecfc76::t_52ed68ab84123b 133,203
+docs/architecture.md
+  s_cebc9677ecfc76::t_a8f6b8c1b4e1c5 187
+AGENTS.md
+  s_cebc9677ecfc76::t_a8f6b8c1b4e1c5 63
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_cebc9677ecfc76::t_52ed68ab84123b 174
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_cebc9677ecfc76::t_0d40b257a8f5e5 620,629
+src/app/(views)/feature/[featureId]/page.tsx
+  s_cebc9677ecfc76::t_ac981e25ca9f63 64-66,125-129
+src/__tests__/theme-contrast.test.ts
+  s_cebc9677ecfc76::t_ba1cd554a6e491 55-58,64-68,87-120,127-131,135-144,152-175,186-191,215-216,220-234
+src/components/search/search-bar.tsx
+  s_cebc9677ecfc76::t_52ed68ab84123b 153
+src/__tests__/dark-primary-text.test.ts
+  s_cebc9677ecfc76::t_2e3989ffe183ed 32-38,43-45,48,56
+  s_cebc9677ecfc76::t_b2425e2cb51e9a 31
+src/components/detail-panel/metadata-link.tsx
+  s_cebc9677ecfc76::t_52ed68ab84123b 23
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_cebc9677ecfc76::t_e41e96231da2b9 11
+  s_cebc9677ecfc76::t_672c8e1208eb99 342,352-368
+  s_cebc9677ecfc76::t_7ebaeb3bffd1ac 369-372
+src/styles/themes/bvbrc-theme.css
+  s_cebc9677ecfc76::t_64343f91d4e416 67-69
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_cebc9677ecfc76::t_148f828a27cf32 171-176,186
+  s_cebc9677ecfc76::t_16fad600d1e9f1 1,114-117,120,122,152-155,157,159-169
+  s_cebc9677ecfc76::t_43e55c981128c5 118-119,121,156,158
+  s_cebc9677ecfc76::t_0dea57cbf1f023 170
+src/lib/e2e-fixtures/records.ts
+  s_cebc9677ecfc76::t_c6b5776288b604 1048-1053
+  s_cebc9677ecfc76::t_06a8fd22452de0 1010-1025
+  s_cebc9677ecfc76::t_3dd9b53d6a11a4 1009
+src/app/(auth)/forgot-password/forgot-password-view.tsx
+  s_cebc9677ecfc76::t_52ed68ab84123b 174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7655259d7e089fc34c7a78d13ab0c9c50d07b31e",
+  "prompts": {},
+  "sessions": {
+    "s_cebc9677ecfc76": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80b1eba0-9854-424e-8f5d-7d80d78e5a3e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

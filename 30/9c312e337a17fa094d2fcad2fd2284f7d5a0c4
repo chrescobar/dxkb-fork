@@ -1,0 +1,48 @@
+src/lib/genome-browser/__tests__/url-state.test.ts
+  s_acfa060f2539a9::t_7c8ffa7f92566d 17-29,125-143
+  s_acfa060f2539a9::t_c5bfc010a3647c 144
+src/lib/views/legacy-hash-adapter.tsx
+  s_acfa060f2539a9::t_7d86d99ca18b7d 60-66
+src/components/genome-browser/genome-browser-view.tsx
+  s_acfa060f2539a9::t_543d29a7c7383c 37-42,85,136-138,145
+src/lib/genome-browser/url-state.ts
+  s_acfa060f2539a9::t_543d29a7c7383c 7-9,27-28,35-36,56-58,62,91-94,128-131,135,158-162
+src/components/genome-browser/__tests__/genome-browser-error-boundary.test.tsx
+  s_acfa060f2539a9::t_7c8ffa7f92566d 11-15,17,42-51
+  s_acfa060f2539a9::t_086251972419c6 52-54,57,59-68
+  s_acfa060f2539a9::t_02d0fb86e957c7 55-56,58
+src/components/genome-browser/genome-browser-error-boundary.tsx
+  s_acfa060f2539a9::t_fd13e80045dd59 5,9-21,23-24,40-44,47,51-55,59,65
+src/lib/genome-browser/__tests__/bounded-cache.test.ts
+  s_acfa060f2539a9::t_c71d870bd77667 61-79
+docs/architecture.md
+  s_acfa060f2539a9::t_df1827e6b86678 179
+e2e/tests/genome-browser.spec.ts
+  s_acfa060f2539a9::t_df1827e6b86678 101-114
+src/lib/genome-browser/bounded-cache.ts
+  s_acfa060f2539a9::t_c71d870bd77667 55-59,88-92
+  s_acfa060f2539a9::t_f4098a121e3f90 93-94
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_acfa060f2539a9::t_7d86d99ca18b7d 275-288
+src/components/genome-browser/genome-browser-panel.tsx
+  s_acfa060f2539a9::t_543d29a7c7383c 88-92,94-101,107
+src/components/genome-browser/__tests__/genome-browser-panel.test.tsx
+  s_acfa060f2539a9::t_7c8ffa7f92566d 20,28,147-161
+  s_acfa060f2539a9::t_409330f7f56520 162-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "309c312e337a17fa094d2fcad2fd2284f7d5a0c4",
+  "prompts": {},
+  "sessions": {
+    "s_acfa060f2539a9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49458cd1-b98e-4ad8-a331-439b0fe02197",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

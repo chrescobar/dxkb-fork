@@ -1,0 +1,25 @@
+src/components/compare-region/__tests__/compare-region-chart.test.tsx
+  s_6d5696b5bf8851::t_251455290a6702 241-251
+src/components/compare-region/compare-region-chart.tsx
+  s_6d5696b5bf8851::t_36b70670e82a2d 346,387-388,391
+src/components/compare-region/compare-region-panel.tsx
+  s_6d5696b5bf8851::t_36b70670e82a2d 206-208,210,214
+src/components/compare-region/__tests__/compare-region-panel.test.tsx
+  s_6d5696b5bf8851::t_251455290a6702 101-107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "941f0c168af9691d0d57df503f5d70faab79c1ae",
+  "prompts": {},
+  "sessions": {
+    "s_6d5696b5bf8851": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b7cb7ac-ab58-412e-bbfc-1ec129faa078",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

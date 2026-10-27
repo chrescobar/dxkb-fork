@@ -1,0 +1,368 @@
+src/lib/compare-region/labels.ts
+  s_afc301db7ab0ea::t_a8ab588addfa6b 1-85,88-99,102-107,109-133,135-225
+  s_afc301db7ab0ea::t_d1e01ff13ab314 86-87
+  s_afc301db7ab0ea::t_d66eae96d1ebc9 100-101,108,134
+src/components/compare-region/compare-region-highlight.tsx
+  s_afc301db7ab0ea::t_a9acf332c980d6 28
+  s_afc301db7ab0ea::t_93d4f4494dfbe9 6-11,13,22,26-27,32-33,35-36,42-75,132,159,164,172-173,178-179,183,187,190,196,199,209-212,220
+  s_afc301db7ab0ea::t_922dbb8e32a742 1-5,12,14-21,23-25,29-31,34,37-41,76-131,133-158,160-163,165-171,174-177,180-182,184-186,188-189,191-195,197-198,200-208,213-219,221-252
+src/lib/compare-region/__tests__/palette.test.ts
+  s_afc301db7ab0ea::t_6eb9672bb50109 56-58,73-75,81-83,89-91,103-106
+  s_afc301db7ab0ea::t_a239ab451889f6 44-53
+  s_afc301db7ab0ea::t_5509a01140255f 1-43,54-55,59-71,76-80,84-88,92-102,107-122
+  s_afc301db7ab0ea::t_5d5891d3d94943 72
+src/lib/compare-region/client.ts
+  s_afc301db7ab0ea::t_dd837ce2f0a65a 31
+  s_afc301db7ab0ea::t_325d82e3ad02e6 38-50
+src/lib/compare-region/__tests__/text-measure.test.ts
+  s_afc301db7ab0ea::t_5157c946b6ab23 1-29,31-43,45-69,89
+  s_afc301db7ab0ea::t_72b925cf036b92 30,44
+  s_afc301db7ab0ea::t_16f2931cbe1117 70-88
+src/lib/compare-region/ribbons.ts
+  s_afc301db7ab0ea::t_b397b0ffb4c124 1-13,30-187
+  s_afc301db7ab0ea::t_d2700348638935 14-29
+src/lib/compare-region/__tests__/genome-labels.test.ts
+  s_afc301db7ab0ea::t_eb3e73a843476d 2-62,71-137
+  s_afc301db7ab0ea::t_d1e01ff13ab314 1,63-70
+src/lib/compare-region/__tests__/layout.test.ts
+  s_afc301db7ab0ea::t_b189ed04680e6d 2
+src/components/compare-region/__tests__/compare-region-command-bar.test.tsx
+  s_afc301db7ab0ea::t_b2ebfab7d9e88f 256-258
+  s_afc301db7ab0ea::t_cfda1e0edd3a40 149-181
+  s_afc301db7ab0ea::t_6f721de9d6251d 123-131
+  s_afc301db7ab0ea::t_ac1f7a4603d41c 1,94,134,185,233,251,264,319
+  s_afc301db7ab0ea::t_696637ed700ae6 71-80
+  s_afc301db7ab0ea::t_9199254bf987d2 282-311
+  s_afc301db7ab0ea::t_2ee92935540ccb 93,250
+  s_afc301db7ab0ea::t_f8ac550aab2857 207-229
+  s_afc301db7ab0ea::t_77eff601352002 321-323
+  s_afc301db7ab0ea::t_090ffb4d8bc37e 2-70,81-92,95-122,132-133,135-148,182-184,186-206,230-232,234-249,252-255,259-263,265-281,312-318,320,324-337
+src/lib/ui-preferences/__tests__/cookie.test.ts
+  s_afc301db7ab0ea::t_31280e7380e608 6,64-79
+  s_afc301db7ab0ea::t_4644e2692fc7e5 80-81
+src/lib/views/child-collection-state.ts
+  s_afc301db7ab0ea::t_d55f3e36df06b0 22
+src/components/compare-region/compare-region-label-column.tsx
+  s_afc301db7ab0ea::t_3babaf61b4492d 1-7,13-80,82-147,150-228,231-273,275-280,282-349
+  s_afc301db7ab0ea::t_1266a03fd830a8 81
+  s_afc301db7ab0ea::t_529ffcd89b9e62 8-12
+  s_afc301db7ab0ea::t_4598a04e6832ad 148-149,229-230,274,281
+src/lib/compare-region/text-measure.ts
+  s_afc301db7ab0ea::t_ae994740203c21 1-27,30-58,60-62
+  s_afc301db7ab0ea::t_d66eae96d1ebc9 28-29,59
+src/lib/compare-region/genome-labels.ts
+  s_afc301db7ab0ea::t_f823e21300cb7b 30-39,55
+  s_afc301db7ab0ea::t_8684fed205b0d7 1-3,6-29,40-54,56-98
+  s_afc301db7ab0ea::t_1699bcc4313121 4-5
+src/lib/compare-region/__tests__/contract.test.ts
+  s_afc301db7ab0ea::t_6763a689fbb3ab 2-3,5,52-80
+  s_afc301db7ab0ea::t_d55f3e36df06b0 114-119
+  s_afc301db7ab0ea::t_e096736be3f8ad 6-7,26-32,81-113,120-129
+src/components/compare-region/__tests__/compare-region-chart.test.tsx
+  s_afc301db7ab0ea::t_0147621c17c3f9 491
+  s_afc301db7ab0ea::t_39e51ec71907b2 337,345-355,371-372
+  s_afc301db7ab0ea::t_8d574849d96e83 9,15-20,489-490,492-495,499-500
+  s_afc301db7ab0ea::t_28a7f6b116312d 332-336,338,340-344,356-363,367-368,370,373-374,377-384,386-390,392-400
+  s_afc301db7ab0ea::t_51749055c51771 1-3,8,11,13-14,21-37,39-41,43-50,52-71,75-96,108-121,138-140,143-147,150-164,168-174,176-181,183-189,191-195,197-203,206-209,211-216,219-228,232-236,238-241,245-251,253-255,259,261-266,268-275,278-282,311-312,314-318,320-329,403-444,448,452-477,483-488,501-515,518-567,571-593
+  s_afc301db7ab0ea::t_58b84375be70ae 5-7,51
+  s_afc301db7ab0ea::t_1c6c0b535b4e48 364-366
+  s_afc301db7ab0ea::t_c17462a253bb9d 72-73,204-205,229-231,242-244,256-258,445-447,449-451,478-482,568-570
+  s_afc301db7ab0ea::t_250a75dd5ac873 285-299,301-309
+  s_afc301db7ab0ea::t_45d6c6517c0462 496-498
+  s_afc301db7ab0ea::t_2f8896d8d1f3a6 10
+e2e/pages/compare-region-page.ts
+  s_afc301db7ab0ea::t_d90c3620cea500 52,114-117
+  s_afc301db7ab0ea::t_27fedd869416a9 1-51,53-113,118-134
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_afc301db7ab0ea::t_06fb06ffe6a2f2 161-169,218,220,228,518-519,523-528,539
+  s_afc301db7ab0ea::t_d72d4548a0c693 510-511,532-535,537-538,540-541
+  s_afc301db7ab0ea::t_395652ae640f2c 531,536
+  s_afc301db7ab0ea::t_cf8d5b24c69dbd 493-509,512-514,530,542
+  s_afc301db7ab0ea::t_e73ae686d04d37 17
+  s_afc301db7ab0ea::t_5ec59605340217 31-55,515-517,520-522,529
+src/lib/compare-region/__tests__/fixtures/rows-50.json
+  s_afc301db7ab0ea::t_b67dbfad6ddebf 1
+src/__tests__/theme-contrast.test.ts
+  s_afc301db7ab0ea::t_a4114c10a2cb9b 266-267
+  s_afc301db7ab0ea::t_8990b9b5c3ce8e 127-139,144-148,256-263,269,271-272,275-278,286,291,293-296
+  s_afc301db7ab0ea::t_3a44face093c36 254-255,264-265,268,270,273-274,279-280,283-284,287-290,292,297-299
+  s_afc301db7ab0ea::t_3c272553d53453 281-282,285
+  s_afc301db7ab0ea::t_e971a30f36b0f0 149
+src/components/compare-region/__tests__/compare-region-selection-strip.test.tsx
+  s_afc301db7ab0ea::t_83490ba9ab78ca 162-166
+  s_afc301db7ab0ea::t_b0c19c3d79717c 3-7,17,40,45,53,197-219,227-235,237,239-241,243,248
+  s_afc301db7ab0ea::t_4edf7296c2b128 50,58
+  s_afc301db7ab0ea::t_b29ca1e1d16bda 12,20-26,220-226,236,238,242,244-247
+  s_afc301db7ab0ea::t_6f721de9d6251d 90-94,125-127
+  s_afc301db7ab0ea::t_1266a03fd830a8 10-11,13-14
+  s_afc301db7ab0ea::t_7f20fbb53e7b9d 123-124,128-132
+  s_afc301db7ab0ea::t_1c14c7ed8d86c5 1-2,8-9,15-16,18-19,27-39,41-44,46-49,51-52,54-57,59-74,78-89,95-122,133-161,167-196,249-250
+  s_afc301db7ab0ea::t_3a649a5bdb49d1 75-77
+src/lib/compare-region/__tests__/ribbons.test.ts
+  s_afc301db7ab0ea::t_ac4adc4d1cd9bf 5-10,16,310-312,317-333,354-361
+  s_afc301db7ab0ea::t_6f6392ed3599f2 248-249
+  s_afc301db7ab0ea::t_d67e3ef9387b82 313-316
+  s_afc301db7ab0ea::t_43efc362c010b8 2-4,11-15,17-23,25-97,101-136,143-154,166-167,172-211,220-224,234,240-247,250-259,274-278,362
+  s_afc301db7ab0ea::t_6320a8a6928222 334-353
+  s_afc301db7ab0ea::t_d1e01ff13ab314 1,98-100,155-165,168-171,212-219,279-309
+  s_afc301db7ab0ea::t_6d1f659e9e3d3a 24,137-142,225-233,235-239,260-273
+src/components/compare-region/compare-region-panel.tsx
+  s_afc301db7ab0ea::t_61cc0b94857740 84-104,106-108,110-114,124-125,127-129,146-148
+  s_afc301db7ab0ea::t_d4a99ecd17a48d 29,45,47,50-57,61-67,69,73-77,79,214-230
+  s_afc301db7ab0ea::t_64f0f1570338ea 109
+  s_afc301db7ab0ea::t_b6b2bd20925a66 212
+  s_afc301db7ab0ea::t_aec1aa45e6b73c 3-5,9,12,18,34-35,37-40,49,170,188,204-211,213,231
+  s_afc301db7ab0ea::t_5e5613c512ef61 151,169,187,196
+  s_afc301db7ab0ea::t_d66eae96d1ebc9 197
+  s_afc301db7ab0ea::t_c17462a253bb9d 19-20,22-23,70-72,78,80-83,179-182
+  s_afc301db7ab0ea::t_5ddcc9ce2fa3a7 6-8,21,26,42-43,152-168
+src/lib/compare-region/__tests__/labels.test.ts
+  s_afc301db7ab0ea::t_fcc6416cadb57f 3,148-149,180-182
+  s_afc301db7ab0ea::t_d1e01ff13ab314 92
+  s_afc301db7ab0ea::t_16f2931cbe1117 124-134
+  s_afc301db7ab0ea::t_1948d7465545ec 1-2,4-91,93-123,135-147,150-179,183-273
+src/lib/compare-region/density-options.ts
+  s_afc301db7ab0ea::t_6eb9672bb50109 10-14
+  s_afc301db7ab0ea::t_c7a694d5963147 1-9,15-19
+src/components/compare-region/compare-region-zoom-controls.tsx
+  s_afc301db7ab0ea::t_92caf395a210bb 1-93
+src/lib/compare-region/url-state.ts
+  s_afc301db7ab0ea::t_64f0f1570338ea 9-10,53-65
+  s_afc301db7ab0ea::t_dd837ce2f0a65a 3-4,22
+  s_afc301db7ab0ea::t_844904ce221dd3 66
+src/lib/compare-region/__tests__/zoom.test.ts
+  s_afc301db7ab0ea::t_0fb5fd5cff3ee8 1-108,123
+  s_afc301db7ab0ea::t_6eb9672bb50109 109-122
+src/components/compare-region/compare-region-chart.tsx
+  s_afc301db7ab0ea::t_3c1382090a2da7 154-156,158,167-170,174-180,182-185,187
+  s_afc301db7ab0ea::t_64f0f1570338ea 20-22,73-74,130
+  s_afc301db7ab0ea::t_c17462a253bb9d 18-19,41,199-204,207-210,372-375,405
+  s_afc301db7ab0ea::t_36ed6022e06326 46,48,261,423
+  s_afc301db7ab0ea::t_64a81e31bc8ba6 3-17,25-40,43-45,47,49-64,66,68-72,75-83,87-90,92-101,105-106,110-114,116-124,127-129,131-152,163-166,172,191-198,205,211-214,217-218,260,315-316,319,349,354-355,413,425-427
+  s_afc301db7ab0ea::t_4e941c6ccffdd1 107-108
+  s_afc301db7ab0ea::t_09ac0452fedfa1 160-162
+  s_afc301db7ab0ea::t_5ccf5937fb5467 221-248,250-251,253-258,262-314,317-318,320-348,350-353,356-371,376-404,406-412,414-422
+  s_afc301db7ab0ea::t_48e28868d764a1 259
+e2e/fixtures/compare-region/rows-10.json
+  s_afc301db7ab0ea::t_afefde9c72c8d2 1
+e2e/fixtures/overrides/catchall.ts
+  s_afc301db7ab0ea::t_808530a4ccb2c5 19,545
+src/components/compare-region/compare-region-tooltip.tsx
+  s_afc301db7ab0ea::t_e27dc2a5faf04a 48,56,65,72,87
+  s_afc301db7ab0ea::t_f6da784b705b23 1-47,49-55,57-64,66-71,73-86,88-95
+src/lib/compare-region/__tests__/ruler.test.ts
+  s_afc301db7ab0ea::t_702647776e03ea 54-55
+  s_afc301db7ab0ea::t_6eb9672bb50109 15-19,28-31,86-90
+  s_afc301db7ab0ea::t_f35077a7f0fb26 1-14,20-27,32-53,56-85,91-139
+src/lib/compare-region/settings-draft.ts
+  s_afc301db7ab0ea::t_f823e21300cb7b 10,59-62,70-71
+  s_afc301db7ab0ea::t_64c334f594a1a0 1-9,11-58,63-69,72-73
+src/components/compare-region/compare-region-glyphs.tsx
+  s_afc301db7ab0ea::t_e12bc81832569f 25-26,213-222,227-228,232
+  s_afc301db7ab0ea::t_1266a03fd830a8 111-113,308-315
+  s_afc301db7ab0ea::t_33c1049b164e9b 1-24,27-110,114-212,223-226,229-231,233-307,316-322
+src/lib/compare-region/__tests__/glyph-placement.test.ts
+  s_afc301db7ab0ea::t_cb42e9c78d18dc 1-13,18-52,69-92
+  s_afc301db7ab0ea::t_45d6c6517c0462 14-17,53-68
+src/lib/compare-region/glyph-placement.ts
+  s_afc301db7ab0ea::t_89cc848d8d98c2 1-28,32-66
+  s_afc301db7ab0ea::t_45d6c6517c0462 29-31
+src/lib/compare-region/__tests__/figure-frame.test.ts
+  s_afc301db7ab0ea::t_6eb9672bb50109 24-29,100-105,109-114,129-133,146-153,157-172,176-178,182-187,192-199
+  s_afc301db7ab0ea::t_6f2bdf91eae63f 1-23,30-99,106-108,115-128,134-145,154-156,173-175,179-181,188-191,200-217
+src/lib/compare-region/contract.ts
+  s_afc301db7ab0ea::t_1982fbeb2b3750 81-86,89-90,198-201
+  s_afc301db7ab0ea::t_0fb82fe0e68c03 16-19,21-26,32-53,64-65,73,92-99,163-164,181-187,202
+docs/architecture.md
+  s_afc301db7ab0ea::t_f2fd123d38c206 295
+  s_afc301db7ab0ea::t_d74e679810ee7a 117-118
+  s_afc301db7ab0ea::t_068989b39d05d1 186,191,288
+  s_afc301db7ab0ea::t_8b3336399c464a 188-190
+src/components/compare-region/use-compare-region-settings.ts
+  s_afc301db7ab0ea::t_c2731c4b9bc44b 1-28,30-40
+  s_afc301db7ab0ea::t_669ca074d51680 29
+src/components/compare-region/compare-region-track-layers.tsx
+  s_afc301db7ab0ea::t_b0b816e278aff7 1-14,16-21,23-29,31-83,85-126,132-150,153-233,235-307
+  s_afc301db7ab0ea::t_e12bc81832569f 15,30,84,234
+  s_afc301db7ab0ea::t_0e564840dae8f1 127-131,151-152
+  s_afc301db7ab0ea::t_e24c553af906ae 22
+src/lib/compare-region/__tests__/fixtures/rows-20.json
+  s_afc301db7ab0ea::t_b67dbfad6ddebf 1
+src/components/compare-region/__tests__/compare-region-export.test.ts
+  s_afc301db7ab0ea::t_78180296412d41 1-5,18-45,247-308,310,313-324,331-352
+  s_afc301db7ab0ea::t_38fb17534dbe13 77-78
+  s_afc301db7ab0ea::t_cf85cf36f02118 191-199,204-206,208-213
+  s_afc301db7ab0ea::t_d7dcca186c07c5 309,311-312,325-330,357
+  s_afc301db7ab0ea::t_5910e05d3d53d1 353-356,358-361
+  s_afc301db7ab0ea::t_6c9b64034c86a5 148-162,174,185-190
+  s_afc301db7ab0ea::t_880e80ca2e8b75 163-173,175-184
+  s_afc301db7ab0ea::t_d8d82bc5127177 200-203,207
+  s_afc301db7ab0ea::t_8b6807b7835415 6-17,46-76,79-112,117-121,124,126-127,136-147,214-246,362-363
+  s_afc301db7ab0ea::t_4519b4a2850a65 122-123,125,128-135
+  s_afc301db7ab0ea::t_4a1cf765a30eac 113-116
+src/lib/compare-region/__tests__/scroll-place.test.ts
+  s_afc301db7ab0ea::t_03c310debaf875 1-61,65-68,75-77,85-86
+  s_afc301db7ab0ea::t_6eb9672bb50109 62-64,69-74,78-84
+src/lib/compare-region/ruler.ts
+  s_afc301db7ab0ea::t_3341eff0252520 87
+  s_afc301db7ab0ea::t_ffef90116b04c9 1-7,9-52,54-86,88-94
+  s_afc301db7ab0ea::t_f823e21300cb7b 8,53
+e2e/tests/compare-region.spec.ts
+  s_afc301db7ab0ea::t_8bedf4fdf004ac 140
+  s_afc301db7ab0ea::t_f629eb631755ef 1-25,32-52,57-62,65-98,100-139,141-146,165-166
+  s_afc301db7ab0ea::t_1699bcc4313121 159
+  s_afc301db7ab0ea::t_f99b30d73fff9a 26-31,147-158,160-164
+  s_afc301db7ab0ea::t_d90c3620cea500 53-56,63-64,99
+src/app/api/compare-region/route.ts
+  s_afc301db7ab0ea::t_6defdc751265b3 4,26-33
+src/lib/compare-region/__tests__/settings-draft.test.ts
+  s_afc301db7ab0ea::t_b9f75fcd1ae14d 1-42,44-77,93-107,111-144
+  s_afc301db7ab0ea::t_6d1f659e9e3d3a 78-92
+  s_afc301db7ab0ea::t_d1e01ff13ab314 43,108-110
+src/lib/compare-region/glyph-paths.ts
+  s_afc301db7ab0ea::t_32c95af366a87f 1-120
+src/lib/compare-region/families.ts
+  s_afc301db7ab0ea::t_b52790c84942e8 1-223
+src/lib/compare-region/figure-frame.ts
+  s_afc301db7ab0ea::t_6eb9672bb50109 90-92
+  s_afc301db7ab0ea::t_88e46f5ffc4bb9 1-13,17-89,93-126
+  s_afc301db7ab0ea::t_4de3706374f7a4 14-16
+src/lib/compare-region/__tests__/client.test.ts
+  s_afc301db7ab0ea::t_083eb42a3984b9 1-3,5-25,63-64
+  s_afc301db7ab0ea::t_cfda1e0edd3a40 4,26-62
+src/components/compare-region/compare-region-command-bar.tsx
+  s_afc301db7ab0ea::t_389bd885912f4e 1-28,30-92,94-110,114,118-200,204-207,209-228,230-234,236-245,247-259,261-292
+  s_afc301db7ab0ea::t_5ddcc9ce2fa3a7 93
+  s_afc301db7ab0ea::t_669ca074d51680 229,235,246
+  s_afc301db7ab0ea::t_e01d21f0b35209 111-113
+  s_afc301db7ab0ea::t_325d82e3ad02e6 115-117,260
+  s_afc301db7ab0ea::t_93c4adfa5f7d1d 201-203
+  s_afc301db7ab0ea::t_1982fbeb2b3750 29,208
+src/lib/compare-region/__tests__/fixtures/rows-10.json
+  s_afc301db7ab0ea::t_0c65a58aa14267 1
+src/lib/compare-region/__tests__/families.test.ts
+  s_afc301db7ab0ea::t_d1e01ff13ab314 1
+  s_afc301db7ab0ea::t_a44d76f7b4fd23 2-254
+src/lib/compare-region/density.ts
+  s_afc301db7ab0ea::t_6e9f050f8bc001 1-184
+src/app/api/compare-region/__tests__/route.test.ts
+  s_afc301db7ab0ea::t_d55f3e36df06b0 147-161
+  s_afc301db7ab0ea::t_4994572ca05c95 105-146,162-163
+src/components/compare-region/use-chart-pointer.ts
+  s_afc301db7ab0ea::t_54d8a619febddf 39-42
+  s_afc301db7ab0ea::t_78c0b75124e9be 1-38,43-118
+src/lib/compare-region/server.ts
+  s_afc301db7ab0ea::t_8bdcd122787f03 42-43,46-56,216-218,239
+src/lib/ui-preferences/definitions.ts
+  s_afc301db7ab0ea::t_82e1b16781fd4c 5-8,38-39,106-109
+  s_afc301db7ab0ea::t_78c2ddead79117 110
+src/lib/compare-region/layout.ts
+  s_afc301db7ab0ea::t_e576a8e22ab90c 11-14
+e2e/README.md
+  s_afc301db7ab0ea::t_2e1b7e3609188b 40
+  s_afc301db7ab0ea::t_570085205aea61 83-85
+e2e/a11y/scan-keys.ts
+  s_afc301db7ab0ea::t_f3f3bfeb2dc2dd 43
+  s_afc301db7ab0ea::t_06fb06ffe6a2f2 44
+src/lib/compare-region/__tests__/url-state.test.ts
+  s_afc301db7ab0ea::t_083eb42a3984b9 23-29,52-73
+  s_afc301db7ab0ea::t_45aff3ad26b368 106
+  s_afc301db7ab0ea::t_5e83f92830a46e 4,74,88-105,107-108
+  s_afc301db7ab0ea::t_d067bbd6292789 75,109
+src/lib/compare-region/__tests__/glyph-paths.test.ts
+  s_afc301db7ab0ea::t_8288f7388123ac 1-70,77-78
+  s_afc301db7ab0ea::t_6eb9672bb50109 71-76
+src/lib/compare-region/__tests__/server.test.ts
+  s_afc301db7ab0ea::t_4994572ca05c95 96,158-166,302-317
+  s_afc301db7ab0ea::t_3392753ec36071 318
+src/lib/compare-region/zoom.ts
+  s_afc301db7ab0ea::t_a38b94aaf2df0b 1-12,21-73
+  s_afc301db7ab0ea::t_c24d0620c729b9 13-20
+src/lib/compare-region/__tests__/density.test.ts
+  s_afc301db7ab0ea::t_23b355d45683a4 99-101,104
+  s_afc301db7ab0ea::t_6ae63fbf765c3d 1-16,19-89,93-96,111
+  s_afc301db7ab0ea::t_1597604cf74897 17-18,97-98,102-103,105-110
+  s_afc301db7ab0ea::t_6eb9672bb50109 90-92
+src/components/compare-region/__tests__/compare-region-panel.test.tsx
+  s_afc301db7ab0ea::t_a6010d5f2b6402 347-348,350-354
+  s_afc301db7ab0ea::t_cfda1e0edd3a40 267-294
+  s_afc301db7ab0ea::t_b7337ba340b47b 212-214
+  s_afc301db7ab0ea::t_a2727305dca944 359-361
+  s_afc301db7ab0ea::t_300f3c3a79f5bc 207-211,215-232
+  s_afc301db7ab0ea::t_15984da6c4f394 372-390
+  s_afc301db7ab0ea::t_16f2931cbe1117 319-324
+  s_afc301db7ab0ea::t_9a792ce17d784e 233-240,245-251,255-266
+  s_afc301db7ab0ea::t_330070b7ae2a4a 6-9
+  s_afc301db7ab0ea::t_54a79fa1150546 241-244,252-254
+  s_afc301db7ab0ea::t_5910e05d3d53d1 367-371
+  s_afc301db7ab0ea::t_c17462a253bb9d 23-27,172-174,181-185,192-194,338-340
+  s_afc301db7ab0ea::t_a69197d9925810 4,21,33-50,74-77,95-106,140,142-145,158-171,175-176,195,306-308,310-313,327,331-332,334-337,341-342,344-346,349,355-358,363,365-366
+  s_afc301db7ab0ea::t_46e056dd40eab1 135,138-139
+  s_afc301db7ab0ea::t_f07d676aae4582 107,177,364
+e2e/fixtures/overrides/compare-region.ts
+  s_afc301db7ab0ea::t_b02f37be551cb1 1-19
+src/components/compare-region/__tests__/compare-region-figure.test.tsx
+  s_afc301db7ab0ea::t_d67e3ef9387b82 375-378
+  s_afc301db7ab0ea::t_cf7e15fce648b9 3,10-12,27,32,61-92,203-265,369-374,379-395,397-418,446,460-470,472-483
+  s_afc301db7ab0ea::t_c28afd0837182d 1-2,4-5,13-17,19,21-26,28-31,33-60,93-102,106-108,114-130,135-202,266-314,320-356,361-368,396,419-445,450-456,484-486,488-513,522-643
+  s_afc301db7ab0ea::t_4edf7296c2b128 18,20,103-105
+  s_afc301db7ab0ea::t_f7ebee944a65ed 514-521
+  s_afc301db7ab0ea::t_1266a03fd830a8 6-9,109-113,131-134,315-319,357-360,447-449,457-459,471,487
+src/lib/compare-region/scroll-place.ts
+  s_afc301db7ab0ea::t_cd7072ee42e1ab 1-33,40-47,52-83
+  s_afc301db7ab0ea::t_6eb9672bb50109 34-39,48-51
+src/components/compare-region/compare-region-source-picker.tsx
+  s_afc301db7ab0ea::t_bb15a1a2a8b6a6 1-164
+src/components/compare-region/compare-region-selection-strip.tsx
+  s_afc301db7ab0ea::t_64f0f1570338ea 30,48,142-143,164,252
+  s_afc301db7ab0ea::t_4edf7296c2b128 155-156
+  s_afc301db7ab0ea::t_e27dc2a5faf04a 56,96,184,212,220-221,234,242,251,268
+  s_afc301db7ab0ea::t_a8e9df0a9501ba 1-27,33-47,49-51,53-55,57-78,82-88,90-95,97-114,118-122,126-141,144-146,151-153,157-163,165-168,170-183,185-209,211,213-219,224-226,230-231,233,235-241,243-250,253-267,269-274
+  s_afc301db7ab0ea::t_36ed6022e06326 52,154,169
+  s_afc301db7ab0ea::t_1266a03fd830a8 123-125,147-150,222-223
+  s_afc301db7ab0ea::t_5b483248c4a26e 79-81,89
+  s_afc301db7ab0ea::t_adad7d2fc4e010 115-117
+  s_afc301db7ab0ea::t_a4114c10a2cb9b 210
+  s_afc301db7ab0ea::t_cf2cb27d98a1bb 227-229,232
+  s_afc301db7ab0ea::t_1982fbeb2b3750 28-29,31-32
+e2e/pages/index.ts
+  s_afc301db7ab0ea::t_3f7590f66e7873 24
+src/lib/compare-region/colors.ts
+  s_afc301db7ab0ea::t_e576a8e22ab90c 2-7
+  s_afc301db7ab0ea::t_c5cb0436ec450f 14-19
+  s_afc301db7ab0ea::t_04b25b21b9cc0d 21,29-34,37-41,43-45,49-56,60-65,68-78
+  s_afc301db7ab0ea::t_a239ab451889f6 11-13,22,24-28,46-48,57
+src/components/compare-region/compare-region-export.ts
+  s_afc301db7ab0ea::t_5910e05d3d53d1 38-43
+  s_afc301db7ab0ea::t_ac71c6aea57593 76-82
+  s_afc301db7ab0ea::t_626b7abf564220 119-132
+  s_afc301db7ab0ea::t_177af5f14f9547 186
+  s_afc301db7ab0ea::t_08b1fcde5fad24 1-5,9-12,14,107-118,133-172,175-178,180-185,187-196,201-206
+  s_afc301db7ab0ea::t_00b4252a522780 198-200
+  s_afc301db7ab0ea::t_983e6d14331580 13
+  s_afc301db7ab0ea::t_351a5a1ac159e1 6-8,15-37,44-75,83-106,173-174,179,197
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_afc301db7ab0ea::t_d74e679810ee7a 550,552-558
+src/components/compare-region/compare-region-legend.tsx
+  s_afc301db7ab0ea::t_1266a03fd830a8 58-61
+  s_afc301db7ab0ea::t_c6d74d9612a2e4 1-45,47-48,50-57,62-64,66-123
+  s_afc301db7ab0ea::t_e27dc2a5faf04a 46,49,65
+e2e/fixtures/overrides/index.ts
+  s_afc301db7ab0ea::t_808530a4ccb2c5 49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "10ddf2c05205c91ede1a69aa116ccedcf0e7393f",
+  "prompts": {},
+  "sessions": {
+    "s_afc301db7ab0ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fa8dbba-fbb9-4e1e-adf2-b66593724d51",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

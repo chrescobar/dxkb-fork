@@ -1,0 +1,62 @@
+src/components/compare-region/__tests__/compare-region-chart.test.tsx
+  s_6d5696b5bf8851::t_c4ee480ab1f94e 656
+  s_6d5696b5bf8851::t_e32e31e8a70207 17-18,33-46,625-628,634-655,657-659,662-664,667,669,671-757
+src/lib/compare-region/__tests__/layout.test.ts
+  s_6d5696b5bf8851::t_5ca2f418c22a91 165-182
+src/lib/compare-region/ribbons.ts
+  s_6d5696b5bf8851::t_0da08c28bf42ef 86-89,97,108-109,130,132,180,182
+src/lib/compare-region/labels.ts
+  s_6d5696b5bf8851::t_0da08c28bf42ef 163-164,187-192
+e2e/pages/compare-region-page.ts
+  s_6d5696b5bf8851::t_c4ee480ab1f94e 9-10,37-38,62
+  s_6d5696b5bf8851::t_a8ce945ef7312a 115-116,119
+src/lib/compare-region/pan.ts
+  s_6d5696b5bf8851::t_074d9a22ffcfe4 1-41
+src/components/compare-region/compare-region-track-layers.tsx
+  s_6d5696b5bf8851::t_d1f0e93a9789e4 38-42,49-54,76,95,243-248,250
+src/lib/compare-region/__tests__/labels.test.ts
+  s_6d5696b5bf8851::t_5ca2f418c22a91 179-190
+src/components/compare-region/compare-region-chart.tsx
+  s_6d5696b5bf8851::t_9a30713d44dac2 16-18,54,159,463,466-467
+src/lib/compare-region/glyph-placement.ts
+  s_6d5696b5bf8851::t_0da08c28bf42ef 43-46,55,59
+src/lib/compare-region/__tests__/ribbons.test.ts
+  s_6d5696b5bf8851::t_5ca2f418c22a91 310-345
+src/components/compare-region/compare-region-highlight.tsx
+  s_6d5696b5bf8851::t_d1f0e93a9789e4 137-138,145,155,204,212,227,232,240-248,267-294,299-300,305-308,314,320,340
+src/lib/compare-region/__tests__/glyph-placement.test.ts
+  s_6d5696b5bf8851::t_5ca2f418c22a91 73-74,82-87,89-90
+docs/architecture.md
+  s_6d5696b5bf8851::t_10e4fc4062dde7 190
+e2e/tests/compare-region.spec.ts
+  s_6d5696b5bf8851::t_c4ee480ab1f94e 101-136
+src/components/compare-region/use-chart-pointer.ts
+  s_6d5696b5bf8851::t_5c605bf46876e9 62,130-131,154-158
+src/lib/compare-region/__tests__/pan.test.ts
+  s_6d5696b5bf8851::t_5ca2f418c22a91 1-42
+src/components/compare-region/compare-region-panned-layers.tsx
+  s_6d5696b5bf8851::t_c4ee480ab1f94e 9-10,103-105,107-109
+  s_6d5696b5bf8851::t_2737c4f7139a4d 1-8,11-102,106,110-112
+src/lib/compare-region/layout.ts
+  s_6d5696b5bf8851::t_0da08c28bf42ef 158,176-187
+src/components/compare-region/compare-region-glyphs.tsx
+  s_6d5696b5bf8851::t_196a50891c2ec1 18,192-194,206-207,215-216,224,250-256,265-266,281-284
+src/components/compare-region/__tests__/compare-region-figure.test.tsx
+  s_6d5696b5bf8851::t_014ce31fd7cc1a 23,138-139,163-164,181-182,194-195,200-201,203,205-209,211-225,234-235,282-283,297-302,311-323,353,362-367,378-383,547-556,558-560,562-564,586,598,603,609-610,624,656
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3f9b69c787e579599b564e6866802cfa931107fe",
+  "prompts": {},
+  "sessions": {
+    "s_6d5696b5bf8851": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b7cb7ac-ab58-412e-bbfc-1ec129faa078",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

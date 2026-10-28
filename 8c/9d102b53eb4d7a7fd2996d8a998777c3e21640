@@ -1,0 +1,68 @@
+src/app/(views)/__tests__/scaffold-routes.test.tsx
+  s_95f92ef1a16897::t_e3bde84b4f9948 47-50
+e2e/pages/circular-viewer-panel.ts
+  s_95f92ef1a16897::t_23cd8035e0e24d 95-103
+src/components/circular-viewer/track-color-picker.tsx
+  s_95f92ef1a16897::t_2980e1a5fb3d4e 7,19,25-29,71-92,95-98
+docs/architecture.md
+  s_95f92ef1a16897::t_7355fbbb274d37 203
+src/components/circular-viewer/custom-track-form.tsx
+  s_95f92ef1a16897::t_c7fc83caa93466 3,116-130
+  s_95f92ef1a16897::t_93053a6cf6a7b8 33,43,46-49,51-100,102,114
+  s_95f92ef1a16897::t_85d833f3bb8102 44-45
+  s_95f92ef1a16897::t_10103f7680e960 42,50
+e2e/tests/circular-viewer.spec.ts
+  s_95f92ef1a16897::t_7355fbbb274d37 87,96
+  s_95f92ef1a16897::t_0248a517d15077 77-86,88-95,97-100
+src/components/circular-viewer/__tests__/circular-viewer-sidebar.test.tsx
+  s_95f92ef1a16897::t_00be1509dedf75 183-198
+  s_95f92ef1a16897::t_dfa72d110a2795 139,161
+  s_95f92ef1a16897::t_6f256aa1bb2997 245,335
+  s_95f92ef1a16897::t_a81dbb176a7be6 104-113,116
+  s_95f92ef1a16897::t_23cd8035e0e24d 204-228,332
+src/components/circular-viewer/circular-viewer-track-list.tsx
+  s_95f92ef1a16897::t_2980e1a5fb3d4e 86,95
+  s_95f92ef1a16897::t_85d833f3bb8102 69
+  s_95f92ef1a16897::t_eb39fca32cd47d 79-82,134,140,144,150
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_95f92ef1a16897::t_42f28818e3d45a 23,127
+src/components/circular-viewer/user-track-form.tsx
+  s_95f92ef1a16897::t_943149269de752 165,173
+  s_95f92ef1a16897::t_bffd2f9116bc83 142-144,147-149,153-155,160-164,166-172,174-182
+  s_95f92ef1a16897::t_10103f7680e960 97,105
+  s_95f92ef1a16897::t_85d833f3bb8102 99-100
+  s_95f92ef1a16897::t_c7fc83caa93466 3,186-200
+  s_95f92ef1a16897::t_6f256aa1bb2997 146
+  s_95f92ef1a16897::t_a658bd10c7685e 11
+  s_95f92ef1a16897::t_93053a6cf6a7b8 91,98,101-104,106-140,145,184
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_95f92ef1a16897::t_35c0c93ee1bea2 2,22,33-42,45-52,63-88,104,108-109,187
+src/app/(views)/feature/[featureId]/page.tsx
+  s_95f92ef1a16897::t_36c3ad959f4d89 12,121-122
+src/components/circular-viewer/circular-viewer-panel.tsx
+  s_95f92ef1a16897::t_e5b43ad685c427 98-101,105
+  s_95f92ef1a16897::t_78022da3d6ac03 108
+  s_95f92ef1a16897::t_85d833f3bb8102 107
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_95f92ef1a16897::t_35c0c93ee1bea2 12,96-104
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_95f92ef1a16897::t_1c08fca500edf6 1,7,23-25,77-78,130-152,155-156,158-243
+  s_95f92ef1a16897::t_3db4f03bd3e602 153-154,157
+  s_95f92ef1a16897::t_033ab2a1329e77 244
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8c9d102b53eb4d7a7fd2996d8a998777c3e21640",
+  "prompts": {},
+  "sessions": {
+    "s_95f92ef1a16897": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1622b998-012a-4f70-9b3e-6eaefd802192",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

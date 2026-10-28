@@ -1,0 +1,262 @@
+src/lib/circular-viewer/__tests__/hit-test.test.ts
+  s_95f92ef1a16897::t_6d8cea0829eb26 1-24
+src/lib/e2e-fixtures/records.ts
+  s_95f92ef1a16897::t_4ac1bb0a977bc5 97-120
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_95f92ef1a16897::t_ccf2621e7df40c 528
+  s_95f92ef1a16897::t_b98cc904c2073a 7-8,19-23,509-510,513-523,527,530
+  s_95f92ef1a16897::t_4a8fb89c62ff22 68-88,511-512,524-526,529
+  s_95f92ef1a16897::t_fe12da3384dd41 67,531-532
+src/lib/circular-viewer/__tests__/keyboard.test.ts
+  s_95f92ef1a16897::t_447e9d7e6d232b 1-3,5-176,179-191
+  s_95f92ef1a16897::t_75661094f0eb42 4,177-178,192-215
+src/lib/circular-viewer/tracks.ts
+  s_95f92ef1a16897::t_08c416d9c35a0b 29-33,35,48,56,73,90,103,111,115-116,124-125,137,178
+  s_95f92ef1a16897::t_04f610a7036f79 28,34,44-47,49,72
+  s_95f92ef1a16897::t_ed6d0b66da5b20 130,136,175-177
+  s_95f92ef1a16897::t_ba11ff68e033b4 1-27,36-43,50-55,57-71,74-89,91-102,104-110,112-114,117-123,126-129,131-135,138-174,179-239
+src/components/circular-viewer/circular-viewer-panel.tsx
+  s_95f92ef1a16897::t_09f2335b27ca01 9
+  s_95f92ef1a16897::t_4e1d4f8238ffab 1-3,6-8,10-12,14-15,17-25,27-43,45-48,50-51,58-63,65,67-77,80-85,87-91,114,164-168
+  s_95f92ef1a16897::t_133cd5d92f04d3 5,52-57,126,128,162
+  s_95f92ef1a16897::t_7f53ff43365e3a 92-93,98
+  s_95f92ef1a16897::t_5dbe573489177b 142-143
+  s_95f92ef1a16897::t_00c0f5440540cf 4,134,138,144
+  s_95f92ef1a16897::t_34a7d9cce4125c 95-97,101,103,148-151
+  s_95f92ef1a16897::t_9f3d8ee7b687db 13,16,26,44,49,64,66,78-79,86,94,153-154
+  s_95f92ef1a16897::t_ae446254586215 99-100,102,104-113,115-125,127,129-133,135-137,139-141,145-147,152,155-161,163
+src/components/circular-viewer/circular-viewer-tooltip.tsx
+  s_95f92ef1a16897::t_cc48eaa576dd44 1-4,6-9,15,31-33,45-50
+  s_95f92ef1a16897::t_4e4b490adcb5c7 5,10-14,16-30,34-44
+src/components/circular-viewer/__tests__/circular-viewer-panel.test.tsx
+  s_95f92ef1a16897::t_d46a48c25897e0 148-149,151,153-155
+  s_95f92ef1a16897::t_13fddf27fbca0b 165,167-172,175-182,184-185,189-203
+  s_95f92ef1a16897::t_e5254ef71b1149 1-56,59-147,150,152,156-164,166,173-174,183,186-188,204-205
+  s_95f92ef1a16897::t_b7f878ed0f601b 57-58
+src/lib/circular-viewer/layout.ts
+  s_95f92ef1a16897::t_7c7f8d9e1c9bb5 97-99,103-106,109-113,116,120
+  s_95f92ef1a16897::t_fdd2209e2249d1 1-96,100-102,107-108,114-115,117-119,121-140
+AGENTS.md
+  s_95f92ef1a16897::t_92ebea772f767a 107
+src/lib/circular-viewer/heatmap.ts
+  s_95f92ef1a16897::t_fdd2209e2249d1 1-22
+src/lib/circular-viewer/keyboard.ts
+  s_95f92ef1a16897::t_559a4327853826 1-143,162-183
+  s_95f92ef1a16897::t_0ec36908709eda 144-161
+src/lib/circular-viewer/paths.ts
+  s_95f92ef1a16897::t_fdd2209e2249d1 1-101
+e2e/fixtures/overrides/circular-viewer.ts
+  s_95f92ef1a16897::t_1a07b577c133ab 1-104
+src/lib/circular-viewer/track-items.ts
+  s_95f92ef1a16897::t_ba11ff68e033b4 1-39
+e2e/pages/index.ts
+  s_95f92ef1a16897::t_19f88809b25ed5 24
+src/app/api/circular-viewer/[operation]/__tests__/route.test.ts
+  s_95f92ef1a16897::t_dc126ef12c08c4 1-90,121-140
+  s_95f92ef1a16897::t_65ba9a8d20c4da 93,98-101,119-120
+  s_95f92ef1a16897::t_9f4ff5e961433a 102-104
+  s_95f92ef1a16897::t_9ea8a5dd1a67b2 91-92,94-97,105-118
+src/components/circular-viewer/__tests__/circular-viewer-figure.test.tsx
+  s_95f92ef1a16897::t_1c36a98e1dacf6 123,145-146,148
+  s_95f92ef1a16897::t_6ca0f1f554c26c 41-43,45-51
+  s_95f92ef1a16897::t_eb254850dce527 8,124-126,170,174,181,183,221,227-236,240
+  s_95f92ef1a16897::t_c6620a2334354d 15,64-78,80-89
+  s_95f92ef1a16897::t_9c02fc22d675ec 9,104-122,137,139-141,147,150-169,171-172,175-178,199,209,237-239,241-248,251-254
+  s_95f92ef1a16897::t_1cd1be020325a7 127-136,138,142-144,149,173,179-180,182,184-198,200-208,210-220,222-226,249-250
+  s_95f92ef1a16897::t_3c5c9445eabba6 44,52-53
+  s_95f92ef1a16897::t_4d76235bd9c9fc 79
+  s_95f92ef1a16897::t_1d430049660f40 1-7,10-14,16-40,54-63,90-103
+src/lib/__tests__/svg-figure-export.test.ts
+  s_95f92ef1a16897::t_cd23a20979dead 1-166,169-176,182-195,199-200,202-388
+  s_95f92ef1a16897::t_91d710f11410b3 167-168,177-181,196-198,201
+src/constants/resources.ts
+  s_95f92ef1a16897::t_f3e2770aa767fe 18
+src/lib/circular-viewer/user-track.ts
+  s_95f92ef1a16897::t_a3ac072e91f83a 1-44,57-86,104
+  s_95f92ef1a16897::t_588dc50aad7dd3 45-56,87-103
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_95f92ef1a16897::t_0a08cc648162da 25-26,579-623
+  s_95f92ef1a16897::t_4567e01901e555 624
+src/components/circular-viewer/lazy-circular-viewer-panel.tsx
+  s_95f92ef1a16897::t_624ad19c47ff81 1-15
+src/lib/genome-view/tabs.ts
+  s_95f92ef1a16897::t_0a08cc648162da 9,21,38-55,60,73-80
+src/components/circular-viewer/custom-track-form.tsx
+  s_95f92ef1a16897::t_133c667e8e6efb 1-127
+src/lib/circular-viewer/__tests__/drawing.test.ts
+  s_95f92ef1a16897::t_55bb6f53ed9c69 2,67-112
+  s_95f92ef1a16897::t_5e335b6fa159ac 1,3-66,113-135
+src/lib/circular-viewer/drawing.ts
+  s_95f92ef1a16897::t_08605ec19250a8 63-64,173,208,234,250
+  s_95f92ef1a16897::t_27bb2d3bc773ea 376-389,407
+  s_95f92ef1a16897::t_915c8759c52a22 1-62,65-172,174-204,212-233,235-249,251-297,338-342,344-345,367-375,390-406,408-410
+  s_95f92ef1a16897::t_03adb0385efe94 298-300,303-304
+  s_95f92ef1a16897::t_04f610a7036f79 205-207,209-211
+  s_95f92ef1a16897::t_651dcf9fbe29d1 301-302,305-337,343,346-366
+src/lib/circular-viewer/__tests__/heatmap.test.ts
+  s_95f92ef1a16897::t_64b4b8c67dc63e 1-22
+src/lib/data-api/schemas.ts
+  s_95f92ef1a16897::t_f3e2770aa767fe 215-219
+src/lib/circular-viewer/gc.ts
+  s_95f92ef1a16897::t_04e5fef5487828 1-34
+docs/architecture.md
+  s_95f92ef1a16897::t_92ebea772f767a 201,205
+  s_95f92ef1a16897::t_f1a481b69b82cc 50,116-118,121-122
+  s_95f92ef1a16897::t_d2358180fdf262 202
+  s_95f92ef1a16897::t_e5dbb01dfb41c4 120,203-204
+  s_95f92ef1a16897::t_cd23a20979dead 199
+  s_95f92ef1a16897::t_7b8bb6f9f81b7b 119
+  s_95f92ef1a16897::t_3fe2f5c963cc4e 123
+src/app/api/e2e-mock/[...path]/route.ts
+  s_95f92ef1a16897::t_b04fec762ef7fa 9,331-342,359-360
+src/components/circular-viewer/circular-viewer-item-dialog.tsx
+  s_95f92ef1a16897::t_cc48eaa576dd44 1-8,22-28,35-56
+  s_95f92ef1a16897::t_2fc2e133e28322 9-21,29-34
+src/components/circular-viewer/circular-viewer-figure.tsx
+  s_95f92ef1a16897::t_4b0bd6f1cbfebf 74
+  s_95f92ef1a16897::t_7a1542eb874f4c 252-253
+  s_95f92ef1a16897::t_43fb2644748813 272-274,276
+  s_95f92ef1a16897::t_1c36a98e1dacf6 159-160
+  s_95f92ef1a16897::t_2fc2e133e28322 271,277
+  s_95f92ef1a16897::t_6f7034dac614b6 18,77-80,82-90
+  s_95f92ef1a16897::t_b81e08a05e2a90 1-17,19-23,25-55,59-62,66-73,75-76,81,91-106,109-152,180-181,186,194,216,219,247-251,254-256,260-270,278-281
+  s_95f92ef1a16897::t_15935f0fa56f71 24,56-58,63-65,107-108,153-158,161-179,182-185,187-193,195-215,217-218,220-246,257-259,275
+src/lib/circular-viewer/__tests__/server.test.ts
+  s_95f92ef1a16897::t_ecc093c5f49c6c 1-6,9-16,18-155,200-211
+  s_95f92ef1a16897::t_9ea8a5dd1a67b2 7-8,17,156-199
+src/lib/circular-viewer/client.ts
+  s_95f92ef1a16897::t_d4f67150af4c48 1-100
+src/components/circular-viewer/circular-viewer-track-layer.tsx
+  s_95f92ef1a16897::t_cc48eaa576dd44 1-38,41-42,56,66-91
+  s_95f92ef1a16897::t_04f610a7036f79 47-52,55,57-60,63
+  s_95f92ef1a16897::t_08605ec19250a8 39-40,43-46,53-54,61-62,64-65
+e2e/README.md
+  s_95f92ef1a16897::t_92ebea772f767a 86
+src/lib/circular-viewer/__tests__/layout.test.ts
+  s_95f92ef1a16897::t_64b4b8c67dc63e 1-56,78-97
+  s_95f92ef1a16897::t_6557239cc4dce0 57-77
+src/lib/circular-viewer/__tests__/user-track.test.ts
+  s_95f92ef1a16897::t_5668049e104e6e 62-63
+  s_95f92ef1a16897::t_e601db9ecc59ba 1,40-61
+  s_95f92ef1a16897::t_6d8cea0829eb26 2-39,64-65
+src/lib/circular-viewer/hit-test.ts
+  s_95f92ef1a16897::t_a3ac072e91f83a 1-59
+package.json
+  s_95f92ef1a16897::t_2c0ee4664b6306 69,100
+e2e/tests/circular-viewer.spec.ts
+  s_95f92ef1a16897::t_4a8fb89c62ff22 51-53,65-66
+  s_95f92ef1a16897::t_68a07161895f0e 1-50,54-61,67-141,157-159,161-169,171-172
+  s_95f92ef1a16897::t_a9e4566a13e45a 62-64
+  s_95f92ef1a16897::t_8ffa10f52e5050 142-156,160,170
+src/lib/data-api/resources.ts
+  s_95f92ef1a16897::t_f3e2770aa767fe 28,62,217
+src/lib/circular-viewer/ticks.ts
+  s_95f92ef1a16897::t_fdd2209e2249d1 1-47
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_95f92ef1a16897::t_0a08cc648162da 3,79,104-105
+src/lib/data-api/__tests__/validation.test.ts
+  s_95f92ef1a16897::t_c7b592178f21a8 14,28-38
+src/lib/circular-viewer/__tests__/gc.test.ts
+  s_95f92ef1a16897::t_9ca39a106d9d78 1-32
+e2e/pages/circular-viewer-panel.ts
+  s_95f92ef1a16897::t_fae789037cda1a 1,3-22,24-44,55-104
+  s_95f92ef1a16897::t_4a8fb89c62ff22 2,45-54
+  s_95f92ef1a16897::t_1c36a98e1dacf6 23
+src/lib/svg-figure-export.ts
+  s_95f92ef1a16897::t_915a730ca97019 3-4
+  s_95f92ef1a16897::t_a18040f3aa21e4 5-6
+  s_95f92ef1a16897::t_91d710f11410b3 148-150,156
+  s_95f92ef1a16897::t_05732bdf97faf3 2
+  s_95f92ef1a16897::t_cd23a20979dead 1,7-147,151-155,157-216
+e2e/a11y/scan-keys.ts
+  s_95f92ef1a16897::t_b98cc904c2073a 41
+src/components/circular-viewer/circular-viewer-item-fields.tsx
+  s_95f92ef1a16897::t_4b0bd6f1cbfebf 92
+  s_95f92ef1a16897::t_cc48eaa576dd44 1-66,86-91,93-97
+  s_95f92ef1a16897::t_3104fd7ea8b232 67-85
+src/lib/circular-viewer/__tests__/ticks.test.ts
+  s_95f92ef1a16897::t_64b4b8c67dc63e 1-31
+src/components/circular-viewer/circular-viewer-track-list.tsx
+  s_95f92ef1a16897::t_3b30a6da6f9998 1-3,5-65,67,70-92,94-102,124-167
+  s_95f92ef1a16897::t_5894dc1de6b187 4,66,68-69,103-123
+  s_95f92ef1a16897::t_08605ec19250a8 93
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_95f92ef1a16897::t_755df3776d71e6 22,59-62
+  s_95f92ef1a16897::t_06cb3a1e908a49 63-64
+src/lib/circular-viewer/__tests__/tracks.test.ts
+  s_95f92ef1a16897::t_3c5c9445eabba6 23-32,68-71,90-91,102,104,107,111,113
+  s_95f92ef1a16897::t_55bb6f53ed9c69 33-35,96-101,103
+  s_95f92ef1a16897::t_566078895f026e 1
+  s_95f92ef1a16897::t_f3ccccf80382eb 2-22,36-67,72-89,92-95,114-127
+  s_95f92ef1a16897::t_43ca36e6f6e172 105-106,108-110,112
+src/lib/circular-viewer/track-state.ts
+  s_95f92ef1a16897::t_08c416d9c35a0b 47
+  s_95f92ef1a16897::t_04f610a7036f79 46,48
+  s_95f92ef1a16897::t_ba11ff68e033b4 1-45,49-69
+src/lib/circular-viewer/contract.ts
+  s_95f92ef1a16897::t_04e5fef5487828 1-145
+src/lib/circular-viewer/__tests__/client.test.ts
+  s_95f92ef1a16897::t_65a209605b73e3 1-68
+src/components/circular-viewer/track-color-picker.tsx
+  s_95f92ef1a16897::t_08605ec19250a8 19,24-25,73-79
+  s_95f92ef1a16897::t_c637ffc65a7a71 1-2,4-18,20-23,26-28,58-63,65-69,82-89,91-102,104-112,114-120
+  s_95f92ef1a16897::t_e508f53257dc63 3,29-57,90,103,113
+  s_95f92ef1a16897::t_99bf3b45db518e 64,70-72,80-81
+src/lib/data-api/index.ts
+  s_95f92ef1a16897::t_f3e2770aa767fe 30
+src/components/circular-viewer/user-track-form.tsx
+  s_95f92ef1a16897::t_fa5cbe98abbae0 1-12,14-34,36-64,66,68-73,76-166
+  s_95f92ef1a16897::t_ecf8f9395bc926 13,35,65,67,74-75
+src/lib/circular-viewer/__tests__/paths.test.ts
+  s_95f92ef1a16897::t_64b4b8c67dc63e 1-37
+src/components/circular-viewer/use-circular-track-data.ts
+  s_95f92ef1a16897::t_03adb0385efe94 15,197,204,214
+  s_95f92ef1a16897::t_590ab33db7edd7 16,105-113,115-119,130-133,143,145-146,148,151,156,164-175,181-182,192-194,196,198-199,207,212-213
+  s_95f92ef1a16897::t_b744681ef93849 1-14,17-104,114,120-129,134-142,144,147,149-150,152-155,157-163,176-180,183-191,195,200-203,205-206,208-211,215-222
+src/components/circular-viewer/index.ts
+  s_95f92ef1a16897::t_1f619b6f86b9c8 1-3
+src/components/views/view-icons.tsx
+  s_95f92ef1a16897::t_0a08cc648162da 6,58
+e2e/fixtures/overrides/index.ts
+  s_95f92ef1a16897::t_19f88809b25ed5 49-52
+src/app/api/circular-viewer/[operation]/route.ts
+  s_95f92ef1a16897::t_ac76f0cffb5a44 1-130
+src/lib/circular-viewer/server.ts
+  s_95f92ef1a16897::t_ecc093c5f49c6c 1-137,139-142,147-180,186-192,194-205,213-244,246-262,264-329,331-358,367-371,380-386,388-398,405-408,410,423-437,439-440
+  s_95f92ef1a16897::t_8ec9cb313e5479 138,143-146,181-185,193,330,359-366,372-379,387,399-404,409,411-422,438
+  s_95f92ef1a16897::t_9b5a20174a1a03 206-212,245,263
+src/components/circular-viewer/__tests__/circular-viewer-sidebar.test.tsx
+  s_95f92ef1a16897::t_6ca0f1f554c26c 5,119-131,137,139,141-149,152
+  s_95f92ef1a16897::t_ffadc13b80027b 10,64-89,182,184,189-192,222,230,241-253,255-274,277
+  s_95f92ef1a16897::t_96071998b11015 134-136
+  s_95f92ef1a16897::t_a708732c70186a 1-4,6-9,11-63,90-91,95-106,111-118,155-181,183,185-188,193-221,223-229,231-240,254,275-276,278-286
+  s_95f92ef1a16897::t_e83c14c577f1a6 92-94
+  s_95f92ef1a16897::t_0790d695739181 132-133,138,140
+  s_95f92ef1a16897::t_b7f878ed0f601b 107-110
+  s_95f92ef1a16897::t_3c5c9445eabba6 150-151,153-154
+src/components/circular-viewer/__tests__/use-circular-track-data.test.tsx
+  s_95f92ef1a16897::t_703c2cab15b44c 11-77,144-145
+  s_95f92ef1a16897::t_3556192ee0411c 1-10,78-143
+src/components/compare-region/compare-region-panel.tsx
+  s_95f92ef1a16897::t_cd23a20979dead 38,227
+src/lib/data-api/types.ts
+  s_95f92ef1a16897::t_f3e2770aa767fe 28
+pnpm-lock.yaml
+  s_95f92ef1a16897::t_93dc0688091971 274-276,367-369,8124-8129,18220-18224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "906e02bec0186b86040f1d0d52fc4f06e3623c52",
+  "prompts": {},
+  "sessions": {
+    "s_95f92ef1a16897": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1622b998-012a-4f70-9b3e-6eaefd802192",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

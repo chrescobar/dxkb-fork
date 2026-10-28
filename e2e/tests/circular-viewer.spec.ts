@@ -167,6 +167,9 @@ test.describe("Circular Viewer", () => {
     expect(svg).toContain("<svg");
     expect(svg).not.toContain("data-overlay");
     expect(svg).toContain('data-track="cds-forward"');
-    expect(svg).toMatch(/data-track="contigs"[^>]*>\s*<path[^>]*fill="rgb\(0, 15, 125\)"/);
+    // At rest: a ring still sweeping into view exports whole (its mask's dash
+    // offset is the animation's, which the file does not carry).
+    expect(svg).toMatch(/data-track="contigs"[^>]*>(?:\s*<mask[\s\S]*?<\/mask>)?\s*<g[^>]*>\s*<path[^>]*fill="rgb\(0, 15, 125\)"/);
+    expect(svg).not.toContain("stroke-dashoffset");
   });
 });

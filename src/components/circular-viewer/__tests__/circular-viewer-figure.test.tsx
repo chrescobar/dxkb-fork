@@ -41,7 +41,7 @@ describe("CircularViewerFigure", () => {
     expect(ring?.querySelector("path")).not.toHaveAttribute("class");
   });
 
-  it("draws legacy's navy contigs in the theme's foreground in a dark theme, keeping the navy for light and export", () => {
+  it("draws legacy's navy contigs in periwinkle in a dark theme, keeping the navy for light and export", () => {
     const contigTracks = defaultTracks().filter((track) => track.id === "contigs");
     const contigData = new Map<string, TrackData>([
       ["contigs", { status: "ready", items: { kind: "contigs", contigs: [{ accession: "NC_1", sequenceId: "s1", length: 1000 }] } }],
@@ -49,7 +49,47 @@ describe("CircularViewerFigure", () => {
     render(<CircularViewerFigure genomeId="1.1" layout={layout} tracks={contigTracks} data={contigData} svgRef={createRef()} />);
     const path = screen.getByRole("img").querySelector('[data-track="contigs"] path');
     expect(path).toHaveAttribute("fill", "#000F7D");
-    expect(path).toHaveClass("dark:fill-foreground");
+    expect(path).toHaveClass("dark:fill-(--dark-color)");
+    expect((path as SVGPathElement | null)?.style.getPropertyValue("--dark-color")).toBe("#9FA8FF");
+  });
+
+  it("sweeps a ring's marks into view once, when its data arrives, then drops the mask", () => {
+    const pending = new Map<string, TrackData>([["cds-forward", { status: "pending" }]]);
+    const { rerender } = render(
+      <CircularViewerFigure genomeId="1.1" layout={layout} tracks={tracks} data={pending} svgRef={createRef()} />,
+    );
+    const ring = () => screen.getByRole("img").querySelector('[data-track="cds-forward"]');
+    expect(ring()?.querySelector("mask")).toBeNull();
+
+    rerender(<CircularViewerFigure genomeId="1.1" layout={layout} tracks={tracks} data={data} svgRef={createRef()} />);
+    const mask = ring()?.querySelector("mask");
+    // Four passes, each later and more opaque, for a soft edge.
+    const passes = [...(mask?.querySelectorAll("circle.animate-circular-track-sweep") ?? [])];
+    expect(passes.map((pass) => pass.getAttribute("opacity"))).toEqual(["0.25", String(1 / 3), "0.5", "1"]);
+    expect(passes.map((pass) => (pass as SVGCircleElement).style.getPropertyValue("--sweep-delay"))).toEqual([
+      "0ms", "50ms", "100ms", "150ms",
+    ]);
+    const sweep = passes.at(-1);
+    expect(sweep).toHaveAttribute("pathLength", "1");
+    // The marks show through the mask, which uncovers the whole ring.
+    const masked = ring()?.querySelector(`g[mask="url(#${mask?.id ?? ""})"]`);
+    expect(masked?.querySelector("path")).toHaveAttribute("fill", "#307D32");
+    expect(Number(sweep?.getAttribute("r")) * 2).toBeGreaterThan(Number(ring()?.getAttribute("data-outer-radius")));
+
+    if (!sweep) throw new Error("no sweep circle");
+    // jsdom has no AnimationEvent, so React listens for the prefixed event name.
+    // An earlier pass ending leaves the mask; the last one's removes it.
+    fireEvent(passes[0], new Event("webkitAnimationEnd", { bubbles: true }));
+    expect(ring()?.querySelector("mask")).not.toBeNull();
+    fireEvent(sweep, new Event("webkitAnimationEnd", { bubbles: true }));
+    expect(ring()?.querySelector("mask")).toBeNull();
+    expect(ring()?.querySelector("g[mask]")).toBeNull();
+
+    // A new color redraws the marks without sweeping them again.
+    const recolored = tracks.map((track) => ({ ...track, foreground: "#123456" }));
+    rerender(<CircularViewerFigure genomeId="1.1" layout={layout} tracks={recolored} data={data} svgRef={createRef()} />);
+    expect(ring()?.querySelector("mask")).toBeNull();
+    expect(ring()?.querySelector('path[fill="#123456"]')).not.toBeNull();
   });
 
   it("names the feature under the pointer and highlights it", () => {

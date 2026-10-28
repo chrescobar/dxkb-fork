@@ -236,6 +236,28 @@ describe("exportSvgFigure", () => {
     }
   });
 
+  it("exports an animated element at rest, not at its animation's first frame", async () => {
+    // jsdom runs no animations: a stylesheet stands in for the first frame,
+    // which the copy would start again from in the host.
+    const style = document.createElement("style");
+    style.textContent = String.raw`.animate-circular-track-sweep, .animate-pulse { opacity: 0; }`;
+    document.head.append(style);
+    try {
+      const svg = figure();
+      const tspan = svg.querySelector("tspan");
+      if (!tspan) throw new Error("no tspan");
+      tspan.setAttribute("class", "fill-muted-foreground animate-circular-track-sweep");
+      svg.querySelector("text")?.setAttribute("class", "animate-pulse");
+      exportSvgFigure(svg, "figure.svg");
+
+      const { root } = await downloaded();
+      expect(root.querySelector("tspan")?.getAttribute("opacity")).toBe("1");
+      expect(root.querySelector("text")?.getAttribute("opacity")).toBe("1");
+    } finally {
+      style.remove();
+    }
+  });
+
   it("resolves the classes under a light-theme host, then removes it", () => {
     let hostDuringExport: Element | null = null;
     download.blob.mockImplementation(() => {

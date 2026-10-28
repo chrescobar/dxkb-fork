@@ -117,15 +117,21 @@ function lightThemeHost(): HTMLDivElement {
 }
 
 /**
- * The `dark:` variant matches anything under a dark-themed <html>, the light
- * host included (it reads the nearest `data-theme` ending in `-dark`, not the
- * closest `data-theme`): drop those classes so the copy computes as it would
- * in the light theme.
+ * Two kinds of class the copy must not compute with. The `dark:` variant
+ * matches anything under a dark-themed <html>, the light host included (it
+ * reads the nearest `data-theme` ending in `-dark`, not the closest
+ * `data-theme`): without it the copy computes as in the light theme. An
+ * animation (`animate-*`, `motion-safe:animate-*`) starts again on the copy,
+ * which would export its first frame (the Circular Viewer's rings at opacity
+ * 0): without it the copy computes at rest.
  */
-function dropDarkVariants(copy: SVGSVGElement): void {
+function dropLiveOnlyClasses(copy: SVGSVGElement): void {
   for (const element of [copy, ...copy.querySelectorAll("[class]")]) {
     for (const name of [...element.classList]) {
-      if (name.startsWith("dark:")) element.classList.remove(name);
+      const utility = name.slice(name.lastIndexOf(":") + 1);
+      if (name.startsWith("dark:") || utility.startsWith("animate-")) {
+        element.classList.remove(name);
+      }
     }
   }
 }
@@ -193,7 +199,7 @@ export function exportSvgFigure(
   for (const node of copy.querySelectorAll("[data-sticky]")) {
     node.removeAttribute("transform");
   }
-  dropDarkVariants(copy);
+  dropLiveOnlyClasses(copy);
   const host = lightThemeHost();
   host.append(copy);
   document.body.append(host);

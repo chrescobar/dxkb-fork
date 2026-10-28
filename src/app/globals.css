@@ -26,6 +26,18 @@
   }
 }
 
+/* A Circular Viewer ring's marks as its data arrives: the mask circle they
+   show through is drawn clockwise from 12 o'clock (`pathLength` 1, so a dash
+   offset of 1 hides all of it and 0 none). */
+@keyframes circular-track-sweep {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 @plugin "tailwindcss-animate";
 @custom-variant dark (&:is([data-theme$="-dark"] *));
 
@@ -77,6 +89,15 @@
    scales cannot express. */
 @utility animate-donut-legend-up {
   animation: donut-legend-up 0.4s 0.4s ease-out both;
+}
+
+@utility animate-circular-track-sweep {
+  animation: circular-track-sweep 400ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: var(--sweep-delay, 0ms);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-delay: 0ms;
+  }
 }
 
 @utility transition-chart-pop {

@@ -20,12 +20,16 @@ describe("default tracks", () => {
     ]);
   });
 
-  it("let the defaults under 3:1 on a dark card give way to the theme's foreground in a dark theme", () => {
-    expect(defaultTracks().filter((track) => track.themeForeground).map((track) => track.id)).toEqual([
-      "contigs",
-      "cds-reverse",
-      "transporter",
-      "drug-target",
+  it("give the defaults under 3:1 on a dark card a lighter version of their color in a dark theme", () => {
+    expect(
+      defaultTracks()
+        .filter((track) => track.darkForeground !== null)
+        .map((track) => [track.id, track.darkForeground]),
+    ).toEqual([
+      ["contigs", "#9FA8FF"],
+      ["cds-reverse", "#D88CCB"],
+      ["transporter", "#5C8DFF"],
+      ["drug-target", "#A6A6A6"],
     ]);
   });
 
@@ -61,8 +65,10 @@ describe("trackReducer", () => {
     expect(custom.map((track) => track.foreground)).toEqual([
       "#0000FF", "#008000", "#FFA500", "#FFC0CB", "#FF0000", "#800080", "#0000FF",
     ]);
-    // Blue and purple (under 3:1 on a dark card) are themed, green and the rest are not.
-    expect(custom.map((track) => track.themeForeground)).toEqual([true, false, false, false, false, true, true]);
+    // Blue and purple (under 3:1 on a dark card) lighten in a dark theme, green and the rest do not.
+    expect(custom.map((track) => track.darkForeground)).toEqual([
+      "#5C8DFF", null, null, null, null, "#C08AF5", "#5C8DFF",
+    ]);
     expect(custom[0].title).toBe("Secretion");
     expect(custom[1].title).toBe("kw1");
     expect(trackDescription(custom[1])).toBe("Custom track 2 - type: CDS, strand: both, keyword: kw1");
@@ -81,8 +87,8 @@ describe("trackReducer", () => {
       foreground: "#0000FF",
       background: "#FFFFE0",
       scale: { min: -3, max: 3 },
-      // Drawn on its own light background, where the theme's foreground would vanish.
-      themeForeground: false,
+      // Drawn on its own light background, where a lighter blue would fade.
+      darkForeground: null,
     });
     expect(trackDescription(state.tracks.at(-1) ?? defaultTracks()[0])).toBe(
       "User track 1 - plot type: histogram, file name: scores.tsv, plot range: -3 - 3",
@@ -93,18 +99,18 @@ describe("trackReducer", () => {
     const state = trackReducer(initialTrackState(), { type: "setForeground", id: "contigs", color: "#123456" });
     expect(state.tracks.find((track) => track.id === "contigs")).toMatchObject({
       foreground: "#123456",
-      themeForeground: false,
+      darkForeground: null,
     });
-    expect(state.tracks.find((track) => track.id === "drug-target")?.themeForeground).toBe(true);
+    expect(state.tracks.find((track) => track.id === "drug-target")?.darkForeground).toBe("#A6A6A6");
   });
 
-  it("clears the flag of a themed custom track when its color is picked", () => {
+  it("clears a custom track's dark color when its color is picked", () => {
     let state = trackReducer(initialTrackState(), {
       type: "addCustom", query: { type: "CDS", strand: "both", keyword: "kw" }, name: "",
     });
-    expect(state.tracks.at(-1)).toMatchObject({ foreground: "#0000FF", themeForeground: true });
+    expect(state.tracks.at(-1)).toMatchObject({ foreground: "#0000FF", darkForeground: "#5C8DFF" });
     state = trackReducer(state, { type: "setForeground", id: "custom-1", color: "#123456" });
-    expect(state.tracks.at(-1)).toMatchObject({ foreground: "#123456", themeForeground: false });
+    expect(state.tracks.at(-1)).toMatchObject({ foreground: "#123456", darkForeground: null });
   });
 
   it("keeps a heatmap's colors its own", () => {

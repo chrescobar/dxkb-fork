@@ -147,11 +147,12 @@ describe("TrackColorPicker", () => {
     }
   });
 
-  it("shows a themed color's swatch in the theme's foreground in a dark theme", () => {
-    render(<TrackColorPicker label="Contigs/Chromosomes color" color="#000F7D" themed onChange={vi.fn()} />);
+  it("shows the track's dark color in the swatch in a dark theme", () => {
+    render(<TrackColorPicker label="Contigs/Chromosomes color" color="#000F7D" darkColor="#9FA8FF" onChange={vi.fn()} />);
     const swatch = screen.getByRole("button", { name: "Contigs/Chromosomes color" }).firstElementChild;
-    expect(swatch).toHaveAttribute("data-themed", "true");
-    expect(swatch).toHaveClass("dark:data-themed:bg-foreground");
+    expect(swatch).toHaveClass("dark:bg-(--swatch-dark)");
+    const style = (swatch as HTMLElement | null)?.style;
+    expect([style?.getPropertyValue("--swatch"), style?.getPropertyValue("--swatch-dark")]).toEqual(["#000F7D", "#9FA8FF"]);
   });
 });
 

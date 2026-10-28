@@ -101,15 +101,15 @@ describe("buildTrackDrawings with a cache", () => {
     expect(buildTrackDrawings(tracks, data, other, 200, cache)[0]).not.toBe(ready);
   });
 
-  it("marks the dark-theme defaults' layers as themed, and no others", () => {
+  it("gives the dark-theme defaults' layers their dark color, and no others", () => {
     const contigs = new Map<string, TrackData>([
       ["contigs", { status: "ready", items: { kind: "contigs", contigs: [{ accession: "A", sequenceId: "s", length: 1000 }] } }],
       ...data,
     ]);
     const drawings = buildTrackDrawings([byId("contigs"), byId("cds-forward")], contigs, layout, 300);
     expect(
-      drawings.map((drawing) => (drawing.body.kind === "marks" ? drawing.body.layers.map((layer) => layer.themed) : null)),
-    ).toEqual([[true], [false]]);
+      drawings.map((drawing) => (drawing.body.kind === "marks" ? drawing.body.layers.map((layer) => layer.darkColor) : null)),
+    ).toEqual([["#9FA8FF"], [null]]);
   });
 });
 

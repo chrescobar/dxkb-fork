@@ -1,5 +1,76 @@
-import type { CSSProperties } from "react";
+import { useId, useState, type CSSProperties, type ReactNode } from "react";
 import { ringPath, type TrackDrawing } from "@/lib/circular-viewer/drawing";
+
+/** Room past a ring's outer edge the sweep also uncovers: the position labels sit there. */
+const sweepReach = 40;
+
+/**
+ * The sweep's soft edge: four passes of the mask, each a little later and
+ * more opaque, which add up to a quarter, a half, three quarters and all of
+ * the marks (`1 - (1 - a)(1 - b)…`). A mark the sweep reaches fades in over
+ * the last pass's delay instead of appearing whole, even a lone one at
+ * 12 o'clock, where the sweep starts.
+ */
+const sweepPasses = [
+  { opacity: 0.25, delay: "0ms" },
+  { opacity: 1 / 3, delay: "50ms" },
+  { opacity: 0.5, delay: "100ms" },
+  { opacity: 1, delay: "150ms" },
+] as const;
+
+/**
+ * Drawn marks sweep into view clockwise from 12 o'clock, the genome's
+ * direction, once: when they replace the pending ring (a new element, so the
+ * animation starts). They show through an alpha mask whose circles, as wide as
+ * the figure's radius, are drawn along their length (`pathLength` 1, a dash of
+ * 1 shifted from 1 to 0). Once the last pass ends the mask goes, so a later
+ * redraw (a color, a resize) does not replay it and an export carries none.
+ * Under reduced motion the passes last 0.01 ms with no delay (globals.css), so
+ * they end at once.
+ */
+function SweepIn({ outerRadius, children }: { outerRadius: number; children: ReactNode }) {
+  const id = useId();
+  const [swept, setSwept] = useState(false);
+  if (swept) return <g>{children}</g>;
+  const reach = outerRadius + sweepReach;
+  return (
+    <>
+      <mask
+        id={id}
+        maskUnits="userSpaceOnUse"
+        x={-reach}
+        y={-reach}
+        width={2 * reach}
+        height={2 * reach}
+        className="mask-type-alpha"
+      >
+        {sweepPasses.map((pass, index) => (
+          <circle
+            key={index}
+            r={reach / 2}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={reach}
+            opacity={pass.opacity}
+            pathLength={1}
+            strokeDasharray="1 1"
+            transform="rotate(-90)"
+            className="animate-circular-track-sweep"
+            style={{ "--sweep-delay": pass.delay } as CSSProperties}
+            onAnimationEnd={
+              index === sweepPasses.length - 1
+                ? () => {
+                    setSwept(true);
+                  }
+                : undefined
+            }
+          />
+        ))}
+      </mask>
+      <g mask={`url(#${id})`}>{children}</g>
+    </>
+  );
+}
 
 function TrackMarks({ drawing }: { drawing: TrackDrawing }) {
   const { body } = drawing;
@@ -11,35 +82,37 @@ function TrackMarks({ drawing }: { drawing: TrackDrawing }) {
   }
   if (body.kind === "labels") {
     return (
-      <g
-        className="fill-(--tick-color) stroke-(--tick-color)"
-        style={{ "--tick-color": drawing.foreground ?? "var(--muted-foreground)" } as CSSProperties}
-      >
-        {body.ticks.map((tick, index) => (
-          <g key={index}>
-            <line x1={tick.x1} y1={tick.y1} x2={tick.x2} y2={tick.y2} />
-            {tick.label && (
-              <text
-                x={tick.label.x}
-                y={tick.label.y}
-                transform={`rotate(${String(tick.label.rotate)} ${String(tick.label.x)} ${String(tick.label.y)})`}
-                textAnchor={tick.label.anchor}
-                dominantBaseline="central"
-                stroke="none"
-                className="text-3xs"
-              >
-                {tick.label.text}
-              </text>
-            )}
-          </g>
-        ))}
-      </g>
+      <SweepIn outerRadius={drawing.ring.outerRadius}>
+        <g
+          className="fill-(--tick-color) stroke-(--tick-color)"
+          style={{ "--tick-color": drawing.foreground ?? "var(--muted-foreground)" } as CSSProperties}
+        >
+          {body.ticks.map((tick, index) => (
+            <g key={index}>
+              <line x1={tick.x1} y1={tick.y1} x2={tick.x2} y2={tick.y2} />
+              {tick.label && (
+                <text
+                  x={tick.label.x}
+                  y={tick.label.y}
+                  transform={`rotate(${String(tick.label.rotate)} ${String(tick.label.x)} ${String(tick.label.y)})`}
+                  textAnchor={tick.label.anchor}
+                  dominantBaseline="central"
+                  stroke="none"
+                  className="text-3xs"
+                >
+                  {tick.label.text}
+                </text>
+              )}
+            </g>
+          ))}
+        </g>
+      </SweepIn>
     );
   }
   // A layer with a dark color keeps its color as the attribute, which the light
   // theme and an export (it drops `dark:` classes) use; a dark theme's class wins over it.
   return (
-    <>
+    <SweepIn outerRadius={drawing.ring.outerRadius}>
       {body.layers.map((layer, index) => {
         const dark =
           layer.darkColor === null ? undefined : ({ "--dark-color": layer.darkColor } as CSSProperties);
@@ -63,7 +136,7 @@ function TrackMarks({ drawing }: { drawing: TrackDrawing }) {
           />
         );
       })}
-    </>
+    </SweepIn>
   );
 }
 

@@ -18,9 +18,9 @@ import {
   featureHeaderParts,
   type FeatureTab,
   type FeatureViewRecord,
-  type LineageCrumb,
 } from "@/lib/feature-view";
 import { featureProteinStructureRql } from "@/lib/protein-structure-view";
+import type { LineageCrumb } from "@/lib/taxonomy-view";
 import {
   featureDomainsRql,
   featureInteractionsRql,
@@ -124,7 +124,7 @@ function breadcrumbs(
 interface FeatureMemberProps {
   feature: FeatureViewRecord;
   /**
-   * The taxa leading the breadcrumb, root first (see `featureLineageCrumbs`).
+   * The taxa leading the breadcrumb, root first (see `lineageCrumbs`).
    * A promise, so a slow taxonomy lookup holds the breadcrumb, not the page.
    */
   lineage: Promise<readonly LineageCrumb[]>;

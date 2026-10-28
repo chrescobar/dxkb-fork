@@ -92,13 +92,15 @@ export class CircularViewerPanelPage {
     contents: string,
   ): Promise<void> {
     await this.chooseOption("Plot type", plot);
-    await this.root()
-      .getByLabel("Data file")
-      .setInputFiles({
-        name: fileName,
-        mimeType: "text/tab-separated-values",
-        buffer: Buffer.from(contents),
-      });
+    // Through the real picker: the "Choose file" button opens the hidden input's.
+    const chooser = this.page.waitForEvent("filechooser");
+    await this.root().getByRole("button", { name: "Data file Choose file" }).click();
+    await (await chooser).setFiles({
+      name: fileName,
+      mimeType: "text/tab-separated-values",
+      buffer: Buffer.from(contents),
+    });
+    await expect(this.root().getByText(fileName, { exact: true })).toBeVisible();
     await this.root().getByRole("button", { name: "Add user track" }).click();
   }
 }

@@ -95,12 +95,17 @@ export function CircularViewerPanel({ genomeId }: CircularViewerPanelProps) {
     // Below `md` the sidebar stacks above a square figure and the card
     // scrolls through both: beside a 320px sidebar a phone's figure would be
     // a sliver. From `md` the sidebar sits beside the figure and scrolls alone.
+    // Both scrollers are `relative`: an absolutely positioned descendant (the
+    // guide link's `sr-only` cue) is placed in its nearest positioned ancestor,
+    // and without one inside the scroller it escapes the scroller's clip and
+    // stretches the page below the screen.
     <div className="flex min-h-0 min-w-0 flex-1 flex-col pt-3 pr-2 sm:pr-3 lg:pr-4">
       <div
         data-testid="circular-viewer"
-        className="flex min-h-0 min-w-0 flex-1 flex-col rounded-t-xl border border-b-0 bg-card text-card-foreground shadow-sm max-md:overflow-y-auto md:flex-row"
+        className="relative flex min-h-0 min-w-0 flex-1 flex-col rounded-t-xl border border-b-0 bg-card text-card-foreground shadow-sm max-md:overflow-y-auto md:flex-row"
       >
-        <aside className="flex flex-col gap-5 border-b p-3 md:w-80 md:shrink-0 md:overflow-y-auto md:border-r md:border-b-0">
+        {/* Its sections (the tracks, the two forms, the actions) are split by rules. */}
+        <aside className="relative flex flex-col divide-y border-b p-3 *:py-3 *:first:pt-0 *:last:pb-0 md:w-80 md:shrink-0 md:overflow-y-auto md:border-r md:border-b-0">
           <CircularViewerTrackList
             tracks={state.tracks}
             data={tracks.data}

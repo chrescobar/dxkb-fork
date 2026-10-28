@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 /** The defaults' colors and a few neutrals, like legacy's palette popup. */
 const swatches = [
@@ -15,11 +16,17 @@ const hexPattern = /^#[0-9a-f]{6}$/i;
 
 export function TrackColorPicker({
   label,
+  hint,
   color,
   darkColor = null,
   onChange,
 }: {
   label: string;
+  /**
+   * What the swatch colors, shown on hover and focus ("Background color"): a
+   * row's two swatches look alike. Hidden from screen readers, which hear `label`.
+   */
+  hint: string;
   color: string | null;
   /** The track's color in a dark theme (`CircularTrack.darkForeground`): the swatch shows it there. */
   darkColor?: string | null;
@@ -61,26 +68,34 @@ export function TrackColorPicker({
         if (open) setDraft(color ?? "");
       }}
     >
-      {/* A 24px target (WCAG 2.5.8) around the 16px swatch it shows. */}
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            aria-label={label}
-            className="grid size-6 place-items-center rounded-sm"
-          >
-            <span
-              className="size-4 rounded-sm border border-foreground/40 bg-(--swatch) dark:bg-(--swatch-dark)"
-              style={
-                {
-                  "--swatch": color ?? "transparent",
-                  "--swatch-dark": darkColor ?? color ?? "transparent",
-                } as CSSProperties
+      {/* A 24px target (WCAG 2.5.8) around the 16px swatch it shows; one
+          element is both the popover's trigger and the tooltip's. */}
+      <Tooltip>
+        <PopoverTrigger
+          render={
+            <TooltipTrigger
+              render={
+                <button
+                  type="button"
+                  aria-label={label}
+                  className="grid size-6 place-items-center rounded-sm"
+                >
+                  <span
+                    className="size-4 rounded-sm border border-foreground/40 bg-(--swatch) dark:bg-(--swatch-dark)"
+                    style={
+                      {
+                        "--swatch": color ?? "transparent",
+                        "--swatch-dark": darkColor ?? color ?? "transparent",
+                      } as CSSProperties
+                    }
+                  />
+                </button>
               }
             />
-          </button>
-        }
-      />
+          }
+        />
+        <TooltipContent aria-hidden="true">{hint}</TooltipContent>
+      </Tooltip>
       <PopoverContent className="w-56">
         <div className="space-y-2">
           <HexColorPicker

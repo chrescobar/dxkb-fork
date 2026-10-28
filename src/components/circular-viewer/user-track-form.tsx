@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, FileUp, Plus } from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import {
   isUserPlotType,
   keepAccessions,
@@ -87,80 +88,117 @@ export function UserTrackForm({
   return (
     <form
       aria-labelledby={`${id}-title`}
-      className="space-y-2"
+      className="space-y-3"
       onSubmit={(event) => {
         event.preventDefault();
         void add();
       }}
     >
-      <div className="flex items-center gap-1">
-        <h2 id={`${id}-title`} className="text-sm font-semibold">Upload your own data</h2>
-        <Popover>
-          <PopoverTrigger
-            render={
-              <Button variant="ghost" size="icon" aria-label="About uploaded tracks">
-                <CircleHelp />
-              </Button>
-            }
-          />
-          <PopoverContent className="w-80">
-            <div className="space-y-2 text-xs">
-              <p>
-                To show your data as Tiles, upload a text file with accession, start and end
-                positions separated by tabs, for example <code>NC_000962&#9;34&#9;1524</code>.
-              </p>
-              <p>
-                For a Line plot, Histogram or Heatmap, add a fourth column with a number, for
-                example <code>NC_000962&#9;3596001&#9;3598000&#9;0.6395</code>.
-              </p>
-            </div>
-          </PopoverContent>
-        </Popover>
+      {/* A heading or label sits 8px above its control; fields are 12px apart. */}
+      <div className="space-y-2">
+        <div className="flex h-6 items-center gap-1">
+          <h2 id={`${id}-title`} className="text-base font-semibold">Upload your own data</h2>
+          <Popover>
+            <PopoverTrigger
+              render={
+                <Button variant="ghost" size="icon-xs" aria-label="About uploaded tracks">
+                  <CircleHelp className="size-4" />
+                </Button>
+              }
+            />
+            <PopoverContent className="w-80">
+              <div className="space-y-2 text-xs">
+                <p>
+                  To show your data as Tiles, upload a text file with accession, start and end
+                  positions separated by tabs, for example <code>NC_000962&#9;34&#9;1524</code>.
+                </p>
+                <p>
+                  For a Line plot, Histogram or Heatmap, add a fourth column with a number, for
+                  example <code>NC_000962&#9;3596001&#9;3598000&#9;0.6395</code>.
+                </p>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <Select
+          items={plotItems}
+          value={plot}
+          onValueChange={(value) => {
+            if (isUserPlotType(value)) setPlot(value);
+          }}
+        >
+          <SelectTrigger size="sm" aria-label="Plot type">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {Object.entries(plotItems).map(([value, text]) => (
+                <SelectItem key={value} value={value}>{text}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
-      <Select
-        items={plotItems}
-        value={plot}
-        onValueChange={(value) => {
-          if (isUserPlotType(value)) setPlot(value);
-        }}
-      >
-        <SelectTrigger size="sm" aria-label="Plot type">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {Object.entries(plotItems).map(([value, text]) => (
-              <SelectItem key={value} value={value}>{text}</SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      <div className="space-y-1">
-        <Label htmlFor={`${id}-file`}>Data file</Label>
-        <Input
+      {/* A button for the browser's file picker: the native control's "Choose
+          File" reads as plain text on the card. The input stays in the form,
+          hidden, and the button opens it; the name beside it says what is chosen. */}
+      <div className="space-y-2">
+        <Label id={`${id}-file-label`} htmlFor={`${id}-file-button`}>
+          Data file
+        </Label>
+        <input
           ref={fileInput}
-          id={`${id}-file`}
           type="file"
           accept={userFileAccept}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="hidden"
           onChange={(event) => {
             setFile(event.target.files?.[0] ?? null);
           }}
         />
+        <div className="flex min-w-0 items-center gap-2">
+          <Button
+            type="button"
+            size="sm"
+            id={`${id}-file-button`}
+            aria-labelledby={`${id}-file-label ${id}-file-action`}
+            aria-describedby={`${id}-file-name`}
+            className="shrink-0"
+            onClick={() => {
+              fileInput.current?.click();
+            }}
+          >
+            <FileUp aria-hidden="true" />
+            <span id={`${id}-file-action`}>Choose file</span>
+          </Button>
+          <span
+            id={`${id}-file-name`}
+            title={file?.name}
+            className={file === null ? "min-w-0 truncate text-sm text-muted-foreground" : "min-w-0 truncate text-sm"}
+          >
+            {file?.name ?? "No file chosen"}
+          </span>
+        </div>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-2">
         <Label htmlFor={`${id}-name`}>Track name (optional)</Label>
-        <Input
-          id={`${id}-name`}
-          value={name}
-          placeholder="Defaults to User track N"
-          onChange={(event) => {
-            setName(event.target.value);
-          }}
-        />
+        {/* The service forms' inline add button (`ServiceAddButton`'s look), but a
+            submit: Enter in a field adds the track too. */}
+        <div className="flex gap-2">
+          <Input
+            id={`${id}-name`}
+            value={name}
+            placeholder="Defaults to User track N"
+            onChange={(event) => {
+              setName(event.target.value);
+            }}
+          />
+          <Button type="submit" variant="soft" size="icon" aria-label="Add user track" disabled={file === null || genomeAccessions === undefined || reading}>
+            {reading ? <Spinner /> : <Plus />}
+          </Button>
+        </div>
       </div>
-      <Button type="submit" size="sm" disabled={file === null || genomeAccessions === undefined || reading}>
-        Add user track
-      </Button>
     </form>
   );
 }

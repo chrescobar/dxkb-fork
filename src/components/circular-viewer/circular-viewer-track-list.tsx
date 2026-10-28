@@ -66,7 +66,7 @@ export function CircularViewerTrackList({ tracks, data, gcWindowSize, dispatch, 
   const id = useId();
   return (
     <section aria-labelledby={`${id}-title`}>
-      <h2 id={`${id}-title`} className="mb-1 text-sm font-semibold">
+      <h2 id={`${id}-title`} className="mb-2 text-base font-semibold">
         Available tracks
       </h2>
       <ul className="divide-y">
@@ -76,11 +76,14 @@ export function CircularViewerTrackList({ tracks, data, gcWindowSize, dispatch, 
           const error = failure?.error ?? (state?.status === "error" ? state.error : undefined);
           const description = trackDescription(track, gcWindowSize);
           return (
-            <li key={track.id} aria-label={track.title} className="py-1">
-              <div className="flex items-center gap-2">
+            <li key={track.id} aria-label={track.title} className="py-0.5">
+              {/* One height for every row, with or without its show and remove buttons
+                  (24px targets, WCAG 2.5.8). */}
+              <div className="flex h-7 items-center gap-2">
                 <div className="flex shrink-0 items-center gap-0.5">
                   <TrackColorPicker
                     label={`${track.title} background color`}
+                    hint="Background color"
                     color={track.background}
                     onChange={(color) => {
                       dispatch({ type: "setBackground", id: track.id, color });
@@ -89,6 +92,7 @@ export function CircularViewerTrackList({ tracks, data, gcWindowSize, dispatch, 
                   {canSetForeground(track) && (
                     <TrackColorPicker
                       label={`${track.title} color`}
+                      hint="Track color"
                       color={track.foreground}
                       darkColor={track.darkForeground}
                       onChange={(color) => {
@@ -127,23 +131,23 @@ export function CircularViewerTrackList({ tracks, data, gcWindowSize, dispatch, 
                   <>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-xs"
                       aria-label={`${track.visible ? "Hide" : "Show"} ${track.title}`}
                       onClick={() => {
                         dispatch({ type: "toggle", id: track.id });
                       }}
                     >
-                      {track.visible ? <Eye /> : <EyeOff />}
+                      {track.visible ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-xs"
                       aria-label={`Remove ${track.title}`}
                       onClick={() => {
                         dispatch({ type: "remove", id: track.id });
                       }}
                     >
-                      <X />
+                      <X className="size-4" />
                     </Button>
                   </>
                 )}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { Suspense, use, type ReactNode } from "react";
 import { CircularViewerPanel } from "@/components/circular-viewer";
 import { GenomeBrowserPanel } from "@/components/genome-browser";
 import { viewIcons } from "@/components/views/view-icons";
@@ -19,7 +19,7 @@ import {
 } from "@/lib/genome-view";
 import { eq } from "@/lib/data-api";
 import { featureListDefaultFilters } from "@/lib/feature-view";
-import { isTaxonId } from "@/lib/taxonomy-view";
+import type { LineageCrumb } from "@/lib/taxonomy-view";
 import { taxonomyHref } from "@/lib/views/hrefs";
 import {
   genomeDomainsRql,
@@ -30,37 +30,26 @@ import {
 import { genomeChildCollections } from "../child-tabs";
 import { GenomeOverview } from "./genome-overview";
 
-function lineage(genome: GenomeViewRecord) {
-  const names = Array.isArray(genome.taxon_lineage_names)
-    ? genome.taxon_lineage_names
-    : genome.taxon_lineage_names?.split(",").map((name) => name.trim());
-  const ids = Array.isArray(genome.taxon_lineage_ids)
-    ? genome.taxon_lineage_ids
-    : genome.taxon_lineage_ids == null
-      ? []
-      : String(genome.taxon_lineage_ids).split(",");
-  if (!names?.length) return null;
+interface CrumbTrailProps {
+  genome: GenomeViewRecord;
+  lineage: readonly LineageCrumb[];
+}
+
+/**
+ * BV-BRC's Genome View header: the taxon lineage, root first (see
+ * `lineageCrumbs`), then the genome's name in bold.
+ */
+function CrumbTrail({ genome, lineage }: CrumbTrailProps) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-1 text-sm">
-      <Link
-        className="text-muted-foreground transition-colors hover:text-foreground"
-        href="/genome"
-      >
-        Genomes
-      </Link>
-      <span className="text-muted-foreground/50 select-none">»</span>
-      {names.map((name, index) => (
-        <span key={ids[index] ?? name} className="contents">
-          {isTaxonId(String(ids[index])) ? (
-            <Link
-              className="text-muted-foreground transition-colors hover:text-foreground"
-              href={taxonomyHref(String(ids[index]))}
-            >
-              {name}
-            </Link>
-          ) : (
-            <span className="text-muted-foreground">{name}</span>
-          )}
+      {lineage.map(({ taxonId, name }) => (
+        <span key={taxonId} className="contents">
+          <Link
+            className="text-muted-foreground transition-colors hover:text-foreground"
+            href={taxonomyHref(taxonId)}
+          >
+            {name}
+          </Link>
           <span className="text-muted-foreground/50 select-none">»</span>
         </span>
       ))}
@@ -68,6 +57,32 @@ function lineage(genome: GenomeViewRecord) {
         {genome.genome_name ?? genome.genome_id}
       </h1>
     </div>
+  );
+}
+
+function LineageCrumbTrail({
+  genome,
+  lineage,
+}: {
+  genome: GenomeViewRecord;
+  lineage: Promise<readonly LineageCrumb[]>;
+}) {
+  return <CrumbTrail genome={genome} lineage={use(lineage)} />;
+}
+
+/**
+ * The lineage is a second lookup (the genome record names its lineage but
+ * not the ranks), so it streams in: until it lands the breadcrumb holds the
+ * genome's name alone.
+ */
+function breadcrumbs(
+  genome: GenomeViewRecord,
+  lineage: Promise<readonly LineageCrumb[]>,
+) {
+  return (
+    <Suspense fallback={<CrumbTrail genome={genome} lineage={[]} />}>
+      <LineageCrumbTrail genome={genome} lineage={lineage} />
+    </Suspense>
   );
 }
 
@@ -86,9 +101,12 @@ const genomeTabIcons: Record<GenomeTab, ReactNode> = {
 
 export function GenomeMember({
   genome,
+  lineage,
   activeTab,
 }: {
   genome: GenomeViewRecord;
+  /** The taxa leading the breadcrumb, root first (see `lineageCrumbs`). */
+  lineage: Promise<readonly LineageCrumb[]>;
   activeTab: GenomeTab;
 }) {
   let content = <GenomeOverview genome={genome} />;
@@ -166,7 +184,7 @@ export function GenomeMember({
     <EntityViewShell
       viewLabel="Genome View"
       title={genome.genome_name ?? genome.genome_id}
-      breadcrumbs={lineage(genome)}
+      breadcrumbs={breadcrumbs(genome, lineage)}
       headerContent={`Genome ${genome.genome_id}`}
       metadataSummary={
         activeTab === "overview" ? (

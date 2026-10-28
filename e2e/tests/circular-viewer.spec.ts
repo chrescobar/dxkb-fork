@@ -74,6 +74,30 @@ test.describe("Circular Viewer", () => {
     ).toHaveAttribute("href", `/feature/${forwardFeature.featureId}`);
   });
 
+  test("fits the screen: the sidebar scrolls, the page does not", async ({
+    page,
+  }) => {
+    // Shorter than the sidebar's content, so the sidebar must scroll inside
+    // the card. Its guide link's sr-only cue is absolutely positioned and
+    // used to escape that scroller, stretching the page below the screen.
+    await page.setViewportSize({ width: 1000, height: 620 });
+    const viewer = new CircularViewerPanelPage(page);
+    await viewer.goto(genomeId);
+    await viewer.expectTrackReady("cds-forward");
+    const sidebar = viewer.root().locator("aside");
+    await expect
+      .poll(() => sidebar.evaluate((node) => node.scrollHeight > node.clientHeight))
+      .toBe(true);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollHeight - window.innerHeight,
+      ),
+    ).toBeLessThanOrEqual(0);
+    const card = await viewer.root().boundingBox();
+    if (!card) throw new Error("The Circular Viewer card has no layout box.");
+    expect(card.y + card.height).toBeLessThanOrEqual(620);
+  });
+
   test("the keyboard reaches an item and opens its details", async ({
     page,
   }) => {

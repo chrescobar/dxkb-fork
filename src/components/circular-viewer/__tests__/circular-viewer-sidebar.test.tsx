@@ -101,9 +101,19 @@ describe("CircularViewerTrackList", () => {
 });
 
 describe("TrackColorPicker", () => {
+  it("names what the swatch colors on hover, and still opens the picker on click", async () => {
+    render(<TrackColorPicker label="GC Content background color" hint="Background color" color="#EBD4F4" onChange={vi.fn()} />);
+    const trigger = screen.getByRole("button", { name: "GC Content background color" });
+    await userEvent.hover(trigger);
+    // Shown to sighted users only: screen readers hear the trigger's label.
+    expect(await screen.findByText("Background color")).toBeInTheDocument();
+    await userEvent.click(trigger);
+    expect(await screen.findByRole("textbox", { name: "GC Content background color, hex value" })).toBeInTheDocument();
+  });
+
   it("applies a palette swatch and a typed hex value", async () => {
     const onChange = vi.fn();
-    render(<TrackColorPicker label="GC Content background color" color="#EBD4F4" onChange={onChange} />);
+    render(<TrackColorPicker label="GC Content background color" hint="Background color" color="#EBD4F4" onChange={onChange} />);
     const trigger = screen.getByRole("button", { name: "GC Content background color" });
     // A 24px target (WCAG 2.5.8) around its 16px swatch.
     expect(trigger).toHaveClass("size-6");
@@ -126,7 +136,7 @@ describe("TrackColorPicker", () => {
     });
     try {
       const onChange = vi.fn();
-      render(<TrackColorPicker label="AMR Genes color" color="#FF0000" onChange={onChange} />);
+      render(<TrackColorPicker label="AMR Genes color" hint="Track color" color="#FF0000" onChange={onChange} />);
       await userEvent.click(screen.getByRole("button", { name: "AMR Genes color" }));
       const hue = await screen.findByRole("slider", { name: "Hue" });
       // Frames the popover asked for before the drag are not the picker's.
@@ -148,7 +158,7 @@ describe("TrackColorPicker", () => {
   });
 
   it("shows the track's dark color in the swatch in a dark theme", () => {
-    render(<TrackColorPicker label="Contigs/Chromosomes color" color="#000F7D" darkColor="#9FA8FF" onChange={vi.fn()} />);
+    render(<TrackColorPicker label="Contigs/Chromosomes color" hint="Track color" color="#000F7D" darkColor="#9FA8FF" onChange={vi.fn()} />);
     const swatch = screen.getByRole("button", { name: "Contigs/Chromosomes color" }).firstElementChild;
     expect(swatch).toHaveClass("dark:bg-(--swatch-dark)");
     const style = (swatch as HTMLElement | null)?.style;
@@ -170,10 +180,51 @@ describe("CustomTrackForm", () => {
     await userEvent.click(add);
     expect(onAdd).toHaveBeenCalledWith({ type: "RNA", strand: "reverse", keyword: "ribosomal" }, "");
   });
+
+  it("adds from the inline + button's form with Enter, too", async () => {
+    const onAdd = vi.fn();
+    render(<CustomTrackForm onAdd={onAdd} />);
+    // Icon-only beside the track name, named by its aria-label.
+    const add = screen.getByRole("button", { name: "Add custom track" });
+    expect(add).toHaveTextContent("");
+    expect(add).toHaveAttribute("type", "submit");
+    await userEvent.click(screen.getByRole("combobox", { name: "Feature type" }));
+    await userEvent.click(await screen.findByRole("option", { name: "RNA" }));
+    await userEvent.click(screen.getByRole("combobox", { name: "Strand" }));
+    await userEvent.click(await screen.findByRole("option", { name: "Reverse" }));
+    await userEvent.type(screen.getByRole("textbox", { name: "Keyword" }), "ribosomal");
+    await userEvent.type(screen.getByRole("textbox", { name: "Track name (optional)" }), "Ribosomes{Enter}");
+    expect(onAdd).toHaveBeenCalledWith({ type: "RNA", strand: "reverse", keyword: "ribosomal" }, "Ribosomes");
+  });
 });
 
 describe("UserTrackForm", () => {
   const genomeAccessions = new Set(["NC_1"]);
+
+  /** The hidden native input behind the "Choose file" button. */
+  function fileInput(): HTMLInputElement {
+    const input = document.querySelector<HTMLInputElement>('input[type="file"]');
+    if (!input) throw new Error("no file input");
+    return input;
+  }
+
+  it("opens the file picker from a visible button and names the chosen file", async () => {
+    render(<UserTrackForm onAdd={vi.fn()} genomeAccessions={genomeAccessions} />);
+    const button = screen.getByRole("button", { name: "Data file Choose file" });
+    expect(button).toHaveAccessibleDescription("No file chosen");
+    // The native input is out of the tab order and the accessibility tree: the button stands for it.
+    expect(fileInput()).toHaveAttribute("tabindex", "-1");
+    expect(fileInput()).toHaveAttribute("aria-hidden", "true");
+    const click = vi.spyOn(fileInput(), "click");
+    await userEvent.click(button);
+    expect(click).toHaveBeenCalledTimes(1);
+    // The label opens it too.
+    await userEvent.click(screen.getByText("Data file"));
+    expect(click).toHaveBeenCalledTimes(2);
+
+    await userEvent.upload(fileInput(), new File(["NC_1\t1\t100\n"], "tiles.txt", { type: "text/plain" }));
+    expect(button).toHaveAccessibleDescription("tiles.txt");
+  });
 
   beforeEach(() => {
     vi.mocked(toast.error).mockClear();
@@ -191,7 +242,7 @@ describe("UserTrackForm", () => {
       typeof contents === "string"
         ? new File([contents], "scores.tsv", { type: "text/tab-separated-values" })
         : contents;
-    fireEvent.change(screen.getByLabelText("Data file"), { target: { files: [file] } });
+    await userEvent.upload(fileInput(), file);
     await userEvent.click(screen.getByRole("button", { name: "Add user track" }));
     return onAdd;
   }
@@ -278,10 +329,10 @@ describe("UserTrackForm", () => {
     expect(screen.getByRole("button", { name: "Add user track" })).toBeEnabled();
   });
 
-  it("cannot add a file before the genome's sequences are known", () => {
+  it("cannot add a file before the genome's sequences are known", async () => {
     render(<UserTrackForm onAdd={vi.fn()} genomeAccessions={undefined} />);
     const file = new File(["NC_1\t1\t100\n"], "tiles.txt", { type: "text/plain" });
-    fireEvent.change(screen.getByLabelText("Data file"), { target: { files: [file] } });
+    await userEvent.upload(fileInput(), file);
     expect(screen.getByRole("button", { name: "Add user track" })).toBeDisabled();
   });
 });

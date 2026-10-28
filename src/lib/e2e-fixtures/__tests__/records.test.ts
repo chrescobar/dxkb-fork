@@ -19,6 +19,7 @@ import {
 import {
   ambiguousSerologyRecords,
   ambiguousSurveillanceRecords,
+  bacterialGenomeRecord,
   biosetRecord,
   brucellaPpiTotal,
   buildBrucellaPpiRecords,
@@ -53,6 +54,12 @@ describe("canonical E2E fixture records parse with production Zod schemas", () =
 
   it("genomeRecord matches genomeRecordSchema", () => {
     expect(genomeRecordSchema.safeParse(genomeRecord).success).toBe(true);
+  });
+
+  it("bacterialGenomeRecord matches genomeRecordSchema", () => {
+    expect(genomeRecordSchema.safeParse(bacterialGenomeRecord).success).toBe(
+      true,
+    );
   });
 
   it("genomeFeatureRecord matches genomeFeatureRecordSchema", () => {

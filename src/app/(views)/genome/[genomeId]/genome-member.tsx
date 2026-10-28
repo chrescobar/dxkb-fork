@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CircularViewerPanel } from "@/components/circular-viewer";
 import { GenomeBrowserPanel } from "@/components/genome-browser";
 import { viewIcons } from "@/components/views/view-icons";
 import {
@@ -75,6 +76,7 @@ const genomeTabIcons: Record<GenomeTab, ReactNode> = {
   sequences: viewIcons.sequences,
   interactions: viewIcons.interactions,
   "genome-browser": viewIcons.genomeBrowser,
+  "circular-viewer": viewIcons.circularViewer,
   features: viewIcons.features,
   proteins: viewIcons.proteins,
   domains: viewIcons.domainsAndMotifs,
@@ -99,6 +101,8 @@ export function GenomeMember({
     );
   } else if (activeTab === "genome-browser") {
     content = <GenomeBrowserPanel genomeId={genome.genome_id} />;
+  } else if (activeTab === "circular-viewer") {
+    content = <CircularViewerPanel genomeId={genome.genome_id} />;
   } else if (activeTab === "interactions") {
     content = (
       <ResourceChildCollection

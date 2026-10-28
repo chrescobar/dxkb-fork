@@ -94,6 +94,30 @@ export const genomeRecord: GenomeFixtureRecord = {
   ],
 };
 
+/** A bacterial genome for tabs the viral fixture cannot open (the Circular Viewer). */
+export const bacterialGenomeRecord: GenomeFixtureRecord = {
+  genome_id: "83332.12",
+  genome_name: "Mycobacterium tuberculosis H37Rv",
+  strain: "H37Rv",
+  superkingdom: "Bacteria",
+  genome_status: "Complete",
+  genome_quality: "Good",
+  genome_length: 50_000,
+  contigs: 1,
+  cds: 2,
+  collection_year: 1905,
+  isolation_country: "United States",
+  host_common_name: "Human",
+  genbank_accessions: ["NC_E2E001"],
+  taxon_id: 83332,
+  taxon_lineage_ids: [131567, 2, 83332],
+  taxon_lineage_names: [
+    "cellular organisms",
+    "Bacteria",
+    "Mycobacterium tuberculosis H37Rv",
+  ],
+};
+
 export interface GenomeFeatureFixtureRecord {
   feature_id: string;
   patric_id: string;

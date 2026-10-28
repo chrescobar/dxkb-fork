@@ -1,9 +1,9 @@
 /**
- * The Compare Region Viewer's figure as a standalone SVG file. The figure is
- * drawn with theme classes, which mean nothing outside the page, so a copy is
- * resolved under an off-screen light-theme host first: every class becomes
- * the colors and fonts it computes to there. Exports always use DXKB's light
- * theme, whatever the page's. Every color is then written as sRGB: browsers
+ * A viewer's figure (Compare Region, Circular Viewer) as a standalone SVG
+ * file. The figure is drawn with theme classes, which mean nothing outside
+ * the page, so a copy is resolved under an off-screen light-theme host first:
+ * every class becomes the colors and fonts it computes to there. Exports
+ * always use DXKB's light theme, whatever the page's. Every color is then written as sRGB: browsers
  * compute theme tokens and the data colors as `oklch()` / `lab()`, which
  * Illustrator, Office, LibreOffice and many SVG-to-PDF tools cannot read.
  */
@@ -145,12 +145,15 @@ function uppercaseText(copy: SVGSVGElement): void {
 /**
  * Every class as the paint it computes to, then no class. Fonts go on every
  * text and tspan (Compact's genome line sets the strain in a tspan), since
- * they also inherit them from a classed group.
+ * they also inherit them from a classed group: the size too, which a class
+ * such as `text-3xs` sets (the Circular Viewer's position labels), and which
+ * a `font-size` attribute computes to unchanged.
  */
 function resolveClasses(copy: SVGSVGElement): void {
   for (const element of copy.querySelectorAll("text, tspan")) {
     const style = getComputedStyle(element);
     element.setAttribute("font-family", style.fontFamily);
+    element.setAttribute("font-size", style.fontSize);
     element.setAttribute("font-weight", style.fontWeight);
     element.setAttribute("font-style", style.fontStyle);
     element.setAttribute("letter-spacing", style.letterSpacing);
@@ -173,7 +176,7 @@ function resolveClasses(copy: SVGSVGElement): void {
  * back in place, every theme class resolved to light-theme colors, and every
  * color written as sRGB through `toSrgb` (tests pass one; jsdom has no canvas).
  */
-export function exportCompareRegionFigure(
+export function exportSvgFigure(
   svg: SVGSVGElement,
   fileName: string,
   toSrgb: ToSrgb = canvasToSrgb(),

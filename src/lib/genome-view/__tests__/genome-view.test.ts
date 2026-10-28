@@ -22,6 +22,8 @@ import {
   isGenomeId,
   parseGenomeCollectionState,
   recentGenomeRql,
+  supportsCircularViewer,
+  type GenomeViewRecord,
 } from "@/lib/genome-view";
 import {
   parseCollectionState,
@@ -572,5 +574,51 @@ describe("genomeOverviewScope", () => {
     });
     expect(state.rql?.length).toBeGreaterThan(8000);
     expect(genomeOverviewScope(state)).toEqual({ fieldRql: state.rql });
+  });
+});
+
+describe("Circular Viewer tab", () => {
+  const record = (fields: Partial<GenomeViewRecord>): GenomeViewRecord => ({
+    genome_id: "83332.12",
+    ...fields,
+  });
+
+  it("is offered wherever legacy offered it: not for viruses or eukaryotic hosts", () => {
+    expect(supportsCircularViewer(record({ superkingdom: "Bacteria" }))).toBe(
+      true,
+    );
+    expect(supportsCircularViewer(record({ superkingdom: "Archaea" }))).toBe(
+      true,
+    );
+    expect(supportsCircularViewer(record({ superkingdom: "Viruses" }))).toBe(
+      false,
+    );
+    expect(supportsCircularViewer(record({ superkingdom: "Eukaryota" }))).toBe(
+      false,
+    );
+    expect(
+      supportsCircularViewer(
+        record({ taxon_lineage_names: ["Viruses", "Duplodnaviria"] }),
+      ),
+    ).toBe(false);
+    expect(supportsCircularViewer(record({}))).toBe(true);
+  });
+
+  it("sits after the Genome Browser, takes legacy's tab name, and falls back when disabled", () => {
+    const bacterial = record({ superkingdom: "Bacteria" });
+    const viral = record({ genome_id: "1282460.2049", superkingdom: "Viruses" });
+    const keys = buildGenomeTabs(bacterial).map((tab) => tab.key);
+    expect(keys.indexOf("circular-viewer")).toBe(
+      keys.indexOf("genome-browser") + 1,
+    );
+    expect(canonicalGenomeTab("circular", bacterial)).toBe("circular-viewer");
+    expect(canonicalGenomeTab("circular-viewer", viral)).toBe("overview");
+    expect(
+      buildGenomeTabs(viral).find((tab) => tab.key === "circular-viewer"),
+    ).toMatchObject({
+      enabled: false,
+      disabledReason:
+        "The Circular Viewer is available for bacterial and archaeal genomes only.",
+    });
   });
 });

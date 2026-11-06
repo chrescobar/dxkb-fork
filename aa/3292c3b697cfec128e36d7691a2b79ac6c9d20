@@ -1,0 +1,38 @@
+.github/workflows/pnpm-build.yml
+  s_5844f432e7ca9d::t_065dbb2ef3a0e4 5
+  s_5844f432e7ca9d::t_acf6b9274f55a2 6
+  s_5844f432e7ca9d::t_ee89dcf8d10673 7-8
+.github/workflows/pnpm-test.yml
+  s_5844f432e7ca9d::t_acf6b9274f55a2 6
+  s_5844f432e7ca9d::t_065dbb2ef3a0e4 5
+  s_5844f432e7ca9d::t_d9285ec451c124 7-8
+.github/workflows/pnpm-typecheck.yml
+  s_5844f432e7ca9d::t_065dbb2ef3a0e4 5
+  s_5844f432e7ca9d::t_acf6b9274f55a2 6
+  s_5844f432e7ca9d::t_eddcca12cbcbf4 7-8
+.github/workflows/pnpm-a11y.yml
+  s_5844f432e7ca9d::t_065dbb2ef3a0e4 5,7
+  s_5844f432e7ca9d::t_acf6b9274f55a2 6
+.github/workflows/pnpm-lint.yml
+  s_5844f432e7ca9d::t_acf6b9274f55a2 6
+  s_5844f432e7ca9d::t_065dbb2ef3a0e4 5
+  s_5844f432e7ca9d::t_7a1c8f954439cf 7-8
+.github/workflows/pnpm-e2e.yml
+  s_5844f432e7ca9d::t_065dbb2ef3a0e4 5-7,104-106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "aa3292c3b697cfec128e36d7691a2b79ac6c9d20",
+  "prompts": {},
+  "sessions": {
+    "s_5844f432e7ca9d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "468e4e71-2842-404c-a585-20c5d1a27b28",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

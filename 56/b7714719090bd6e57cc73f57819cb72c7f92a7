@@ -1,0 +1,21 @@
+package.json
+  s_9bc3d0f6e23465::t_5beb89ccdbdb52 166
+pnpm-lock.yaml
+  s_9bc3d0f6e23465::t_d50980845510f2 10-11,15-16,20-21,25-26,30-31,35-36,40-41,46-47,52-53,58-59,64-65,70-71,76-77,82-83,87-88,92-94,99,102,105,108,111,114,117,120,123,126,129,132,135,138,141,143-156
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "56b7714719090bd6e57cc73f57819cb72c7f92a7",
+  "prompts": {},
+  "sessions": {
+    "s_9bc3d0f6e23465": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d93ccbb-dd01-4f6a-8e05-c495525cc9b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+src/components/genome-browser/genome-browser-view.tsx
+  s_9bc3d0f6e23465::t_b4d877675618ea 153-154,167-169,172-177
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_9bc3d0f6e23465::t_76ca017ab7c3ce 107
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_9bc3d0f6e23465::t_76ca017ab7c3ce 81-95,151,159,170-172,259,284-299,301-302
+scripts/auspice-shell.test.ts
+  s_9bc3d0f6e23465::t_de14781a1b926d 42-56
+patches/auspice@3.2.0.patch
+  s_9bc3d0f6e23465::t_e73ec235700626 21-35
+e2e/tests/organisms/auspice.spec.ts
+  s_9bc3d0f6e23465::t_de14781a1b926d 1,76,139-143
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_9bc3d0f6e23465::t_b4d877675618ea 149
+  s_9bc3d0f6e23465::t_de14781a1b926d 35,456-457
+docs/architecture.md
+  s_9bc3d0f6e23465::t_b4d877675618ea 233
+e2e/tests/organisms/archaeopteryx.spec.ts
+  s_9bc3d0f6e23465::t_76ca017ab7c3ce 72,80-82,86,88-92,96,101
+docs/phylogeny-integration.md
+  s_9bc3d0f6e23465::t_76ca017ab7c3ce 15,18,22
+  s_9bc3d0f6e23465::t_de14781a1b926d 34-43,48
+public/auspice-dark.css
+  s_9bc3d0f6e23465::t_de14781a1b926d 268-284,288-292,297-302,306,310-315,375,377-381
+scripts/build-auspice.mjs
+  s_9bc3d0f6e23465::t_de14781a1b926d 120-121,123
+e2e/pages/archaeopteryx-page.ts
+  s_9bc3d0f6e23465::t_76ca017ab7c3ce 76-88,90,92-95
+docs/bvbrc-auspice-nextstrain-integration.md
+  s_9bc3d0f6e23465::t_de14781a1b926d 9-12
+e2e/fixtures/overrides/auspice-basemap.ts
+  s_9bc3d0f6e23465::t_de14781a1b926d 1-47
+e2e/tests/genome-browser.spec.ts
+  s_9bc3d0f6e23465::t_b4d877675618ea 30-31,145,150-153
+pnpm-lock.yaml
+  s_9bc3d0f6e23465::t_08a6afb73c08a8 177,481,14573
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a29392622938d035e5daa1e9839dc8300436261b",
+  "prompts": {},
+  "sessions": {
+    "s_9bc3d0f6e23465": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d93ccbb-dd01-4f6a-8e05-c495525cc9b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

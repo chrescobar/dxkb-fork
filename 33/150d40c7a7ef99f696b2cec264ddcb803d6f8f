@@ -1,0 +1,55 @@
+src/components/views/collection-filters/filters-menu.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 559
+src/components/ui/calendar.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 5,29,48-60
+public/auspice-dark.css
+  s_9bc3d0f6e23465::t_728ed99b690a0c 61,92-93
+e2e/pages/collection-toolbar.ts
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 170,172
+src/components/shared/data-table-footer.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 103
+src/components/ui/select.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 41
+src/components/views/collection-filters/__tests__/active-filter-pill.test.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 18,21
+src/components/ui/button-variants.ts
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 66
+scripts/build-auspice.mjs
+  s_9bc3d0f6e23465::t_728ed99b690a0c 68-69
+src/components/workspace/__tests__/selection-to-group-dialog-browse.test.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 47-54
+src/components/views/collection-filters/active-filter-pill.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 127
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 213-216
+src/components/workspace/workspace-table-rows.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 50
+src/components/views/collection-filters/__tests__/columns-menu.test.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 90-91,120,207,278
+src/app/(footer)/privacy-policy/components/privacy-sidebar.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 37,39
+src/components/views/collection-filters/columns-menu.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 459-460,466
+src/components/jobs/job-status-pill.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 230-231,239
+src/components/detail-panel/metadata-link.tsx
+  s_9bc3d0f6e23465::t_2852d8b2909e0d 106,117
+docs/phylogeny-integration.md
+  s_9bc3d0f6e23465::t_728ed99b690a0c 38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "33150d40c7a7ef99f696b2cec264ddcb803d6f8f",
+  "prompts": {},
+  "sessions": {
+    "s_9bc3d0f6e23465": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d93ccbb-dd01-4f6a-8e05-c495525cc9b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

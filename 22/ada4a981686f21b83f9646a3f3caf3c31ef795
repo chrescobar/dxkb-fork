@@ -1,0 +1,42 @@
+src/components/ui/__tests__/command-dialog.test.tsx
+  s_9bc3d0f6e23465::t_1a4674858d9540 1,3-7,9-19
+  s_9bc3d0f6e23465::t_2a842d0d736a86 2,8
+.github/workflows/pnpm-a11y.yml
+  s_9bc3d0f6e23465::t_3bd62b81cfcf83 30,106,157,208,259
+.github/workflows/pnpm-e2e.yml
+  s_9bc3d0f6e23465::t_3bd62b81cfcf83 32,105
+e2e/tests/organisms/auspice.spec.ts
+  s_9bc3d0f6e23465::t_5beaa5524f4d2c 6
+  s_9bc3d0f6e23465::t_5d150354064d32 139-150
+e2e/README.md
+  s_9bc3d0f6e23465::t_172d5d9f53479b 282-289
+package.json
+  s_9bc3d0f6e23465::t_d28891f6a0d9b4 121
+.github/workflows/sync-linux-snapshots.yml
+  s_9bc3d0f6e23465::t_3bd62b81cfcf83 17
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_9bc3d0f6e23465::t_5beaa5524f4d2c 36
+  s_9bc3d0f6e23465::t_5d150354064d32 483-484
+src/components/ui/command.tsx
+  s_9bc3d0f6e23465::t_59bb0fddb71e39 60-65
+e2e/support/webgl.ts
+  s_9bc3d0f6e23465::t_5d150354064d32 1-12
+pnpm-lock.yaml
+  s_9bc3d0f6e23465::t_badf73870e2148 357,421,426-427,475,2625-2626,7949-7950,7954-7955,9633,9636,12211,12213,14204,14208,14410-14411,17887,17906,18200,18202,18204,18889,19702
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "22ada4a981686f21b83f9646a3f3caf3c31ef795",
+  "prompts": {},
+  "sessions": {
+    "s_9bc3d0f6e23465": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d93ccbb-dd01-4f6a-8e05-c495525cc9b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

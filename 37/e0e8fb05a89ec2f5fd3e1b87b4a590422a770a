@@ -1,0 +1,23 @@
+src/app/services/(viral-tools)/sars-cov2-genome-analysis/sars-genome-sections.tsx
+  s_a5faa8cfeacc69::t_6ba5cdadbbd523 11,146-150
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_a5faa8cfeacc69::t_1e727cc6363274 45,306-307,309
+src/app/services/(genomics)/variation-analysis/library-input-section.tsx
+  s_a5faa8cfeacc69::t_71684c2a634d54 7,46-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "37e0e8fb05a89ec2f5fd3e1b87b4a590422a770a",
+  "prompts": {},
+  "sessions": {
+    "s_a5faa8cfeacc69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cebfcbcb-6d8d-436e-965d-5b13e86b368c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

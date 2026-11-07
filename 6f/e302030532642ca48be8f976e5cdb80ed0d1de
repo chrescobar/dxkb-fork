@@ -1,0 +1,27 @@
+src/components/jobs/__tests__/jobs-date-filter.test.tsx
+  s_a5faa8cfeacc69::t_b2ceee0c360ca1 63-65,72-74,83-85
+src/components/jobs/jobs-date-filter.tsx
+  s_a5faa8cfeacc69::t_b2ceee0c360ca1 228
+src/components/views/collection-filters/collection-toolbar.tsx
+  s_a5faa8cfeacc69::t_75a4d19549a54a 264-266,273
+  s_a5faa8cfeacc69::t_b2ceee0c360ca1 3,30-32,40,263,267-272,274-287
+src/components/views/collection-filters/__tests__/collection-toolbar.test.tsx
+  s_a5faa8cfeacc69::t_e3e043f310da24 2,4-5
+  s_a5faa8cfeacc69::t_b2ceee0c360ca1 1,3,6-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6fe302030532642ca48be8f976e5cdb80ed0d1de",
+  "prompts": {},
+  "sessions": {
+    "s_a5faa8cfeacc69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cebfcbcb-6d8d-436e-965d-5b13e86b368c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+.github/workflows/pnpm-e2e.yml
+  s_aac12d0e129b3c::t_88ad7ef65263dd 7-11
+src/test-helpers/__tests__/static-imports.test.ts
+  s_aac12d0e129b3c::t_d10c13f4532104 49-71
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_aac12d0e129b3c::t_7c65fd5890e793 732,739-752
+  s_aac12d0e129b3c::t_f8d73fb0566ef7 753-754
+src/app/api/e2e-mock/[...path]/route.ts
+  s_aac12d0e129b3c::t_28ccb00a92b24b 922-941,943,947-959
+src/test-helpers/static-imports.ts
+  s_aac12d0e129b3c::t_7ecc2ef755a897 43
+  s_aac12d0e129b3c::t_c6e86ec1078bb0 3,5,15-19,26-42,44-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "18234b3b51d3976a7ab4dbb54d02b5e0975b188b",
+  "prompts": {},
+  "sessions": {
+    "s_aac12d0e129b3c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fc3d2f27-1282-44c4-b7c5-ad0a94cc17b3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

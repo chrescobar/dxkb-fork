@@ -1,0 +1,20 @@
+src/__tests__/rank-badge-colors.test.ts
+  s_bbb39140f269e7::t_b88008bd42aa33 12-13,16-17
+  s_bbb39140f269e7::t_e4974bd60409a4 9-11,14,18-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3cd03a3753589d980438e35312ea0c55b8c3dd20",
+  "prompts": {},
+  "sessions": {
+    "s_bbb39140f269e7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f21c7e39-e7f6-40e6-b504-9ce7cea07079",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

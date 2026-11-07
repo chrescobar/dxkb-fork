@@ -1,0 +1,23 @@
+src/__tests__/rank-badge-colors.test.ts
+  s_bbb39140f269e7::t_0b50b8c36f9517 29
+  s_bbb39140f269e7::t_8dba4bf2778666 9-11,17-18,24-28,31-32
+e2e/tests/organisms/auspice.spec.ts
+  s_bbb39140f269e7::t_31bc26f0353af0 119-125
+  s_bbb39140f269e7::t_ee2468be869626 161-164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "518faa5b8878748b139f799f87d3ba1a1d3bd310",
+  "prompts": {},
+  "sessions": {
+    "s_bbb39140f269e7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f21c7e39-e7f6-40e6-b504-9ce7cea07079",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

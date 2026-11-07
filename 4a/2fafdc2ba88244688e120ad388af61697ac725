@@ -1,0 +1,40 @@
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_a5faa8cfeacc69::t_12339d17a34ff5 296-299
+src/components/circular-viewer/user-track-form.tsx
+  s_a5faa8cfeacc69::t_12339d17a34ff5 107-108
+src/components/detail-panel/metadata-link-policy.ts
+  s_a5faa8cfeacc69::t_12339d17a34ff5 34-37
+src/components/workspace/folder-picker/use-column-strip-motion.ts
+  s_a5faa8cfeacc69::t_a2742d4ae79346 13,42
+src/components/services/service-output-fields.tsx
+  s_a5faa8cfeacc69::t_e0528da2ef5217 19-22
+src/components/workspace/folder-picker/folder-picker-column.tsx
+  s_a5faa8cfeacc69::t_a2742d4ae79346 298-299,305-306
+src/components/workspace/folder-picker/folder-picker-dialog.tsx
+  s_a5faa8cfeacc69::t_0906884139b359 28
+  s_a5faa8cfeacc69::t_a2742d4ae79346 286,469-472
+src/components/workspace/upload-panel.tsx
+  s_a5faa8cfeacc69::t_a2742d4ae79346 34,138
+src/app/advanced-search/[type]/advanced-search-fields.tsx
+  s_a5faa8cfeacc69::t_ce7015348242c9 17,43,55,130-161,179-192
+src/components/workspace/folder-picker/folder-picker-row.tsx
+  s_a5faa8cfeacc69::t_a2742d4ae79346 18-21,43-44,66
+src/app/services/(viral-tools)/sars-cov2-wastewater-analysis/page.tsx
+  s_a5faa8cfeacc69::t_985e1ce544a031 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4a2fafdc2ba88244688e120ad388af61697ac725",
+  "prompts": {},
+  "sessions": {
+    "s_a5faa8cfeacc69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cebfcbcb-6d8d-436e-965d-5b13e86b368c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+src/lib/forms/tree-threshold-options.ts
+  s_a5faa8cfeacc69::t_48f54b00a7b95e 1-14
+src/components/services/__tests__/tree-threshold-select.test.tsx
+  s_a5faa8cfeacc69::t_ff2f6580d9773c 1-41
+src/app/services/(phylogenomics)/viral-genome-tree/viral-genome-tree-parameters.tsx
+  s_a5faa8cfeacc69::t_421fe5b14fd318 15,174-176,178-179
+src/components/services/tree-threshold-select.tsx
+  s_a5faa8cfeacc69::t_48f54b00a7b95e 1-59
+src/app/services/(protein-tools)/gene-protein-tree/gene-protein-tree-parameters.tsx
+  s_a5faa8cfeacc69::t_421fe5b14fd318 15,29,175-177,179-180
+docs/architecture.md
+  s_a5faa8cfeacc69::t_e635c4524fbdcb 301
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fa04d77acfbd953b7fca25b0ab1cab9f0124cefa",
+  "prompts": {},
+  "sessions": {
+    "s_a5faa8cfeacc69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cebfcbcb-6d8d-436e-965d-5b13e86b368c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

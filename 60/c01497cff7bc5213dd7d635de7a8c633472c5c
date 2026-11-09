@@ -1,0 +1,21 @@
+src/lib/__tests__/browser-storage.server.test.ts
+  s_543195d1911b7d::t_cdc48ab005a656 1-46
+src/lib/browser-storage.ts
+  s_543195d1911b7d::t_01a1e5c89b306e 16-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "60c01497cff7bc5213dd7d635de7a8c633472c5c",
+  "prompts": {},
+  "sessions": {
+    "s_543195d1911b7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02a508f0-d716-4270-9b8a-39eb1fd83e84",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

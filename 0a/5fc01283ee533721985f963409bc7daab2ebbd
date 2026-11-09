@@ -1,0 +1,31 @@
+src/components/navbars/mobile-navbar.tsx
+  s_0f4f854aab5299::t_8b2df405ad575e 3,33,36-52
+  s_0f4f854aab5299::t_41bceedd5b1ebc 53
+docs/architecture.md
+  s_0f4f854aab5299::t_e06898cdebcaa2 323
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_0f4f854aab5299::t_c25982a18773dc 720
+src/__tests__/app-shell-lazy-imports.test.ts
+  s_0f4f854aab5299::t_d521451bd4ac5e 1-22,24-36,38-54
+  s_0f4f854aab5299::t_945cadc8012627 23,37
+src/components/search/command-palette-body.tsx
+  s_0f4f854aab5299::t_327ccd63a574e1 1-256
+src/components/search/command-palette.tsx
+  s_0f4f854aab5299::t_68060671b52a43 3-4,8-17,21-23,43,48-49,60,63-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0a5fc01283ee533721985f963409bc7daab2ebbd",
+  "prompts": {},
+  "sessions": {
+    "s_0f4f854aab5299": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b28eb01f-0c40-48e8-a80e-0ff43fb21d3c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

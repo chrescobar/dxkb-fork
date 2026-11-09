@@ -1,0 +1,63 @@
+.claude/rules/testing.md
+  s_543195d1911b7d::t_fa79ad0c92dfef 5
+.devcontainer/devcontainer.json
+  s_543195d1911b7d::t_6bc7d42f58173b 6
+.github/workflows/e2e-har-refresh.yml
+  s_543195d1911b7d::t_395914d49c893f 54,139
+.github/workflows/pnpm-a11y.yml
+  s_543195d1911b7d::t_2da7731568bb43 42,45,118,121,169,172,220,223,271,274
+.github/workflows/pnpm-build.yml
+  s_543195d1911b7d::t_b5a6f740184206 32
+.github/workflows/pnpm-e2e.yml
+  s_543195d1911b7d::t_be8988ee30c117 56,59,133,136
+.github/workflows/pnpm-lint.yml
+  s_543195d1911b7d::t_b867fd37dff3c9 32
+.github/workflows/pnpm-test.yml
+  s_543195d1911b7d::t_352aef9daeec5a 32
+.github/workflows/pnpm-typecheck.yml
+  s_543195d1911b7d::t_e539066aaad57a 32
+.github/workflows/sync-linux-snapshots.yml
+  s_543195d1911b7d::t_b283a4a71a66e2 28,31
+.nvmrc
+  s_543195d1911b7d::t_5d70cc988d77a6 1
+AGENTS.md
+  s_543195d1911b7d::t_fc0503b3876553 19
+README.md
+  s_543195d1911b7d::t_7220181def4a13 9,11-12
+docs/phylogeny-integration.md
+  s_543195d1911b7d::t_986ba106a4da17 30,44-45
+docs/troubleshooting/auth-login-issues.html
+  s_543195d1911b7d::t_6f80965b8c0c87 569
+package.json
+  s_543195d1911b7d::t_ec3a1407f2bed6 129
+patches/auspice@3.2.0.patch
+  s_543195d1911b7d::t_1d149591569844 70,73-109
+patches/babel-plugin-lodash@3.3.4.patch
+  s_543195d1911b7d::t_65a9bacd1ddf67 1-15
+pnpm-lock.yaml
+  s_543195d1911b7d::t_6292ac41253d9d 181-182,362,455-456,474,477,480,486,510,534,537,4419-4420,9148-9149,11137,11139-11140,11142,11144,11148,11154,11158,11160,13857,13889,13899,13903,13949,13965,14002,14004,14008,14045,14050,14054,14342,14345,14349,14351-14352,14355,14362,14365,14371,14391,14393,14404,14410-14411,14711,14726-14727,14733,14735,14738,14757,14763,14767,14788,14790,14793,14842,14849,14851,15145,15148,15214,15221,15334,15345,16765,16773,17082,17286,17289,17822,17825,17827,17835,17935,17937,17987,18009,18042,18046,18978,18985,19075,19106,19590,19744,19752,19764,19769,19772,19789,19792-19793,19849,19854,19856,19875,19889-19890,20089,20094
+pnpm-workspace.yaml
+  s_543195d1911b7d::t_66e018b728c3bf 46
+src/lib/__tests__/recent-workspace-folders.test.ts
+  s_543195d1911b7d::t_880392ddd40127 8
+src/test-helpers/storage.ts
+  s_543195d1911b7d::t_e8d1194538df3f 2-4
+vitest.setup.ts
+  s_543195d1911b7d::t_8c4775e5434857 4-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1e0a7371b2181d36583ccbb096712c415991ad49",
+  "prompts": {},
+  "sessions": {
+    "s_543195d1911b7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02a508f0-d716-4270-9b8a-39eb1fd83e84",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

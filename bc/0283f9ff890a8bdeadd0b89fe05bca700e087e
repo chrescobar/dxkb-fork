@@ -1,0 +1,37 @@
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_0f4f854aab5299::t_d5d9bdd3f2cf9a 41-42
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  s_0f4f854aab5299::t_584690aaf7f337 4-8
+src/components/services/form-ui/__tests__/service-number-input.test.tsx
+  s_0f4f854aab5299::t_18ce4ba0a5ff81 1-30
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_0f4f854aab5299::t_d5d9bdd3f2cf9a 37-38
+src/__tests__/service-form-imports.test.ts
+  s_0f4f854aab5299::t_d88b74618ef5b7 1-47
+docs/architecture.md
+  s_0f4f854aab5299::t_d5d9bdd3f2cf9a 296,338
+src/app/services/(metagenomics)/metagenomic-binning/metagenomic-binning-parameters-card.tsx
+  s_0f4f854aab5299::t_d5d9bdd3f2cf9a 24-25
+src/app/services/(genomics)/genome-assembly/assembly-sections.tsx
+  s_0f4f854aab5299::t_d5d9bdd3f2cf9a 37
+src/app/services/(genomics)/genome-alignment/genome-alignment-sections.tsx
+  s_0f4f854aab5299::t_d5d9bdd3f2cf9a 28
+src/components/services/form-ui/service-number-input.tsx
+  s_0f4f854aab5299::t_e8eacb23e6af81 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc0283f9ff890a8bdeadd0b89fe05bca700e087e",
+  "prompts": {},
+  "sessions": {
+    "s_0f4f854aab5299": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b28eb01f-0c40-48e8-a80e-0ff43fb21d3c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

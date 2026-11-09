@@ -1,0 +1,43 @@
+src/components/copilot/copilot-composer.tsx
+  s_0f4f854aab5299::t_29a2a309cd03d7 19
+src/components/workspace/workspace-object-selector.tsx
+  s_0f4f854aab5299::t_4bfb427ef65727 119-121
+  s_0f4f854aab5299::t_a81f3e7c9096c7 470,473,478
+  s_0f4f854aab5299::t_cff0a4395a6d3c 15-18
+src/components/workspace/file-viewer/file-viewer-content.tsx
+  s_0f4f854aab5299::t_43ca14cfe01da9 3,5,14-27
+  s_0f4f854aab5299::t_0ef409851fd097 28
+src/__tests__/workspace-lazy-imports.test.ts
+  s_0f4f854aab5299::t_33fe2b9f955e2b 1-82
+src/components/views/collection-selection-actions.tsx
+  s_0f4f854aab5299::t_0e4e370627a22e 3,129-147,192-193,307,316,443
+src/components/workspace/folder-picker/folder-picker-dialog-lazy.tsx
+  s_0f4f854aab5299::t_e30cc18d3516c9 1-24
+docs/architecture.md
+  s_0f4f854aab5299::t_d9b4edd369eea3 206
+src/components/workspace/file-viewer/viewers/zoom-pan-frame.tsx
+  s_0f4f854aab5299::t_175ec3cf0d4da1 1-68
+src/components/workspace/workspace-object-selector-view.tsx
+  s_0f4f854aab5299::t_41e14e2d37cd20 136-137,180-186
+src/components/workspace/file-viewer/viewers/zoomable-image.tsx
+  s_0f4f854aab5299::t_175ec3cf0d4da1 4,7-16,21-24,36-46
+  s_0f4f854aab5299::t_077dd852796c9a 17-20
+src/components/workspace/file-viewer/viewers/__tests__/zoomable-image.test.tsx
+  s_0f4f854aab5299::t_3f003f9d9ca840 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a8a6413befe43c7a7d0b21eac13785bf4e0593b9",
+  "prompts": {},
+  "sessions": {
+    "s_0f4f854aab5299": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b28eb01f-0c40-48e8-a80e-0ff43fb21d3c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

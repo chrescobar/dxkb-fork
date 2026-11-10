@@ -1,0 +1,54 @@
+src/components/views/resource-collection-actions.tsx
+  s_0f4f854aab5299::t_f377cefae62ad7 876
+  s_0f4f854aab5299::t_118ef04dc583ad 595-596
+  s_0f4f854aab5299::t_30f655ae576891 890
+src/components/views/collection-copy-dialog.tsx
+  s_0f4f854aab5299::t_53e0d480e79d7e 3,26-27,31-32,64,108
+  s_0f4f854aab5299::t_5884d43e05455a 28-30
+e2e/tests/resource-collection-selection.spec.ts
+  s_0f4f854aab5299::t_ac01acfbbe7495 86-126
+  s_0f4f854aab5299::t_15f0610a0741bc 8
+src/components/views/collection-selection-actions.tsx
+  s_0f4f854aab5299::t_a325f4f7b46e78 426-430,442,452,458
+  s_0f4f854aab5299::t_68ffdab7cfd772 199-202
+src/components/views/__tests__/collection-selection-actions-focus.test.tsx
+  s_0f4f854aab5299::t_c2471f8f677cdc 41-42,47-51
+  s_0f4f854aab5299::t_925629067f0d71 1-40,43-46,52-144,170-190
+  s_0f4f854aab5299::t_21a3dddaac4568 145-169
+src/components/workspace/selection-to-group-dialog.tsx
+  s_0f4f854aab5299::t_53e0d480e79d7e 36-37,41-42,99,292,308-311
+  s_0f4f854aab5299::t_5884d43e05455a 38-40
+e2e/pages/resource-collection-page.ts
+  s_0f4f854aab5299::t_8b3018d36a6b1d 121-125
+src/components/search/search-action-bar.tsx
+  s_0f4f854aab5299::t_234fd304f29ac1 43-48,64
+  s_0f4f854aab5299::t_4e1bc79d81e689 129
+  s_0f4f854aab5299::t_d35e3817fcab85 3
+  s_0f4f854aab5299::t_4e811a20654966 49-51
+e2e/tests/taxonomy-view.spec.ts
+  s_0f4f854aab5299::t_afd3f7bcb2c450 83-89
+docs/architecture.md
+  s_0f4f854aab5299::t_5b79feeba93992 260
+src/components/views/selection-service-chooser.tsx
+  s_0f4f854aab5299::t_53e0d480e79d7e 3,37-38,42-43,180,207
+  s_0f4f854aab5299::t_5884d43e05455a 39-41
+src/components/views/taxonomy-service-chooser.tsx
+  s_0f4f854aab5299::t_53e0d480e79d7e 3,20-21,25-26,33,46
+  s_0f4f854aab5299::t_5884d43e05455a 22-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9aacc1dc18ea8d089f2139260042de80a4eff7d0",
+  "prompts": {},
+  "sessions": {
+    "s_0f4f854aab5299": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b28eb01f-0c40-48e8-a80e-0ff43fb21d3c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+src/components/ui/message-scroller.tsx
+  s_63d88b74b21bf2::t_a2fe5b2a8703eb 26-27,67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "416376e187cd799083d10e1d02652f3928ad314b",
+  "prompts": {},
+  "sessions": {
+    "s_63d88b74b21bf2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a43df924-8143-4aea-a055-1c0b131a6d2a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+src/components/copilot/copilot-progress.tsx
+  s_63d88b74b21bf2::t_44cda1fce28462 32
+src/components/ui/message-scroller.tsx
+  s_63d88b74b21bf2::t_c6f10661f47cd3 22-26,35,66
+AGENTS.md
+  s_63d88b74b21bf2::t_7465bd5cc3f116 71
+src/components/copilot/__tests__/copilot-transcript.test.tsx
+  s_63d88b74b21bf2::t_f459d69207dc03 267-340
+src/components/ui/button-variants.ts
+  s_63d88b74b21bf2::t_51e59b35f04697 79-85
+src/components/copilot/copilot-panel-header.tsx
+  s_63d88b74b21bf2::t_44cda1fce28462 146,154
+src/components/ui/message.tsx
+  s_63d88b74b21bf2::t_20409753d64e44 86
+  s_63d88b74b21bf2::t_c6f10661f47cd3 32-36,42,76-80,84
+src/components/copilot/copilot-session-list.tsx
+  s_63d88b74b21bf2::t_650cfbbd710acd 108
+  s_63d88b74b21bf2::t_13adc649ad6369 131
+src/components/copilot/copilot-message.tsx
+  s_63d88b74b21bf2::t_fe1eeccc225641 195-198,253-260,264,310,317-318,342,366-367,373-376,397,402-405
+src/components/copilot/copilot-transcript.tsx
+  s_63d88b74b21bf2::t_fe1eeccc225641 43,147-159,186,202-203
+src/components/copilot/copilot-composer.tsx
+  s_63d88b74b21bf2::t_a8af23965e144d 191,205-209
+  s_63d88b74b21bf2::t_20409753d64e44 13,175
+  s_63d88b74b21bf2::t_44cda1fce28462 21-24,182,184-190,192-204,389-390
+  s_63d88b74b21bf2::t_97833ac4f5eed3 20
+src/components/ui/dropdown-menu.tsx
+  s_63d88b74b21bf2::t_00620813e4281f 116-120
+  s_63d88b74b21bf2::t_766910a55ae06f 136,161,207,262
+src/components/copilot/copilot-markdown.tsx
+  s_63d88b74b21bf2::t_44cda1fce28462 110
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac736b8a12d3d8773779acfa4041ee55989a08c2",
+  "prompts": {},
+  "sessions": {
+    "s_63d88b74b21bf2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a43df924-8143-4aea-a055-1c0b131a6d2a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

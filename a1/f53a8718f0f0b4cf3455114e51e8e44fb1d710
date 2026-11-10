@@ -1,0 +1,28 @@
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_0f4f854aab5299::t_cc673492b4bfb5 720-729
+e2e/tests/taxonomy-view.spec.ts
+  s_0f4f854aab5299::t_cc673492b4bfb5 83
+e2e/tests/resource-collection-selection.spec.ts
+  s_0f4f854aab5299::t_cc673492b4bfb5 90-91,117
+e2e/pages/resource-collection-page.ts
+  s_0f4f854aab5299::t_cc673492b4bfb5 126-144
+e2e/pages/taxonomy-collection-page.ts
+  s_0f4f854aab5299::t_cc673492b4bfb5 107-110,112,117-128
+  s_0f4f854aab5299::t_b7d128f3339ebc 129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a1f53a8718f0f0b4cf3455114e51e8e44fb1d710",
+  "prompts": {},
+  "sessions": {
+    "s_0f4f854aab5299": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b28eb01f-0c40-48e8-a80e-0ff43fb21d3c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+e2e/tests/genome-view.spec.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 9,144-153
+  s_205e8b8cc331ce::t_757159679b33ba 154-155
+src/lib/data-api/__tests__/rql.test.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 37-73,284-299
+e2e/pages/index.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 29
+src/lib/genome-view/query.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 43-57,59,61-62
+  s_205e8b8cc331ce::t_5c5d35274ec165 58,60
+src/lib/views/__tests__/collection-state.test.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 263-307
+docs/architecture.md
+  s_205e8b8cc331ce::t_0db6d4e2917583 217,222
+src/lib/views/collection-state.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 62-66,70,219,222
+e2e/pages/site-chrome.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 1-53
+src/lib/views/__tests__/facet-filters.test.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 1-85
+src/lib/data-api/rql.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 291-293,295-298,300-302
+e2e/tests/resource-collection-facets.spec.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 33-37,277-334
+  s_205e8b8cc331ce::t_0241ac7417eafc 335-336
+src/components/footers/footer.tsx
+  s_205e8b8cc331ce::t_0db6d4e2917583 92
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 75-100
+src/lib/serology-view/__tests__/serology-view.test.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 80-88
+src/app/globals.css
+  s_205e8b8cc331ce::t_5c5d35274ec165 422-423
+  s_205e8b8cc331ce::t_0db6d4e2917583 424-427
+e2e/tests/public.spec.ts
+  s_205e8b8cc331ce::t_0db6d4e2917583 6,47-60
+  s_205e8b8cc331ce::t_a98059ca4f8246 61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b1128b5c5a27dfc8b78c313e2a0cadd18d4b086d",
+  "prompts": {},
+  "sessions": {
+    "s_205e8b8cc331ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9d048d65-be76-4c70-94ed-f045fa4b4366",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

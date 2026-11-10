@@ -1,0 +1,19 @@
+src/components/copilot/__tests__/copilot-transcript.test.tsx
+  s_63d88b74b21bf2::t_dcd2430924370a 124-127,189-192,205-210
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9772fd018962d9a3f6d214fcfbcdc54a021f2b57",
+  "prompts": {},
+  "sessions": {
+    "s_63d88b74b21bf2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a43df924-8143-4aea-a055-1c0b131a6d2a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

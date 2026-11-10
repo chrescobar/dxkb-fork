@@ -1,0 +1,27 @@
+e2e/tests/genome-view.spec.ts
+  s_2f35b7487f3f62::t_10a36a0bc6496d 154
+  s_2f35b7487f3f62::t_6b213d7cc976d8 9
+e2e/tests/public.spec.ts
+  s_2f35b7487f3f62::t_2c6cdc3b09d642 6
+  s_2f35b7487f3f62::t_d943b9d8b640f6 54,56-59
+e2e/pages/site-chrome.ts
+  s_2f35b7487f3f62::t_2438ef42b7271a 1-53
+e2e/pages/index.ts
+  s_2f35b7487f3f62::t_a4774522e66aa7 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f5e82f331bb436b21d2d13f11641698256f7fba2",
+  "prompts": {},
+  "sessions": {
+    "s_2f35b7487f3f62": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7d8baa9a-6fde-4b06-bfdc-ad0a618adc90",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

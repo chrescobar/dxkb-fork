@@ -1,0 +1,23 @@
+src/lib/data-api/rql.ts
+  s_2f35b7487f3f62::t_0f42aebe6a2c6f 307-308,311-312
+src/lib/data-api/__tests__/rql.test.ts
+  s_2f35b7487f3f62::t_97583ea3abd3ab 55-63
+docs/architecture.md
+  s_2f35b7487f3f62::t_a875041000f0dd 217
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c2fd8ce7ea38e914a029b705b90cf9a594426534",
+  "prompts": {},
+  "sessions": {
+    "s_2f35b7487f3f62": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7d8baa9a-6fde-4b06-bfdc-ad0a618adc90",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

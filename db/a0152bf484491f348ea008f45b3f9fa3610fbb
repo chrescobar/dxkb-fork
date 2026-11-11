@@ -1,0 +1,217 @@
+src/lib/taxonomy-view/lineage-server.ts
+  s_37c7bb7c8dbfbf::t_bd6b71c1897573 1-3,18-21
+src/app/api/data/search/__tests__/route.test.ts
+  s_16548dd7411b3b::t_9ad0ffbe2ed27a 199-223
+src/lib/data-api/__tests__/repository-upstream-failures.test.ts
+  s_16548dd7411b3b::t_9ad0ffbe2ed27a 161-173,175-195,199-218,220-223
+  s_16548dd7411b3b::t_03b8591f03986b 174
+  s_16548dd7411b3b::t_0040dee1f4ed9b 196-198,219
+src/lib/data-api/__tests__/repository.test.ts
+  s_16548dd7411b3b::t_0040dee1f4ed9b 468-495,524-542
+  s_16548dd7411b3b::t_64353acb22b15a 496-523
+src/lib/services/__tests__/statistics.test.ts
+  s_37c7bb7c8dbfbf::t_8cd7c678fced41 5,286,314,322,366
+  s_37c7bb7c8dbfbf::t_e1bb7d18b17863 246-263,275,297,300-303,306,308-313,315-319,323,328,350,353-354,356,362-363,365,367-372,392
+  s_37c7bb7c8dbfbf::t_eab3150309c07e 284,289,320,325
+  s_37c7bb7c8dbfbf::t_86efa51c05ded1 17,29,227-245,264-274,276-283,285,287-288,290-291,295-296,298-299,304-305,307,321,324,326,330-349,351-352,355,357-361,364,373-391,393-399
+  s_37c7bb7c8dbfbf::t_d5eff3105c87a7 292-294,327,329
+  s_37c7bb7c8dbfbf::t_c5120099023ccd 400
+src/components/statistics/__tests__/db-statistics.test.tsx
+  s_37c7bb7c8dbfbf::t_11009ee2bf3b75 13,17
+  s_37c7bb7c8dbfbf::t_e1bb7d18b17863 20,42,64,79,98
+src/lib/__tests__/shared-cache.test.ts
+  s_37c7bb7c8dbfbf::t_9a40518029ac80 915-916
+  s_16548dd7411b3b::t_b7baa326065e5b 1035-1091
+  s_16548dd7411b3b::t_bfd8449252a748 246-273
+  s_37c7bb7c8dbfbf::t_7d9a39cb83a3e4 189-196,531-569,1212-1228
+  s_37c7bb7c8dbfbf::t_39919e69b2c9c0 173-174,177,447-482
+  s_37c7bb7c8dbfbf::t_342677432978b1 100,821-822,826-827,829
+  s_37c7bb7c8dbfbf::t_9db5c0c0b08b93 832-852
+  s_16548dd7411b3b::t_b3737e3078c2d0 30-31
+  s_37c7bb7c8dbfbf::t_3d450efc5419da 495-530,570-588,886,895-898,905-914,917-1034,1092-1144
+  s_37c7bb7c8dbfbf::t_a98813d9ee9cef 1-29,32-99,101-172,175-176,178-188,197-209,380-446,483-494,589-722,724-820,823-825,828,830-831,853-885,887-894,899-904,1145-1211,1229-1287
+  s_16548dd7411b3b::t_1dad3346662e54 210-245,274-379
+  s_37c7bb7c8dbfbf::t_544d9cafa33da9 723
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_37c7bb7c8dbfbf::t_e30f8c7cf527ce 15,20,40-41,117
+  s_37c7bb7c8dbfbf::t_69f9824e4f7c47 38-39
+src/components/statistics/db-statistics.tsx
+  s_37c7bb7c8dbfbf::t_11009ee2bf3b75 4,26
+src/lib/shared-cache.ts
+  s_37c7bb7c8dbfbf::t_14afe44576419e 220
+  s_37c7bb7c8dbfbf::t_7eb1329735e9b7 128-142,167,169,176-177,182-185,217-218,222-223,228,230-237,239-241,248-255,264
+  s_16548dd7411b3b::t_ce264c905924e0 238
+  s_37c7bb7c8dbfbf::t_dc8963c8672bf3 33-35,116-125,143-144,147,152
+  s_37c7bb7c8dbfbf::t_17daf28ba09263 3-4,83-86,180-181,193,202,204,242-244,247,292
+  s_37c7bb7c8dbfbf::t_7f0f6ebb3333d6 5-13,19-25,29,44-82,87-94,97-107,109-113,115,126-127,148-151,153-164,166,168,178-179,186-192,194-201,203,205-216,245-246,256-259,265-291,293-319
+  s_37c7bb7c8dbfbf::t_30f25abb3ad9ad 114,145-146
+  s_16548dd7411b3b::t_1b11c3e6f34cc3 14-18,165,170-175,260-263
+  s_37c7bb7c8dbfbf::t_45a6427addcc9f 219,221,229
+  s_37c7bb7c8dbfbf::t_898b22e3a508e4 32,36
+  s_16548dd7411b3b::t_e46d29de834eed 38-43,108,224-227
+  s_37c7bb7c8dbfbf::t_e2595f2e3e2535 1-2,26-28,30-31,37,95-96
+src/lib/taxonomy-view/server.ts
+  s_37c7bb7c8dbfbf::t_241c90ade0a9ea 1-2,4-5,10-12,14-15,18-26,32-39,43-53,60-61,63-65
+  s_37c7bb7c8dbfbf::t_8b315d024ec81d 62
+  s_16548dd7411b3b::t_00bbcf2a7d38ea 6-9,54-58
+  s_37c7bb7c8dbfbf::t_806287d5b36a8e 40-42
+src/lib/data-api/repository.ts
+  s_16548dd7411b3b::t_03b8591f03986b 948,954-955
+  s_16548dd7411b3b::t_89061453f058bd 93-101
+  s_16548dd7411b3b::t_156f443e262488 946-947,951-953
+  s_16548dd7411b3b::t_7a0e1c01dbefc5 956,961
+  s_16548dd7411b3b::t_0040dee1f4ed9b 960,962
+src/lib/data-api/__tests__/server-policy.test.ts
+  s_37c7bb7c8dbfbf::t_7702d6993a4af5 5-6
+  s_37c7bb7c8dbfbf::t_105750ba32ddb8 143-151,153-163,165-173,175-194
+  s_37c7bb7c8dbfbf::t_38ceb313a15395 47-50,57,152,164,174
+src/lib/data-api/server-policy.ts
+  s_37c7bb7c8dbfbf::t_0b5e19dc078c1e 38,65,76
+  s_37c7bb7c8dbfbf::t_bd8be220ff4d1d 55-56
+src/lib/services/organisms/__tests__/taxonomy.test.ts
+  s_37c7bb7c8dbfbf::t_8cd7c678fced41 14,92,105,123,147
+  s_37c7bb7c8dbfbf::t_69f9824e4f7c47 124,158,220-232
+  s_16548dd7411b3b::t_a4108bd38b9789 483-501,503-519
+  s_37c7bb7c8dbfbf::t_e6b4a548afec06 2,68
+  s_16548dd7411b3b::t_25ce747471e2ee 248-280
+  s_37c7bb7c8dbfbf::t_64898bf5d73202 478-482,520-531,533-546
+  s_37c7bb7c8dbfbf::t_37ec2a2a933420 8,29-67,69-91,93-104,106-122,125-146,148-157,159-160,212-219,233-247,281-292,294-295
+  s_16548dd7411b3b::t_569f3e88ec5290 161-211
+  s_37c7bb7c8dbfbf::t_9c63a0beebe080 293,532
+src/lib/taxon-view/phylo-manifest.ts
+  s_37c7bb7c8dbfbf::t_e30f8c7cf527ce 36
+  s_37c7bb7c8dbfbf::t_3a72580fcff5b9 62-63
+  s_37c7bb7c8dbfbf::t_7f12563c5cc4c8 61,66-67
+  s_37c7bb7c8dbfbf::t_931d8ef85cec9d 1-2,9,30-32,34-35,37,60,64-65,68-75
+src/test-helpers/settle.ts
+  s_37c7bb7c8dbfbf::t_595bbe56acac53 1-8
+src/lib/taxon-view/__tests__/phylo-manifest.test.ts
+  s_37c7bb7c8dbfbf::t_9ecdb8c0941af8 4,121,140,167,169,174
+  s_37c7bb7c8dbfbf::t_cb9dd86d34c8b7 150-156,159-163,165,168,171-173,175-183,196
+  s_37c7bb7c8dbfbf::t_ff1acbe09c9fb5 6,13,86-120,122-139,141-149,184-195
+  s_37c7bb7c8dbfbf::t_a30a3ee2aa185d 157-158,164,166,170
+  s_37c7bb7c8dbfbf::t_2ecc3f734a5c9f 197
+src/lib/cepi-news.ts
+  s_37c7bb7c8dbfbf::t_66ab4740e93a07 80-81
+  s_37c7bb7c8dbfbf::t_288967e83aa707 3,95,106-107,109-114,116-121
+  s_37c7bb7c8dbfbf::t_6ef05ac02849fc 79,82
+  s_37c7bb7c8dbfbf::t_c7dcfb28577d57 108
+  s_37c7bb7c8dbfbf::t_4ec6f16bfe119e 115
+  s_16548dd7411b3b::t_8277eb5b8878e5 1-2,89-92,94,96-102,122
+src/lib/api/upstream-outage.ts
+  s_16548dd7411b3b::t_b54104a959d231 3-6,13-21,42-49,52-57,59-63,65-69,71-77
+  s_37c7bb7c8dbfbf::t_e2595f2e3e2535 1-2,50-51,78
+  s_37c7bb7c8dbfbf::t_176748be7fd9ad 7-12,22-41,58,64,70
+src/lib/data-api/__tests__/server-repository.test.ts
+  s_37c7bb7c8dbfbf::t_41c2d985fa0a97 140-161
+src/lib/data-api/server-repository.ts
+  s_37c7bb7c8dbfbf::t_0b5e19dc078c1e 15-16,22,28
+src/components/errors/record-load-failure.ts
+  s_37c7bb7c8dbfbf::t_cc612752b7dab2 6,27,32
+src/app/(footer)/news/page.tsx
+  s_37c7bb7c8dbfbf::t_288967e83aa707 3,38
+docs/architecture.md
+  s_37c7bb7c8dbfbf::t_76f5488d4d1801 90
+  s_16548dd7411b3b::t_77c7f4ec4c2c9d 337
+  s_16548dd7411b3b::t_38da69776684d1 93
+  s_37c7bb7c8dbfbf::t_aa4835c2f204f4 87
+  s_16548dd7411b3b::t_63586fe56d100f 88-89
+  s_16548dd7411b3b::t_fe29f5881f2e9e 91
+  s_16548dd7411b3b::t_00c4319d8d6743 92
+  s_37c7bb7c8dbfbf::t_fc39c24af406c7 94
+  s_37c7bb7c8dbfbf::t_56cfe30aa47d6c 86
+AGENTS.md
+  s_16548dd7411b3b::t_38da69776684d1 106
+src/components/taxonomy/taxon-name-selector.tsx
+  s_16548dd7411b3b::t_86cd99dac41055 103,105-107,110,113,116,119,122,139
+vitest.setup.ts
+  s_37c7bb7c8dbfbf::t_07d37ec02d93c1 53-54,56,62
+src/lib/taxonomy-view/__tests__/lineage-server.test.ts
+  s_37c7bb7c8dbfbf::t_dc01c68cd2c425 6,8,11,21,24-70,72-78,80-81,109-120,122-142,144-153,155-172,174-200,292-328,330-334
+  s_37c7bb7c8dbfbf::t_ce7619b4951db0 79
+  s_37c7bb7c8dbfbf::t_a6dceb610fdb65 268
+  s_37c7bb7c8dbfbf::t_56cfe30aa47d6c 121,173
+  s_37c7bb7c8dbfbf::t_198ef2d557f709 10,143,154,259
+  s_16548dd7411b3b::t_9e8aab09ecbaab 201-243
+  s_37c7bb7c8dbfbf::t_77c6d1b5291573 5,245-258,260-267,269-276,290-291,329
+  s_37c7bb7c8dbfbf::t_30bd25aa8b69c2 244,277-289
+src/components/taxonomy/__tests__/taxon-name-selector.test.tsx
+  s_16548dd7411b3b::t_877ed7d4c1b778 224-246,248-258
+  s_16548dd7411b3b::t_00a7ace7fcc60d 247
+src/app/api/services/taxonomy/__tests__/route.test.ts
+  s_37c7bb7c8dbfbf::t_d9b5e76d413b46 348,352-355
+  s_37c7bb7c8dbfbf::t_7e4d780ade22e9 281-291
+  s_16548dd7411b3b::t_c81a12faaa37d9 570,574-577,587
+  s_16548dd7411b3b::t_86cd99dac41055 580,585-586,588-592,595-596,599
+  s_16548dd7411b3b::t_7caa66032d10b4 483,498-499,508-517,520-523,526-527,529,594,600
+  s_16548dd7411b3b::t_38da69776684d1 518,528,530-551,554
+  s_16548dd7411b3b::t_47759ee63fbad6 364-398
+  s_16548dd7411b3b::t_824ba47dabb4bf 399-428
+  s_16548dd7411b3b::t_00a7ace7fcc60d 489-497,505-507,519,524-525,555-569,571-573,578-579,581-584,593,597-598,601
+  s_37c7bb7c8dbfbf::t_92cb0553ea0cde 6,243,311,324,346,436
+  s_16548dd7411b3b::t_c1856b48abf381 235,480,486,500-504
+  s_37c7bb7c8dbfbf::t_8ac2155df18333 241-242,247,250-265,336-345,347,349-351,356-363,429-435,437-440
+  s_37c7bb7c8dbfbf::t_c83b87bdf2edf7 266-280,292-293
+  s_16548dd7411b3b::t_00c4319d8d6743 552-553
+  s_37c7bb7c8dbfbf::t_d3faf1cb2e3288 3,27-49,51,208-234,236-240,244-246,248-249,294-310,312-323,325-335,441-479,481-482,484-485,487-488,602
+src/app/api/services/taxonomy/route.ts
+  s_16548dd7411b3b::t_86cd99dac41055 28,46-47,49-50,99-100,106
+  s_37c7bb7c8dbfbf::t_3b3fa997aaf091 24-27,91-92
+  s_37c7bb7c8dbfbf::t_f11da72c6fae00 9-12,14,18-19,29,33,43-45,48,52-55,59-65,73-74,78-79,83,85-86,93
+  s_16548dd7411b3b::t_7caa66032d10b4 75-77,103,105
+  s_16548dd7411b3b::t_00bbcf2a7d38ea 66-72
+  s_37c7bb7c8dbfbf::t_36ab0fe91fc0e3 80-82,87-90,94-96
+  s_16548dd7411b3b::t_89061453f058bd 101-102,104
+  s_37c7bb7c8dbfbf::t_d4511da81aad11 20-23
+  s_37c7bb7c8dbfbf::t_c068dde7334248 56-58
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_37c7bb7c8dbfbf::t_69f9824e4f7c47 352-405
+  s_37c7bb7c8dbfbf::t_80baea888b8ed3 9,11,25-26,51,131,197,214,235,237,272,287,303,316
+src/lib/services/organisms/taxonomy.ts
+  s_16548dd7411b3b::t_1bbcb66cf70acf 203,213
+  s_16548dd7411b3b::t_00bbcf2a7d38ea 15,125-131
+  s_16548dd7411b3b::t_807ec61013fc07 212,214
+  s_16548dd7411b3b::t_eb0f2133bd5e6a 113-114,124
+  s_37c7bb7c8dbfbf::t_8c70bb8ec3b7f9 1-2,7-8,101-111,115-123,132-143,202,209
+  s_16548dd7411b3b::t_b12460b7fa07ec 112
+src/lib/api/__tests__/upstream-outage.test.ts
+  s_16548dd7411b3b::t_64353acb22b15a 106-134
+  s_37c7bb7c8dbfbf::t_ed4cfe9caf66da 1-17,19-25,39-77,79-87,89,105,135-139,141-163,165-168,171-172,174-177,180-186,188-193,195-196,198-206,208-219,222-226,228-239,241-249,251,267-275,277-279,281-285,288-290,292-295,297-304,306-307,319,321-324,326-328
+  s_16548dd7411b3b::t_5dd9c4a9ee0c74 18,26-38,78,88,90-104,140,164,169-170,173,178-179,187,194,197,207,220,227,240,250,252-266,276,280,286-287,291,296,305,308-318,320,325
+  s_37c7bb7c8dbfbf::t_8432b9deccb842 221
+src/lib/__tests__/cepi-news.test.ts
+  s_37c7bb7c8dbfbf::t_64576a8ba9489a 7,83,111
+  s_16548dd7411b3b::t_89061453f058bd 165
+  s_37c7bb7c8dbfbf::t_bf243280e4bbe0 4,6,53-82,85-109,112-121
+  s_16548dd7411b3b::t_468c05256f96ac 3,127
+  s_16548dd7411b3b::t_37c0f2d805f20b 5,122-126,128-164,166-197
+  s_37c7bb7c8dbfbf::t_ea1d0590c3e404 84,110
+.claude/rules/testing.md
+  s_37c7bb7c8dbfbf::t_56cfe30aa47d6c 72
+src/lib/services/statistics.ts
+  s_37c7bb7c8dbfbf::t_11009ee2bf3b75 8,129-169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dba0152bf484491f348ea008f45b3f9fa3610fbb",
+  "prompts": {},
+  "sessions": {
+    "s_16548dd7411b3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b827e755-df11-43eb-8ffe-97f6fc134485",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_37c7bb7c8dbfbf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1a2697c-d499-42f0-8a61-2120ac422deb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

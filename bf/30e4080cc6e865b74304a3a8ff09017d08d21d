@@ -1,0 +1,21 @@
+src/app/api/copilot/chat/route.ts
+  s_205e8b8cc331ce::t_81312467e29b4b 31
+src/app/settings/page.tsx
+  s_205e8b8cc331ce::t_81312467e29b4b 36-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bf30e4080cc6e865b74304a3a8ff09017d08d21d",
+  "prompts": {},
+  "sessions": {
+    "s_205e8b8cc331ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9d048d65-be76-4c70-94ed-f045fa4b4366",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

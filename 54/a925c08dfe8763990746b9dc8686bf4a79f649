@@ -1,0 +1,2036 @@
+src/components/taxonomy/__tests__/taxonomy-lookup-state.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 48
+src/components/ui/button-variants.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3-4,10-11,28-29,78-79
+src/components/taxonomy/taxonomy-tree-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28,52
+src/app/api/workspace/__tests__/resolve-download.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 33,203
+e2e/pages/circular-viewer-panel.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-7,90
+src/lib/__tests__/utils.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 95
+src/hooks/views/use-resource-collection.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20,32,35,42,115,132,147,218,242
+src/components/services/tree-metadata-options.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 47-48,82-83
+src/app/api/taxonomy-tree/[operation]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15,28,52,88
+src/components/copilot/__tests__/use-copilot-actions.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 496
+src/components/views/use-resource-collection-row-resolution.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 34,38-39,50-51
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6,164-165
+src/components/services/form-ui/card-field.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+e2e/tests/jobs-preferences.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42-43
+e2e/tests/services/genome-input-services.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-19,64-65
+src/components/workspace/folder-picker/folder-picker-breadcrumb.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10,32
+src/components/organisms/taxon-views/__tests__/lazy-tab-roots-imports.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8,12,54
+e2e/tests/workspace-actions.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18,32,69-70,117-118,126-127,165,180-182,186-187,278-279,351-352,355-356
+src/components/navbars/mobile-navbar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 79
+src/components/workspace/file-viewer/viewers/structure-download.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40-42,73-74
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 38
+src/components/taxonomy/__tests__/taxon-name-selector.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11-12
+src/__tests__/theme-disabled-state.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29,37,59
+src/hooks/views/__tests__/use-child-collection-url-state.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60,95,166
+src/app/(views)/__tests__/exact-keyword-lists.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42-43
+e2e/tests/organisms/view-rail.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-15
+src/app/(views)/strain/[strainId]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-20
+src/components/copilot/copilot-transcript.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 128,131-132,134-135
+src/components/organisms/types.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30
+src/components/ui/__tests__/command-dialog.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15
+src/components/circular-viewer/circular-viewer-track-list.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-19,99-101
+e2e/tests/taxonomy-tree.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11,18-19,81-82
+src/app/api/services/workspace/upload/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10,26,36,54-55,107,113-114,121-122,129-130,158
+e2e/tests/taxonomy-view.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30-31,66-67
+src/app/api/copilot/sessions/[sessionId]/plans/[planId]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17
+src/components/ui/separator.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/workspace/upload-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40-41,70-71,74-75,177-178,183-184,214-215
+e2e/scripts/env-loader.mjs
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1-2,12-14,16,18-20
+src/components/circular-viewer/circular-viewer-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 82-85
+src/__tests__/theme-contrast.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 78,187,203,227,263
+src/components/organisms/taxon-views/sfvt.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-7,9,12-13,41
+src/hooks/services/workspace/use-workspace-dialog-handlers.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 160
+src/hooks/use-view-nav-collapsed.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/app/services/(viral-tools)/subspecies-classification/use-subspecies-classification-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14
+e2e/pages/error-alert.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5
+src/components/services/form-ui/__tests__/service-submit-error.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 133-134
+src/app/api/data/[resource]/download/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27,43,59,118
+src/components/organisms/metadata-distributions/_shared/use-chart-link.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10
+src/app/organisms/viruses/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28-29
+src/app/services/(phylogenomics)/viral-genome-tree/__tests__/use-viral-genome-tree-add-inputs.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 153
+e2e/tests/jobs.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 57-58
+src/app/(views)/__tests__/view-error-boundaries.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 52
+src/components/circular-viewer/user-track-form.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 36,96,102-103,182-183
+src/components/detail-panel/metadata-link-policy.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-9,30-31,46-47
+e2e/scripts/journeys/workspace-browse.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-8,19-20
+e2e/tests/viewer-3d.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-23,49-51,68,96-97
+src/app/search/__tests__/fixtures/legacy-search-to-query.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-3
+src/components/phylogeny/archaeopteryx-phylogeny.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-19,74-75,184-185
+src/components/organisms/virus-families/__tests__/virus-families-section.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31
+src/components/views/collection-filters/__tests__/columns-menu.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 347
+src/components/organisms/geo-distribution/color-scale.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5,48-50,66,68-69,99
+src/hooks/services/use-genome-typeahead.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 79,95,105,107
+src/app/global-error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+e2e/tests/jobs-lifecycle.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 208,242-243,258,304-305,340,346-347,353
+e2e/tests/organisms/archaeopteryx.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35-37
+src/app/services/(protein-tools)/msa-snp-analysis/validate-fasta-file.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19
+src/components/workspace/folder-picker/folder-picker-preview.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 375
+src/components/genome-browser/__tests__/jbrowse-containment.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/compare-region/compare-region-command-bar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 103,188,217-218
+src/app/services/(protein-tools)/gene-protein-tree/__tests__/page-alphabet.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31,64
+src/components/compare-region/compare-region-highlight.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 190
+e2e/tests/organisms/all.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24-25
+src/components/compare-region/__tests__/compare-region-command-bar.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15,76,128,264
+src/components/views/collection-selection-actions.tsx
+  s_0f4f854aab5299::t_62f9e1d22cd51e 110,120
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 88-89,132-133,179-180,217-218,224-225,341-342
+src/components/copilot/copilot-panel.tsx
+  s_0f4f854aab5299::t_62f9e1d22cd51e 283
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 77,144-145,172-173,282,285
+src/components/errors/__tests__/retry-button.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-17
+src/components/genome-browser/index.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1-2
+src/hooks/services/jobs/use-jobs-summary.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14,23,28,40
+src/constants/datafields/types.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+src/lib/__tests__/fasta-validation.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 69,112,120
+src/components/views/collection-filters/filters-menu.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42-43,161,243-244,285,369-370
+src/components/navbars/__tests__/user-avatar-theme-submenu.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 41-43
+src/components/organisms/metadata-distributions/_shared/chart-status-message.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/components/organisms/shared/with-section-error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-8,10-13
+src/components/workspace/__tests__/upload-dialog.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 77-78,105-106,194-195
+src/app/(auth)/layout.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5
+src/app/__tests__/all-term-search-results.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27,244-245,252-253
+src/components/workspace/folder-picker/__tests__/fixtures/picker-harness.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-3,29-30,82-83
+src/components/views/resource-collection.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 96-97,158-159,190-191,531-532
+e2e/fixtures/overrides/genome-browser.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35-36
+e2e/pages/collection-toolbar.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,84-85,134
+src/components/compare-region/lazy-compare-region-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/views/collection-filters/use-facet-actions.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-20
+e2e/tests/copilot.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14,23,119-120,212,325
+src/app/workspace/[username]/home/[[...path]]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 27-29
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1345-1346
+src/components/jobs/__tests__/jobs-shell.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11,14-15
+e2e/fixtures/overrides/workspace.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 38-39,111-112,144-145,149-150,154-155,236-237,251-252,343-345,374-376
+src/hooks/services/use-rerun-form.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26,58,80
+src/components/organisms/metadata-distributions/_shared/use-svg-band-pointer.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6
+src/components/views/collection-filters/columns-menu.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 428
+src/components/ui/slider.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-10
+src/constants/search-info.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 64
+src/components/organisms/taxon-views/domains-and-motifs.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6
+src/components/circular-viewer/use-circular-track-data.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30-31,96,117
+src/components/genome-browser/__tests__/genome-browser-error-boundary.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+e2e/a11y/theme.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-10
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 226-227,235-236
+src/components/organisms/metadata-distributions/bar-chart.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 107
+e2e/a11y/gate.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-20
+src/app/api/phylogeny/bacterial-trees/[taxonId]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-30
+src/components/shared/file-table-utils.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6
+e2e/tests/backends.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11,20
+src/components/taxonomy/__tests__/taxonomy-tree-panel.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18,28,247-248
+src/app/(footer)/contact/components/contact-form.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 103-104
+src/components/compare-region/use-compare-region-settings.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/phylogeny.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8,59-60
+src/components/taxonomy/taxon-name-selector.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23,25,143,237,247,316
+src/components/workspace/folder-picker/folder-picker-header.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 68-69
+src/hooks/services/jobs/__tests__/use-jobs-data.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 358
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 48-49,63-64,83-84,105-106,124-127,149-150,152,296-299,340,347-348,357-358,425-426,434-435,439,441,453-454,484,543-544
+src/components/organisms/taxon-genome-count.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5
+src/components/ui/bubble.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18
+src/components/views/view-icons.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-30
+e2e/tests/services/genome-assembly.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-16,64-65,67,175-176
+src/components/search/__tests__/search-bar.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 172-173
+e2e/fixtures/overrides/interactions.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-16,18-19,69-70,85-86
+e2e/fixtures/overrides/circular-viewer.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 41-42
+e2e/scripts/update-baseline.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24-25
+e2e/support/webgl.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5
+e2e/tests/circular-viewer.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-13,22-23,171-172,198-199
+src/components/detail-panel/__tests__/info-panel-search.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 193-194
+e2e/pages/workspace-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,38,49,69-71,92
+src/components/organisms/metadata-distributions/_shared/chart-dimensions.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-15
+src/components/shared/column-resize.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-6,52-53,77-78,137-139,141-144,179-180,191-192,220-221
+src/app/(views)/genome/__tests__/genome-collection.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 367-368,446,467-468,488-489,573-574,736-737,755
+src/components/settings/__tests__/preferences-form.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 85-86
+src/app/viewer/structure/[[...path]]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23-25,65
+src/components/views/collection-filters/facet-values.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-15
+src/components/organisms/shared/section-retry-button.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7,13
+src/components/organisms/metadata-distributions/area-chart.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40,138
+src/components/shared/__tests__/column-resize.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 297,329
+src/components/organisms/landing-shell/__tests__/landing-mobile-nav.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 88-89
+src/lib/__tests__/view-server-lookups.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1,44,68,83,106,124,169,226
+src/app/organisms/__tests__/error.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35
+src/components/circular-viewer/track-color-picker.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30-31
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 37
+e2e/a11y/baseline.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-20,22-24,29-30,36
+e2e/a11y/teardown.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11-12,32-33
+src/app/api/e2e-mock/[...path]/__tests__/full-transport.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-15,100,105,169
+src/components/__tests__/theme-provider.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14,26
+src/components/organisms/taxon-views/amr-phenotypes.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/app/(views)/epitope/[epitopeId]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27
+src/app/(views)/epitope/[epitopeId]/epitope-overview.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14
+src/components/shared/__tests__/data-table-render-scope.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-13
+src/components/views/__tests__/overview-card.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 37-38
+src/app/workspace/shared/[[...path]]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-17
+src/components/views/use-selection-service-launch.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 182-183,303
+e2e/auth/storage-state.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-6
+src/components/circular-viewer/circular-viewer-tooltip.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-16
+src/components/errors/view-error-boundary.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12
+src/app/api/circular-viewer/[operation]/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 182
+src/components/workspace/workspace-toolbar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 122-123
+eslint.config.mjs
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60-61,68-70,73,79,85-86,92,114,124-125,127,135-137,146-147,176-177,189,223-227,243-244,256-257
+src/app/(views)/genome/genome-collection.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 136,143-144,147-148,226-228
+src/components/navbars/navbar-links.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 229-232,241
+src/__tests__/rank-badge-colors.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11,37
+src/lib/__tests__/rate-limit.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10,67,76,93,99,105,119
+src/app/api/compare-region/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 27,47
+src/app/api/data/[resource]/fasta/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20,53
+src/components/workspace/file-viewer/file-viewer-registry.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 96,105-106,156
+src/app/workspace/__tests__/catch-all-redirects.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-21,80-81,96-97
+src/components/compare-region/__tests__/compare-region-panel.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 41,364
+src/components/views/overview-group-fields.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23-24
+src/components/workspace/__tests__/job-metadata-card-collapsible.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-7
+src/hooks/use-hide-on-scroll.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5
+package.json
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3
+src/app/api/data/search/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+e2e/fixtures/overrides/catchall.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-32,111-114,284-285,454,493-495,509-511,537-538
+src/components/organisms/genera-grid/featured-viruses-data.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+src/components/views/taxonomy-service-chooser.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 55-57
+playwright.a11y.meta.config.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-10
+src/app/services/(protein-tools)/proteome-comparison/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 84,275
+src/app/api/data/search/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 22
+src/components/circular-viewer/index.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+e2e/tests/genome-view.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 43-44
+src/components/jobs/__tests__/jobs-date-filter.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 141-142
+src/components/workspace/file-viewer/viewers/__tests__/structure-source-viewer.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 259-260,413-414
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 67-68,271-272,295-296,346-347
+src/components/workspace/__tests__/workspace-browser-rendering.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 27-28
+src/components/organisms/metadata-distributions/_shared/__tests__/use-svg-band-pointer.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 39-40
+auspice/navbar.js
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6
+src/app/api/data/[resource]/fasta/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+src/app/services/(phylogenomics)/viral-genome-tree/__tests__/page-add-inputs.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 237
+playwright.config.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-11,14-16
+src/components/views/collection-filters/active-filter-pill.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 34,138-139,198-199
+e2e/pages/sign-up-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-7,33-34,41-42,61
+src/app/(views)/genome/child-tabs.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23-24,35-36
+e2e/pages/folder-picker-dialog.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-16,78,160-164,191
+src/components/copilot/__tests__/copilot-transcript.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 124-125,150,274
+src/app/api/copilot/sessions/[sessionId]/stop/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11
+src/components/shared/__tests__/file-table.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 274-276,325-327
+src/app/search/search-type-routing.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23,34-35,41-44,58-59,64-65,80-83,107-109,146-147
+src/components/views/overview-section.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24-25
+src/app/services/(genomics)/similar-genome-finder/actions.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 78,90
+src/__tests__/e2e-fixtures-import-boundary.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6,59
+src/components/phylogeny/__tests__/archaeopteryx-phylogeny.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 48
+src/hooks/services/use-output-name-validation.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 103
+e2e/tests/metadata-link-navigation.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-12,42-43
+src/components/services/lookup-error-alert.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-13,26
+e2e/a11y/setup.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-7
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30,50-51,54,150-151
+src/components/views/__tests__/fixtures/search-action-bar-fake.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,13-14
+src/app/not-found.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/components/organisms/shared/section-error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13,17,23
+src/app/search/__tests__/search-type-routing.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 64-65,109-110,222-223
+src/components/services/selected-genomes-table.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 25
+src/components/services/taxonomy-lookup-note.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10
+src/components/views/__tests__/resource-workspace.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14,24-25,349-350
+e2e/pages/genome-member-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,23-24,34-36,50,56-60,80-81,111,146-147
+e2e/a11y/settle.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6,11,19-23,32,37-38,67,72-73
+src/components/errors/retry-button.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11-12
+src/components/organisms/taxon-views/lazy-tab-roots.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-11,13-15
+e2e/pages/theme-switcher.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5
+src/components/workspace/workspace-breadcrumbs.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 43-44
+src/app/viewer/structure/[[...path]]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14,40-42,74-76,83-84,87-88,99-100
+src/app/(views)/feature/[featureId]/feature-overview.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-17,57,79-80
+e2e/scripts/__tests__/record-har.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 76-77,180
+src/hooks/services/use-service-form-submission.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16,22,79
+src/app/(views)/genome/[genomeId]/__tests__/genome-overview.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 86-87
+src/app/(views)/genome/[genomeId]/genome-overview.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11
+src/components/ui/__tests__/disabled-state.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 104-105,153-154,171
+src/components/copilot/copilot-surfaces.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17
+e2e/tests/a11y/deep-tier.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 87,337-338,381-382,508,516,590,597-598,648
+src/components/search/search-action-bar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27,69-71
+src/components/copilot/copilot-execution-card.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30
+src/components/genome-browser/jbrowse/theme.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5,48,86-87
+src/components/services/tree-threshold-select.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-20
+src/app/services/(protein-tools)/msa-snp-analysis/validate-genome-group.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42
+src/app/(views)/epitope/[epitopeId]/__tests__/epitope-overview.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60-61
+src/components/organisms/geo-distribution/lazy-geo-distribution-client.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/app/organisms/loading.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-7
+src/app/services/(genomics)/blast/__tests__/database-selector.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 53
+src/components/errors/route-error-message.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10
+src/components/taxonomy/__tests__/tax-id-selector.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 92-93,115-116
+src/hooks/services/jobs/use-jobs-data.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 164
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 22-23,214
+e2e/support/url-params.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6
+next.config.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-8,68,81
+e2e/tests/a11y/keyboard.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1,25-26,137-139,143-144,243-244
+src/app/api/structure/[...path]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 56-57
+src/components/compare-region/compare-region-panned-layers.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 43-44
+src/components/interactions/__tests__/graph-legend.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 49-50
+src/components/services/form-ui/service-label.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24-26
+src/app/(footer)/news/news-card-image.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6,11
+src/app/api/auth/ensure-workspace/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 36
+src/components/compare-region/compare-region-glyphs.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60,135-136,231-232
+src/components/ui/autocomplete.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8,102-103
+e2e/tests/a11y/reduced-motion.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-3,12
+src/components/copilot/copilot-floating-window.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 44,63
+src/components/ui/select.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 32-33,40-41,200-201
+src/hooks/copilot/use-copilot-queries.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 55,62,78,94,104,117,145
+src/app/services/(viral-tools)/influenza-ha-subtype/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 66
+src/components/copilot/copilot-composer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 255,318-319,380-381
+src/components/detail-panel/info-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 48-49,867-868
+src/components/services/form-ui/service-form-footer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22
+src/app/services/(genomics)/genome-assembly/assembly-sections.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 512
+src/components/detail-panel/metadata-link.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11,15
+e2e/fixtures/overrides/downloads.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-18,41
+src/components/organisms/metadata-distributions/_shared/chart-legend-pill.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6
+src/components/views/__tests__/resource-collection.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 216-217,261-262,1301-1302
+src/app/(views)/feature/[featureId]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 45-46,65
+src/components/workspace/edit-type-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31
+e2e/support/tab-history.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3-7
+src/components/search/search-bar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 92-93
+src/hooks/services/workspace/use-workspace-directory.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13,45,224,247
+src/lib/__tests__/svg-figure-export.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 127,201,223,244,359
+src/components/genome-browser/jbrowse/plugin.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9
+src/components/services/form-ui/service-collapsible.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11,39-40
+src/components/ui/__a11y__/sonner.a11y.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-15
+src/components/ui/input.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/app/services/(genomics)/primer-design/primer-options-section.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 83
+src/app/(views)/genome/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22
+src/app/api/data/[resource]/download/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+src/components/services/__tests__/genome-name-selector.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,99-100
+src/components/search/__tests__/command-palette.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-17
+e2e/support/focus-trail.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-19,76-77
+e2e/tests/auth.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 111-112
+src/app/api/copilot/sessions/[sessionId]/workflow-watches/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18
+src/app/services/(metagenomics)/taxonomic-classification/taxonomic-classification-input-cards.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 79
+src/components/genome-browser/genome-browser-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 71-72,84-85
+src/__tests__/theme-token-order.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 66
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8,69,256-257,399
+src/components/ui/scroll-area.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31-32
+src/components/workspace/selection-to-group-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 290-291
+src/lib/__tests__/recent-workspace-folders.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8
+src/app/services/(utilities)/fastq-utilities/use-fastq-utilities-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 192
+src/components/compare-region/compare-region-chart.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 79-80,198-199,318,485-487
+src/app/services/(genomics)/genome-alignment/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 32,52,62
+e2e/pages/forgot-password-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-13,18,22
+src/app/(views)/feature/[featureId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 179-180,277-278
+src/app/services/(genomics)/primer-design/primer-advanced-section.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 129
+src/components/copilot/copilot-panel-header.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 132
+src/components/organisms/metadata-distributions/_shared/__tests__/chart-legend-pill.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 213
+e2e/pages/resource-collection-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 56-57,155
+  s_0f4f854aab5299::t_62f9e1d22cd51e 121-123
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42,81-82
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28,60
+e2e/pages/hydration.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6
+src/components/ui/label.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-10
+src/components/detail-panel/__tests__/metadata-link-policy.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 93-94
+src/app/(views)/epitope/[epitopeId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 103-104
+src/components/interactions/interactions-subview-shell.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27,30,32-33
+e2e/tests/organisms/bacteria.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 37-38
+src/app/api/contact/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16,29-30,39-40,104,121-122,124,141-142
+src/components/organisms/landing-shell/landing-nav.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 124-125
+src/app/(auth)/auth-submit-error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9
+src/components/shared/data-table-header.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 25-26,38-40,45-46,50-52
+src/app/services/(protein-tools)/msa-snp-analysis/use-pick-check.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19,25
+src/app/services/(genomics)/blast/database-selector.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 36
+src/components/copilot/copilot-card-actions.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10
+src/components/taxonomy/tax-id-selector.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19,21,71
+src/components/workspace/workspace-object-selector-view.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 216-217
+src/components/genome-browser/genome-browser-error-boundary.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-13,28-29
+src/__tests__/react-compiler-config.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8,17,19,78
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29,31,126-127,134-137
+src/components/organisms/taxon-views/build-taxon-views.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 49
+src/components/search/all-types/type-results-card.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 46-47
+e2e/fixtures/overrides/auspice-basemap.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3-6,36
+src/components/ui/command.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60-61,174-175
+src/app/workspace/__tests__/owner-redirects.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20-21
+src/components/ui/radio-group.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-22
+src/components/workspace/job-metadata-card.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 149-152
+src/components/workspace/upload-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27
+e2e/pages/view-nav-rail.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6,27-28,39-40
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 263
+src/app/workspace/layout.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+e2e/pages/taxonomy-collection-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 76-77,85,88-89
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/sfvt.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6,16
+src/components/organisms/metadata-distributions/_shared/use-stacked-chart-highlight.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-21
+src/components/jobs/jobs-shell.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 49-50
+src/components/workspace/__tests__/workspace-shell.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-19,76-78,88
+src/components/workspace/file-viewer/viewers/__tests__/codemirror-viewer.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 74-76,97
+e2e/pages/organism-landing-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22,33-34
+e2e/tests/resource-collection-pagination.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 200-201
+src/components/ui/checkbox.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-11
+src/app/services/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 52
+src/components/organisms/taxon-breadcrumb.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23
+playwright.a11y.config.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,12-15,19-20,24-25,52-54,76
+src/components/ui/field-error-message.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3
+src/app/api/services/feature/from-group/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18
+e2e/a11y/axe-scan.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6,12-13,26
+src/lib/__tests__/app-service.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 213
+src/components/organisms/taxon-views/__tests__/lazy-tab-roots.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21
+src/components/workspace/file-viewer/viewers/iframe-viewer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+src/components/views/__tests__/entity-view-shell.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 272
+src/components/workspace/workspace-object-selector.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40-42,297-298,305-306,324-326,341-342
+e2e/tests/resource-collection-selection.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14
+src/components/compare-region/compare-region-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 50-51,113-115,117-118,182-184
+src/app/api/taxon-view/tab-policy/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6
+src/components/copilot/copilot-provider.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 52,60
+src/components/services/__tests__/sra-run-accession-with-validation.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-16,523-524,573
+src/hooks/services/workspace/use-workspace-object-search.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16,66
+src/components/taxonomy/taxonomy-tree.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 117,185,292
+src/components/workspace/__tests__/workspace-selector-presets.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6
+src/components/shared/data-table-controls.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 25-27
+src/components/organisms/geo-distribution/topology-utils.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26-27
+src/components/services/fasta-textarea.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 105-106
+e2e/tests/resource-collection-facets.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-15,55-56,342-343
+src/components/views/resource-filter-bar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 89
+src/components/workspace/folder-picker/__tests__/folder-picker-motion.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/workspace/folder-picker/folder-picker-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 136-137,202-204,212-214,248-249,356-357,411-412,422-423,537-538,556-557,710-711
+src/app/(views)/experiment/experiment-bioset-collection.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 57-58
+src/components/views/collection-download/collection-download-action.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 41-42,65-67
+src/components/footers/footer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-15
+e2e/tests/services/output-folder-picker.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-18,285,584-585
+src/components/filterbar/keyword-search.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6
+src/components/search/command-palette.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 33-35,39
+src/components/services/genome-name-selector.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 47-48,173
+e2e/scripts/har-overrides.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28-29,40-41,71,77-78,95,126-129,183-184
+src/components/ui/number-input.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20,120,190-191
+src/components/views/collection-filters/collection-toolbar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 246-247
+src/components/views/resource-child-collection.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 39-41,102-103,192-194
+src/components/compare-region/index.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1-2
+src/components/organisms/__tests__/overview-lazy-imports.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9
+src/components/views/resource-workspace.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23-24,29-31,49-52,62-63,100,162-164
+src/components/views/tab-content-search-params.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-18,27-28
+src/components/workspace/__tests__/selection-to-group-dialog-browse.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 47-48,62-63
+e2e/tests/collection-download.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20-21
+src/app/api/services/genome/by-ids/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26
+src/components/services/form-ui/service-select.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-9
+src/components/workspace/create-workspace-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23,44-45
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 153-154,255,307,325
+e2e/pages/compare-region-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6,24
+e2e/tests/taxonomy-map.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-17,29,33-34,44-45,69,73-74,87
+src/components/organisms/taxon-views/features.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10
+src/components/timeline/timeline.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 69
+src/components/ui/resizable.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-16
+src/components/workspace/workspace-browser.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 108-109,159-160,190-191,252,352-353,356-357
+src/components/search/__tests__/search-action-policy.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 200-202
+src/constants/datafields/__tests__/metadata-links.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 83
+src/components/compare-region/compare-region-label-column.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5,266
+src/app/(views)/taxonomy/[taxonId]/__tests__/nav-items.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 96
+src/app/api/e2e-mock/[...path]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 46-48,71,168,477,597,815-816,851,855-857,1063,1109-1110
+src/components/jobs/jobs-date-filter.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 46-47,102-103,151-153
+e2e/scripts/journeys/jobs-lifecycle.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-7,17
+src/components/phylogeny/__tests__/viral-phylogeny-panel.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30-31,210-211
+src/app/(auth)/sign-in/sign-in-view.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 85
+e2e/fixtures/overrides/outage.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-18,46-49
+e2e/scripts/start-webserver.mjs
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-5,10,14
+src/components/error-toast-defaults.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10
+e2e/scripts/seed-account.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-5,54-55
+src/app/api/e2e-mock/[...path]/query.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-7,134
+src/components/shared/__tests__/data-table.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 52-53
+e2e/fixtures/overrides/copilot.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6
+src/components/services/form-ui/service-add-button.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1-2,20,81,127,148,186,280-281,299,378,385,399
+e2e/scripts/har-constants.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-4,9-10
+src/components/organisms/geo-distribution/color-legend.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31,43
+src/hooks/copilot/__tests__/use-copilot-queries.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 91
+src/components/views/__tests__/resource-collection-actions.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18,28-29,214-215
+src/components/views/__tests__/resource-collection-bioset-actions.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 62,179-180,411-412
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 50,62-63,71-73,91-93,123-124,196-198,239-240,265-266,274-275,277-278
+e2e/a11y/scan-keys.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-9,78-79
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-14,32-33,107-108,129,135,232-233,322-323,348-349,361
+src/components/workspace/folder-picker/__tests__/folder-picker-breadcrumb.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 136-137
+src/app/api/workspace/view/[...path]/document-error.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6
+src/app/search/legacy-keyword-normalization.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-4,48,60-61,70-71
+src/components/services/sra-run-accession-with-validation.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 48,108-109,154-155,234-235,384-385
+src/app/(views)/strain/[strainId]/strain-overview.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 45-46
+e2e/a11y/report.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22,29-30
+e2e/tests/organisms/auspice.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31-32,146-147,151-152,156-157,160-161,194-195,262-263,286-287,329-330,371-372
+src/app/api/e2e-mock/[...path]/outage.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42
+e2e/tests/backend-outage.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-21,25-26,68
+src/app/layout.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 70
+src/components/ui/__a11y__/dialog.a11y.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-20
+e2e/pages/panel-split.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-7,41-43
+src/app/api/auth/profile/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+src/components/workspace/download-options-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35
+src/hooks/services/__tests__/use-genome-typeahead.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40
+src/hooks/views/use-collection-download.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 27
+src/app/services/(genomics)/blast/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 145
+src/components/views/collection-copy-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 69-70
+src/app/services/(viral-tools)/influenza-ha-subtype/use-influenza-ha-subtype-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16
+src/components/ui/number-input.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 269-270
+src/app/(views)/feature/[featureId]/__tests__/feature-overview.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 92-93
+scripts/auspice-shell.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6,31,36-37,50-51,91-92,103,111-112,117-118,124-125,132-133
+src/components/genome-browser/lazy-genome-browser-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/shared/__tests__/data-table-virtualizer.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5
+e2e/pages/settings-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5,35,43
+src/components/search/all-types/use-section-nav.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-19,69-70,116-117
+src/components/search/search-action-policy.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18,46-47,65,183-184,313,349-350
+e2e/tests/visual/visual.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40-41
+src/app/(views)/strain/[strainId]/strain-member.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23
+src/components/ui/calendar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 49-50
+e2e/tests/a11y/coverage.meta.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 129-130,180-181,231-233
+src/app/api/auth/profile/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 101-102
+src/components/workspace/folder-picker/folder-picker-motion.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-4,95-96,101,119-121,132
+src/app/search/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 73
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 790,1112,1411-1412,1476-1478,1495
+e2e/scripts/record-har.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 48-49,84-85,106-107,120-121,198-199,214,250-251,267
+src/app/services/(genomics)/genome-assembly/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 94
+src/components/views/collection-filters/types.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18
+e2e/tests/workspace-browse.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 170-171,305-307,318-319
+src/components/views/__tests__/resource-collection-taxonomy-actions.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 572-573
+src/components/organisms/taxon-views/overview.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 75
+e2e/pages/genome-browser-panel.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5,19-21,42-43,59-60,129-130,150-151,217-218
+src/components/services/form-ui/service-submit-error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18-20,45-47
+src/components/copilot/copilot-markdown.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 65,126
+src/lib/api/__tests__/upstream-failure.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 362
+src/constants/datafields/genome_sequence.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 38
+src/app/api/services/genome/search/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+src/app/(views)/genome/[genomeId]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28-29
+src/app/api/workspace/public/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14
+src/components/interactions/__tests__/graph-toolbar.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15
+src/components/ui/tooltip.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28-29
+e2e/tests/genome-browser.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-31,138-139,150-151,189-190,195-196
+src/components/organisms/metadata-distributions/bar-stack-chart.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 185,203
+e2e/scripts/journeys/workspace-viewer.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-8,27
+src/components/jobs/jobs-pagination.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22
+src/components/services/service-output-fields.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18
+src/components/ui/switch.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-10
+src/components/views/overview-link-list-field.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11-12
+src/components/workspace/create-folder-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19
+src/components/copilot/copilot-message.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 137-138,191-192
+src/components/jobs/jobs-browser.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 111-112,223-224,291-292,309-310,325,446-447
+src/components/services/__tests__/genome-suggestion-list.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 68,99-100
+src/app/workspace/home/[[...path]]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-17
+src/components/views/resource-collection-actions.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 299-301,320-321,452-455,528-529,559-560,602-603,721-722
+src/components/views/use-retry-keeping-error.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-19
+src/components/organisms/metadata-distributions/amr-bar-stack-chart.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 259,328
+src/app/(footer)/contact/components/contact-form-utils.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 51-52,57-58,67-68,75-76,90,96-97,116-117
+src/components/views/__tests__/resource-child-collection-history.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 102-103
+src/components/workspace/file-viewer/viewers/codemirror-viewer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14,16-17
+src/app/api/circular-viewer/[operation]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 27,29
+src/app/settings/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 103
+src/components/phylogeny/viral-tree-picker.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 101,116-117,136-137
+src/components/detail-panel/__tests__/metadata-link.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-6
+src/components/services/field-error-details.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-15
+e2e/pages/sign-in-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20-21,30
+e2e/tests/workspace-viewer.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 37-38,91-92,112-113
+src/components/views/entity-view-shell.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 33-34
+src/components/workspace/file-viewer/viewers/use-molstar-plugin.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35-36,58-59,70-71,83-84,146-147,160-161,196-197
+e2e/tests/organisms/interactions.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11,36-37,58,93-94,175-176
+src/app/(views)/domains-and-motifs/error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9
+src/app/services/(protein-tools)/meta-cats/meta-cats-input-sections.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5
+src/app/(views)/feature/__tests__/feature-collection.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 38-39,98-99
+e2e/tests/taxonomy-tab-back-forward.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15
+src/components/genome-browser/__tests__/genome-browser-panel.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 132-133
+src/components/taxonomy/taxon-tree-types.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+src/components/taxonomy/use-taxon-children.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9,17,34
+src/components/workspace/copy-to-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 59-60
+e2e/tests/genome-tab-back-forward.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19
+src/constants/datafields/sequence_feature.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3
+src/lib/__tests__/browser-storage.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 41
+e2e/support/runtime-errors.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6
+e2e/tests/services/tree-services.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 25-28,78,123-124,154-155,197-198,239-242,304-305
+src/app/api/genome-browser/[operation]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21,25,108
+src/app/api/workspace/view/[...path]/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 80
+src/components/services/single-genome-selector.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 50,53-54,119-120
+src/app/(views)/surveillance/[sampleId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 34-35,135-136
+src/components/views/__tests__/overview-group-fields.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 128
+src/app/(views)/serology/[sampleId]/__tests__/serology-overview.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 33-34
+src/hooks/views/use-collection-url-state.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 45
+src/hooks/copilot/use-copilot-chat.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35,40,46,74,112,120,154,158,184,333,341,417,425
+src/hooks/services/use-service-runtime.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60
+src/components/jobs/jobs-toolbar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 56-57
+src/lib/__tests__/browser-storage.server.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4
+src/components/genome-browser/jbrowse/config.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9
+src/app/api/contact/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 43
+e2e/scripts/journeys/workspace-upload.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-8,25
+e2e/scripts/__tests__/env-loader.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/__tests__/dark-primary-text.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29
+src/components/copilot/use-copilot-actions.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 61,124,147,166-167,187-188,364,373
+src/app/api/services/taxonomy/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14
+src/app/api/data/[resource]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 106,121-122,135-136
+e2e/fixtures/overrides/journey.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-11
+src/app/settings/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 36-38,54-55
+src/components/organisms/geo-distribution/__tests__/geo-distribution-layers.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+src/components/taxonomy/__tests__/use-taxon-children.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 158-160
+src/components/organisms/metadata-distributions/lazy-charts.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/components/statistics/db-statistics.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28
+src/components/shared/data-table-footer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 51-53,68-69
+src/hooks/services/workspace/use-workspace-picker-listing.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 22,67
+src/components/interactions/__tests__/graph-action-bar.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 125-126
+e2e/auth/signed-in.setup.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+src/components/services/form-ui/service-required-label.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/search/all-types/search-results-header.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22
+e2e/tests/services/service-form-controls.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14,31-32,58,71-73,367-368
+src/app/api/auth/ensure-workspace/__tests__/route-upstream.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35
+src/app/error.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10
+src/components/circular-viewer/lazy-circular-viewer-panel.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/components/organisms/reference-genomes/lazy-reference-genomes-client.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7
+src/hooks/use-debounced-draft.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+src/hooks/use-storage-item.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6
+src/hooks/views/use-fasta-download.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28
+src/hooks/services/jobs/use-kept-query-error.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7,12,21
+src/app/api/genome-browser/[operation]/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1,143,242
+src/components/compare-region/use-chart-pointer.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 28-29,48-49,99,115-116
+e2e/scripts/__tests__/har-overrides.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 75-76,119-120,198-199,232-233
+e2e/scripts/journeys/_helpers/sign-in.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8
+e2e/pages/service-form-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-6
+src/app/__tests__/root-boundaries.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 53-54
+src/app/all-term-search-results.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40-41,62,77,216-217,234-236,239-240,253-254
+scripts/build-auspice.mjs
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 14-15,32-34,53-55,111-112
+e2e/pages/archaeopteryx-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-5,56-57,72
+src/app/(views)/serology/[sampleId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 34-35,115-116
+src/app/api/copilot/sessions/[sessionId]/execution-answer/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 23
+src/components/circular-viewer/circular-viewer-figure.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 60-61,105-106,137-138,160-161,255-256
+src/app/api/copilot/sessions/[sessionId]/title/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26
+src/components/circular-viewer/circular-viewer-track-layer.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8,18-19,103-104,135-137
+e2e/tests/search-keyboard.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 7-8,37,110-111,135-136
+src/components/compare-region/compare-region-tooltip.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3
+e2e/pages/copilot-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-17,47,161
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 38-40,82-83,115-116,119-120,131
+src/app/api/copilot/chat/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31,108
+src/components/compare-region/compare-region-feature-card.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 57,118
+src/app/api/workspace/resolve-download.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35-36,65-66,119-120,137-138,172
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,28,175-176,195-196
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15,39-40
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35,37
+src/components/services/genome-suggestion-list.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 74-76,96
+src/components/services/selected-sequences-table.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 31-32,45,48-50,63
+src/components/taxonomy/taxonomy-lookup-state.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 20
+src/components/ui/table.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 45-47,69-70,110,179
+src/contexts/workspace-repository-context.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29
+src/hooks/views/__tests__/use-collection-download.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16
+src/hooks/services/jobs/use-jobs-url-state.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24,32,46,56
+src/components/views/selection-service-chooser.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 30-31
+src/components/genome-browser/genome-browser-view.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 41-43,48-49,77-78,95,102-104,122-126
+src/app/api/phylogeny/nextstrain-datasets/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11
+src/components/compare-region/compare-region-legend.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 64-65
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35,353
+src/components/services/form-ui/service-library-header.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10,28-29
+src/components/taxonomy/__tests__/taxonomy-tree.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-20,43,88-89,500-501
+src/hooks/services/jobs/__tests__/use-jobs-url-state.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 170
+e2e/a11y/routes.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-8,15,23-24,36-37,133-134,186-187,526-527,542-545,602-603,617-618,633-634
+src/components/interactions/interactions-graph.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 56,114-115,232
+src/components/services/anchored-suggestion-portal.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 42-44,57,68-69
+src/components/shared/pointer-drag.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 4-7,18-19
+src/hooks/services/workspace/use-workspace-selection.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 100,112
+src/components/copilot/copilot-page.tsx
+  s_0f4f854aab5299::t_62f9e1d22cd51e 12-13
+src/constants/datafields/genome.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 145
+src/components/compare-region/place-feature-popup.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2-3,26,47
+src/app/api/e2e-mock/[...path]/__tests__/query.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17,32,104
+src/app/api/workspace/preview/[...path]/route.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-12,89
+src/components/views/__tests__/selection-service-chooser.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 126-127
+src/constants/search-info.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21,169
+src/components/theme-provider.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 33-35,45,50-51,66-67
+src/app/(views)/feature/[featureId]/feature-member.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 91-92,123
+src/components/workspace/folder-picker/folder-picker-column.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 98-99,150-151
+src/hooks/views/__tests__/use-resource-collection.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 171
+src/components/errors/record-load-failure.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13,22-23
+src/components/organisms/shared/genome-scope-props.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6
+src/components/workspace/folder-picker/folder-picker-utils.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 36
+src/components/genome-browser/jbrowse/adapters.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-31,48-49,64,70-71,102-103
+src/components/services/form-ui/service-autocomplete.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14
+src/hooks/copilot/use-copilot-draft.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 26,72,98
+src/lib/__tests__/history-scroll-restoration.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3,370
+src/app/api/services/workspace/upload/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 2,320
+src/components/services/form-ui/__tests__/service-library-header.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 18
+src/hooks/use-table-layout.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18
+src/components/services/__tests__/anchored-suggestion-portal.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 152-153
+src/components/workspace/__tests__/workspace-object-selector-browse.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24-25
+src/lib/__tests__/rerun-utility.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 325,349
+src/components/organisms/shared/__tests__/section-error.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 158-159
+e2e/mocks/backends.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11-12,27-28,35-36,46-47,123-125,135,153,210-212,225-226
+e2e/tests/organisms/serology.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8,13-14
+src/components/shared/use-data-table-download.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 123-124
+src/components/genome-browser/use-applied-theme.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 25-27
+src/components/views/__tests__/fixtures/resource-collection-mocks.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 6-7
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9
+e2e/tests/workspace-upload.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15-16,19,54-55,104-105,135-136
+src/components/organisms/metadata-distributions/__tests__/donut-chart.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3,228,540
+src/hooks/services/workspace/use-workspace.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16
+src/hooks/views/use-child-collection-url-state.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-30,49,74
+src/components/shared/data-table.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 137-138,192-193,230-232,444-445,455,476-477,530-532,561-563,592-594,738-744,810-814,890,900-901,1013-1014,1024-1026,1032-1033,1085-1086,1109-1111,1136-1137,1164-1165,1168-1169,1205-1206,1235-1236,1239-1240,1255-1256,1350-1351
+src/components/shared/file-table.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 114-115,202-204,255-257,363-366,489,494-496,549-550,591-592,604-605
+e2e/pages/jobs-list-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8-9,29,48-49,54-55,66-67,85,111-112,121,135-136,156,200-201
+src/app/globals.css
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-30,49-50,68-70,97-99,131-133,155-157,161-162,177,203,254-255,273,307-308,312-313,318-319,421-422,427-428,438-440,634-638,659-660,669-670,727-728,737-738,753-754,786-788,797,806-807,848-849,860-861,866-867,881-882,892-894,899-901,908-909,915-916,925-926,932-933,1004-1006,1064
+e2e/tests/compare-region.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 12-13,24-25,122-123,345
+e2e/pages/taxon-interactions-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 40-41
+src/app/(auth)/sign-up/sign-up-view.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 64
+src/components/compare-region/compare-region-selection-strip.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 174-175
+src/app/api/taxonomy-tree/[operation]/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1-2,19,267
+src/components/navbars/theme-menu-options.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 62-63
+src/app/(views)/feature/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35-36
+src/components/organisms/metadata-distributions/donut-chart.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 52-61,125,575,701,730,745,749,765,798,840,876-877,901,945
+e2e/tests/organisms/taxon-list-data.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 35-36,168-169,217,247,358-360,416-417,549
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 252,262,499
+src/components/jobs/job-status-pill.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 71-72,76-77,131-132
+src/app/services/(protein-tools)/meta-cats/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 665
+src/components/compare-region/__tests__/compare-region-chart.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 44,53,106,839
+src/hooks/services/workspace/use-ensure-user-workspace.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17,21,33,57,82
+e2e/pages/viral-genome-tree-page.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-23,46-48,119-120
+src/components/copilot/copilot-plan-card.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 107
+src/components/ui/button.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10
+src/components/services/__tests__/single-genome-selector.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10,181
+src/components/views/collection-filters/facet-value-list.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 93
+src/components/circular-viewer/circular-viewer-item-dialog.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10
+src/app/(views)/strain/[strainId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 78-79
+src/components/interactions/graph-toolbar.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 16-17,26-27,44-45
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 36-37,965,1211,1393-1394,1730-1732
+src/components/taxonomy/taxonomy-tree-view.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 33
+src/app/(views)/experiment/[experimentId]/page.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 29-30
+src/app/search/__tests__/legacy-keyword-normalization.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 32,38-39,55-56,92-93,149-150
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 64-65,73-74
+src/components/ui/input-group.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 11-12
+src/components/views/resource-export.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 3-5
+src/components/workspace/workspace-shell.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 44-46,56-57,138-139
+src/lib/account-caches.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+e2e/scripts/journeys/service-submit.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 5-7,13
+src/components/views/overview-value-policy.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 13-14,21
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 118-119,135-137,174
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 70-71
+src/components/workspace/workspace-table-columns.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 54-56
+src/components/workspace/__tests__/workspace-mini-browser.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 8,12-13,20-21
+e2e/fixtures/overrides/compare-region.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 24-28
+src/app/api/workspace/preview/__tests__/route.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 102-103,196,232-233,235
+src/app/(views)/feature/feature-collection.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 19-21
+src/components/organisms/geo-distribution/map-constants.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 1
+src/components/auth/session-unverified-banner.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 10-11
+src/components/copilot/__tests__/copilot-panel.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17
+src/__tests__/proxy.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 204,274
+e2e/tests/services/workspace-file-picker.spec.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 25-26,74-75,471,478
+src/components/ui/__tests__/tanstack-form.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 9-10
+src/components/organisms/geo-distribution/__tests__/color-scale.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 15
+src/components/interactions/graph-node-list.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 21-22,30-31,40,58-59
+src/components/workspace/folder-picker/__tests__/folder-picker-files-upload.test.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18
+src/app/api/copilot/__tests__/chat-routes.test.ts
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 308
+src/components/organisms/taxon-views/phylogeny.tsx
+  s_0f4f854aab5299::t_3e33b74cd1a8c8 17-18
+e2e/a11y/baseline.generated.ts
+  s_0f4f854aab5299::t_b9df74c71b01eb 3-4,8-9
+src/lib/api/poll-backoff.ts
+  s_0f4f854aab5299::t_9c19f0385d1226 10,13
+src/lib/api/query-retry.ts
+  s_0f4f854aab5299::t_59e4e9e75817d5 1,4
+src/lib/api/server-user-agent.ts
+  s_0f4f854aab5299::t_502c6ab1696a1b 2-3
+src/lib/api/types.ts
+  s_0f4f854aab5299::t_74e2a59c5d6b46 4-7
+src/lib/api/upstream-failure.ts
+  s_0f4f854aab5299::t_9f5d2bfcec1b2c 2-3,24,48,51,53,59,61,93,106,197,241,299,329,340,347,381,386,393
+src/lib/api/upstream-route.ts
+  s_0f4f854aab5299::t_63386738691b81 6
+src/lib/api/workspace-proxy-error.ts
+  s_0f4f854aab5299::t_2c13f270b3e901 9,37-38,58
+src/lib/app-service.ts
+  s_0f4f854aab5299::t_cbd66f57ec7b47 32,102,178,186
+src/lib/auth/__tests__/protected-layouts.test.ts
+  s_0f4f854aab5299::t_df7f8e9785dbce 5-6,69-70
+src/lib/auth/provider.tsx
+  s_0f4f854aab5299::t_e17e325d6dbf56 33-34
+src/lib/auth/redirect.ts
+  s_0f4f854aab5299::t_7c846867837bd8 14
+src/lib/auth/server/__tests__/current-user-cache.test.ts
+  s_0f4f854aab5299::t_219063631c7c30 17-18
+src/lib/auth/server/__tests__/current-user.test.ts
+  s_0f4f854aab5299::t_d68e35ccc08eb3 10-11
+src/lib/auth/server/actions.ts
+  s_0f4f854aab5299::t_d31c9dc98d0cc5 254-255,285-287,296-297,334-338
+src/lib/auth/server/adapters/__tests__/bvbrc-identity-logging.test.ts
+  s_0f4f854aab5299::t_0074401c211115 14-17
+src/lib/auth/server/adapters/bvbrc-identity.ts
+  s_0f4f854aab5299::t_f66660d6d0b924 28-29,46-48,70-71,126-127,214-216
+src/lib/auth/server/errors.ts
+  s_0f4f854aab5299::t_155bbe81171a00 127-128
+src/lib/auth/server/page-auth.ts
+  s_0f4f854aab5299::t_b3b938d2006e0a 20-21
+src/lib/auth/server/profile-cache.ts
+  s_0f4f854aab5299::t_92c06ae480b437 7-14,28-29,71,86-87,103-104
+src/lib/auth/server/profile-settings.ts
+  s_0f4f854aab5299::t_5f6e6051e99db6 5-10
+src/lib/auth/server/respond.ts
+  s_0f4f854aab5299::t_c9893e7ff1279f 75-77
+src/lib/auth/server/result.ts
+  s_0f4f854aab5299::t_99ee9522d11926 17-18
+src/lib/auth/server/session.ts
+  s_0f4f854aab5299::t_0c0f2edffed3f7 50
+src/lib/auth/types.ts
+  s_0f4f854aab5299::t_4d1fc3854659e1 15-16,20
+src/lib/browser-storage.ts
+  s_0f4f854aab5299::t_6334f1b2bdb66b 1,6
+src/lib/cepi-news.ts
+  s_0f4f854aab5299::t_7aeb4355391c0d 1,13,16,49,77
+src/lib/circular-viewer/client.ts
+  s_0f4f854aab5299::t_031becf0a98064 2-3
+src/lib/circular-viewer/contract.ts
+  s_0f4f854aab5299::t_6daeeaeac02281 17,59
+src/lib/circular-viewer/drawing.ts
+  s_0f4f854aab5299::t_3b5aeb8a8a516b 41-42,191,233-234
+src/lib/circular-viewer/hit-test.ts
+  s_0f4f854aab5299::t_7e7140939e3a6d 56-57,77-78
+src/lib/circular-viewer/layout.ts
+  s_0f4f854aab5299::t_b69d093bd9ed74 1,7,85-86
+src/lib/circular-viewer/paths.ts
+  s_0f4f854aab5299::t_8dd5f51d8abade 2-4
+src/lib/circular-viewer/server.ts
+  s_0f4f854aab5299::t_7a793810c3022a 5-6,121,180-181,287-288,354-356,437,449-450,495-496,502-503
+src/lib/circular-viewer/tracks.ts
+  s_0f4f854aab5299::t_81f255c88a72ad 23-25,161
+src/lib/circular-viewer/user-track.ts
+  s_0f4f854aab5299::t_f3cc5ad7b87c7a 25,67-68,98-99
+src/lib/compare-region/client.ts
+  s_0f4f854aab5299::t_96cfcb34d73531 2-3,37
+src/lib/compare-region/colors.ts
+  s_0f4f854aab5299::t_48fb58e078a87d 2-3,18-19,34-35
+src/lib/compare-region/contract.ts
+  s_0f4f854aab5299::t_6c029f28c32c06 7-8,67-68,86,146-147
+src/lib/compare-region/density-options.ts
+  s_0f4f854aab5299::t_a68217b60150d0 2-3
+src/lib/compare-region/families.ts
+  s_0f4f854aab5299::t_39ec4aec3e5523 48-49
+src/lib/compare-region/feature-card.ts
+  s_0f4f854aab5299::t_c6158eadb46b29 4-5
+src/lib/compare-region/feature-popup.ts
+  s_0f4f854aab5299::t_fe4d00fa33e3a5 7-8
+src/lib/compare-region/glyph-placement.ts
+  s_0f4f854aab5299::t_25d7f9f3917d32 30-31
+src/lib/compare-region/labels.ts
+  s_0f4f854aab5299::t_e2e3a212f37f57 134
+src/lib/compare-region/layout.ts
+  s_0f4f854aab5299::t_7f13197548063f 18,40-41,116-117,135
+src/lib/compare-region/pan.ts
+  s_0f4f854aab5299::t_870aecf22e8988 2-4
+src/lib/compare-region/ribbons.ts
+  s_0f4f854aab5299::t_d38ff293332c2c 82-83
+src/lib/compare-region/server.ts
+  s_0f4f854aab5299::t_6f5b260ba97d79 56-58,174-176,193-195
+src/lib/compare-region/text-measure.ts
+  s_0f4f854aab5299::t_201ba95bc5b742 1
+src/lib/compare-region/url-state.ts
+  s_0f4f854aab5299::t_bbb1ad15660f14 2-3
+src/lib/compare-region/zoom.ts
+  s_0f4f854aab5299::t_f5a44a263c2110 8
+src/lib/copilot/__tests__/server.test.ts
+  s_0f4f854aab5299::t_b49fd834871c21 23-24
+src/lib/copilot/attachments.ts
+  s_0f4f854aab5299::t_fe97c8de78eba3 73-74
+src/lib/copilot/cards.ts
+  s_0f4f854aab5299::t_9058fb28292c65 137,156-157
+src/lib/copilot/client.ts
+  s_0f4f854aab5299::t_3218dccf7f8e20 2-3,27,188-189
+src/lib/copilot/drafts.ts
+  s_0f4f854aab5299::t_1fa1fbf58668c0 2-4,81-82,106
+src/lib/copilot/floating-rect.ts
+  s_0f4f854aab5299::t_d2575bda37b991 34
+src/lib/copilot/name.ts
+  s_0f4f854aab5299::t_db52aa2e6a78a0 2-3
+src/lib/copilot/page-context.ts
+  s_0f4f854aab5299::t_e8c326365bf5d2 2-3,102-103
+src/lib/copilot/paths.ts
+  s_0f4f854aab5299::t_2384159ddd9f21 1
+src/lib/copilot/plan.ts
+  s_0f4f854aab5299::t_48829eece97d24 2-3,167,252-253
+src/lib/copilot/route-errors.ts
+  s_0f4f854aab5299::t_8ff62ffcddf907 16
+src/lib/copilot/server.ts
+  s_0f4f854aab5299::t_5df10c6cf9ecd4 4-6,36,47,134-135,175,210,231,245-246,317-318,443,466,506,535,593,602-604,629,670,695
+src/lib/copilot/sse.ts
+  s_0f4f854aab5299::t_d4ecd4065854ac 2-3,63,89
+src/lib/copilot/steps.ts
+  s_0f4f854aab5299::t_eeb43c7fd59fe9 1
+src/lib/copilot/turn.ts
+  s_0f4f854aab5299::t_c08573e5d29e75 164-165,211-212
+src/lib/copilot/types.ts
+  s_0f4f854aab5299::t_aad3e87698807a 32,45,70,91,121,141
+src/lib/data-api/__tests__/client-download.test.ts
+  s_0f4f854aab5299::t_38ad895953b4f6 6-7
+src/lib/data-api/__tests__/client-fasta.test.ts
+  s_0f4f854aab5299::t_fa4d613e39512e 7-8
+src/lib/data-api/__tests__/repository-upstream-failures.test.ts
+  s_0f4f854aab5299::t_de0781e0b74925 99-100
+src/lib/data-api/__tests__/repository.test.ts
+  s_0f4f854aab5299::t_b2bfbe8e77a63f 297-298,511,764
+src/lib/data-api/__tests__/rql.test.ts
+  s_0f4f854aab5299::t_c6031f92f71a04 207-208,215-216,229-230,255-256,385
+src/lib/data-api/__tests__/server-policy.test.ts
+  s_0f4f854aab5299::t_407bfab20291b7 1-2,245-246,261-262
+src/lib/data-api/__tests__/server-repository.test.ts
+  s_0f4f854aab5299::t_9cd246192b2588 1-2
+src/lib/data-api/__tests__/taxonomy-tree.test.ts
+  s_0f4f854aab5299::t_584622fdacc3f5 243-244,312-314
+src/lib/data-api/client.ts
+  s_0f4f854aab5299::t_8394fd0c9713b2 43-46,105-106,239-242,262-263,270-272
+src/lib/data-api/download-transport.ts
+  s_0f4f854aab5299::t_098725750cc4a8 7-12,40-41,132
+src/lib/data-api/downloads.ts
+  s_0f4f854aab5299::t_734e8d368a5a65 11-12,38-39,113,119-120,161,181-182,186-187,202-204,271-272
+src/lib/data-api/fasta.ts
+  s_0f4f854aab5299::t_978ffb6934c64f 5-6,11,36-37
+src/lib/data-api/file-name.ts
+  s_0f4f854aab5299::t_1ad6048b548416 4-7
+src/lib/data-api/keyword-terms.ts
+  s_0f4f854aab5299::t_4160d9e3c9e7d6 1-2,5-6,18-21,28-29,39-40,55-59,85-89
+src/lib/data-api/query-options.ts
+  s_0f4f854aab5299::t_e39ee26fe8a93e 77-78
+src/lib/data-api/repository.ts
+  s_0f4f854aab5299::t_43e315f6dd6a4d 79-80,136-137,159-160,263-264,324-325,526-529,552-554,577-579,606-608,688-689,726-728,858-859,904-905,919,921,954-955
+src/lib/data-api/resources.ts
+  s_0f4f854aab5299::t_53a3d5d2ed1c6c 123-124,142-143
+src/lib/data-api/route-errors.ts
+  s_0f4f854aab5299::t_89963377590d34 6-7,13-14,30-31
+src/lib/data-api/route-failure-client.ts
+  s_0f4f854aab5299::t_6e2b3122aea523 2-3,17-18
+src/lib/data-api/route-guards.ts
+  s_0f4f854aab5299::t_10fab2843106cb 6-7,13-14,44-45,62-63
+src/lib/data-api/rql.ts
+  s_0f4f854aab5299::t_55c75c0640a255 27,69-70,221-222,242-244,246-248,307-308,315,391-394
+src/lib/data-api/schemas.ts
+  s_0f4f854aab5299::t_bc82a976deddc3 15-17,52-54
+src/lib/data-api/server-policy.ts
+  s_0f4f854aab5299::t_ff1f2064dbec40 8-9,14-16,27-28,38,45-46,52-57,73-74
+src/lib/data-api/server-repository.ts
+  s_0f4f854aab5299::t_0aa4fef7cde232 10-16
+src/lib/data-api/taxonomy-tree-client.ts
+  s_0f4f854aab5299::t_5d3d00129f0df7 2-4,38-39
+src/lib/data-api/taxonomy-tree.ts
+  s_0f4f854aab5299::t_e7c26ce7f0de26 2-3,12-14,19-20,29-30,37-38,49-52,115-116,132-134,140-141,150-151
+src/lib/data-api/types.ts
+  s_0f4f854aab5299::t_38120b642d534d 5-6,133
+src/lib/data-api/validation.ts
+  s_0f4f854aab5299::t_ca304588cefa94 202-204
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_0f4f854aab5299::t_dd3e4481d90d51 44,133,138,189,199,445,452,473,489,495,504,520,527,536,560,582
+src/lib/e2e-fixtures/__tests__/transport-parity.test.ts
+  s_0f4f854aab5299::t_16bce048509d90 6,29,49,78,227
+src/lib/e2e-fixtures/downloads.ts
+  s_0f4f854aab5299::t_a2c7cd8897704e 4-5,41,48
+src/lib/e2e-fixtures/envelopes.ts
+  s_0f4f854aab5299::t_781bd815de773f 1,60
+src/lib/e2e-fixtures/outages.ts
+  s_0f4f854aab5299::t_4718ad90371229 2-3,7-8,32,59,105,115
+src/lib/e2e-fixtures/records.ts
+  s_0f4f854aab5299::t_0ce8c4dba93298 2-3,256,580,582,584,594,636,664,675,780,811,970,985,997
+src/lib/env.ts
+  s_0f4f854aab5299::t_e3e2fd1c51f20a 9,16
+src/lib/fasta-validation.ts
+  s_0f4f854aab5299::t_989fe0931591a2 119
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_0f4f854aab5299::t_e974c53f1c56d5 161,187,229,255
+src/lib/feature-view/display.ts
+  s_0f4f854aab5299::t_6f16b460323a77 4,13,29
+src/lib/feature-view/fields.ts
+  s_0f4f854aab5299::t_d8413ff4944653 4
+src/lib/feature-view/query.ts
+  s_0f4f854aab5299::t_b31a7a89458d9f 24,34,37,77
+src/lib/feature-view/tabs.ts
+  s_0f4f854aab5299::t_24f3ba98b72523 35,45
+src/lib/forms/(genomics)/blast/blast-form-utils.ts
+  s_0f4f854aab5299::t_80653e384ab4d2 14
+src/lib/forms/(genomics)/genome-alignment/genome-alignment-form-utils.ts
+  s_0f4f854aab5299::t_da525eb4d86782 38
+src/lib/forms/(genomics)/genome-annotation/genome-annotation-service.ts
+  s_0f4f854aab5299::t_c9454c8ebf1007 19
+src/lib/forms/(genomics)/genome-assembly/genome-assembly-form-utils.ts
+  s_0f4f854aab5299::t_4bf09e4232865b 112,138-139
+src/lib/forms/(genomics)/primer-design/primer-design-form-utils.ts
+  s_0f4f854aab5299::t_b2fd9441c1f084 146,161,234
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-form-utils.ts
+  s_0f4f854aab5299::t_42d288b58eeb65 60
+src/lib/forms/(genomics)/similar-genome-finder/similar-genome-finder-result-utils.ts
+  s_0f4f854aab5299::t_10e12002f7ec85 41
+src/lib/forms/(genomics)/variation-analysis/variation-analysis-form-schema.ts
+  s_0f4f854aab5299::t_44b688b4b49111 8-10
+src/lib/forms/(metagenomics)/metagenomic-binning/__tests__/metagenomic-binning-form-schema.test.ts
+  s_0f4f854aab5299::t_2c66f23092f53a 28
+src/lib/forms/(metagenomics)/metagenomic-read-mapping/__tests__/metagenomic-read-mapping-form-schema.test.ts
+  s_0f4f854aab5299::t_f3cab8c7e9a688 49
+src/lib/forms/(metagenomics)/metagenomic-read-mapping/metagenomic-read-mapping-form-utils.ts
+  s_0f4f854aab5299::t_a4b0cef0eca39f 9
+src/lib/forms/(protein-tools)/gene-protein-tree/gene-protein-tree-form-utils.ts
+  s_0f4f854aab5299::t_87b95ce7457b75 59
+src/lib/forms/(protein-tools)/meta-cats/meta-cats-form-utils.ts
+  s_0f4f854aab5299::t_e5d30bd0fee1e8 20-21,34,65,142,337,354
+src/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-schema.ts
+  s_0f4f854aab5299::t_1f3d343f11dd4d 58
+src/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils.ts
+  s_0f4f854aab5299::t_e94700cc5bb81f 52,72,83,101,145
+src/lib/forms/(protein-tools)/proteome-comparison/__tests__/proteome-comparison-form-schema.test.ts
+  s_0f4f854aab5299::t_bdf92e5b5a0647 72
+src/lib/forms/(protein-tools)/proteome-comparison/__tests__/proteome-comparison-form-utils.test.ts
+  s_0f4f854aab5299::t_c37ba9216e0427 35,42
+src/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-schema.ts
+  s_0f4f854aab5299::t_f405f30a73dc44 26-27,29,38
+src/lib/forms/(protein-tools)/proteome-comparison/proteome-comparison-form-utils.ts
+  s_0f4f854aab5299::t_747305c24b1562 121,124,152
+src/lib/forms/(viral-tools)/influenza-ha-subtype/influenza-ha-subtype-form-utils.ts
+  s_0f4f854aab5299::t_2b041b71ff8094 3
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/__tests__/sars-cov2-genome-analysis-service.test.ts
+  s_0f4f854aab5299::t_e6ec9397b08d2a 28
+src/lib/forms/(viral-tools)/sars-cov2-genome-analysis/sars-cov2-genome-analysis-service.ts
+  s_0f4f854aab5299::t_9a9ac334608ec7 13,22-23,83
+src/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/sars-cov2-wastewater-analysis-form-schema.ts
+  s_0f4f854aab5299::t_4cc28000fc5195 44
+src/lib/forms/(viral-tools)/sars-cov2-wastewater-analysis/sars-cov2-wastewater-analysis-form-utils.ts
+  s_0f4f854aab5299::t_f198ec2d6b6aed 13
+src/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-schema.ts
+  s_0f4f854aab5299::t_0e5ce9e8cbc1da 5,135,148
+src/lib/forms/(viral-tools)/viral-assembly/viral-assembly-form-utils.ts
+  s_0f4f854aab5299::t_1624d79543a432 62,119-120
+src/lib/forms/genome-metadata-fields.ts
+  s_0f4f854aab5299::t_1a8a27502d5352 1,29,215
+src/lib/forms/shared-schemas.ts
+  s_0f4f854aab5299::t_d051d3f1ca318e 15,19-21
+src/lib/forms/taxonomy-lookup.ts
+  s_0f4f854aab5299::t_a84d7e244b6273 17,60,80,97
+src/lib/genome-browser/__tests__/bounded-cache.test.ts
+  s_0f4f854aab5299::t_4f437153cf75ff 19,68,70,72-73
+src/lib/genome-browser/__tests__/chunks.test.ts
+  s_0f4f854aab5299::t_06f0df95b4a271 101
+src/lib/genome-browser/__tests__/server.test.ts
+  s_0f4f854aab5299::t_3e3d69afa40d5a 270
+src/lib/genome-browser/__tests__/url-state.test.ts
+  s_0f4f854aab5299::t_987fed4fc1a1e9 92
+src/lib/genome-browser/bounded-cache.ts
+  s_0f4f854aab5299::t_1d9e5d9258fe0f 2-3,51,66
+src/lib/genome-browser/chunks.ts
+  s_0f4f854aab5299::t_cc771212269460 50
+src/lib/genome-browser/client.ts
+  s_0f4f854aab5299::t_8644e3459b0dc9 2-3,54
+src/lib/genome-browser/contract.ts
+  s_0f4f854aab5299::t_4ea955d4bd7897 2-3,15,63,133,157,165
+src/lib/genome-browser/server.ts
+  s_0f4f854aab5299::t_749f1b5ef5dfd2 2-3,37,140,286,293,304-305,354,372,379,413
+src/lib/genome-browser/url-state.ts
+  s_0f4f854aab5299::t_f8a079a094e9f4 2-3,94,101
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_0f4f854aab5299::t_e63168c81de953 185,352
+src/lib/genome-view/query.ts
+  s_0f4f854aab5299::t_a052a5ccc24881 29,58,60,76-77,96-97,128,155-156,193,220,270,277
+src/lib/genome-view/tabs.ts
+  s_0f4f854aab5299::t_2d50d5cf0917bb 49,66
+src/lib/genome-view/value-links.ts
+  s_0f4f854aab5299::t_4a65e3e4bf617b 11,25-26,55
+src/lib/history-scroll-restoration.ts
+  s_0f4f854aab5299::t_1f3895d01ecd3b 1,6,8,42,55,64,69,92,102,114,120
+src/lib/interactions/__tests__/graph-layout-worker.test.ts
+  s_0f4f854aab5299::t_1e4f02cb9f0e76 3-4
+src/lib/interactions/__tests__/graph-theme.test.ts
+  s_0f4f854aab5299::t_d122ef91b1a02a 11-13,50-51
+src/lib/interactions/__tests__/layouts.test.ts
+  s_0f4f854aab5299::t_274a854fd02d9d 6-7,80-81
+src/lib/interactions/__tests__/use-graph-layout.test.tsx
+  s_0f4f854aab5299::t_50e89f96724b07 176-177
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_0f4f854aab5299::t_f66ac3bb7548e1 38,158-159
+src/lib/interactions/graph-layout.worker.ts
+  s_0f4f854aab5299::t_223807ba74ad17 7-8
+src/lib/interactions/graph-theme.ts
+  s_0f4f854aab5299::t_23b5a0e8e0a4e1 10,13-16,32-33,36-37
+src/lib/interactions/layout-client.ts
+  s_0f4f854aab5299::t_1599f2f75bb8fa 21-22,29-31,64-65,114-115
+src/lib/interactions/layout-positions.ts
+  s_0f4f854aab5299::t_e83d387da73b3b 6,37-38
+src/lib/interactions/layouts.ts
+  s_0f4f854aab5299::t_3b0afaad3ead4d 23
+src/lib/interactions/schema.ts
+  s_0f4f854aab5299::t_f320687959e7a0 8-9
+src/lib/interactions/types.ts
+  s_0f4f854aab5299::t_6822f96b108946 52-53
+src/lib/interactions/use-graph-layout.ts
+  s_0f4f854aab5299::t_df20d66d4907dc 21-23,47-48,66-68
+src/lib/interactions/use-interactions.ts
+  s_0f4f854aab5299::t_e055d0b150b450 16-18,55-56,67-68,74-75,86-87
+src/lib/jobs/__tests__/jobs-url-state.test.ts
+  s_0f4f854aab5299::t_25b9cc7789c318 41-42,50-51
+src/lib/jobs/formatting.ts
+  s_0f4f854aab5299::t_432a029daa2a59 31-32
+src/lib/jobs/icons.ts
+  s_0f4f854aab5299::t_fc384e59a7e369 4-6
+src/lib/jobs/jobs-url-state.ts
+  s_0f4f854aab5299::t_26f54ad7ab51de 4,90
+src/lib/jsonrpc-client.ts
+  s_0f4f854aab5299::t_d207a187ffdfff 79,96,117
+src/lib/phylogeny/__tests__/archaeopteryx.test.ts
+  s_0f4f854aab5299::t_3384757eef6617 45,80,167,238,280,418
+src/lib/phylogeny/__tests__/bacterial-tree-index.test.ts
+  s_0f4f854aab5299::t_4c75d1791f53dd 69
+src/lib/phylogeny/__tests__/dataset-store.test.ts
+  s_0f4f854aab5299::t_1210215964396f 56,190
+src/lib/phylogeny/__tests__/viral-facets.test.ts
+  s_0f4f854aab5299::t_269e048293a03b 84
+src/lib/phylogeny/archaeopteryx.ts
+  s_0f4f854aab5299::t_5e338a2d64d610 51,75,79,82,89,114,129,144,148,153,163
+src/lib/phylogeny/bacterial-tree-index.ts
+  s_0f4f854aab5299::t_a25fcaea8a4ccd 6,10,51,70,76
+src/lib/phylogeny/viral-facets.ts
+  s_0f4f854aab5299::t_5311ed4389a053 103
+src/lib/popup-placement.ts
+  s_0f4f854aab5299::t_6c8c66b52ee0bc 1,12,23
+src/lib/protein-feature-view/fields.ts
+  s_0f4f854aab5299::t_ba58052810843d 4
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_0f4f854aab5299::t_a18109d6ea70d9 94,268
+src/lib/protein-structure-view/__tests__/server.test.ts
+  s_0f4f854aab5299::t_97cec7c156a6a7 1,90
+src/lib/protein-structure-view/fields.ts
+  s_0f4f854aab5299::t_f12add90af3ce0 4,7
+src/lib/protein-structure-view/mode.ts
+  s_0f4f854aab5299::t_5f4f3fbdad0078 68,82-83
+src/lib/protein-structure-view/server.ts
+  s_0f4f854aab5299::t_eb8b4fc85eea27 14,21,26
+src/lib/protein-structure-view/source.ts
+  s_0f4f854aab5299::t_61efeb96031fc9 41
+src/lib/rate-limit.ts
+  s_0f4f854aab5299::t_40083b14b43cf4 1,16,19,60,65
+src/lib/recent-workspace-folders.ts
+  s_0f4f854aab5299::t_e7ab9ead1e98b9 48
+src/lib/rerun-utility.ts
+  s_0f4f854aab5299::t_b98134299b7536 33,38,50,54,62,66,73,78,113,121,173
+src/lib/search/all-types-query.ts
+  s_0f4f854aab5299::t_0fe39bbb3c7375 1,9,15,29
+src/lib/search/all-types-search.ts
+  s_0f4f854aab5299::t_f7e586c81577ed 32,37,61,485,490,493
+src/lib/serology-view/__tests__/serology-view.test.ts
+  s_0f4f854aab5299::t_cd756ab40c8d16 1
+src/lib/services/__tests__/genome.test.ts
+  s_0f4f854aab5299::t_453424cdce35b2 726-727
+src/lib/services/genome.ts
+  s_0f4f854aab5299::t_af0aef46c470c7 43,109,127-128,176,327-328,347-349,375-376
+src/lib/services/minhash.ts
+  s_0f4f854aab5299::t_02d1d1ff2fade8 17-18,62-63,86,112,160-161
+src/lib/services/organisms/__tests__/amr-distribution.test.ts
+  s_0f4f854aab5299::t_e33e58b22f176f 157-159
+src/lib/services/organisms/__tests__/cgmlst-distribution.test.ts
+  s_0f4f854aab5299::t_fdc03c74b7fc19 32
+src/lib/services/organisms/__tests__/fetch-timeout.test.ts
+  s_0f4f854aab5299::t_a9a672afdc48c5 42,73-74
+src/lib/services/organisms/__tests__/serotype-distribution.test.ts
+  s_0f4f854aab5299::t_ed8d25bbcdcf9a 117
+src/lib/services/organisms/amr-distribution.ts
+  s_0f4f854aab5299::t_3f2da8361c5025 25
+src/lib/services/organisms/cgmlst-distribution.ts
+  s_0f4f854aab5299::t_cfdca10c209f57 22-23
+src/lib/services/organisms/chart-utils.ts
+  s_0f4f854aab5299::t_5c43008c3b34d6 1,18-19
+src/lib/services/organisms/genome-count.ts
+  s_0f4f854aab5299::t_e0fe28241d17dc 13-14,20-21
+src/lib/services/organisms/genome-scope.ts
+  s_0f4f854aab5299::t_97f16e95d9ab8d 2-3,11-12,16,35-37
+src/lib/services/organisms/geo-distribution.ts
+  s_0f4f854aab5299::t_c1baf68531c7b5 46-47,103-104
+src/lib/services/organisms/metadata-field-labels.ts
+  s_0f4f854aab5299::t_24de67d5826b57 18-19
+src/lib/services/organisms/phylogeny.ts
+  s_0f4f854aab5299::t_e584b14ce906d7 68-70,132-133,142-143
+src/lib/services/organisms/reference-genomes.ts
+  s_0f4f854aab5299::t_34235fb60523fc 22-24,75-76,92-93
+src/lib/services/organisms/serotype-distribution.ts
+  s_0f4f854aab5299::t_ec86dd9f6a4d18 11
+src/lib/services/organisms/taxonomy.ts
+  s_0f4f854aab5299::t_cfed2aa95f0d92 31,41-42,57-58,97-98,154-155
+src/lib/services/organisms/types.ts
+  s_0f4f854aab5299::t_5d61c52ac094a9 17-18
+src/lib/services/organisms/utils.ts
+  s_0f4f854aab5299::t_52827cf31f6e7c 18-21,38-39,52-53,61-63,75-77,95-97,122-124,157-158,180,224-225,307-308
+src/lib/services/service-utils.ts
+  s_0f4f854aab5299::t_d61c11a61b4154 19-21
+src/lib/services/sra-validation.ts
+  s_0f4f854aab5299::t_4962acf873c9b5 2-3,12-13,92-93
+src/lib/services/statistics.ts
+  s_0f4f854aab5299::t_b28d8bdc443bd3 43-44,71
+src/lib/services/workspace/__tests__/favorites-failures.test.ts
+  s_0f4f854aab5299::t_068daef9a42af1 57-58
+src/lib/services/workspace/__tests__/helpers.test.ts
+  s_0f4f854aab5299::t_ca899515340f9d 208-209,214-215,220-221,398-406,657-658,768-769,779-780
+src/lib/services/workspace/__tests__/mini-browser-items.test.ts
+  s_0f4f854aab5299::t_83d6441ecc9736 194-195
+src/lib/services/workspace/__tests__/setup.test.ts
+  s_0f4f854aab5299::t_b437ebb7a4fab7 15-16,21-22
+src/lib/services/workspace/adapters/__tests__/in-memory-workspace-repository.test.ts
+  s_0f4f854aab5299::t_4077a3de69df96 247
+src/lib/services/workspace/adapters/__tests__/parsers.test.ts
+  s_0f4f854aab5299::t_34f853349e15cf 14-25,54-65
+src/lib/services/workspace/adapters/http-workspace-repository.ts
+  s_0f4f854aab5299::t_861541018f0a11 2-3,409-410
+src/lib/services/workspace/adapters/in-memory-workspace-repository.ts
+  s_0f4f854aab5299::t_4d97d673926a79 2-3,69-70,115-116,298-299,550-552
+src/lib/services/workspace/adapters/parsers.ts
+  s_0f4f854aab5299::t_1a2f7366126933 1,6-7,61-62,77,101-102,115-116
+src/lib/services/workspace/adapters/rpc.ts
+  s_0f4f854aab5299::t_86c3bfa978d706 2-3,16-18,32-33
+src/lib/services/workspace/client.ts
+  s_0f4f854aab5299::t_2410f388bb887c 22,70-72,122-123,139
+src/lib/services/workspace/domain.ts
+  s_0f4f854aab5299::t_15c1a1555b479e 2-3,10-11,24,39,92-93,98-101,147-148
+src/lib/services/workspace/favorites.ts
+  s_0f4f854aab5299::t_479ce400158d89 21-22,46-48,70-71,95-96
+src/lib/services/workspace/helpers.ts
+  s_0f4f854aab5299::t_fde8f2bf44cda7 19-21,61-62,130-131,154-155,161-162,207-208,228,248-249,262-263,292,316-317,351-352,417-418
+src/lib/services/workspace/id-group.ts
+  s_0f4f854aab5299::t_880cca54523bcd 18,36-38
+src/lib/services/workspace/mini-browser-items.ts
+  s_0f4f854aab5299::t_91651f1cd0fa32 2-4,31-32,39-41
+src/lib/services/workspace/path-utils.ts
+  s_0f4f854aab5299::t_44864799961a40 1,22-23,80-81,126,136-137,150-151,236-237,299-300,332-335
+src/lib/services/workspace/picker-views.ts
+  s_0f4f854aab5299::t_bc2a2b3ad9471f 3-5,40-41,79-80,155-158,224,251-252,282-285,334-335,386-388,403,443-445,473-475,551,570-571
+src/lib/services/workspace/protected-folders.ts
+  s_0f4f854aab5299::t_689be038c01256 2-5,24-26
+src/lib/services/workspace/realm.ts
+  s_0f4f854aab5299::t_938f332d92c161 2-3
+src/lib/services/workspace/server-rpc.ts
+  s_0f4f854aab5299::t_77ca1d2638068d 2-5,45-46,66-67,70-72
+src/lib/services/workspace/setup.ts
+  s_0f4f854aab5299::t_3dbd3d1269aaa4 2-5,30-33,73-74
+src/lib/services/workspace/shared.ts
+  s_0f4f854aab5299::t_8880e2967ca50b 6-7
+src/lib/services/workspace/types.ts
+  s_0f4f854aab5299::t_62017c8d46b030 1-2,75-77,175,179-182,230,275-278
+src/lib/services/workspace/utils.ts
+  s_0f4f854aab5299::t_e002fe16e86c4d 20
+src/lib/services/workspace/validation.ts
+  s_0f4f854aab5299::t_d560d22151dd49 41-44
+src/lib/services/workspace/workspace-errors.ts
+  s_0f4f854aab5299::t_de8565be295355 2-7,40-41,52-53,69-71
+src/lib/services/workspace/workspace-query-keys.ts
+  s_0f4f854aab5299::t_986722fd362414 2-3,60-61
+src/lib/services/workspace/workspace-repository.ts
+  s_0f4f854aab5299::t_12b7276202b0ce 2-4,53-54,69,104-106,120-121
+src/lib/surveillance-view/__tests__/surveillance-view.test.ts
+  s_0f4f854aab5299::t_45b0fef6d434eb 1
+src/lib/svg-figure-export.ts
+  s_0f4f854aab5299::t_3a7b498fa8589c 1,16,54,89,101,126,148,178
+src/lib/table-layout.ts
+  s_0f4f854aab5299::t_bff63314757be1 3,11,49,65,104,115
+src/lib/taxon-view/__tests__/curated-lists-env.test.ts
+  s_0f4f854aab5299::t_1148cf7010836a 13,26,35,52-53,60-61,71-72
+src/lib/taxon-view/__tests__/landing-request.test.ts
+  s_0f4f854aab5299::t_da1ec3c6815140 19
+src/lib/taxon-view/__tests__/predicates.test.ts
+  s_0f4f854aab5299::t_e830fc1af0d897 107,130
+src/lib/taxon-view/__tests__/tab-policy.test.ts
+  s_0f4f854aab5299::t_9cb88c2ef9cdd8 122
+src/lib/taxon-view/curated-lists.ts
+  s_0f4f854aab5299::t_b638b414a8d92e 1,13,26,34,46,73
+src/lib/taxon-view/landing-request.ts
+  s_0f4f854aab5299::t_8ae2c38e4aad8e 10
+src/lib/taxon-view/phylo-manifest.ts
+  s_0f4f854aab5299::t_0f11ed621dbec3 11,27,43
+src/lib/taxon-view/predicates.ts
+  s_0f4f854aab5299::t_ec1ab681a7bc25 14,21,44
+src/lib/taxon-view/tab-policy.tsx
+  s_0f4f854aab5299::t_6f1ad3a101c02d 45,72
+src/lib/taxonomy-view/lineage-crumbs.ts
+  s_0f4f854aab5299::t_4d9434b0a6e1db 8,19,40,53,62,85,96
+src/lib/taxonomy-view/lineage-server.ts
+  s_0f4f854aab5299::t_024c82252a6357 5
+src/lib/taxonomy-view/query.ts
+  s_0f4f854aab5299::t_5095f4c12b83aa 16
+src/lib/ui-preferences/__tests__/provider.test.tsx
+  s_0f4f854aab5299::t_6e9dfeb947485a 27
+src/lib/ui-preferences/__tests__/server.test.ts
+  s_0f4f854aab5299::t_f33a42dd3ea928 40
+src/lib/ui-preferences/cookie.ts
+  s_0f4f854aab5299::t_c810647d8197a2 9
+src/lib/ui-preferences/definitions.ts
+  s_0f4f854aab5299::t_beb06ea87a4de2 6,86,108
+src/lib/ui-preferences/provider.tsx
+  s_0f4f854aab5299::t_15ad44de0f12e8 42,51,75
+src/lib/ui-preferences/schemas.ts
+  s_0f4f854aab5299::t_e09bc910967110 15,17,40
+src/lib/ui-preferences/server.ts
+  s_0f4f854aab5299::t_a93b1c330613c3 6
+src/lib/url.ts
+  s_0f4f854aab5299::t_ad7b6912567069 9,20,32,43,50,55,65
+src/lib/utils.ts
+  s_0f4f854aab5299::t_1a9670593be2d3 5,8,19,53
+src/lib/views/__tests__/child-collection-state.test.ts
+  s_0f4f854aab5299::t_98b324011e2a8c 54
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_0f4f854aab5299::t_8c9a5d18779317 50-51,131,197-198,226-227,241-242,310,316-317,528-529
+src/lib/views/__tests__/collection-selection.test.ts
+  s_0f4f854aab5299::t_4cc2da42e21841 63-64,80-81
+src/lib/views/__tests__/collection-state.test.ts
+  s_0f4f854aab5299::t_6f09a470e8bd74 490-491,592,607-608
+src/lib/views/__tests__/compound-sample-page.test.ts
+  s_0f4f854aab5299::t_cc61f1f39ec688 1,14-15,172-173
+src/lib/views/__tests__/compound-sample.test.ts
+  s_0f4f854aab5299::t_ea214159657616 20,52-53
+src/lib/views/__tests__/field-metadata.test.ts
+  s_0f4f854aab5299::t_7e6779a2bf1228 6-7,40-41
+src/lib/views/__tests__/interaction-predicates.test.ts
+  s_0f4f854aab5299::t_fced28ff58fcba 10-14,93-94
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_0f4f854aab5299::t_c16d1092f8bf52 250-251
+src/lib/views/__tests__/legacy-redirect.test.ts
+  s_0f4f854aab5299::t_80a0fc811f6705 42-43,377-378
+src/lib/views/__tests__/route-params.test.ts
+  s_0f4f854aab5299::t_8c0bc51688673b 5
+src/lib/views/__tests__/rql.test.ts
+  s_0f4f854aab5299::t_a0a4fcb258ca3e 24-25,62-63
+src/lib/views/__tests__/structural-rql.test.ts
+  s_0f4f854aab5299::t_7add3bed867e57 111-112
+src/lib/views/__tests__/view-registry.test.ts
+  s_0f4f854aab5299::t_e924d6dcc462d7 8-9,43
+src/lib/views/child-collection-state.ts
+  s_0f4f854aab5299::t_d98d38c5279ef2 10-14,60-61,65-67
+src/lib/views/child-resources.ts
+  s_0f4f854aab5299::t_18a06985fb3675 9-14,46-47,56,85-87,94-95,102-103
+src/lib/views/collection-selection.ts
+  s_0f4f854aab5299::t_e5e45fef445ee3 3-4,11,15-17,22-24,29-30,35-36
+src/lib/views/collection-state.ts
+  s_0f4f854aab5299::t_86033aab28070d 11-15,116-117,123,189,260-264,296-298,382-386,415-416,430-432
+src/lib/views/compound-sample-page.ts
+  s_0f4f854aab5299::t_df82f48b9ee0b7 25-27,48-50
+src/lib/views/field-metadata.ts
+  s_0f4f854aab5299::t_129f31c2328c42 7-12,18-20,25-26,36-39,43,50-51,63-64
+src/lib/views/hrefs.ts
+  s_0f4f854aab5299::t_4b1b686a6aeefa 6-7,111-112,131
+src/lib/views/legacy-hash-adapter.tsx
+  s_0f4f854aab5299::t_7ef597c33ed7c3 9-14,38-40,55-56,75,99-100
+src/lib/views/legacy-redirect.ts
+  s_0f4f854aab5299::t_8b6485dfe6b94c 27-28,37-38,97-100,136-142,160-162,170-171,185-188,235-236,266-267,282-284,295,302,310,314-315,341-342
+src/lib/views/route-params.ts
+  s_0f4f854aab5299::t_cf17ea50429e83 4-9,15-16,23-24
+src/lib/views/rql.ts
+  s_0f4f854aab5299::t_0da6fdcfcd29c0 9-10,21-23
+src/lib/views/structural-rql.ts
+  s_0f4f854aab5299::t_b8d40fedbd8a70 7-10,19-21,27-31
+src/lib/zod-mini.ts
+  s_0f4f854aab5299::t_241c9c6e54ff2f 4
+src/proxy.ts
+  s_0f4f854aab5299::t_0f246f68f8c469 64
+src/styles/archaeopteryx-theme.css
+  s_0f4f854aab5299::t_d86c973f998dc4 1
+src/styles/chat-utilities.css
+  s_0f4f854aab5299::t_a400599681567d 1
+src/styles/logo-utils.ts
+  s_0f4f854aab5299::t_8e779f36226809 23,31,41
+src/styles/molstar-theme.css
+  s_0f4f854aab5299::t_05b5c18dc7212c 1,4
+src/styles/themes/bvbrc-theme.css
+  s_0f4f854aab5299::t_a129d17c80bbc8 46,97
+src/styles/themes/violet-theme.css
+  s_0f4f854aab5299::t_0cb4c8a52efc45 46,95
+src/test-helpers/api-route-helpers.ts
+  s_0f4f854aab5299::t_40832fcbff682e 85
+src/test-helpers/compare-region.ts
+  s_0f4f854aab5299::t_fedec98116c091 26,57
+src/test-helpers/history-navigation.ts
+  s_0f4f854aab5299::t_af5e7243833efe 1
+src/test-helpers/menu-layout.ts
+  s_0f4f854aab5299::t_3288ff554277c4 1
+src/test-helpers/overview.ts
+  s_0f4f854aab5299::t_36c3b6389f392f 1
+src/test-helpers/pending-navigation.tsx
+  s_0f4f854aab5299::t_883441b5ee9c39 3
+src/test-helpers/react.ts
+  s_0f4f854aab5299::t_a82a08efa7ec16 38
+src/test-helpers/resizable.ts
+  s_0f4f854aab5299::t_bdfa16bb7fb8ca 3,30
+src/test-helpers/static-imports.ts
+  s_0f4f854aab5299::t_cc5221038a9cb8 12
+src/test-helpers/storage.ts
+  s_0f4f854aab5299::t_ed3e6d439aca93 1
+src/test-helpers/upstream-failures.ts
+  s_0f4f854aab5299::t_375c1fb3ecc5b7 3,55
+src/test-helpers/workspace-responses.ts
+  s_0f4f854aab5299::t_343e3d8bd875c6 3
+vitest.a11y.config.mts
+  s_0f4f854aab5299::t_dd6df25fa19cb1 5-7
+vitest.config.mts
+  s_0f4f854aab5299::t_1526b3d6def2b2 52-53,56-58
+vitest.setup.ts
+  s_0f4f854aab5299::t_d56229668efca3 4-6,24-25,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "54a925c08dfe8763990746b9dc8686bf4a79f649",
+  "prompts": {},
+  "sessions": {
+    "s_0f4f854aab5299": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b28eb01f-0c40-48e8-a80e-0ff43fb21d3c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

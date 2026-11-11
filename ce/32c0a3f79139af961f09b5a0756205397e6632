@@ -1,0 +1,60 @@
+src/lib/taxonomy-view/server.ts
+  s_16548dd7411b3b::t_78aff70d6b3335 43
+  s_16548dd7411b3b::t_df5e45230f4003 26
+src/lib/data-api/__tests__/server-repository.test.ts
+  s_16548dd7411b3b::t_1d5887cb294728 162-183
+src/lib/data-api/__tests__/server-policy.test.ts
+  s_16548dd7411b3b::t_36e687093d0ce9 199-233
+  s_16548dd7411b3b::t_f92e16dc013bd2 49-52,61
+src/lib/__tests__/shared-cache.test.ts
+  s_16548dd7411b3b::t_ff56030d0da460 1021,1038,1043-1045,1047-1048
+  s_16548dd7411b3b::t_69bdb0811d3be9 641,646,655-657,660-686,688-691,719-744
+  s_16548dd7411b3b::t_8697b3daa98979 692-718
+src/lib/taxonomy-view/__tests__/lineage-server.test.ts
+  s_16548dd7411b3b::t_0d34108d0b543f 164-179
+src/app/api/services/taxonomy/__tests__/route.test.ts
+  s_16548dd7411b3b::t_4e75b807475f5a 538
+  s_16548dd7411b3b::t_b109b7e1863fd9 15
+  s_16548dd7411b3b::t_86d94ef16394e7 180-181
+  s_16548dd7411b3b::t_8d2a2b0b040063 47-50,52-53
+  s_16548dd7411b3b::t_4e4fd02773119a 182
+  s_16548dd7411b3b::t_f894271a526498 536-537
+src/lib/taxon-view/phylo-manifest.ts
+  s_16548dd7411b3b::t_ea2060d3f4914f 68-71
+  s_16548dd7411b3b::t_1511a5bdb36259 34-43,52,54-55,64,72-80,83-86
+  s_16548dd7411b3b::t_9016a1ef2af666 91
+src/lib/shared-cache.ts
+  s_16548dd7411b3b::t_4eeacfe1ba691a 31
+  s_16548dd7411b3b::t_2d1948e3205cb0 236
+  s_16548dd7411b3b::t_4e8f21c4c307db 258
+  s_16548dd7411b3b::t_4f2c0913da3ed4 312-315
+  s_16548dd7411b3b::t_2b7d1e32552bf8 274-283
+docs/architecture.md
+  s_16548dd7411b3b::t_65178376d7874c 87
+  s_16548dd7411b3b::t_670820f6a43afa 89
+  s_16548dd7411b3b::t_7a6cb3646e57bb 86
+src/lib/data-api/server-repository.ts
+  s_16548dd7411b3b::t_2f985a3d3d5748 16-17,24,31
+src/lib/data-api/server-policy.ts
+  s_16548dd7411b3b::t_ff01d9397b9144 39-43
+  s_16548dd7411b3b::t_a52eda408b888c 84-85,87
+  s_16548dd7411b3b::t_627a5ed4bee5d7 71
+src/lib/taxon-view/__tests__/phylo-manifest.test.ts
+  s_16548dd7411b3b::t_df1757578a74a9 184-245
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ce32c0a3f79139af961f09b5a0756205397e6632",
+  "prompts": {},
+  "sessions": {
+    "s_16548dd7411b3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b827e755-df11-43eb-8ffe-97f6fc134485",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

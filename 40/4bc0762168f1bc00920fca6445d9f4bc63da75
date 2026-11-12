@@ -1,0 +1,26 @@
+src/lib/copilot/__tests__/edge-tab.test.ts
+  s_f3076d56c8db07::t_61a53cebb2142a 6,19-22,52-54,60-66,68-69,73
+  s_f3076d56c8db07::t_ca099b9a61b147 15-17
+  s_f3076d56c8db07::t_df32fa1732d004 42-43
+  s_f3076d56c8db07::t_8be37c38151d46 18
+src/components/copilot/copilot-edge-tab.tsx
+  s_f3076d56c8db07::t_61a53cebb2142a 80
+src/lib/copilot/edge-tab.ts
+  s_f3076d56c8db07::t_61a53cebb2142a 31-34,47,50-53,57,59-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "404bc0762168f1bc00920fca6445d9f4bc63da75",
+  "prompts": {},
+  "sessions": {
+    "s_f3076d56c8db07": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26470a30-3aab-4c7a-9fa8-51a1bdf2c9ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

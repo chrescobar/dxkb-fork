@@ -1,0 +1,32 @@
+src/app/(views)/genome/[genomeId]/genome-member.tsx
+  s_5977c68183fc5b::t_75ce81f2bd5778 87,109-116
+  s_5977c68183fc5b::t_bb791976d59c30 25
+src/app/(views)/genome/[genomeId]/__tests__/page.test.tsx
+  s_5977c68183fc5b::t_9c5f0355d2a510 360-388
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_5977c68183fc5b::t_9c5f0355d2a510 25,685-736
+  s_5977c68183fc5b::t_f4a727176d646c 737
+src/lib/genome-view/tabs.ts
+  s_5977c68183fc5b::t_75ce81f2bd5778 6,60-66,71,74-81
+src/app/(views)/genome/child-tabs.ts
+  s_5977c68183fc5b::t_75ce81f2bd5778 24-30
+  s_5977c68183fc5b::t_7a77a1bebd212f 31-32
+src/lib/views/child-resources.ts
+  s_5977c68183fc5b::t_75ce81f2bd5778 98-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "097bc077867c2e22be1aa4d1bd6028cf93b5b80d",
+  "prompts": {},
+  "sessions": {
+    "s_5977c68183fc5b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6afa2e40-1ca9-4cea-a492-5675feeb5900",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

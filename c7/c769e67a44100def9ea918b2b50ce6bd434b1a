@@ -1,0 +1,25 @@
+src/app/(views)/experiment/[experimentId]/__tests__/experiment-overview.test.tsx
+  s_3e509a213c592a::t_356f4cebd79011 41
+e2e/fixtures/overrides/catchall.ts
+  s_3e509a213c592a::t_356f4cebd79011 184
+src/app/advanced-search/[type]/experiment-search.tsx
+  s_3e509a213c592a::t_356f4cebd79011 101
+src/lib/e2e-fixtures/records.ts
+  s_3e509a213c592a::t_356f4cebd79011 409
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c7c769e67a44100def9ea918b2b50ce6bd434b1a",
+  "prompts": {},
+  "sessions": {
+    "s_3e509a213c592a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c39dc81e-b96a-4883-a308-d16c27c75509",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

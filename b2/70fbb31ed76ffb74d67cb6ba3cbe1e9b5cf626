@@ -1,0 +1,22 @@
+src/constants/datafields/genome_amr.ts
+  s_5977c68183fc5b::t_d54cc11ec15bf4 3-4,6-191
+src/lib/genome-amr-view/__tests__/genome-amr-view.test.ts
+  s_5977c68183fc5b::t_5e5ea726d57218 22,31-33,37-77
+  s_5977c68183fc5b::t_d428790d7bf17c 78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b270fbb31ed76ffb74d67cb6ba3cbe1e9b5cf626",
+  "prompts": {},
+  "sessions": {
+    "s_5977c68183fc5b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6afa2e40-1ca9-4cea-a492-5675feeb5900",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

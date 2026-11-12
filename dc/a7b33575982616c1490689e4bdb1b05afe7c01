@@ -1,0 +1,28 @@
+src/components/phylogeny/viral-tree-picker.tsx
+  s_f489a45e316e27::t_9bf24524f8a2f3 1-2,4,8-12,15-28,33,37,39-40,49-50,53-80,103-109,127-139,141,148,150-154,156-161,168-169,171-174,176-185,187-188,190-218,220-247,249-268,273-278,280-285,287-293,295-309,311-314,316-332,334-359,362-364,366-414,416,422-456,460-509,513,517-519,522,525,529,531-534,536,541-542,546,548-563
+  s_f489a45e316e27::t_7892e4b5470bef 125,143,155,170,279,286,294,333,415,457-459,523
+src/lib/phylogeny/viral-facets.ts
+  s_f489a45e316e27::t_67f4e4b6de874a 161-163,166-175,177-178,182-198,201-222,224-248
+src/lib/phylogeny/__tests__/viral-facets.test.ts
+  s_f489a45e316e27::t_c5c9be5f5f2fe0 3,10,149-152,156-160,167-212,215-243,247
+src/components/organisms/taxon-views/phylogeny.tsx
+  s_f489a45e316e27::t_d9070736e7d378 18-20,22
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_f489a45e316e27::t_01ea9822360807 117-120,389,400-403,405-410,414-525,547
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dca7b33575982616c1490689e4bdb1b05afe7c01",
+  "prompts": {},
+  "sessions": {
+    "s_f489a45e316e27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b3e23963-835b-4fdd-8797-1979b01e4657",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

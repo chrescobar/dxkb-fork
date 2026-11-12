@@ -1,0 +1,27 @@
+src/components/copilot/copilot-message.tsx
+  s_f3076d56c8db07::t_4870b91d711cb8 299,354,400
+  s_f3076d56c8db07::t_f0fc8cfeac6901 30
+src/components/copilot/copilot-transcript.tsx
+  s_f3076d56c8db07::t_4870b91d711cb8 168
+  s_f3076d56c8db07::t_bcda4e482bdf70 175,206
+src/components/ui/message-scroller.tsx
+  s_f3076d56c8db07::t_4870b91d711cb8 54,57,59-61,65-69
+src/components/ui/message.tsx
+  s_f3076d56c8db07::t_4870b91d711cb8 45-51,56-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2b958e595ba95cdd21451ff1d5ea6a2eddc9a390",
+  "prompts": {},
+  "sessions": {
+    "s_f3076d56c8db07": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26470a30-3aab-4c7a-9fa8-51a1bdf2c9ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

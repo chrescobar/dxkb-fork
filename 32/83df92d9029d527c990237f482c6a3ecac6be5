@@ -1,0 +1,26 @@
+src/lib/phylogeny/__tests__/viral-facets.test.ts
+  s_3cf81c446b4ff3::t_c3c4c6ac9e39f0 224,311-326
+  s_3cf81c446b4ff3::t_adac17235460ba 327-328
+src/lib/phylogeny/viral-facets.ts
+  s_3cf81c446b4ff3::t_c3c4c6ac9e39f0 243-244,248-254,292
+src/components/phylogeny/viral-tree-picker.tsx
+  s_3cf81c446b4ff3::t_68ca4dd5279c6d 471-479,481-483,485-496,498-503,547-553,562
+src/components/phylogeny/__tests__/viral-tree-picker.test.tsx
+  s_3cf81c446b4ff3::t_55de447641a7c0 637-667
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3283df92d9029d527c990237f482c6a3ecac6be5",
+  "prompts": {},
+  "sessions": {
+    "s_3cf81c446b4ff3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "22529394-c60d-409f-80b5-a3983d623dda",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+src/components/copilot/prototype/dock-state.tsx
+  s_f3076d56c8db07::t_1b599d9d54bb5f 131,155
+  s_f3076d56c8db07::t_8d45c6e481f99f 108-130,132-154,156-163
+src/components/copilot/prototype/NOTES.md
+  s_f3076d56c8db07::t_f6e9feb80fe291 21-23,26-38
+  s_f3076d56c8db07::t_eaad95e8bfc81b 24-25,39-49
+src/components/copilot/copilot-panel-header.tsx
+  s_f3076d56c8db07::t_8d45c6e481f99f 36-54
+  s_f3076d56c8db07::t_3e4368395c2a40 3,6-8
+src/components/copilot/prototype/prototype-switcher.tsx
+  s_f3076d56c8db07::t_c8ec09278e97f8 5,7-9,11,56,58-85,89
+  s_f3076d56c8db07::t_8ace40a344358e 126
+src/components/copilot/prototype/header-variants.tsx
+  s_f3076d56c8db07::t_c8ec09278e97f8 39,77-80
+  s_f3076d56c8db07::t_fd6d7e3a5b3123 154
+  s_f3076d56c8db07::t_79a85ac7ae0797 1-8,11-38,40-76,81-153,155-330
+  s_f3076d56c8db07::t_1b599d9d54bb5f 9-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac4314a3b302cf5ac5c888e1b0aca35dea18f20e",
+  "prompts": {},
+  "sessions": {
+    "s_f3076d56c8db07": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26470a30-3aab-4c7a-9fa8-51a1bdf2c9ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

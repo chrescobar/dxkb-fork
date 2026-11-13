@@ -5,6 +5,7 @@ src/components/views/collection-filters/__tests__/fixtures/toolbar-harness.tsx
 src/components/views/resource-filter-bar.tsx
   s_b937fc0d0b8dc5::t_ae40ee96debb46 161-163,176
   s_b937fc0d0b8dc5::t_52064fed957b02 16-19,37,63,71,117,122-123,178-179
+  s_b937fc0d0b8dc5::t_0214add52bbed7 118-121,166,170
 src/components/views/resource-collection.tsx
   s_b937fc0d0b8dc5::t_d8b85fdf544411 195-199
   s_b937fc0d0b8dc5::t_52064fed957b02 192-194,200-201,487
@@ -30,8 +31,17 @@ src/components/views/__tests__/resource-filter-bar.test.tsx
   s_b937fc0d0b8dc5::t_76c55453b38bf0 40-43,331,384,509,531,581-604
   s_b937fc0d0b8dc5::t_ae40ee96debb46 462,481,545,550-555,564,567-580
   s_b937fc0d0b8dc5::t_c3dae3489c0e19 605
+  s_b937fc0d0b8dc5::t_0be0e82d46f2d7 350-371
 src/components/views/collection-filters/types.ts
   s_b937fc0d0b8dc5::t_52064fed957b02 27-33,59-62
+docs/architecture.md
+  s_b937fc0d0b8dc5::t_0214add52bbed7 266
+src/components/navbars/navbar-links.ts
+  s_b937fc0d0b8dc5::t_c561c2b68f559e 241
+e2e/pages/collection-toolbar.ts
+  s_b937fc0d0b8dc5::t_c561c2b68f559e 193-198
+e2e/tests/resource-collection-facets.spec.ts
+  s_b937fc0d0b8dc5::t_c561c2b68f559e 366,389,415
 ---
 {
   "schema_version": "authorship/3.0.0",

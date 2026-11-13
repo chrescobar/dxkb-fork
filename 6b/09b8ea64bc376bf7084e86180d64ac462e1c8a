@@ -1,0 +1,19 @@
+src/components/views/__tests__/genome-resource-collection.test.tsx
+  s_5717f443346ce2::t_924873b8a5f9a1 8,12-15,17-19,24,38,53,58-66,70-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b09b8ea64bc376bf7084e86180d64ac462e1c8a",
+  "prompts": {},
+  "sessions": {
+    "s_5717f443346ce2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad52e2ef-5b10-44c1-b314-5bd4ac2bc022",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

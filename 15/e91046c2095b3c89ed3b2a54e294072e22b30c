@@ -1,0 +1,23 @@
+src/lib/compare-region/__tests__/contract.test.ts
+  s_10d79350e58fc4::t_c5d612a0f6b25b 44-54,56,60-63,65-68
+src/components/compare-region/__tests__/compare-region-selection-strip.test.tsx
+  s_10d79350e58fc4::t_233dda559e4942 169,180-181
+src/lib/compare-region/contract.ts
+  s_10d79350e58fc4::t_68218c224b65c9 146-149,152,155,157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "15e91046c2095b3c89ed3b2a54e294072e22b30c",
+  "prompts": {},
+  "sessions": {
+    "s_10d79350e58fc4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f380fd4e-d8f3-4392-91c7-c13b0498fc12",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

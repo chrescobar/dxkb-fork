@@ -1,0 +1,25 @@
+e2e/pages/resource-collection-page.ts
+  s_5717f443346ce2::t_8374f182a7c4a3 18-23
+e2e/tests/resource-collection-facets.spec.ts
+  s_5717f443346ce2::t_49591f5be3e545 108-111
+  s_5717f443346ce2::t_0636bd1f9ef072 281-360
+  s_5717f443346ce2::t_873f6ea975b27c 361-362
+e2e/pages/collection-toolbar.ts
+  s_5717f443346ce2::t_e8462190826d19 134-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4e94c166159028060ad3bb2c7d851846cdfd178b",
+  "prompts": {},
+  "sessions": {
+    "s_5717f443346ce2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad52e2ef-5b10-44c1-b314-5bd4ac2bc022",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

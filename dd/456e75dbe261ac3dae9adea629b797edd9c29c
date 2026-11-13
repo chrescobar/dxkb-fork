@@ -1,0 +1,25 @@
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_10d79350e58fc4::t_f7a8ec264c8f7a 549
+docs/architecture.md
+  s_10d79350e58fc4::t_df1497fdf2502b 243
+  s_10d79350e58fc4::t_4c1ba0d9138017 246
+  s_10d79350e58fc4::t_515cdf40b4fee8 245
+  s_10d79350e58fc4::t_b7815e00e1b6a0 247
+  s_10d79350e58fc4::t_0605bbd2cda550 136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dd456e75dbe261ac3dae9adea629b797edd9c29c",
+  "prompts": {},
+  "sessions": {
+    "s_10d79350e58fc4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f380fd4e-d8f3-4392-91c7-c13b0498fc12",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

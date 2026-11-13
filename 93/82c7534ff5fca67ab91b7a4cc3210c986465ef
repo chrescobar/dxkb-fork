@@ -1,0 +1,64 @@
+src/lib/strain-view/__tests__/strain-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 98,103
+  s_5717f443346ce2::t_69fce2a45bcbc7 104
+src/lib/views/__tests__/structural-rql.test.ts
+  s_5717f443346ce2::t_0ecb41795d47eb 82,88,94
+  s_5717f443346ce2::t_7affbfc7e35f2e 301,303
+src/lib/serology-view/__tests__/serology-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 76-77
+src/lib/epitope-view/__tests__/epitope-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 31,33-34
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 303,306,309,311
+src/lib/views/structural-rql.ts
+  s_5717f443346ce2::t_d2f751b8805ec6 29
+  s_5717f443346ce2::t_d96fbecca0c91b 30
+  s_5717f443346ce2::t_9a98d892056ba8 27-28
+src/lib/views/__tests__/collection-state.test.ts
+  s_5717f443346ce2::t_94b182775abfb0 61,68,81,83,564,574,636
+  s_5717f443346ce2::t_782567b7299b07 216,221-223
+  s_5717f443346ce2::t_810b62240a0ec2 653-657
+  s_ef08b7ded9c937::t_82f0d23987e879 629,643,658
+src/lib/views/collection-state.ts
+  s_5717f443346ce2::t_2b01d26dd897cf 13-14
+  s_5717f443346ce2::t_3812d2221a5a44 122-127,139-140
+src/lib/genome-view/value-links.ts
+  s_5717f443346ce2::t_a4799aaebb8ce5 26
+src/lib/taxonomy-view/__tests__/taxonomy-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 36,42-43
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_5717f443346ce2::t_76aa03c64fec1a 151,156,158-164,172-177
+  s_5717f443346ce2::t_ae54b30367e013 165-171
+src/lib/surveillance-view/__tests__/surveillance-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 60,76-79
+src/hooks/views/__tests__/collection-state.test.ts
+  s_5717f443346ce2::t_904ad18918ed69 34,51
+src/lib/views/child-collection-state.ts
+  s_5717f443346ce2::t_3c4748da3bf2ef 66-67
+src/lib/protein-feature-view/__tests__/protein-feature-view.test.ts
+  s_5717f443346ce2::t_83b209083c93a2 82,90,93-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9382c7534ff5fca67ab91b7a4cc3210c986465ef",
+  "prompts": {},
+  "sessions": {
+    "s_5717f443346ce2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad52e2ef-5b10-44c1-b314-5bd4ac2bc022",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ef08b7ded9c937": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d46c55d-d63f-43d9-b2b8-ca01850f96c1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+src/components/views/genome-resource-collection.tsx
+  s_5717f443346ce2::t_ca88bbfcbf38d1 9-12
+  s_5717f443346ce2::t_035ccac6c9a6cf 45-47
+src/components/views/__tests__/genome-resource-collection.test.tsx
+  s_5717f443346ce2::t_0b59f56a6e080b 2-3,8,44-56
+  s_5717f443346ce2::t_941ab9ef35f368 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "799f5da3cc6a43a780c782a408abda6fc4450fc5",
+  "prompts": {},
+  "sessions": {
+    "s_5717f443346ce2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad52e2ef-5b10-44c1-b314-5bd4ac2bc022",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

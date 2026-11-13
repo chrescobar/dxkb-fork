@@ -1,0 +1,26 @@
+.claude/rules/testing.md
+  s_27ba89afd13c93::t_905c45748413fc 57
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_27ba89afd13c93::t_a7f1f656c023e9 282,296
+  s_27ba89afd13c93::t_8e6a3fd3456e4d 86-116
+  s_27ba89afd13c93::t_3acb2b67619395 265-266,273
+  s_27ba89afd13c93::t_3652c3bee9a0c2 233,245
+  s_27ba89afd13c93::t_dd007c28db4c73 16-21
+  s_27ba89afd13c93::t_2b732bf0dc9cef 85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "942451743e505bda6d9e785ff469a10e875e76da",
+  "prompts": {},
+  "sessions": {
+    "s_27ba89afd13c93": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37760a62-0be0-4c9a-985a-2ef18bd23427",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

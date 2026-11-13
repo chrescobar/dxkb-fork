@@ -1,0 +1,47 @@
+e2e/README.md
+  s_ef08b7ded9c937::t_547fadd064b8b2 101
+src/lib/__tests__/app-service.test.ts
+  s_ef08b7ded9c937::t_f04fda73e89b42 392-407,457,465-470,472-541,576-577,579-587
+  s_ef08b7ded9c937::t_53f704982e5517 2,458-464,471,578
+  s_ef08b7ded9c937::t_0d733423f9ba8a 408-419,542-575
+  s_ef08b7ded9c937::t_96e71f42421edc 588-589
+docs/architecture.md
+  s_ef08b7ded9c937::t_e6ca1f07d086e0 80
+src/app/api/services/app-service/jobs/summary/__tests__/route.test.ts
+  s_ef08b7ded9c937::t_c16666b0d848b6 1-2,4,7-59,63,65-69,75,83-88,90,93,96-101,104-115,119-133,136-149,152,159-169
+src/app/api/services/app-service/jobs/summary/route.ts
+  s_ef08b7ded9c937::t_1caa7d01ed0806 16
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_ef08b7ded9c937::t_5fbea4d394e380 1219-1220,1242-1273
+  s_ef08b7ded9c937::t_1624a3be4f5609 1274-1277
+src/hooks/services/jobs/use-jobs-summary.ts
+  s_ef08b7ded9c937::t_a850634ed73725 17
+src/lib/app-service.ts
+  s_ef08b7ded9c937::t_a850634ed73725 53,146-153,186,198,205-216,223,240
+  s_ef08b7ded9c937::t_1caa7d01ed0806 38-52,54-60,163,179,199-204,217-222,224-239,241-248,250
+  s_ef08b7ded9c937::t_ff9ba91aa280d7 249
+src/app/api/services/app-service/jobs/task-summary/__tests__/route.test.ts
+  s_ef08b7ded9c937::t_f0f64f087da9c6 1-2,4,7-53,57,59-63,69,77-78,80,83,86-107,109-117,120,122-127,129-132,135-147,149-154,156-170,172,177-187
+src/app/api/services/app-service/jobs/task-summary/route.ts
+  s_ef08b7ded9c937::t_1caa7d01ed0806 15
+src/types/workspace.ts
+  s_ef08b7ded9c937::t_ce00dd960c596f 137-138
+src/app/api/e2e-mock/[...path]/route.ts
+  s_ef08b7ded9c937::t_5fbea4d394e380 1012-1029,1077,1079-1082,1084,1121-1123,1125-1129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fca6dcf19c8c3f3d6900e97e26ab52d8cb805b1d",
+  "prompts": {},
+  "sessions": {
+    "s_ef08b7ded9c937": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d46c55d-d63f-43d9-b2b8-ca01850f96c1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

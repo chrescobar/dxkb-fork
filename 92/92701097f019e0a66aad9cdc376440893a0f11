@@ -1,0 +1,23 @@
+e2e/tests/services/genome-assembly.spec.ts
+  s_ef08b7ded9c937::t_234b0ac88764b5 104-114,120,127-139,141-144,146-153,157-161,164-167,170-172
+  s_ef08b7ded9c937::t_96fc68b4b0034d 115-119,121-126,140,145,162,168-169
+  s_ef08b7ded9c937::t_67ed64e3f0a0cf 154-156,163
+docs/architecture.md
+  s_ef08b7ded9c937::t_3facc96c7ef10d 338
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9292701097f019e0a66aad9cdc376440893a0f11",
+  "prompts": {},
+  "sessions": {
+    "s_ef08b7ded9c937": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d46c55d-d63f-43d9-b2b8-ca01850f96c1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

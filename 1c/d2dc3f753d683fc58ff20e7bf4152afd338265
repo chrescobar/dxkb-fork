@@ -1,0 +1,30 @@
+src/app/globals.css
+  s_ef08b7ded9c937::t_250a423278e588 227,281
+  s_ef08b7ded9c937::t_83402ca5308e6a 170
+AGENTS.md
+  s_ef08b7ded9c937::t_5039a5eeaea9f2 63
+docs/architecture.md
+  s_ef08b7ded9c937::t_c9a631b56e9c2f 338
+src/components/jobs/job-status-pill.tsx
+  s_ef08b7ded9c937::t_5213b218b3444d 129
+src/styles/themes/bvbrc-theme.css
+  s_ef08b7ded9c937::t_6729d470640491 18,68
+src/styles/themes/violet-theme.css
+  s_ef08b7ded9c937::t_02d6e69d6d12eb 18,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1cd2dc3f753d683fc58ff20e7bf4152afd338265",
+  "prompts": {},
+  "sessions": {
+    "s_ef08b7ded9c937": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d46c55d-d63f-43d9-b2b8-ca01850f96c1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

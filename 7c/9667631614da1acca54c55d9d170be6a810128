@@ -1,0 +1,38 @@
+src/components/jobs/__tests__/job-status-pill.test.tsx
+  s_ef08b7ded9c937::t_7d1e8a09b287bc 134
+  s_ef08b7ded9c937::t_93f87a0727c7b1 124,137-149,158
+  s_ef08b7ded9c937::t_2a8ee84e40c49d 135-136
+e2e/pages/navbar.ts
+  s_ef08b7ded9c937::t_93f87a0727c7b1 6-9
+src/lib/__tests__/app-service.test.ts
+  s_ef08b7ded9c937::t_93f87a0727c7b1 539,542
+  s_ef08b7ded9c937::t_c20ca22143b63b 540-541,576
+src/lib/app-service.ts
+  s_ef08b7ded9c937::t_93f87a0727c7b1 220,227,234
+e2e/tests/jobs.spec.ts
+  s_ef08b7ded9c937::t_93f87a0727c7b1 6,26,32
+src/components/jobs/job-status-pill.tsx
+  s_ef08b7ded9c937::t_93f87a0727c7b1 231-232
+e2e/tests/services/genome-assembly.spec.ts
+  s_ef08b7ded9c937::t_93f87a0727c7b1 9,161,170
+e2e/tests/jobs-lifecycle.spec.ts
+  s_ef08b7ded9c937::t_93f87a0727c7b1 10,136
+src/app/api/services/app-service/jobs/task-summary/__tests__/route.test.ts
+  s_ef08b7ded9c937::t_2f0ca06122cdc0 130-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7c9667631614da1acca54c55d9d170be6a810128",
+  "prompts": {},
+  "sessions": {
+    "s_ef08b7ded9c937": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4d46c55d-d63f-43d9-b2b8-ca01850f96c1",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

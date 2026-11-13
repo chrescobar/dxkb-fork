@@ -1,0 +1,51 @@
+src/components/views/collection-filters/collection-toolbar.tsx
+  s_b937fc0d0b8dc5::t_38e37772399807 3-4,21,51-52,242-243
+src/components/views/collection-filters/__tests__/fixtures/toolbar-harness.tsx
+  s_b937fc0d0b8dc5::t_bfbaf00a444e7c 64,135-136
+src/components/views/resource-filter-bar.tsx
+  s_b937fc0d0b8dc5::t_ae40ee96debb46 161-163,176
+  s_b937fc0d0b8dc5::t_52064fed957b02 16-19,37,63,71,117,122-123,178-179
+src/components/views/resource-collection.tsx
+  s_b937fc0d0b8dc5::t_d8b85fdf544411 195-199
+  s_b937fc0d0b8dc5::t_52064fed957b02 192-194,200-201,487
+  s_b937fc0d0b8dc5::t_e6a89ee29fd40e 21-24
+src/components/views/collection-filters/__tests__/explicit-rql-chip.test.tsx
+  s_b937fc0d0b8dc5::t_f515d743c78520 1-28,30-46,75-91,93-101,103-120
+  s_b937fc0d0b8dc5::t_c984c6bf83f13b 29
+  s_b937fc0d0b8dc5::t_858fd6b64fc919 92,102
+  s_b937fc0d0b8dc5::t_87cbdda7f3555f 47-74
+src/components/views/__tests__/resource-collection-explicit-rql.test.tsx
+  s_b937fc0d0b8dc5::t_b44b13ea00bf07 1-7,9-78,81-116,118-125
+  s_b937fc0d0b8dc5::t_19b50664b73fe7 117
+  s_b937fc0d0b8dc5::t_20a0ad98968428 8,79-80
+src/components/views/collection-filters/explicit-rql-chip.tsx
+  s_b937fc0d0b8dc5::t_c2cc9b2e9037d5 1-16,18-36,38-46,48-54,56,59-73,87-99
+  s_b937fc0d0b8dc5::t_c984c6bf83f13b 74-86
+  s_b937fc0d0b8dc5::t_71a6b6f74533fe 17,37,55,57-58
+  s_b937fc0d0b8dc5::t_b5c3095cd1987c 47
+src/components/views/collection-filters/__tests__/collection-toolbar.test.tsx
+  s_b937fc0d0b8dc5::t_6a6988e2d7ee55 2,9-12,14,17,30-42,45,48-50
+  s_b937fc0d0b8dc5::t_858fd6b64fc919 1,4,15-16,19-20,22-25,27-29
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_b937fc0d0b8dc5::t_76c55453b38bf0 40-43,331,384,509,531,581-604
+  s_b937fc0d0b8dc5::t_ae40ee96debb46 462,481,545,550-555,564,567-580
+  s_b937fc0d0b8dc5::t_c3dae3489c0e19 605
+src/components/views/collection-filters/types.ts
+  s_b937fc0d0b8dc5::t_52064fed957b02 27-33,59-62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0a3b5ccd49f90d2a512194172bc66333d4b2a004",
+  "prompts": {},
+  "sessions": {
+    "s_b937fc0d0b8dc5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "72e7c0cc-1476-4122-84b2-a812bfdeb68d",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+src/lib/services/organisms/__tests__/summary.test.ts
+  s_7aaecdd53fdf4f::t_9791561cf8c661 172-179,182-189,226
+  s_7aaecdd53fdf4f::t_c54c5a9ee89ea6 180-181
+  s_7aaecdd53fdf4f::t_d41d53a3a8cf56 217-225
+  s_7aaecdd53fdf4f::t_94ead94cb5b327 227
+src/app/organisms/all/views/__tests__/overview.test.tsx
+  s_7aaecdd53fdf4f::t_e1e39a1432a65b 126-127,145-147,149-153,155-162
+  s_7aaecdd53fdf4f::t_8973c753f22a03 116
+e2e/tests/organisms/all.spec.ts
+  s_7aaecdd53fdf4f::t_cae8f3a2d1c322 48
+src/lib/services/organisms/summary.ts
+  s_7aaecdd53fdf4f::t_770555a4763307 50-52
+  s_7aaecdd53fdf4f::t_443d43e84009e5 39,46-49
+  s_7aaecdd53fdf4f::t_444668a0f0329d 82
+  s_9ce8f125a426fd::t_83b0d940e1492e 62-67
+docs/architecture.md
+  s_7aaecdd53fdf4f::t_6c4383421413e7 279
+src/app/organisms/all/views/overview.tsx
+  s_9ce8f125a426fd::t_ff5c2549e1bf1e 14-19
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_9ce8f125a426fd::t_d5948219a2a63c 574-576
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82dae900939bdbe36225e9d370b487f3dcd7c83f",
+  "prompts": {},
+  "sessions": {
+    "s_7aaecdd53fdf4f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "854671f0-6aae-4005-b9e4-104d235b30ff",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9ce8f125a426fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-adadf9eccbc8da2fb",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

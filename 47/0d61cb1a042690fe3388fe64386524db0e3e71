@@ -1,0 +1,54 @@
+src/app/organisms/__tests__/landing-outage.test.tsx
+  s_7aaecdd53fdf4f::t_5fc8155fed073e 78,93
+src/components/organisms/taxon-views/__tests__/scope.test.ts
+  s_7aaecdd53fdf4f::t_97a45109d8deb9 3-9,82-131
+docs/architecture.md
+  s_7aaecdd53fdf4f::t_42a1c0f6cf6faf 279
+src/app/organisms/all/views/__tests__/overview.test.tsx
+  s_7aaecdd53fdf4f::t_4390b42c795ecd 136,138,141
+  s_7aaecdd53fdf4f::t_22e0f40fcc279a 1,86
+  s_7aaecdd53fdf4f::t_e1e39a1432a65b 116,144-148,150-153
+  s_7aaecdd53fdf4f::t_71804ff5696354 2-85,88-115,117-135,137,139-140,142-143,149,154-158
+  s_7aaecdd53fdf4f::t_4d79cb650089ff 87
+e2e/tests/organisms/all.spec.ts
+  s_7aaecdd53fdf4f::t_857e23ad1fc577 40-41
+src/app/organisms/all/views/overview.tsx
+  s_7aaecdd53fdf4f::t_b7d465345a295b 14-19
+  s_7aaecdd53fdf4f::t_f171642418cca9 10
+  s_9ce8f125a426fd::t_ff672a8e0e0a46 25,28
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_7aaecdd53fdf4f::t_5589a047b59596 337,450-467,470
+  s_7aaecdd53fdf4f::t_cc490357b8590d 468-469,471-472
+src/components/organisms/taxon-views/scope.ts
+  s_7aaecdd53fdf4f::t_0a5a3b719b19c6 12-13,16-24,26-28,30-38,43
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_7aaecdd53fdf4f::t_4b12a6dc7453ea 574-576
+  s_7aaecdd53fdf4f::t_c5ffcb88c5e870 577-585
+src/lib/e2e-fixtures/records.ts
+  s_7aaecdd53fdf4f::t_c5ffcb88c5e870 993
+  s_7aaecdd53fdf4f::t_6ebeb4fa76ca62 688
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "470d61cb1a042690fe3388fe64386524db0e3e71",
+  "prompts": {},
+  "sessions": {
+    "s_7aaecdd53fdf4f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "854671f0-6aae-4005-b9e4-104d235b30ff",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_9ce8f125a426fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-adadf9eccbc8da2fb",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

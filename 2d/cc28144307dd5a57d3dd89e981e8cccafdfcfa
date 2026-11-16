@@ -1,0 +1,34 @@
+src/lib/services/organisms/__tests__/genome-count.test.ts
+  s_d94d840b1e9e34::t_cca97ce55383e2 126-127
+  s_d94d840b1e9e34::t_7e9c0679d19268 3-6
+  s_d94d840b1e9e34::t_fa912dedb13ea5 124-125,128-156
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_d94d840b1e9e34::t_a76529f89391b6 10-12,14,19,47,68,90,110,123,137,141,154,178,189
+src/components/organisms/__tests__/taxon-genome-count.test.tsx
+  s_d94d840b1e9e34::t_8b78a05bf54e03 4-14,56,72
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_d94d840b1e9e34::t_fd246f820f5878 4,39,42
+src/components/organisms/taxon-genome-count.tsx
+  s_d94d840b1e9e34::t_b34fcc389c6167 8-13
+  s_d94d840b1e9e34::t_fd246f820f5878 2
+src/lib/services/organisms/genome-count.ts
+  s_d94d840b1e9e34::t_fd246f820f5878 1-2,43-50
+docs/architecture.md
+  s_d94d840b1e9e34::t_bb436bcf35149d 279
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2dcc28144307dd5a57d3dd89e981e8cccafdfcfa",
+  "prompts": {},
+  "sessions": {
+    "s_d94d840b1e9e34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "72d2078c-f3ac-4c97-a9f0-7ea387e7995b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

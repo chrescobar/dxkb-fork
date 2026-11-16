@@ -1,0 +1,22 @@
+src/components/quick-links/__tests__/quick-viral.test.tsx
+  s_30e323e54cfb5a::t_1082e2f8fe4595 108,113-124,141,168
+src/components/quick-links/quick-viral-content.tsx
+  s_30e323e54cfb5a::t_d897e48b7ff6f1 61-63
+  s_30e323e54cfb5a::t_6a8d3519995da7 39-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9760ee0a9ab35d94ad7a45f7357154decaa035a9",
+  "prompts": {},
+  "sessions": {
+    "s_30e323e54cfb5a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83cfb26f-38b2-4fda-a0d2-4280a24e88a0",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

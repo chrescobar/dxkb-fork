@@ -1,0 +1,19 @@
+docs/architecture.md
+  s_1646e8529f7f40::t_ed24b9c58254ea 288
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f7b9f291a02c354f6332b64b47009f36cad610dc",
+  "prompts": {},
+  "sessions": {
+    "s_1646e8529f7f40": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2ef0c181-6cf4-48e4-afcc-93dd89881b2b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

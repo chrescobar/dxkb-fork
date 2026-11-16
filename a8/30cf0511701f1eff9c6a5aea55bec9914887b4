@@ -1,0 +1,41 @@
+src/app/organisms/viruses/views/overview.tsx
+  s_7aaecdd53fdf4f::t_770555a4763307 16
+src/lib/services/organisms/__tests__/summary.test.ts
+  s_7aaecdd53fdf4f::t_08cdf7d0c10c1f 3-6,85-107,116-156,161-163,165,167,169-196,199-202
+  s_7aaecdd53fdf4f::t_b2fe7d9b90db61 108-115,157-160,164,166,168
+  s_7aaecdd53fdf4f::t_d41d53a3a8cf56 197-198
+  s_7aaecdd53fdf4f::t_c3759a52e6ce31 203-204
+src/components/organisms/data-summary/__tests__/data-summary.test.tsx
+  s_7aaecdd53fdf4f::t_ccf250d1d0e69c 2,6-16,25-39,45-81
+  s_7aaecdd53fdf4f::t_0a47c45454c901 82
+src/components/organisms/data-summary/data-summary.tsx
+  s_7aaecdd53fdf4f::t_770555a4763307 2,44-49
+src/app/organisms/bacteria/views/overview.tsx
+  s_7aaecdd53fdf4f::t_770555a4763307 17
+src/app/organisms/all/views/overview.tsx
+  s_7aaecdd53fdf4f::t_770555a4763307 11,15
+src/lib/services/organisms/summary.ts
+  s_7aaecdd53fdf4f::t_443d43e84009e5 42-44
+  s_7aaecdd53fdf4f::t_770555a4763307 38-41,45-53,60-79
+  s_7aaecdd53fdf4f::t_7cb8fc8dfd2918 54-59
+src/app/organisms/all/_config.ts
+  s_7aaecdd53fdf4f::t_770555a4763307 3-5,8
+src/app/organisms/all/page.tsx
+  s_7aaecdd53fdf4f::t_770555a4763307 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a830cf0511701f1eff9c6a5aea55bec9914887b4",
+  "prompts": {},
+  "sessions": {
+    "s_7aaecdd53fdf4f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "854671f0-6aae-4005-b9e4-104d235b30ff",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

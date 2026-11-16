@@ -1,0 +1,21 @@
+src/lib/services/organisms/structure-count.ts
+  s_c1ad829ed3a3c9::t_9232231e526d81 1-37
+src/lib/services/organisms/__tests__/structure-count.test.ts
+  s_c1ad829ed3a3c9::t_eb6dcd3a318de7 1-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "546ddc581ef1a1e57cc5f87c4b4504d5196f3578",
+  "prompts": {},
+  "sessions": {
+    "s_c1ad829ed3a3c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48b7335c-edea-452d-90af-6835c58680fe",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

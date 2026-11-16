@@ -1,0 +1,21 @@
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_30e323e54cfb5a::t_b3a98a555f691d 98-109
+src/app/api/e2e-mock/[...path]/route.ts
+  s_30e323e54cfb5a::t_1e89ac1e630f11 139-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "02fdddf1471ef33fe321a11f2019577a1264acb9",
+  "prompts": {},
+  "sessions": {
+    "s_30e323e54cfb5a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83cfb26f-38b2-4fda-a0d2-4280a24e88a0",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

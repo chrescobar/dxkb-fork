@@ -1,0 +1,23 @@
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_1646e8529f7f40::t_a26079bed0992c 181-183,187-189
+  s_1646e8529f7f40::t_59f55d47e7f828 256,258
+  s_1646e8529f7f40::t_31c9e70027cc05 170,179-180,184-186,307,332
+docs/architecture.md
+  s_1646e8529f7f40::t_31c9e70027cc05 288
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a359f49d0484239dcd682e345a32421c5a365a96",
+  "prompts": {},
+  "sessions": {
+    "s_1646e8529f7f40": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2ef0c181-6cf4-48e4-afcc-93dd89881b2b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

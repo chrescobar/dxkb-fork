@@ -1,0 +1,24 @@
+src/lib/e2e-fixtures/__tests__/records.test.ts
+  s_d94d840b1e9e34::t_b20448680c6d1a 560,568,571
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_d94d840b1e9e34::t_a604136e738258 10
+  s_d94d840b1e9e34::t_a255152489668f 3-4,16-23,37-45,49-50,53,55-62,64-68,77
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_d94d840b1e9e34::t_5264b59bb773f1 10-12,16,18,44,65,85,87-107,110-113,116-119,122-123,125,128,133-154,159-163,176,187
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5dfb7e8dc6ec80fd73c1e4000f7f1cd4a9df9e95",
+  "prompts": {},
+  "sessions": {
+    "s_d94d840b1e9e34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "72d2078c-f3ac-4c97-a9f0-7ea387e7995b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+src/lib/services/organisms/__tests__/amr-distribution.test.ts
+  s_d94d840b1e9e34::t_54cc836c9393ee 116-140
+src/lib/genome-view/query.ts
+  s_d94d840b1e9e34::t_65ba0f251fcaf5 302-308,311
+docs/architecture.md
+  s_d94d840b1e9e34::t_167bca463691e2 285
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_d94d840b1e9e34::t_77c09a94042e35 562-564,567,575,578-583
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "17d978629224ed56fad350f6c2d1535a3a935ad0",
+  "prompts": {},
+  "sessions": {
+    "s_d94d840b1e9e34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "72d2078c-f3ac-4c97-a9f0-7ea387e7995b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

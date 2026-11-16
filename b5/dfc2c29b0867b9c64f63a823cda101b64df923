@@ -1,0 +1,33 @@
+src/components/organisms/reference-genomes/__tests__/reference-genomes.test.tsx
+  s_1646e8529f7f40::t_bfb3b9ef84ebc6 23,29
+  s_1646e8529f7f40::t_843f6d66314799 78-110,124
+  s_1646e8529f7f40::t_08a071a818dc61 111-123
+  s_1646e8529f7f40::t_12af5d0f038879 3
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_1646e8529f7f40::t_27b0ee17ae448a 119-120
+  s_1646e8529f7f40::t_e2c756372d2759 36-43,230-254,307-328,503-511
+  s_1646e8529f7f40::t_14267921109edb 512
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_1646e8529f7f40::t_73ec4967110fdd 183-186
+  s_1646e8529f7f40::t_4982e417765abe 81-83,86,110-111,307-314
+src/components/organisms/reference-genomes/reference-genomes.tsx
+  s_1646e8529f7f40::t_10362c7cfba821 20-24
+docs/architecture.md
+  s_1646e8529f7f40::t_a64d105ca7536e 288
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b5dfc2c29b0867b9c64f63a823cda101b64df923",
+  "prompts": {},
+  "sessions": {
+    "s_1646e8529f7f40": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2ef0c181-6cf4-48e4-afcc-93dd89881b2b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

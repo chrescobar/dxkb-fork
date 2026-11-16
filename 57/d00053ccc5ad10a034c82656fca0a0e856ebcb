@@ -1,0 +1,28 @@
+docs/architecture.md
+  s_d94d840b1e9e34::t_a0bb3cec1b831e 279
+  s_d94d840b1e9e34::t_80a3187efe35af 285
+src/lib/services/organisms/genome-scope.ts
+  s_d94d840b1e9e34::t_f04f05eea1bd15 41-48
+src/lib/services/organisms/__tests__/genome-scope.test.ts
+  s_d94d840b1e9e34::t_f192ffb0e0679c 1-38
+src/lib/services/organisms/__tests__/amr-distribution.test.ts
+  s_d94d840b1e9e34::t_dc4617d07dc8f1 108,110
+  s_d94d840b1e9e34::t_7f23c1285245da 92-107,109,111-115
+  s_d94d840b1e9e34::t_80344f653baa43 3-6,8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "57d00053ccc5ad10a034c82656fca0a0e856ebcb",
+  "prompts": {},
+  "sessions": {
+    "s_d94d840b1e9e34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "72d2078c-f3ac-4c97-a9f0-7ea387e7995b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

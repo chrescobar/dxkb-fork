@@ -1,0 +1,26 @@
+e2e/tests/a11y/deep-tier.spec.ts
+  s_7faae644b9ac20::t_3d9333dd78e865 206,221
+e2e/tests/services/workspace-file-picker.spec.ts
+  s_7faae644b9ac20::t_3d9333dd78e865 470
+e2e/pages/folder-picker-dialog.ts
+  s_7faae644b9ac20::t_3d9333dd78e865 39-41,61-67
+e2e/tests/services/output-folder-picker.spec.ts
+  s_7faae644b9ac20::t_3d9333dd78e865 254,282,502
+  s_7faae644b9ac20::t_21c465f6209d3a 306-307,313-314,480,487,505
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "015272ca8f6903ad5399de4f18834309c8a55b5b",
+  "prompts": {},
+  "sessions": {
+    "s_7faae644b9ac20": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "33913d48-8b4c-4793-8f38-17304b43627e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

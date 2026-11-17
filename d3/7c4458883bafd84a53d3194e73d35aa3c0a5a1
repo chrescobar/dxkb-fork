@@ -1,0 +1,19 @@
+src/components/workspace/folder-picker/folder-picker-layout.ts
+  s_0bc2b50a3b97f4::t_8177bc83208271 9-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d37c4458883bafd84a53d3194e73d35aa3c0a5a1",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

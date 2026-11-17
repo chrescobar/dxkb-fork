@@ -1,0 +1,30 @@
+e2e/pages/folder-picker-dialog.ts
+  s_0bc2b50a3b97f4::t_78d4ef40a27e69 155-158
+e2e/README.md
+  s_0bc2b50a3b97f4::t_e535c1e17bf57b 137
+src/components/ui/dialog.tsx
+  s_0bc2b50a3b97f4::t_0574023711e89d 40-57,62,64-67,73
+e2e/tests/services/output-folder-picker.spec.ts
+  s_0bc2b50a3b97f4::t_e535c1e17bf57b 607-642
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog-resize.test.tsx
+  s_0bc2b50a3b97f4::t_2918251314dc9f 58-62,66-76
+  s_0bc2b50a3b97f4::t_a88280840576e3 63-65
+src/components/workspace/folder-picker/folder-picker-dialog.tsx
+  s_0bc2b50a3b97f4::t_0574023711e89d 781-782,784
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a840cf07784c6258b3a969c21589fe67c32552ab",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

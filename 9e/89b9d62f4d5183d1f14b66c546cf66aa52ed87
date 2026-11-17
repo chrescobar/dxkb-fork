@@ -1,0 +1,60 @@
+src/hooks/__tests__/use-viewport-size.test.ts
+  s_bc857b5602e0fd::t_db081ed860027c 1-31
+e2e/tests/services/output-folder-picker.spec.ts
+  s_bc857b5602e0fd::t_db081ed860027c 345,347,355,514-801,859-861,863-864
+src/components/workspace/folder-picker/folder-picker-preview.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 144,147,243,246
+src/components/workspace/folder-picker/folder-picker-header.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 1,18-22,31-33,36,55-68
+e2e/pages/folder-picker-dialog.ts
+  s_bc857b5602e0fd::t_db081ed860027c 33-38,142-189,198-203,210-220
+src/components/workspace/folder-picker/folder-picker-resize-handle.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 12-17,21,29-31,58-60,70-71
+src/components/workspace/folder-picker/__tests__/fixtures/picker-harness.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 10,20,34-35,45-46
+  s_bc857b5602e0fd::t_f0b7a96e302d27 47
+src/components/ui/dialog.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 40-59,64,66-69,75
+docs/architecture.md
+  s_bc857b5602e0fd::t_db081ed860027c 211-212,218,379
+src/components/workspace/folder-picker/__tests__/folder-picker-columns.test.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 49-82
+src/components/workspace/folder-picker/__tests__/folder-picker-layout.test.ts
+  s_bc857b5602e0fd::t_db081ed860027c 1-213
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog-resize.test.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 1-442
+src/components/workspace/folder-picker/folder-picker-dialog-resize.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 1-90
+src/components/workspace/folder-picker/folder-picker-dialog.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 22-23,25,56,58-72,118-120,134-136,480-482,711-730,732-745,749,751-755,757-765,794-795,797-804,812-818,832-869
+src/components/workspace/folder-picker/__tests__/folder-picker-resize-handle.test.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 18-20,26-28,38-40,182-220
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog.test.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 742-761
+e2e/README.md
+  s_bc857b5602e0fd::t_db081ed860027c 48,137
+src/components/workspace/__tests__/selection-to-group-dialog-browse.test.tsx
+  s_bc857b5602e0fd::t_db081ed860027c 19
+src/hooks/use-viewport-size.ts
+  s_bc857b5602e0fd::t_db081ed860027c 1-29
+src/components/workspace/folder-picker/folder-picker-layout.ts
+  s_bc857b5602e0fd::t_db081ed860027c 1-205
+e2e/pages/protein-structure-page.ts
+  s_bc857b5602e0fd::t_db081ed860027c 33,51,55-63,65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9e89b9d62f4d5183d1f14b66c546cf66aa52ed87",
+  "prompts": {},
+  "sessions": {
+    "s_bc857b5602e0fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f694fa14-04ac-4b15-a49f-20301885ae11",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

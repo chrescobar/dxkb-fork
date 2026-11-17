@@ -1,0 +1,21 @@
+e2e/tests/services/output-folder-picker.spec.ts
+  s_0bc2b50a3b97f4::t_948461ca3bef99 345,347,355,613,615,620,787
+e2e/pages/folder-picker-dialog.ts
+  s_0bc2b50a3b97f4::t_948461ca3bef99 33-38,142-146,149,198-203,210-220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e74a10ef5c28b60a21769d4d6f53ad3f3d906dec",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

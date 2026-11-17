@@ -1,0 +1,33 @@
+src/components/workspace/folder-picker/folder-picker-preview.tsx
+  s_bc857b5602e0fd::t_84b3f995383f80 48-49,58-59,121
+src/components/workspace/folder-picker/__tests__/folder-picker-files.test.tsx
+  s_bc857b5602e0fd::t_f996c99a989534 2,229-240,242
+  s_bc857b5602e0fd::t_89b0c4ec9f2096 241,243-244
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog.test.tsx
+  s_bc857b5602e0fd::t_f996c99a989534 5,345-350,354-359,361-372,374-376
+  s_bc857b5602e0fd::t_01d140403ae025 360,373
+  s_bc857b5602e0fd::t_050a5376092fdf 351-353
+src/components/workspace/folder-picker/__tests__/folder-picker-info.test.tsx
+  s_bc857b5602e0fd::t_f996c99a989534 7,63-67,102-112,132-135
+  s_bc857b5602e0fd::t_f14ea8505abac5 136-137
+src/components/workspace/folder-picker/folder-picker-utils.ts
+  s_bc857b5602e0fd::t_84b3f995383f80 4,23,33
+src/components/workspace/folder-picker/__tests__/fixtures/picker-harness.tsx
+  s_bc857b5602e0fd::t_f996c99a989534 19,184-193,218-226
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b8fac69e899fb2ddaffe9b1fca81ac0ce125c8a9",
+  "prompts": {},
+  "sessions": {
+    "s_bc857b5602e0fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f694fa14-04ac-4b15-a49f-20301885ae11",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

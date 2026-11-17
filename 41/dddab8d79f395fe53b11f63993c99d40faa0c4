@@ -1,0 +1,41 @@
+src/components/workspace/folder-picker/folder-picker-toolbar.tsx
+  s_7faae644b9ac20::t_09fc482ff54a68 1-55,58-71,74-89
+  s_7faae644b9ac20::t_ea377e150e1945 73
+  s_7faae644b9ac20::t_c43ec7cfcef7e7 72
+  s_7faae644b9ac20::t_24e19db654f27f 56-57
+  s_7faae644b9ac20::t_f0d18b126b7636 90-92
+  s_95d257482a398d::t_a736d8190220f5 93-97
+src/components/workspace/folder-picker/__tests__/folder-picker-toolbar.test.tsx
+  s_7faae644b9ac20::t_0f247ab15dbe55 82-84,86-89
+  s_7faae644b9ac20::t_6f722586def04a 1-81,85,90-91
+  s_7faae644b9ac20::t_96d46c4235b051 92-94
+src/components/workspace/folder-picker/__tests__/folder-picker-utils.test.ts
+  s_7faae644b9ac20::t_9452bbb921f0c4 10
+  s_7faae644b9ac20::t_57d5aec2ad9b2b 107-152
+src/components/workspace/folder-picker/folder-picker-utils.ts
+  s_7faae644b9ac20::t_e91003898ce978 60-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "41dddab8d79f395fe53b11f63993c99d40faa0c4",
+  "prompts": {},
+  "sessions": {
+    "s_7faae644b9ac20": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "33913d48-8b4c-4793-8f38-17304b43627e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_95d257482a398d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a884b6eb7e6a3d9a1",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

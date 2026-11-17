@@ -1,0 +1,20 @@
+e2e/pages/protein-structure-page.ts
+  s_0bc2b50a3b97f4::t_797d2643f5d9da 33
+  s_0bc2b50a3b97f4::t_af178909551241 51,55-63,65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d7f40a2348303dcfef1bd287db2643cb2d3f1514",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+e2e/tests/services/workspace-file-picker.spec.ts
+  s_bc857b5602e0fd::t_9ffb205402c439 46-50
+  s_bc857b5602e0fd::t_fc33d4c1f6260f 457-506
+  s_bc857b5602e0fd::t_8e591399ac3abd 41-43
+  s_bc857b5602e0fd::t_5ce8354d74b19e 71-76
+  s_bc857b5602e0fd::t_038df1509daec4 77
+  s_bc857b5602e0fd::t_ae31f246870a87 507-508
+docs/architecture.md
+  s_bc857b5602e0fd::t_050a5376092fdf 214
+  s_bc857b5602e0fd::t_70f85f69b4b663 207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3737805124a579ced8f3f7cf9995de41ce8f2cab",
+  "prompts": {},
+  "sessions": {
+    "s_bc857b5602e0fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f694fa14-04ac-4b15-a49f-20301885ae11",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

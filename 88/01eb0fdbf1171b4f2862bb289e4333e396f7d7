@@ -1,0 +1,23 @@
+src/hooks/use-viewport-size.ts
+  s_0bc2b50a3b97f4::t_558284acc65f29 1-29
+src/components/workspace/folder-picker/__tests__/folder-picker-layout.test.ts
+  s_0bc2b50a3b97f4::t_523be75a5b251b 1-104
+src/components/workspace/folder-picker/folder-picker-layout.ts
+  s_0bc2b50a3b97f4::t_f81c580eaef628 1-150
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8801eb0fdbf1171b4f2862bb289e4333e396f7d7",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

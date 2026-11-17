@@ -1,0 +1,25 @@
+docs/architecture.md
+  s_0bc2b50a3b97f4::t_3cb1bfe1148e4c 212
+e2e/tests/services/output-folder-picker.spec.ts
+  s_0bc2b50a3b97f4::t_70f271e3c48abf 722-739
+e2e/pages/folder-picker-dialog.ts
+  s_0bc2b50a3b97f4::t_70f271e3c48abf 136-140
+src/components/workspace/folder-picker/folder-picker-preview.tsx
+  s_0bc2b50a3b97f4::t_24d150a5f0b3a4 140,143,239,242
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "232fc8aec34cadfd14dc47ee01753f005d6942e1",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

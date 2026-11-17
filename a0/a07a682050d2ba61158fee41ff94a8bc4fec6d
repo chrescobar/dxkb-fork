@@ -1,0 +1,35 @@
+src/lib/services/organisms/fold-facet-buckets.ts
+  s_0db0e1858f9f1b::t_ace3664090fb61 1-48
+src/lib/services/organisms/__tests__/fold-facet-buckets.test.ts
+  s_0db0e1858f9f1b::t_c870477891bb08 1-21,31-99
+  s_0db0e1858f9f1b::t_a7283f14b6f893 22-30
+docs/architecture.md
+  s_0db0e1858f9f1b::t_50a4fb2b02f434 280
+src/lib/services/organisms/__tests__/metadata-facets.test.ts
+  s_0db0e1858f9f1b::t_0672fc20d38640 51-94,96-101,140-159
+  s_0db0e1858f9f1b::t_4bc590c46a27bf 111,113,115-119,121,123-138
+  s_0db0e1858f9f1b::t_54a2178f4cbca0 120,122
+  s_0db0e1858f9f1b::t_38ad72fa79ea92 102-110,112,114,139
+  s_0db0e1858f9f1b::t_acc671bcbdf513 95
+src/lib/services/organisms/metadata-facets.ts
+  s_0db0e1858f9f1b::t_b8e89f31951fd3 1,15,20,23-24,26,30-31
+  s_0db0e1858f9f1b::t_481ab87608f542 12-13
+  s_0db0e1858f9f1b::t_1a0f31ff745d7a 40-41
+  s_0db0e1858f9f1b::t_ebb6f63d79646b 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a0a07a682050d2ba61158fee41ff94a8bc4fec6d",
+  "prompts": {},
+  "sessions": {
+    "s_0db0e1858f9f1b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "daf4a74a-8ce3-49fb-96fa-e32a14617df0",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

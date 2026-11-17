@@ -1,0 +1,21 @@
+src/lib/services/workspace/__tests__/workshop.test.ts
+  s_bc857b5602e0fd::t_f57d6cc74a17dc 1-18
+src/lib/services/workspace/workshop.ts
+  s_bc857b5602e0fd::t_72e7a658f6b77d 1-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "535fa3f35574fbf2213c78c4112a4e535d5fd08a",
+  "prompts": {},
+  "sessions": {
+    "s_bc857b5602e0fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f694fa14-04ac-4b15-a49f-20301885ae11",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

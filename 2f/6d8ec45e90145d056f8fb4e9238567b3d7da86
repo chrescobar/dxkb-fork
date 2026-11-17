@@ -1,0 +1,23 @@
+docs/architecture.md
+  s_0bc2b50a3b97f4::t_0af2d348ac3716 218
+  s_0bc2b50a3b97f4::t_6bca8bd91a083b 211-212
+  s_0bc2b50a3b97f4::t_030125bada0708 379
+src/components/ui/dialog.tsx
+  s_0bc2b50a3b97f4::t_95127449c81ecf 40-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2f6d8ec45e90145d056f8fb4e9238567b3d7da86",
+  "prompts": {},
+  "sessions": {
+    "s_0bc2b50a3b97f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "50d8b53a-fc6a-42d9-b74f-d17f2eeb467b",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

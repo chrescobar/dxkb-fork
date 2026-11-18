@@ -1,0 +1,51 @@
+e2e/tests/organisms/interactions.spec.ts
+  s_dece5f65c66771::t_d656568411ad40 224-287
+src/lib/interactions/use-interactions.ts
+  s_dece5f65c66771::t_a8b88e3e92a22d 161-166
+  s_dece5f65c66771::t_f13e73fa9f3c88 169-170
+e2e/fixtures/overrides/interactions.ts
+  s_dece5f65c66771::t_72a6d219b26b4b 9-10,69-116,132
+src/components/interactions/interactions-graph.tsx
+  s_dece5f65c66771::t_444934a9aeb85b 332-339
+  s_dece5f65c66771::t_058423a9324e1b 347,349,353-356
+  s_dece5f65c66771::t_5294bce5363f5c 340
+e2e/pages/taxon-interactions-page.ts
+  s_dece5f65c66771::t_40a80abc555cc6 200-204,206-213
+  s_dece5f65c66771::t_4b14c52ec57b13 132-134
+  s_dece5f65c66771::t_96358de04f6af3 1-5,9-13,17,116-120,135-199,205,214-269
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_dece5f65c66771::t_920c46d5457526 551-552,617-652,654
+  s_dece5f65c66771::t_70f292ab4885af 553-562,573-579,1231-1232
+  s_dece5f65c66771::t_bac92d5f75b023 580-582
+  s_dece5f65c66771::t_142c063ccbd7e8 653
+  s_61f5d77ec5bc45::t_0d0199e1432556 583
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_dece5f65c66771::t_a8b88e3e92a22d 348-358
+e2e/scripts/__tests__/ppi-overrides.test.ts
+  s_dece5f65c66771::t_1f0ccd83148858 4,51-103
+  s_dece5f65c66771::t_f0b01222ea02ba 104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "808c2ede9dce08f6b1e3f8ff43ef92a640a7f1a1",
+  "prompts": {},
+  "sessions": {
+    "s_61f5d77ec5bc45": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-aaeb03b63551afe77",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

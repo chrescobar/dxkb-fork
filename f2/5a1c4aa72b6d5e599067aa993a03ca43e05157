@@ -1,0 +1,23 @@
+src/lib/views/__tests__/scoped-structural-rql.test.ts
+  s_dece5f65c66771::t_f4aa945b7bbd71 1-22
+src/components/views/resource-child-collection.tsx
+  s_dece5f65c66771::t_3f1c904fe48fa8 31
+src/lib/views/scoped-structural-rql.ts
+  s_dece5f65c66771::t_87e7dc0d8d15f5 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f25a1c4aa72b6d5e599067aa993a03ca43e05157",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

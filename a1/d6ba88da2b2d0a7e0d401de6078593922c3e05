@@ -1,0 +1,33 @@
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_b3519a84212dd8::t_23686c7e16c6fb 417-452
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_b3519a84212dd8::t_ee88bce615d6e5 4,150-152,159,166,171,179
+src/components/interactions/graph-node-list.tsx
+  s_b3519a84212dd8::t_23686c7e16c6fb 55-59,71-73
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_b3519a84212dd8::t_23686c7e16c6fb 102-138
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_b3519a84212dd8::t_23686c7e16c6fb 232-242,245,250-257,310-314,319-324
+src/components/interactions/graph-detail-panel.tsx
+  s_b3519a84212dd8::t_ee88bce615d6e5 10
+docs/architecture.md
+  s_b3519a84212dd8::t_c124c54c9e5f6e 271
+docs/interactions-graph-react-port.md
+  s_b3519a84212dd8::t_ee88bce615d6e5 328-329
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a1d6ba88da2b2d0a7e0d401de6078593922c3e05",
+  "prompts": {},
+  "sessions": {
+    "s_b3519a84212dd8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebda863b-58c1-464c-b88a-345f4c6defd4",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

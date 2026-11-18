@@ -1,0 +1,42 @@
+e2e/pages/taxon-interactions-page.ts
+  s_feeebbd194cd9a::t_b85b65fa87e4d7 125-129
+  s_feeebbd194cd9a::t_e640a9cdd6e436 27-33
+docs/interactions-graph-react-port.md
+  s_feeebbd194cd9a::t_1450f51daa8fd4 356-358
+  s_feeebbd194cd9a::t_9c25292c3c7a5e 350
+  s_feeebbd194cd9a::t_609cecb3ad35c4 359-363
+e2e/tests/organisms/interactions.spec.ts
+  s_feeebbd194cd9a::t_17dc373e992ade 35-46
+  s_feeebbd194cd9a::t_3ddd2c509e1701 136-139
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_feeebbd194cd9a::t_eb429c787d9777 546-573
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_feeebbd194cd9a::t_087989f55c210e 277-279
+  s_feeebbd194cd9a::t_6a983e0f42d0ac 1
+docs/architecture.md
+  s_dece5f65c66771::t_0196100eb98114 241,269,300
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e13d1432cd49d1ab725c813b6a0c10301899d9d1",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_feeebbd194cd9a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5387b3ae-cb01-4037-8186-d0907aba1577",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

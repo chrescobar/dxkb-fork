@@ -1,0 +1,23 @@
+e2e/pages/taxon-interactions-page.ts
+  s_b3519a84212dd8::t_c63423687b932f 110-116
+docs/architecture.md
+  s_b3519a84212dd8::t_a82cfe1dfe04cb 269
+e2e/tests/organisms/interactions.spec.ts
+  s_b3519a84212dd8::t_e0acbab54722e2 129-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "00fe79c83f3a21878ae8e821047af79dd91139ba",
+  "prompts": {},
+  "sessions": {
+    "s_b3519a84212dd8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebda863b-58c1-464c-b88a-345f4c6defd4",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

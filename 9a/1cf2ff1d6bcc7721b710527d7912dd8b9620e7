@@ -1,0 +1,48 @@
+src/lib/views/__tests__/interaction-collection-profile.test.ts
+  s_dece5f65c66771::t_c9b772b1cdfb84 302,306-307
+  s_dece5f65c66771::t_47b95b46ab4274 313-316
+  s_dece5f65c66771::t_ba13be92d12c5e 116
+  s_dece5f65c66771::t_4c700b0adc62d8 109,197,201-205,210-212,218,224,227-228,231,235-236,240-241,243-247,270,279-282,288,295,299-301,303-305,308-310,317-320,322
+  s_dece5f65c66771::t_06534ca084a26b 321
+  s_dece5f65c66771::t_3bad848238d9f0 311-312
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_dece5f65c66771::t_47b95b46ab4274 549
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_dece5f65c66771::t_ac368637932821 615
+  s_dece5f65c66771::t_dd8501ff4c3514 151-152,155,335,422,531-532,549-550,554-555,570,586-590,595-597,616,619-635,637-646,648-656,658-665,696,756-757,760,770-771,773-774,776,783-784,786,804,888,923,986,989,1196
+  s_dece5f65c66771::t_06534ca084a26b 540-543,569,571-577,579,581
+  s_dece5f65c66771::t_47b95b46ab4274 558-560
+src/components/interactions/interactions-subview-shell.tsx
+  s_dece5f65c66771::t_92ca92afcf5643 97-98
+src/lib/views/__tests__/interaction-predicates.test.ts
+  s_dece5f65c66771::t_173fbc5936201b 115
+  s_dece5f65c66771::t_4e2aa25ce906a6 103-105
+e2e/pages/taxon-interactions-page.ts
+  s_dece5f65c66771::t_a690f8ac8fcd6e 194
+src/lib/interactions/__tests__/to-graph.test.ts
+  s_dece5f65c66771::t_ae47396184bf62 79
+docs/architecture.md
+  s_dece5f65c66771::t_b758e20c0c7717 230
+  s_dece5f65c66771::t_1008af8c1ff55f 228
+  s_dece5f65c66771::t_47b95b46ab4274 269-271
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_dece5f65c66771::t_1e23b2c10d781e 6,14-15,160,185,275,278-279,300,305,310-313,317,322-324,327,337,340-344,347-352,357,361-362,376,379,386,392,395,401-437,439-445,457-458,464,474,483,495,552,555,576,578,580,621-622,629,645,684,698,738,770,779
+src/lib/views/child-resources.ts
+  s_dece5f65c66771::t_92ca92afcf5643 103-109,115,205-208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a1cf2ff1d6bcc7721b710527d7912dd8b9620e7",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

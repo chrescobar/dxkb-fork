@@ -1,0 +1,26 @@
+docs/architecture.md
+  s_dece5f65c66771::t_5bef9b99b36265 269
+  s_dece5f65c66771::t_3587bce208f813 230,271-272
+  s_dece5f65c66771::t_d55b593ce0d33c 244
+  s_dece5f65c66771::t_312f969aafe180 264,273
+  s_dece5f65c66771::t_8d0e3082fb0a6a 228
+  s_dece5f65c66771::t_12457104c58128 270
+docs/interactions-graph-react-port.md
+  s_dece5f65c66771::t_c2b1a9fb4d1883 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4939f90661a8f7f9bb010de02a3bd8f812cf73d9",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

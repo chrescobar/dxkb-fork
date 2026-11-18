@@ -1,0 +1,221 @@
+src/components/workspace/folder-picker/folder-picker-utils.ts
+  s_dece5f65c66771::t_282ca4c5d84461 4,23,33,62-80
+  s_dece5f65c66771::t_9ecad8ab0a0e3b 81
+src/lib/interactions/url-state.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-185
+src/components/interactions/graph-detail-panel.tsx
+  s_dece5f65c66771::t_80d8d5d1f474cc 1,4
+  s_dece5f65c66771::t_282ca4c5d84461 14,16,32-47,75-77,79-87,91-97,167-171,173-177
+src/components/workspace/folder-picker/__tests__/folder-picker-upload.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 30-39,65,76-80,93-95,114,172-173,206-213
+e2e/pages/taxon-interactions-page.ts
+  s_dece5f65c66771::t_282ca4c5d84461 131-179
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_dece5f65c66771::t_685c3ed5f5f4e0 103-113,115-132,134-147,320
+  s_dece5f65c66771::t_282ca4c5d84461 184-188,264,270-294,323-544
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 21-27,53-54,58,60-62,65,67-72,77-80,82-84,88-89,140-143,147,156-162,1030-1065,1067-1071,1077-1107,1109-1133,1135-1222,1224-1238,1240-1304
+  s_dece5f65c66771::t_9cf33456d045e3 117-119,125-130,1066,1108,1134,1223,1239
+  s_dece5f65c66771::t_c13dc2416fd736 115-116,120-123,135,1026-1029
+  s_dece5f65c66771::t_8d6942958349f7 1072-1076
+  s_dece5f65c66771::t_338f18e70ee261 1305
+e2e/pages/index.ts
+  s_dece5f65c66771::t_282ca4c5d84461 47,49
+e2e/README.md
+  s_dece5f65c66771::t_282ca4c5d84461 48,137
+src/components/views/experiment-bioset-collection.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-176
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 5,345-395,689-714,767-785
+  s_dece5f65c66771::t_6869e326f837cb 786
+src/app/workspace/workshop/page.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 2,5
+src/lib/data-api/rql.ts
+  s_dece5f65c66771::t_282ca4c5d84461 9,276
+src/lib/experiment-view/query.ts
+  s_dece5f65c66771::t_282ca4c5d84461 2,63-93,95-105
+src/components/workspace/folder-picker/__tests__/folder-picker-actions.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-284
+src/lib/services/workspace/__tests__/picker-views.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 36,87-93,103,210-228,259-289,320-325,745-766,953-970
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1,16-39,51-52,57-61,349-443
+  s_dece5f65c66771::t_8e9d8a555adf53 444
+src/components/views/resource-child-collection.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 101-107,193-197,199-200
+src/components/workspace/folder-picker/__tests__/folder-picker-files-upload.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 86-89
+src/lib/views/__tests__/child-collection-state.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 4,144-170
+  s_dece5f65c66771::t_9c600cf8398d3d 171
+e2e/tests/services/output-folder-picker.spec.ts
+  s_dece5f65c66771::t_282ca4c5d84461 13-18,148-155,267,295,319-325,331-332,334-335,367,369,377,469-479,482-483,502,509,525,528,541-1002,1060-1062,1064-1065
+src/lib/views/child-collection-state.ts
+  s_dece5f65c66771::t_282ca4c5d84461 14-15,27,62-71
+  s_dece5f65c66771::t_d786ca0bda10d9 72-73
+src/components/organisms/taxon-views/lazy-tab-roots.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 88-92
+  s_dece5f65c66771::t_1de164879baa32 85-87
+e2e/pages/folder-picker-dialog.ts
+  s_dece5f65c66771::t_282ca4c5d84461 33-54,61-64,84-90,99,169-290,299-304,311-321
+src/app/(views)/experiment/experiment-collection.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 8
+src/components/workspace/folder-picker/__tests__/folder-picker-files.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 2,229-263,282-292
+  s_dece5f65c66771::t_8ac3c3c7a9f393 293
+src/components/workspace/folder-picker/__tests__/folder-picker-layout.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-404
+src/components/workspace/folder-picker/folder-picker-dialog.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 22-23,25,54,57,59-73,82,120-122,136-138,473-501,509-511,647-652,663,735-754,756-769,773,775-779,781-789,818-819,821-828,836-842,856-895
+src/lib/interactions/__tests__/to-graph.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 47-69
+src/components/interactions/interactions-graph.tsx
+  s_dece5f65c66771::t_8c977bed957414 67-71,121-124,217-218,249-254,256-261
+  s_dece5f65c66771::t_ebd5bf898cf820 22
+  s_dece5f65c66771::t_282ca4c5d84461 3,23,26,35,39,133-139,154-157,195-197,216,220,225-248,255,370-371,373-379,382,384-385,389-390,395-396,470,475-476
+src/components/workspace/folder-picker/folder-picker-actions.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-136
+src/lib/experiment-view/__tests__/experiment-view.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 7-8,20,116-135
+  s_dece5f65c66771::t_2339f6f6dac6f0 136
+src/lib/interactions/layout-positions.ts
+  s_dece5f65c66771::t_282ca4c5d84461 37-53,60,63,73
+  s_dece5f65c66771::t_d579ceb9d45aed 36
+src/lib/interactions/schema.ts
+  s_dece5f65c66771::t_282ca4c5d84461 22-23
+src/lib/views/hrefs.ts
+  s_dece5f65c66771::t_282ca4c5d84461 56-62
+src/lib/interactions/graph-selections.ts
+  s_dece5f65c66771::t_282ca4c5d84461 3-10,88-116
+  s_dece5f65c66771::t_ebd5bf898cf820 117-124
+src/hooks/__tests__/use-viewport-size.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-31
+src/hooks/use-viewport-size.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-29
+src/lib/views/child-resources.ts
+  s_dece5f65c66771::t_96db2e52f25df1 46-54
+src/components/workspace/folder-picker/__tests__/folder-picker-resize-handle.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 18-20,26-28,38-40,182-220
+src/components/navbars/navbar-links.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1,267
+src/components/workspace/folder-picker/__tests__/fixtures/picker-harness.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 10,20-21,34-35,45-47,191-200,225-233
+src/components/workspace/folder-picker/__tests__/folder-picker-utils.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 10,107-144
+  s_dece5f65c66771::t_df5c9db558687a 145
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 34,38,87,90-118,124,128-132,149-150,167-209,336-337,367-373
+src/lib/interactions/__tests__/url-state.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-258
+src/lib/interactions/use-interactions.ts
+  s_dece5f65c66771::t_282ca4c5d84461 36-37
+src/constants/datafields/ppi.ts
+  s_dece5f65c66771::t_282ca4c5d84461 16,24,32,47,62,84,92,100,115,130
+src/lib/interactions/types.ts
+  s_dece5f65c66771::t_282ca4c5d84461 11,45-57,72-75
+src/lib/services/workspace/__tests__/workshop.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-18
+src/components/workspace/folder-picker/folder-picker-layout.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-259
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1,313-319,1033,1035,1059-1060,1062,1070-1136,1279-1418
+  s_dece5f65c66771::t_1ef9739eb3d938 1278
+  s_dece5f65c66771::t_78b21ff4be338d 1137-1138,1419
+src/lib/interactions/__tests__/layout-positions.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 108-116
+e2e/tests/a11y/deep-tier.spec.ts
+  s_dece5f65c66771::t_282ca4c5d84461 206,221
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1,17-40,45-46,105-107,215-414
+src/lib/services/workspace/picker-views.ts
+  s_dece5f65c66771::t_282ca4c5d84461 14,17-23,25-26,114,149,160,167-170,183
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1,500-574
+  s_dece5f65c66771::t_dd793dcc5dceff 575-576
+src/components/workspace/folder-picker/folder-picker-resize-handle.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 12-19,23,31-34,61-63,73-74,91-94
+src/components/organisms/taxon-views/experiments.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 2,6,27-32
+docs/interactions-graph-react-port.md
+  s_dece5f65c66771::t_282ca4c5d84461 327-333,359,365-373
+  s_dece5f65c66771::t_76639ad7d28c8f 374
+src/lib/views/__tests__/hrefs.test.ts
+  s_dece5f65c66771::t_282ca4c5d84461 6,210-215
+  s_dece5f65c66771::t_aa7ee7235583a2 216-218
+src/components/workspace/folder-picker/__tests__/folder-picker-dialog-resize.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-695
+src/components/workspace/folder-picker/folder-picker-header.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1,16-20,27-29,31,50-53,56,58-61,63,65-82
+src/components/interactions/__tests__/zoom-control.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 3,50-65
+  s_dece5f65c66771::t_9197fc37e42033 66-67
+e2e/pages/protein-structure-page.ts
+  s_dece5f65c66771::t_282ca4c5d84461 33,51,55-63,65
+src/components/interactions/sigma/zoom-control.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 42-43
+src/components/shared/data-table.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 375-387
+src/lib/interactions/to-graph.ts
+  s_dece5f65c66771::t_282ca4c5d84461 18
+src/components/ui/dialog.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 40-59,64,66-69,75
+src/components/workspace/__tests__/selection-to-group-dialog-browse.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 19
+src/components/workspace/folder-picker/__tests__/folder-picker-columns.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 49-82
+src/lib/interactions/layouts.ts
+  s_dece5f65c66771::t_282ca4c5d84461 292-297,303
+src/components/views/__tests__/experiment-bioset-collection.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-293
+src/lib/services/workspace/workshop.ts
+  s_dece5f65c66771::t_282ca4c5d84461 1-15
+src/components/workspace/folder-picker/folder-picker-dialog-resize.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-132
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 77-89,405,411-414,416-417
+docs/architecture.md
+  s_dece5f65c66771::t_282ca4c5d84461 207,209-210,212-213,216,219,243,304,368,382,390
+  s_dece5f65c66771::t_ba80537c9ef8c0 230,271,273-274
+src/components/workspace/folder-picker/__tests__/folder-picker-new-folder.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 310,318-319
+src/components/workspace/folder-picker/folder-picker-preview.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 46-47,56-57,73-74,86,93-96,99,101-108,110,123,146,149,199-200,210-211,214-219,223,226,253
+src/components/interactions/interactions-subview-shell.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 7,10,12-15,17-23,33,142-146,148-151,153-159,161-167,213-218,228,239,260-265
+  s_dece5f65c66771::t_23103c9083b352 8-9,11,60-65,75-80,85,92,94-95,103-104,107-118,152,168-170,176-178,180-190,194-196,205-208,248,257
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 3,246,265-266,268,391-399,401,403-405,407-408,412-416,420,440-474
+  s_dece5f65c66771::t_f92e791f83e89c 475
+e2e/tests/services/workspace-file-picker.spec.ts
+  s_dece5f65c66771::t_282ca4c5d84461 41-43,46-50,71-77,457-508,537
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 291-337
+src/hooks/views/__tests__/use-child-collection-url-state.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 3
+src/lib/interactions/__tests__/graph-selections.test.ts
+  s_dece5f65c66771::t_6fefd4035346ba 1-7,63-96
+  s_dece5f65c66771::t_aa4e56d5b330f6 97
+src/components/views/__tests__/resource-child-collection-links.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 1-151
+e2e/tests/organisms/interactions.spec.ts
+  s_dece5f65c66771::t_282ca4c5d84461 124-127,135-162
+  s_dece5f65c66771::t_198842cce6f90c 163-165
+src/components/workspace/folder-picker/__tests__/folder-picker-info.test.tsx
+  s_dece5f65c66771::t_282ca4c5d84461 3-6,9,62-66,101-111,131-137,240-319,321-333,335-349,352-381,383,385-387
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3d6e386f5d0cc4ccfa9ef9e1903c8577d497740f",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

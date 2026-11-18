@@ -1,0 +1,23 @@
+src/lib/interactions/__tests__/selection-focus.test.ts
+  s_b3519a84212dd8::t_b120254aa48ac7 75
+  s_b3519a84212dd8::t_b4dc4e0ad2fb7e 1-74,76-149
+src/lib/interactions/selection-focus.ts
+  s_b3519a84212dd8::t_1850e5c3914d94 7-11,13-17,19-22
+  s_b3519a84212dd8::t_6e8c8d1b9b2e47 1-6,12,18,23-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c17f190d069f4a07b5fee1c8bc85bbc0d5d70dd8",
+  "prompts": {},
+  "sessions": {
+    "s_b3519a84212dd8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebda863b-58c1-464c-b88a-345f4c6defd4",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+e2e/tests/organisms/interactions.spec.ts
+  s_dece5f65c66771::t_55ebfbbd70dc7a 268-269
+  s_dece5f65c66771::t_6c97b56a28d757 270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "425f1962e5230f3180b8ba2e83692081f86b3c41",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_feeebbd194cd9a::t_6e730abe2e4ee1 1
+  s_feeebbd194cd9a::t_4697410efc9338 499-547
+src/constants/datafields/ppi.ts
+  s_feeebbd194cd9a::t_816d27922a41aa 16,24,32,47,62,84,92,100,115,130
+src/lib/views/child-resources.ts
+  s_feeebbd194cd9a::t_b41d1096470b4c 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e0730e4e0e33774fc2a3332123f482799a055af2",
+  "prompts": {},
+  "sessions": {
+    "s_feeebbd194cd9a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5387b3ae-cb01-4037-8186-d0907aba1577",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_dece5f65c66771::t_e4415d2301d6c8 211-214,885,887-894,896-897,899,901-908,911,913-926,928-931,936-939,943-945,948,950-957,959,961-967,969,1587-1588,1597
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_dece5f65c66771::t_e4415d2301d6c8 631,650,751-753,771,799-850,881,939-989,1019,1083-1117,1205
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_dece5f65c66771::t_e4415d2301d6c8 455,559,623,663-665,851-853,1002
+src/lib/interactions/__tests__/graph-selections.test.ts
+  s_dece5f65c66771::t_e4415d2301d6c8 3,98-105
+  s_dece5f65c66771::t_67570414712716 106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae147d2e4b678fc8b3129cba3223dc05cb817f48",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

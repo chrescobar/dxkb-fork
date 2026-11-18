@@ -1,0 +1,29 @@
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_dece5f65c66771::t_f3cf7799a101e8 16,39-40,72-74,563-642
+src/lib/interactions/use-interactions.ts
+  s_dece5f65c66771::t_986bf22170357e 9,146-162,165-171
+  s_dece5f65c66771::t_a8b88e3e92a22d 163-164
+  s_dece5f65c66771::t_3ef135b5cdfcc8 172-174
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_dece5f65c66771::t_d2265d47327bd2 10,17,272-416
+  s_dece5f65c66771::t_21168c1a988526 417-418
+src/components/interactions/interactions-graph.tsx
+  s_dece5f65c66771::t_1570e8ad317491 16,164-170,338
+  s_dece5f65c66771::t_055625899d86c3 339-340
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ff3ba5db32cb6a7560317cb5db3f5d95b406e7a7",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

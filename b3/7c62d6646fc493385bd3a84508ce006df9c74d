@@ -1,0 +1,33 @@
+src/lib/circular-viewer/__tests__/server.test.ts
+  s_d76a630f9b136c::t_d4b3daea4959dc 161-182
+src/lib/forms/(protein-tools)/msa-snp-analysis/__tests__/msa-snp-analysis-form-utils.test.ts
+  s_d76a630f9b136c::t_3388575ee9d3f4 20,504-552
+  s_d76a630f9b136c::t_e3d77a4587c182 553
+src/lib/genome-browser/__tests__/server.test.ts
+  s_d76a630f9b136c::t_83ece239a572c4 156-181
+src/lib/forms/(protein-tools)/msa-snp-analysis/msa-snp-analysis-form-utils.ts
+  s_d76a630f9b136c::t_b35c13cbc6f517 4-5,28-37
+  s_d76a630f9b136c::t_8cabd59d63df5d 38-39
+src/lib/circular-viewer/server.ts
+  s_d76a630f9b136c::t_b35c13cbc6f517 13,237
+src/app/services/(protein-tools)/msa-snp-analysis/page.tsx
+  s_d76a630f9b136c::t_3957c1dd958693 895-898
+src/lib/genome-browser/server.ts
+  s_d76a630f9b136c::t_b35c13cbc6f517 8,215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b37c62d6646fc493385bd3a84508ce006df9c74d",
+  "prompts": {},
+  "sessions": {
+    "s_d76a630f9b136c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45f9eb2d-b7aa-42ab-a7d0-3a9c0d525bbc",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

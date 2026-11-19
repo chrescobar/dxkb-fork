@@ -1,0 +1,76 @@
+src/app/__tests__/all-term-search-results.test.tsx
+  s_5cb544d1304b49::t_8f35b9ff47a753 430,435-437,441,453
+  s_5cb544d1304b49::t_2e53a26ab48fdc 309,386-429,431-434,438-440,442-452,454-481
+  s_5cb544d1304b49::t_e9735c741c41ea 197-199,257-308
+  s_5cb544d1304b49::t_cca629555b27f8 310
+src/lib/search/__tests__/all-types-search.test.ts
+  s_5cb544d1304b49::t_1975293a1fd408 122,534-657,660,665-670,672,674-709
+  s_5cb544d1304b49::t_4078a1afcdad8d 13,117-121,671,673
+  s_5cb544d1304b49::t_75dd2f100016d1 658-659,661-664
+  s_5cb544d1304b49::t_a906055c5c33f6 21-26
+  s_5cb544d1304b49::t_96d96e900b916d 151
+  s_5cb544d1304b49::t_11d62eebaf6349 146-150,152-188
+  s_5cb544d1304b49::t_e3e1aa6307964f 85
+  s_5cb544d1304b49::t_af80419f8b9333 98,102-116
+  s_5cb544d1304b49::t_72b9a29128881f 33-36,42,47-84,86-94
+  s_5cb544d1304b49::t_02ea65ef5efa0e 95,123
+src/app/search/__tests__/page.test.tsx
+  s_5cb544d1304b49::t_2e53a26ab48fdc 11-22,194-220,222-237
+  s_5cb544d1304b49::t_7f1553bbc8fb4c 221
+  s_5cb544d1304b49::t_eb3f419932947f 238
+src/app/all-term-search-results.tsx
+  s_5cb544d1304b49::t_7f1553bbc8fb4c 62-67,74,78-79,167,218
+src/lib/data-api/__tests__/repository-download.test.ts
+  s_5cb544d1304b49::t_60f411624cd7a1 289
+  s_5cb544d1304b49::t_1fe955a21bed37 276-288,290-292
+src/lib/data-api/repository.ts
+  s_5cb544d1304b49::t_9a890516b51361 35,409,518
+  s_5cb544d1304b49::t_480481a9389d5b 127-144,147-150,155-160
+  s_5cb544d1304b49::t_a4bb79d23f190c 734-735
+src/lib/data-api/__tests__/repository.test.ts
+  s_5cb544d1304b49::t_48da47f3be0ca7 332-385
+src/app/api/data/search/__tests__/route.test.ts
+  s_5cb544d1304b49::t_af80419f8b9333 114
+  s_5cb544d1304b49::t_6cb60ff0769c5a 107-108,119-144
+  s_5cb544d1304b49::t_330d2cb56519ab 145
+src/app/search/page.tsx
+  s_5cb544d1304b49::t_7f1553bbc8fb4c 21,53-55,63-66,73
+src/lib/search/all-types-query.ts
+  s_5cb544d1304b49::t_62812977a24a89 6
+  s_5cb544d1304b49::t_27cb5a57c3328c 29-32
+  s_5cb544d1304b49::t_55462ed21ca287 40,46-48
+src/lib/search/all-types-search.ts
+  s_5cb544d1304b49::t_5c1872c7665922 470-506,545
+docs/architecture.md
+  s_5cb544d1304b49::t_4078a1afcdad8d 270,287
+src/lib/data-api/index.ts
+  s_5cb544d1304b49::t_9dc19006876755 20
+src/lib/data-api/rql.ts
+  s_5cb544d1304b49::t_e541d1c33d8c11 431-478
+  s_5cb544d1304b49::t_7e4e4d3e5918fb 1-5
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_5cb544d1304b49::t_aa6d5ed72e7449 366-367
+  s_5cb544d1304b49::t_3e7fdcdea8f72e 227-266
+  s_5cb544d1304b49::t_3e000505608ed8 179-181
+  s_5cb544d1304b49::t_4078a1afcdad8d 226
+src/lib/data-api/__tests__/rql.test.ts
+  s_5cb544d1304b49::t_60742861f7ad15 8
+  s_5cb544d1304b49::t_a53bee37b7be4d 385-452,454-476
+  s_5cb544d1304b49::t_4078a1afcdad8d 453
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "07d4201b643ea95ff5fb284356a8c93490aa4023",
+  "prompts": {},
+  "sessions": {
+    "s_5cb544d1304b49": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b72884e-22fb-41a9-a084-6c935120ce30",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

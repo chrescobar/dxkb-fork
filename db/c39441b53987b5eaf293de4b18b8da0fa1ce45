@@ -1,0 +1,53 @@
+src/lib/search/__tests__/all-types-search.test.ts
+  s_d76a630f9b136c::t_c360b167d28904 336-381
+src/lib/protein-feature-view/__tests__/protein-feature-view.test.ts
+  s_d76a630f9b136c::t_eab9d6a2dde916 59-71,73-79
+  s_d76a630f9b136c::t_dbf4c9cc872933 72
+src/components/shared/__tests__/data-table-rendering.test.tsx
+  s_d76a630f9b136c::t_70ec0bef4f0b02 8,469-495
+  s_d76a630f9b136c::t_1eb9fd56150582 496-497
+src/lib/protein-feature-view/__tests__/display.test.ts
+  s_d76a630f9b136c::t_2032a27fc78fd0 1-38
+src/components/detail-panel/__tests__/info-panel-search.test.tsx
+  s_d76a630f9b136c::t_eab9d6a2dde916 280-321
+src/components/detail-panel/info-panel.tsx
+  s_d76a630f9b136c::t_d0afbb22c1a96c 156-160
+  s_d76a630f9b136c::t_fcaff9a9116060 30
+  s_d76a630f9b136c::t_46f63ebd223dd8 154-155
+  s_19000a10472050::t_9ffe2910239233 147
+src/lib/search/all-types-search.ts
+  s_d76a630f9b136c::t_34a9c0f9cdabc6 6
+  s_d76a630f9b136c::t_14124f5dde2f2d 330-334,342,344
+src/lib/protein-feature-view/display.ts
+  s_d76a630f9b136c::t_862436d0b15262 1-8
+src/lib/protein-feature-view/fields.ts
+  s_d76a630f9b136c::t_1c32109fdd5f86 3,5-8,19-21
+  s_d76a630f9b136c::t_dbf4c9cc872933 22
+  s_d76a630f9b136c::t_842eaab6af1dac 23-24
+docs/architecture.md
+  s_d76a630f9b136c::t_55923617b1a700 243
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dbc39441b53987b5eaf293de4b18b8da0fa1ce45",
+  "prompts": {},
+  "sessions": {
+    "s_19000a10472050": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ab536bfe7e1cb11f6",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_d76a630f9b136c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45f9eb2d-b7aa-42ab-a7d0-3a9c0d525bbc",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

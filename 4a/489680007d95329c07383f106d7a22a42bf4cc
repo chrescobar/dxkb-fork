@@ -1,0 +1,23 @@
+src/lib/views/__tests__/interaction-collection-profile.test.ts
+  s_dece5f65c66771::t_4151101a1f07e4 313-316
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_dece5f65c66771::t_4151101a1f07e4 566-569
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_dece5f65c66771::t_73b32cac1d310b 234-238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4a489680007d95329c07383f106d7a22a42bf4cc",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+src/components/organisms/genera-grid/__tests__/genera-card.test.tsx
+  s_5b6d5b6a64f3d6::t_aaa5556f44c1c1 46-67
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_5b6d5b6a64f3d6::t_9dc94280dadcf4 5-10,17-25,27-32,34-41
+  s_5b6d5b6a64f3d6::t_2bc7078c012450 26,33
+  s_5b6d5b6a64f3d6::t_610bf0d76196cf 42,53,55,101
+src/components/organisms/virus-families/family-pathogens-popover.tsx
+  s_5b6d5b6a64f3d6::t_8b7c171970e898 1-70
+src/components/organisms/genera-grid/genera-card.tsx
+  s_5b6d5b6a64f3d6::t_37e1627b972819 3,8,16-17,20-26,30-33,37-40,62
+src/components/organisms/virus-families/__tests__/virus-families-section.test.tsx
+  s_5b6d5b6a64f3d6::t_b06c89be62e2f0 38
+  s_5b6d5b6a64f3d6::t_c8d61bf9f16f4d 1,34-37,39-69
+src/components/organisms/virus-families/__tests__/family-pathogens-popover.test.tsx
+  s_5b6d5b6a64f3d6::t_0239a1bd90fe98 1-51,55-67
+  s_5b6d5b6a64f3d6::t_2bc7078c012450 52-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "476e981feb35d5ba0809f4bca2a55b06d7b2f9fd",
+  "prompts": {},
+  "sessions": {
+    "s_5b6d5b6a64f3d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8feb49c2-ab8f-4bf1-a0fd-b25012186f52",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

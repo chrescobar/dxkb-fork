@@ -1,0 +1,24 @@
+docs/architecture.md
+  s_5b6d5b6a64f3d6::t_2bc7078c012450 284
+  s_5b6d5b6a64f3d6::t_03988f10e95975 283
+docs/a11y-manual-checklist.md
+  s_5b6d5b6a64f3d6::t_1245c502cc21f4 23
+AGENTS.md
+  s_5b6d5b6a64f3d6::t_2bc7078c012450 111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "91cc379ce634d42db93f1d0842261e336e0f6be9",
+  "prompts": {},
+  "sessions": {
+    "s_5b6d5b6a64f3d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8feb49c2-ab8f-4bf1-a0fd-b25012186f52",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

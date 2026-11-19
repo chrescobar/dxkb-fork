@@ -1,0 +1,184 @@
+src/components/interactions/__tests__/graph-controls.test.tsx
+  s_bcda78dd0e4a1d::t_a0a0d4342388d9 1-82
+src/components/views/collection-filters/collection-toolbar.tsx
+  s_bcda78dd0e4a1d::t_e8f9d27d166639 309
+  s_bcda78dd0e4a1d::t_d09a27f247227d 28,59,127,140,304,310,316-317
+  s_bcda78dd0e4a1d::t_f553513d8957ea 131-134
+src/lib/interactions/graph-columns.ts
+  s_bcda78dd0e4a1d::t_80e9d7cf8032a1 1-15
+docs/architecture.md
+  s_bcda78dd0e4a1d::t_5983ecf5dd1c78 274
+  s_bcda78dd0e4a1d::t_0dd9e7acb5627a 275
+  s_bcda78dd0e4a1d::t_fe1661379a767b 272
+  s_bcda78dd0e4a1d::t_2f3913f724a520 276
+  s_bcda78dd0e4a1d::t_c407ff0281655b 273
+  s_bcda78dd0e4a1d::t_6497c31a8aadef 268,278-279
+  s_bcda78dd0e4a1d::t_b525e7b688945b 378
+src/components/views/__tests__/resource-collection-action-error-layout.test.tsx
+  s_bcda78dd0e4a1d::t_9b6b25ff10cedb 1-152
+src/lib/interactions/__tests__/node-insight.test.ts
+  s_bcda78dd0e4a1d::t_e0a378630f195f 1-125,127-128,130-215
+  s_bcda78dd0e4a1d::t_2f820fa3235d5a 126,129
+src/components/interactions/graph-legend.tsx
+  s_bcda78dd0e4a1d::t_4f856f186f2e5c 8-52
+  s_bcda78dd0e4a1d::t_4db94e4dc497bd 7
+e2e/pages/taxon-interactions-page.ts
+  s_bcda78dd0e4a1d::t_235756baa4461b 138-149,176,191,196,200-201
+  s_bcda78dd0e4a1d::t_fe46a023fc1207 210-211,213,215-216,220-221,223-229,231-244
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_bcda78dd0e4a1d::t_2b091f50a09623 3,525-716
+  s_bcda78dd0e4a1d::t_51c18d6263e2b2 7,39,42,56,78,94,114,135,155,177,196,218,247,261,276,302,323
+  s_bcda78dd0e4a1d::t_ac89fe4fbc7f01 59,81,97,117,138,158,180,199,221,250,264,279,305,326,400,470
+  s_bcda78dd0e4a1d::t_f6afc6c7bc7842 338-399,401-469,471-524,717-718
+e2e/fixtures/overrides/interactions.ts
+  s_bcda78dd0e4a1d::t_ee70637ae19445 90
+src/components/interactions/__tests__/graph-columns.test.tsx
+  s_bcda78dd0e4a1d::t_b75bacbb82afff 2,17-21,38
+  s_bcda78dd0e4a1d::t_75ed72d066c674 1,3-16,22-37,39,41-67,70,73-74,76,78-81,86-95,98-99
+  s_bcda78dd0e4a1d::t_89883fea2b82b5 68-69,71-72,75,77,82-85,96-97
+  s_bcda78dd0e4a1d::t_29816e2212788f 40
+src/app/globals.css
+  s_bcda78dd0e4a1d::t_420c3ce2ec0968 84-94
+src/components/interactions/graph-node-dot.tsx
+  s_bcda78dd0e4a1d::t_268dadbeb09f8d 1-29
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_bcda78dd0e4a1d::t_0bce9aaf55d570 2,4-7,81-82,86,121-122,126,339-440
+  s_bcda78dd0e4a1d::t_066ef51592b0fe 441-442
+src/components/views/collection-filters/toolbar-layout.tsx
+  s_bcda78dd0e4a1d::t_604992e7b95068 1-10,14-21,23,30-31,38-45,47,49-50,53,55-69
+  s_bcda78dd0e4a1d::t_f553513d8957ea 11,22,24-29,46,51-52
+  s_bcda78dd0e4a1d::t_f720b2db72dfde 54
+  s_bcda78dd0e4a1d::t_4979c27e2bb655 12-13,32-37,48
+src/components/interactions/graph-detail-panel.tsx
+  s_bcda78dd0e4a1d::t_b3a71583bd129a 177-178,191
+  s_bcda78dd0e4a1d::t_3a8936c6da46d4 1-2,4,6-10,21-22,105-112,175-176,179-190,193-200
+src/lib/ui-preferences/schemas.ts
+  s_bcda78dd0e4a1d::t_80e9d7cf8032a1 7,36-42
+src/components/interactions/graph-controls.tsx
+  s_bcda78dd0e4a1d::t_b2ba8ab26c06d9 43
+  s_bcda78dd0e4a1d::t_c9d8aab5bd130f 1-42,44-96
+src/components/interactions/interactions-subview-shell.tsx
+  s_bcda78dd0e4a1d::t_47698f8f9be176 7,229-230,232,247-292
+  s_bcda78dd0e4a1d::t_ae650c5d38eb92 231,241,243
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_bcda78dd0e4a1d::t_fe1661379a767b 1635,1793,1795-1799,1805,1807-1810
+  s_bcda78dd0e4a1d::t_14fcd8061ba5e5 229-249
+  s_bcda78dd0e4a1d::t_4fa6580c4fbf09 14,696-715,1653-1671,1734-1792,1794,1800-1804,1806,1811-1815
+  s_bcda78dd0e4a1d::t_59fb3220b1cea4 296-316,652-653,658,660,664-669,680-681,750,764,766,771
+  s_bcda78dd0e4a1d::t_4bdb59406308a5 401,867,984,1021,1083,1118,1142,1216,1265,1686,1727,1841,1873,1918
+  s_bcda78dd0e4a1d::t_c8074d0504acd9 1218-1221,1280-1282,1922-1925,1930,1936-1937
+  s_bcda78dd0e4a1d::t_b75bacbb82afff 1
+  s_bcda78dd0e4a1d::t_6df269a8fbf048 1672,1816-1817
+src/components/views/resource-collection.tsx
+  s_bcda78dd0e4a1d::t_4979c27e2bb655 7,152,523-531,549,566
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_bcda78dd0e4a1d::t_b75bacbb82afff 155-157
+  s_bcda78dd0e4a1d::t_14fcd8061ba5e5 145-154,158-165
+  s_bcda78dd0e4a1d::t_027ca496a2e081 1461,1477,1494,1532
+src/components/interactions/graph-columns.tsx
+  s_bcda78dd0e4a1d::t_a2eaef83ca96fa 1-72,75-88,90-105
+  s_bcda78dd0e4a1d::t_147a355cc3f819 73-74,89
+e2e/tests/organisms/interactions.spec.ts
+  s_bcda78dd0e4a1d::t_fe46a023fc1207 304-305
+  s_bcda78dd0e4a1d::t_235756baa4461b 127-128,153-154,179-180,190,229-230,271-272,276-277,317,343-344,349
+  s_bcda78dd0e4a1d::t_2f3a66279b66b8 13-18
+src/components/interactions/interactions-graph.tsx
+  s_bcda78dd0e4a1d::t_f959a853cf9cf3 459
+  s_bcda78dd0e4a1d::t_b0b4f3366169cd 425-428,476
+  s_bcda78dd0e4a1d::t_fe1661379a767b 34
+  s_bcda78dd0e4a1d::t_1268855a47f484 55
+  s_bcda78dd0e4a1d::t_d8724fcedf3a5f 9,58,83-84,93,95,97-103
+  s_bcda78dd0e4a1d::t_a2eaef83ca96fa 54,464-470,473,475,478-540,542-566,568-574,576-579,581-585
+  s_bcda78dd0e4a1d::t_f553513d8957ea 96,203,457-458
+  s_bcda78dd0e4a1d::t_33732eb8f61c35 580
+  s_bcda78dd0e4a1d::t_94f1e6f5ec3688 471,575
+src/components/interactions/graph-node-panel.tsx
+  s_bcda78dd0e4a1d::t_ebb470247b0de7 67,130,132,138-140,142-157,159-177,179-199,201-243,247-249,294-297,329-331,336-338
+  s_bcda78dd0e4a1d::t_e15563f4125377 1-66,68-86,88-90,92-101,104-105,107-110,112-116,118-129,133-137,158,200,244-246,251-263,265-286,288-292,298-323,325-328,332,334-335,340-347,349-354
+  s_bcda78dd0e4a1d::t_c0ca018afd227c 117
+  s_bcda78dd0e4a1d::t_079a18e6546861 87,91,102-103,106,111,141,178,250,264,287,293,324,333,339,348
+  s_bcda78dd0e4a1d::t_6d36013651a461 131
+src/components/interactions/graph-node-list.tsx
+  s_bcda78dd0e4a1d::t_94f1e6f5ec3688 182
+  s_bcda78dd0e4a1d::t_51e65c147bcb96 3,14-25,30-31,35-40,44-45,52,64-77,90,128,148-153,160,162-164,168,177-181,183,190-191,194,197-219
+  s_bcda78dd0e4a1d::t_c6e3413a1ef412 12,33-34,46-48,54,57-62,78-89,91-114,131-134,137-144,170,172
+  s_bcda78dd0e4a1d::t_e09758ff4a3ba9 63
+src/__tests__/graph-notice-contrast.test.ts
+  s_bcda78dd0e4a1d::t_5655197a53ab9a 1-253
+src/components/interactions/graph-edge-panel.tsx
+  s_bcda78dd0e4a1d::t_6d36013651a461 128
+  s_bcda78dd0e4a1d::t_d59228ede056cb 1-71,73-76,78-83,86-87,89-96,98-104,106-127,129-138,140-192,194-213,215-222,224-229,231-248,250-262,264-270,272-278,280-292,294-304,306-310,312-322
+  s_bcda78dd0e4a1d::t_079a18e6546861 72,77,84-85,88,97,105,139,193,214,223,230,249,263,271,279,293,305,311
+src/components/interactions/__tests__/graph-node-panel.test.tsx
+  s_bcda78dd0e4a1d::t_7e65857c9f7da9 194
+  s_bcda78dd0e4a1d::t_5ece7e4c578f11 1-193,195-411
+docs/interactions-graph-react-port.md
+  s_bcda78dd0e4a1d::t_6497c31a8aadef 3
+  s_bcda78dd0e4a1d::t_bc620e72ffb862 317
+src/lib/interactions/use-interactions.ts
+  s_bcda78dd0e4a1d::t_f553513d8957ea 150,155
+src/components/views/collection-filters/__tests__/toolbar-layout.test.tsx
+  s_bcda78dd0e4a1d::t_fe1661379a767b 28-31,85,90,93-97
+  s_bcda78dd0e4a1d::t_b8cca08811d7c0 1-27,32-84,86-89,91-92,98-133
+src/components/interactions/graph-detail-parts.tsx
+  s_bcda78dd0e4a1d::t_268dadbeb09f8d 1-103
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_bcda78dd0e4a1d::t_2ac0ff08a509f1 180-182,194-196,198-200,208,212-215,220
+  s_bcda78dd0e4a1d::t_c0741a90c69b12 191-192,202-207,209-210,216-219,221-225,490
+  s_bcda78dd0e4a1d::t_2fee62a43f7a75 183-190,193,197,201,211
+src/lib/interactions/node-insight.ts
+  s_bcda78dd0e4a1d::t_a2f7f540c29e49 1-142
+src/components/interactions/graph-truncation-notice.tsx
+  s_bcda78dd0e4a1d::t_6f99f5ab0321b1 13
+  s_bcda78dd0e4a1d::t_b2baf124c13360 32-35,46
+  s_bcda78dd0e4a1d::t_0cbe9205511009 1-12,14-31,37-43,45,47-56,58-67,69-70
+  s_bcda78dd0e4a1d::t_d8724fcedf3a5f 44,68
+  s_bcda78dd0e4a1d::t_224ee1b5e2dac8 36,57
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_bcda78dd0e4a1d::t_408035e77aee23 222,238
+  s_bcda78dd0e4a1d::t_b93c5fb678a337 73,193-194,197-200,203-204,207,209,212,214-221,223-230,232-237,239-243,245-246
+src/components/interactions/__tests__/graph-truncation-notice.test.tsx
+  s_bcda78dd0e4a1d::t_e750c2a63d164b 105
+  s_bcda78dd0e4a1d::t_2ac0b2ad5848e5 1-104,106-109
+src/lib/ui-preferences/definitions.ts
+  s_bcda78dd0e4a1d::t_80e9d7cf8032a1 4,20-21,81-83
+  s_bcda78dd0e4a1d::t_fa8a96ab2dc9dd 84
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_bcda78dd0e4a1d::t_147a355cc3f819 137,144-156,158-177,185-188,202,216-223,225,242-250
+  s_bcda78dd0e4a1d::t_c0741a90c69b12 20-21,56-57
+  s_bcda78dd0e4a1d::t_29816e2212788f 157
+  s_bcda78dd0e4a1d::t_60185e15533924 178
+  s_bcda78dd0e4a1d::t_ca1f3b0c8e2e8e 179-184,189-201,203-215,224,226-241
+  s_94f6520ca0a62e::t_356e417c4de48c 251-252
+src/components/interactions/__tests__/graph-edge-panel.test.tsx
+  s_bcda78dd0e4a1d::t_6a5d1bd13f7ed6 1-160,163-170,172-281
+  s_bcda78dd0e4a1d::t_02a54ddc803c04 161-162,171
+src/components/views/collection-filters/__tests__/fixtures/toolbar-harness.tsx
+  s_bcda78dd0e4a1d::t_429b2420a22861 2,40-41,51,133
+src/components/ui/command.tsx
+  s_bcda78dd0e4a1d::t_ea736a963d2479 175-178,184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0066d1fdddb1896e97c11766e369607dad3e00af",
+  "prompts": {},
+  "sessions": {
+    "s_94f6520ca0a62e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48d0b667-66c0-416e-be76-b303672baf28",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bcda78dd0e4a1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ccb61c3a-f81f-4b9a-988b-4859635d8f90",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

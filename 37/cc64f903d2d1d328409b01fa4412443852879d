@@ -1,0 +1,59 @@
+src/components/interactions/interactions-graph.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 21-24,62-68,78,106-116,132,136-142,153-158,160-164,170,254,257-261,272,279,339,390
+src/lib/interactions/url-state.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 22
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 47-50,56,64,71,604,706-726,844-990
+  s_5cb544d1304b49::t_46d8613234e656 991
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 64,70,84-189,222,233,241,248,256,373-401,406
+src/lib/interactions/__tests__/graph-theme.test.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 7,9-10,12,14,80,101,116,127,130-255
+src/components/interactions/graph-legend.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 7-58
+src/lib/interactions/selection-focus.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 1-101
+e2e/pages/taxon-interactions-page.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 110-116
+src/lib/interactions/types.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 3-4,67-69
+src/components/interactions/__tests__/graph-legend.test.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 55-63
+docs/architecture.md
+  s_5cb544d1304b49::t_5a8879e34e26c3 271
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 3,7-13,22-23,58-71,74-75,106,111,132,140-158,259-544
+  s_5cb544d1304b49::t_9a743d6e759c66 545
+src/lib/interactions/graph-theme.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 1-2,10-11,40-56,59,61-73,76-78,81,85,88-99,101
+docs/interactions-graph-react-port.md
+  s_5cb544d1304b49::t_5a8879e34e26c3 328-329
+e2e/tests/organisms/interactions.spec.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 133-154
+src/lib/interactions/__tests__/selection-focus.test.ts
+  s_5cb544d1304b49::t_5a8879e34e26c3 1-169
+src/components/interactions/graph-node-list.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 18,29-31,47-52,55-59,68,71-73
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 1,64,81,102-138,246-306
+src/components/interactions/graph-detail-panel.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 8-11,14,40-117,128-131,133-175,182-213,217
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_5cb544d1304b49::t_5a8879e34e26c3 19,22-27,37-43,230-261,265,268,274,277,283-295,299-314,316-324,346-347,349,406,418,423-426,458,461
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "37cc64f903d2d1d328409b01fa4412443852879d",
+  "prompts": {},
+  "sessions": {
+    "s_5cb544d1304b49": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b72884e-22fb-41a9-a084-6c935120ce30",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

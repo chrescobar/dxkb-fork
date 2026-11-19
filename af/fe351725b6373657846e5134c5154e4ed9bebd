@@ -1,0 +1,29 @@
+src/components/organisms/virus-families/__tests__/virus-families-data.test.ts
+  s_5b6d5b6a64f3d6::t_aea7f40a866c16 49-53
+src/components/organisms/virus-families/virus-families-data.ts
+  s_ba71fa1e85ef56::t_d31466ab710417 73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "affe351725b6373657846e5134c5154e4ed9bebd",
+  "prompts": {},
+  "sessions": {
+    "s_5b6d5b6a64f3d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8feb49c2-ab8f-4bf1-a0fd-b25012186f52",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ba71fa1e85ef56": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a79ef9a052220de91",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

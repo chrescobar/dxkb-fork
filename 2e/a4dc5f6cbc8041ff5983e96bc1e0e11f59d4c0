@@ -1,0 +1,26 @@
+src/app/globals.css
+  s_bcda78dd0e4a1d::t_fc3d30a80de38b 464-475
+docs/architecture.md
+  s_bcda78dd0e4a1d::t_0499f4be6103b0 273
+src/components/ui/command.tsx
+  s_bcda78dd0e4a1d::t_4a70efb5a21fff 175
+  s_bcda78dd0e4a1d::t_570320f494f448 181
+src/__tests__/graph-list-drag-containment.test.ts
+  s_bcda78dd0e4a1d::t_fc3d30a80de38b 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2ea4dc5f6cbc8041ff5983e96bc1e0e11f59d4c0",
+  "prompts": {},
+  "sessions": {
+    "s_bcda78dd0e4a1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ccb61c3a-f81f-4b9a-988b-4859635d8f90",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

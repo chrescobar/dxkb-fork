@@ -1,0 +1,155 @@
+src/hooks/views/__tests__/use-facet-counts.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-220
+src/components/views/__tests__/resource-collection-navigation-actions.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 361-449
+src/hooks/use-debounced-draft.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 3,9,17,21,33-36,38,45-65
+src/components/views/__tests__/fixtures/search-action-bar-fake.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 25,56
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1,4-6,10,17,174-433
+src/components/interactions/interactions-subview-shell.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 3-5,9-10,12,17,20,26-34,40-66,81,83-101,104-153,160-161,166,179-180,182,185-226,254-255,259,264-265,268-277
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 261-422
+e2e/scripts/__tests__/ppi-overrides.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 4,51-103
+  s_5cb544d1304b49::t_38f498ca8bec06 104
+src/lib/interactions/graph-selections.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 118-124
+src/components/navbars/__tests__/user-avatar-dropdown.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 100-103,105-111,128-138
+  s_5cb544d1304b49::t_e790151a307571 139-140
+src/lib/data-api/__tests__/selected-rows.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-114
+src/components/interactions/graph-detail-panel.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 2,5-13,27-28,129,199-233
+src/lib/interactions/__tests__/url-state.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 8,259-268
+  s_5cb544d1304b49::t_bf62363c374f3f 269
+src/lib/views/__tests__/child-collection-state.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 243-317
+src/lib/views/__tests__/interaction-predicates.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 102-122
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-2,4-8,11-39,52-54,58,64-66,70,75-76,83,90-94,101-124,126-160,163-174,177-180,193,200,205,209,223,227,230,235,243,260,267,298,317,320,547-1260
+e2e/pages/taxon-interactions-page.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-5,9-13,17,116-120,188-317
+docs/architecture.md
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 230,232,246,266,271-275
+docs/interactions-graph-react-port.md
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 3-4
+src/test-helpers/history-navigation.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1,20,23,26
+src/hooks/views/use-facet-counts.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-128
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 45,51-52,60,564-566
+src/components/navbars/user-avatar-dropdown.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 39,150,164
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 20-21,1390-1503
+  s_5cb544d1304b49::t_c7d6d0fd5f7ed1 1504
+src/lib/interactions/use-interactions.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 9,13,77-102,106-109,111-115,118-179
+src/components/search/__tests__/search-action-bar.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 298-345,550-569
+src/components/views/resource-collection-actions.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 27,311-329,470-474,493,521-534,664-670,753-757,763
+src/lib/data-api/selected-rows.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-45
+src/components/views/use-resource-collection-row-resolution.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 11-15
+src/components/views/__tests__/resource-filter-bar.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 212-238,892-919
+  s_5cb544d1304b49::t_d20bd81ce0b598 920
+src/components/auth/__tests__/su-login-dialog.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-34
+src/components/views/collection-filters/__tests__/collection-toolbar.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 53-125
+src/lib/views/child-resources.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 7,10,46-51,54-126,213-216,219
+src/components/search/__tests__/search-action-policy.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 105-145,239-240
+src/lib/interactions/__tests__/graph-selections.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 3,98-105
+  s_5cb544d1304b49::t_1cddd5b58102ce 106
+src/hooks/__tests__/use-debounced-draft.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-2,184-357
+  s_5cb544d1304b49::t_454bb22c58c1c5 358
+src/components/views/collection-filters/types.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 40-41
+e2e/tests/organisms/interactions.spec.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 281-347
+src/lib/views/collection-selection.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 11-16
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 51,204,206
+src/lib/genome-view/__tests__/genome-view.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 303
+src/components/auth/su-login-dialog.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 17,111,113
+src/components/settings/password-input.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 18,20-22,31-33,45-47
+src/hooks/views/use-resource-collection.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 3,16-17,101-112,159
+src/lib/views/__tests__/interaction-collection-profile.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-324
+e2e/fixtures/overrides/interactions.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 9-10,69-116,132
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 9,16,28-29,31,45-46,102-106,118,120,123-126,131-142,146-149,161-164,201-209,222-223,226,228-271,283,287,309,317-485,487-503,618-629,639-766,843-848,850-1024,1062,1104,1130,1219,1235,1421-1644,1679-1682,1725-1728
+src/components/interactions/graph-filter-bar.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-48
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 6,8,11,42,48,60-72,95,99,104,109-111,114-115,117-142,144,152-156,170-202,212-213,216-217,221-222,232,235,237,242-259,279-281,287-293,411-1109,1319-1385
+  s_5cb544d1304b49::t_9701c9620d1265 1386
+src/lib/interactions/url-state.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 186-194
+src/lib/views/__tests__/scoped-structural-rql.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-22
+src/lib/views/scoped-structural-rql.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-17
+src/components/views/__tests__/resource-child-collection.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 9-12,570-648
+  s_5cb544d1304b49::t_3de1c9ecb386fb 649
+src/components/views/resource-collection.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 56-64,127-131,148,396,482
+src/components/interactions/__tests__/graph-filter-bar.test.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 1-205
+src/components/views/resource-filter-bar.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 22,35-36,40-41,63,67,97-100,135
+src/components/search/search-action-policy.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 12,41,61-66,204-211,327-328,336,345
+  s_5cb544d1304b49::t_454a6a15d3aa3e 346-347
+src/components/interactions/interactions-graph.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 7-8,11-12,16-17,22,34-35,50,71-99,108-111,113-117,119,123-142,154,159-164,170-192,194-201,204,226-231,235,239-241,290-295,297-300,314-352,355-357,437-445,452-454,458-461,560
+src/lib/views/child-collection-state.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 129-135,141,155-158
+src/lib/interactions/__tests__/to-graph.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 101-115
+src/components/search/search-action-bar.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 67
+src/components/views/collection-filters/collection-toolbar.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 36,63
+src/components/views/resource-child-collection.tsx
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 30,90-94,111-112,142,185,225
+src/lib/views/__tests__/collection-field-contract.test.ts
+  s_5cb544d1304b49::t_4f37bbcf12bfa9 41,616-617
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f167099c66b12b2159de13a7be943e0fd184b911",
+  "prompts": {},
+  "sessions": {
+    "s_5cb544d1304b49": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b72884e-22fb-41a9-a084-6c935120ce30",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

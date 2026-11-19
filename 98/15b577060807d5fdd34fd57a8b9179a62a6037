@@ -1,0 +1,41 @@
+src/components/interactions/graph-node-list.tsx
+  s_bcda78dd0e4a1d::t_aa1f1ae9a8bd61 130-132
+  s_bcda78dd0e4a1d::t_eafc1697a14db8 3-9,11,44-48,68-69,92-109,122-124,127-128,153,172-176,189,263-279
+src/components/interactions/__tests__/graph-node-panel.test.tsx
+  s_bcda78dd0e4a1d::t_76ef77ca9d6850 55-57,59-61,66
+  s_bcda78dd0e4a1d::t_4b7cab33d5bb68 62-65,67-76,83,87-91,107-128,415-434
+  s_bcda78dd0e4a1d::t_0cec44cfc8578a 435
+docs/architecture.md
+  s_bcda78dd0e4a1d::t_4d12996cc5b40a 274
+  s_bcda78dd0e4a1d::t_d075fa407bf24a 273
+src/components/interactions/graph-node-panel.tsx
+  s_bcda78dd0e4a1d::t_aa1f1ae9a8bd61 115-121,262-264
+src/components/interactions/__tests__/graph-columns.test.tsx
+  s_bcda78dd0e4a1d::t_9932417e80eec2 1,88-89,98-152
+  s_bcda78dd0e4a1d::t_ac572018972fa9 153
+src/components/interactions/graph-columns.tsx
+  s_bcda78dd0e4a1d::t_6048612b6c8721 42-52,65-73,75
+  s_bcda78dd0e4a1d::t_aa1f1ae9a8bd61 58-59
+  s_bcda78dd0e4a1d::t_dcedd39e813b5d 3,53-57,74,93,107
+e2e/pages/taxon-interactions-page.ts
+  s_bcda78dd0e4a1d::t_8eba8e417d58e8 116-125,127,131-133
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_bcda78dd0e4a1d::t_15584803faf815 743-834
+  s_bcda78dd0e4a1d::t_4b7cab33d5bb68 675-685
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9815b577060807d5fdd34fd57a8b9179a62a6037",
+  "prompts": {},
+  "sessions": {
+    "s_bcda78dd0e4a1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ccb61c3a-f81f-4b9a-988b-4859635d8f90",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

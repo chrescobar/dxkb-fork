@@ -1,0 +1,67 @@
+src/components/ui/badge.tsx
+  s_5b6d5b6a64f3d6::t_6e0ff0b9ca2b71 30-32
+src/components/organisms/virus-families/family-pathogens-disclosure.tsx
+  s_5b6d5b6a64f3d6::t_3b71b24e9a7949 111,175
+  s_5b6d5b6a64f3d6::t_2a7aa4fa2d6a6f 60,159
+  s_5b6d5b6a64f3d6::t_316e650a0d77bd 84-89,97,121
+  s_5b6d5b6a64f3d6::t_31c40bbf8ba3cc 1-59,61-83,90-96,98-110,112-120,122-158,160-174,176-192
+src/components/organisms/virus-families/__tests__/family-pathogens-disclosure.test.tsx
+  s_5b6d5b6a64f3d6::t_4f100e22ed06dd 33
+  s_5b6d5b6a64f3d6::t_ff67c51c303e48 3
+  s_5b6d5b6a64f3d6::t_316e650a0d77bd 12-13,165,171-176,185-187
+  s_5b6d5b6a64f3d6::t_09baa9307ee43b 1-2,4-11,14-32,34-43,45-133,149-164,166-170,177-184,188-217
+  s_5b6d5b6a64f3d6::t_ea0b26657d5642 44
+  s_5b6d5b6a64f3d6::t_865003e96bb8ff 134-148
+AGENTS.md
+  s_5b6d5b6a64f3d6::t_3e603107ba645b 111
+src/components/ui/button-variants.ts
+  s_5b6d5b6a64f3d6::t_039a073562bfce 76-77
+docs/a11y-manual-checklist.md
+  s_5b6d5b6a64f3d6::t_3e603107ba645b 23
+src/components/ui/card.tsx
+  s_5b6d5b6a64f3d6::t_c37d84239ec1b5 20
+src/components/organisms/genera-grid/avatar-colors.ts
+  s_5b6d5b6a64f3d6::t_e7187e044287e4 1-8
+e2e/pages/organism-landing-page.ts
+  s_5b6d5b6a64f3d6::t_f91271990ce0f0 35,46-48
+  s_5b6d5b6a64f3d6::t_5d54cc226d0a3d 41-45,51
+  s_5b6d5b6a64f3d6::t_3575af82ca8675 49-50,52
+src/components/organisms/genera-grid/genera-card.tsx
+  s_5b6d5b6a64f3d6::t_8a9258fb52c1b0 48
+  s_5b6d5b6a64f3d6::t_033a3e955efc6e 10-11
+src/components/organisms/virus-families/use-hover-disclosure.ts
+  s_5b6d5b6a64f3d6::t_e15b6861835e5f 2-24,28-29,46-79
+  s_5b6d5b6a64f3d6::t_ffe4ed5a4ac3ec 1
+  s_5b6d5b6a64f3d6::t_644799354e650f 30-45
+  s_5b6d5b6a64f3d6::t_b4120e5fe2b5d6 25-27
+e2e/tests/organisms/viruses.spec.ts
+  s_5b6d5b6a64f3d6::t_5d54cc226d0a3d 64
+  s_5b6d5b6a64f3d6::t_3942a3852234e8 56,62-63,66-67,69,71,73-77,80-81,85-86,88,91-108,117-120
+  s_5b6d5b6a64f3d6::t_906717de13c5d9 65
+src/components/organisms/virus-families/__tests__/virus-families-section.test.tsx
+  s_5b6d5b6a64f3d6::t_106483e7ac08e8 42
+  s_5b6d5b6a64f3d6::t_316e650a0d77bd 53-58,67
+  s_5b6d5b6a64f3d6::t_0f0b69ada5fb65 64,66,68,70,72-74,78,82-88
+  s_5b6d5b6a64f3d6::t_a53a0cdb2981d4 89-90
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_5b6d5b6a64f3d6::t_695518f82048c5 6-9,28-32,34-51,92
+  s_5b6d5b6a64f3d6::t_ffe244a3a58ca8 5
+docs/architecture.md
+  s_5b6d5b6a64f3d6::t_3e603107ba645b 289
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "697803d645c8e4c3a50b9dc6b656b602867a17ed",
+  "prompts": {},
+  "sessions": {
+    "s_5b6d5b6a64f3d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8feb49c2-ab8f-4bf1-a0fd-b25012186f52",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

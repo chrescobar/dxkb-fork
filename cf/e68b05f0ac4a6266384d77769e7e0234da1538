@@ -1,0 +1,22 @@
+src/hooks/__tests__/use-debounced-draft.test.tsx
+  s_dece5f65c66771::t_7e02d94a4ffbe7 287-311
+src/hooks/use-debounced-draft.ts
+  s_dece5f65c66771::t_ff71d63031d23b 56
+  s_dece5f65c66771::t_f5a82341203f1b 54-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cfe68b05f0ac4a6266384d77769e7e0234da1538",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

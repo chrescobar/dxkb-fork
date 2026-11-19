@@ -1,0 +1,63 @@
+e2e/pages/taxon-interactions-page.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 123-129
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 3,7-13,22-23,58-71,74-75,106,111,132,140-158,259-544
+  s_dece5f65c66771::t_c0f4110c364231 545
+src/lib/interactions/url-state.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 22
+src/components/interactions/__tests__/graph-legend.test.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 55-63
+src/lib/interactions/types.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 3-4,67-69
+src/components/interactions/graph-legend.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 7-58
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 19,22-27,37-43,226-257,261,264,270,273,279-291,295-310,312-320,342-343,345,402,414,419-422,454,457
+e2e/tests/organisms/interactions.spec.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 133-154
+src/lib/interactions/__tests__/graph-theme.test.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 7,9-10,12,14,80,101,116,127,130-255
+docs/architecture.md
+  s_dece5f65c66771::t_57dc0c67a569bc 271
+src/components/interactions/graph-node-list.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 18,29-31,47-52,55-59,68,71-73
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 1,64,81,102-138,246-306
+src/components/interactions/interactions-graph.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 28-31,100-106,145,210-220,243,247-253,264-269,271-275,281,408,411-415,426,433,506,557
+src/lib/interactions/__tests__/selection-focus.test.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 1-169
+src/lib/interactions/selection-focus.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 1-101
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 64,70,84-189,222,233,241,248,256,535-563,568
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_dece5f65c66771::t_f8f37d9f41ed6a 53-56,62,70,77,1180,1282-1301,1645-1678,1683-1724,1729-1798
+  s_dece5f65c66771::t_cf36247f25d14e 1644
+  s_dece5f65c66771::t_e9a6f7c5e0d285 1679-1682,1725-1728
+  s_dece5f65c66771::t_84c0d04670212c 857
+  s_dece5f65c66771::t_299da5e3f51228 1302,1799
+src/lib/interactions/graph-theme.ts
+  s_dece5f65c66771::t_f8f37d9f41ed6a 1-2,10-11,40-56,59,61-73,76-78,81,85,88-99,101
+src/components/interactions/graph-detail-panel.tsx
+  s_dece5f65c66771::t_1050f895e8a3b8 129,199-206,208-213,215-233
+  s_dece5f65c66771::t_f8f37d9f41ed6a 18-21,24,52-128,140-143,145-187,194-198,234-260,264
+docs/interactions-graph-react-port.md
+  s_dece5f65c66771::t_f8f37d9f41ed6a 330-331
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e0e5b92668d5ae3d8f4e45869b30194a3438ea5e",
+  "prompts": {},
+  "sessions": {
+    "s_dece5f65c66771": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "930cb2f7-9f4d-4a2f-b299-0385f39e4e75",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

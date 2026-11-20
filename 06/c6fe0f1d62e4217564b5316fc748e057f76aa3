@@ -1,0 +1,69 @@
+src/components/interactions/interactions-subview-shell.tsx
+  s_a51021ff5142b2::t_a487434f63e24a 108
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_a51021ff5142b2::t_5138ea82694945 713-714,725-726,741,744-745,761-765,776-788,790,793,795,797-802,1629-1633
+src/lib/data-api/types.ts
+  s_a51021ff5142b2::t_e7631b1a2433ef 129-138
+src/lib/e2e-fixtures/envelopes.ts
+  s_a51021ff5142b2::t_4b4d1cade8032f 40-54
+src/lib/views/collection-selection.ts
+  s_a51021ff5142b2::t_a487434f63e24a 14-15,17
+src/components/views/__tests__/resource-collection-selection-actions.test.tsx
+  s_a51021ff5142b2::t_c0a4186f9e1e26 1480-1481,1483
+src/lib/data-api/__tests__/client.test.ts
+  s_a51021ff5142b2::t_a87c9b0224ee59 137-150
+src/components/interactions/interactions-graph.tsx
+  s_a51021ff5142b2::t_a487434f63e24a 441
+  s_a51021ff5142b2::t_8da0324cbecda8 442-443,445-446
+src/components/interactions/__tests__/graph-truncation-notice.test.tsx
+  s_a51021ff5142b2::t_6e0e110652f8ef 15-16,21-22,29,36,40,46,50,56,67,81,86,93,101
+src/lib/data-api/__tests__/repository.test.ts
+  s_a51021ff5142b2::t_eca7f8178463dc 321-322
+  s_a51021ff5142b2::t_a3d27982c8eb0f 333-344
+  s_a51021ff5142b2::t_66e18e6e438454 280-320,323-332,345-349
+docs/architecture.md
+  s_a51021ff5142b2::t_946c0c7a116b1f 278-279
+  s_a51021ff5142b2::t_77b848e69367b7 271
+e2e/fixtures/overrides/interactions.ts
+  s_a51021ff5142b2::t_8940f34d28d9ea 7
+  s_a51021ff5142b2::t_df6713e7226f4c 118-140,158,162
+  s_a51021ff5142b2::t_db70f1ffc2c2fa 91-92
+e2e/scripts/__tests__/ppi-overrides.test.ts
+  s_a51021ff5142b2::t_c43ca753db019d 5,106-142
+  s_a51021ff5142b2::t_d56d4dc7284468 143
+src/lib/data-api/repository.ts
+  s_a51021ff5142b2::t_354ad35951433f 44,325-344,360,532-536,541,549,557-561,569
+e2e/tests/organisms/interactions.spec.ts
+  s_a51021ff5142b2::t_11e7aeb0857865 299-301,304,307
+  s_a51021ff5142b2::t_9363c223a4273f 295-296
+src/app/api/data/[resource]/__tests__/route.test.ts
+  s_a51021ff5142b2::t_65a16d72e41946 344-376
+e2e/pages/taxon-interactions-page.ts
+  s_a51021ff5142b2::t_11e7aeb0857865 5,286,297
+src/lib/data-api/client.ts
+  s_a51021ff5142b2::t_add69037b9e0aa 15,209,214,224
+src/lib/interactions/use-interactions.ts
+  s_a51021ff5142b2::t_9c2b5538afe548 17-21
+  s_a51021ff5142b2::t_3cb9999f830ffe 22-24,26,54,61-62,77,86-87,94-106,159-161,163-165
+src/lib/e2e-fixtures/__tests__/envelopes.test.ts
+  s_a51021ff5142b2::t_1ed15d797291a7 5,50-71
+  s_a51021ff5142b2::t_123a197a8e32c2 72-73
+src/lib/interactions/__tests__/use-interactions.test.ts
+  s_a51021ff5142b2::t_e092095499f436 6,8,10-13,25,35-85,95-99,101-102,104-111,114-125,131,136,139-140,144,148-156,162,168,173-177,180-184,191,194-198,204-257,279-283
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "06c6fe0f1d62e4217564b5316fc748e057f76aa3",
+  "prompts": {},
+  "sessions": {
+    "s_a51021ff5142b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64c399b4-0030-4463-94c9-b08d12c343a8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

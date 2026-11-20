@@ -1,0 +1,40 @@
+src/test-helpers/oklch-contrast.ts
+  s_e219a5582a730f::t_a4fb7f1f36c0d2 1-43
+src/components/organisms/geo-distribution/state-counties-layer.tsx
+  s_e219a5582a730f::t_2283eac64e2380 66
+src/app/globals.css
+  s_e219a5582a730f::t_ab389312f841f1 332-335,338-339,344,347-348
+src/components/organisms/geo-distribution/world-countries-layer.tsx
+  s_e219a5582a730f::t_2283eac64e2380 68
+src/components/organisms/geo-distribution/__tests__/geo-border-contrast.test.ts
+  s_e219a5582a730f::t_7c542465019d1a 38-43
+  s_e219a5582a730f::t_c3e7c987d5fb3c 74-76
+  s_e219a5582a730f::t_49b7a5ea830b2c 1-30,36,44-73,77-101
+  s_e219a5582a730f::t_f7709ca9ee996c 31-35,37
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_e219a5582a730f::t_55b5f9f5fb1445 61
+src/components/organisms/geo-distribution/__tests__/choropleth-path.test.tsx
+  s_e219a5582a730f::t_5a06244b66be1a 1-26,28-40
+  s_e219a5582a730f::t_2283eac64e2380 27
+src/components/organisms/geo-distribution/choropleth-path.tsx
+  s_e219a5582a730f::t_26f141d81a7a7a 23-24,29
+  s_e219a5582a730f::t_28960da1a7b65b 25-28,30
+  s_e219a5582a730f::t_6c2f11a79296c3 31,35
+  s_e219a5582a730f::t_b0bb6b115acc01 57-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4430f4b030af32991622e39fd4b065a0be8db4f7",
+  "prompts": {},
+  "sessions": {
+    "s_e219a5582a730f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729e2cd2-762c-46f2-92eb-7e6185eec4e1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+docs/architecture.md
+  s_94f6520ca0a62e::t_d5297d3951272c 283-284
+e2e/pages/taxon-page.ts
+  s_94f6520ca0a62e::t_18bcfb346c2b3a 17-21
+  s_94f6520ca0a62e::t_940bb3f20f18f0 37-39
+  s_bcda78dd0e4a1d::t_41b1e6cf0a8583 40-41
+e2e/tests/taxonomy-tab-back-forward.spec.ts
+  s_94f6520ca0a62e::t_21dd93faa53861 1-2,21-32,39,88-110
+  s_94f6520ca0a62e::t_6a75896cab0714 111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4e528dda90f606494c01ee6d2ef79e3ff083190f",
+  "prompts": {},
+  "sessions": {
+    "s_94f6520ca0a62e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48d0b667-66c0-416e-be76-b303672baf28",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_bcda78dd0e4a1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ccb61c3a-f81f-4b9a-988b-4859635d8f90",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

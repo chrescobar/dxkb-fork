@@ -1,0 +1,26 @@
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_94f6520ca0a62e::t_c0dc1e8cac2a00 362-369
+src/lib/feature-view/query.ts
+  s_94f6520ca0a62e::t_c0dc1e8cac2a00 56,60-65,69
+docs/architecture.md
+  s_94f6520ca0a62e::t_c2788c0b825a01 230
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_94f6520ca0a62e::t_c0dc1e8cac2a00 19,262-303
+  s_94f6520ca0a62e::t_969bc39b16ebd1 304-305
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9a55a7f246e12428d6e423d133a8394e9d963c0b",
+  "prompts": {},
+  "sessions": {
+    "s_94f6520ca0a62e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48d0b667-66c0-416e-be76-b303672baf28",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

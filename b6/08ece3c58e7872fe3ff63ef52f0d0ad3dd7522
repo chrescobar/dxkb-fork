@@ -1,0 +1,52 @@
+src/lib/interactions/__tests__/tooltip-placement.test.ts
+  s_a51021ff5142b2::t_0d678a44853f8b 1-53
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_a51021ff5142b2::t_9437c396369ffa 48-53
+docs/architecture.md
+  s_a51021ff5142b2::t_58b09aa21d164c 271
+src/lib/interactions/tooltip-placement.ts
+  s_a51021ff5142b2::t_6cc244cc6bd8f2 1-41
+src/components/interactions/webgl2-notice.tsx
+  s_a51021ff5142b2::t_e5ab5407d69103 1-25
+src/components/interactions/interactions-graph.tsx
+  s_a51021ff5142b2::t_d2aaed14efcd66 51
+  s_a51021ff5142b2::t_2a978a140aee92 489
+src/components/interactions/__tests__/graph-canvas.test.tsx
+  s_a51021ff5142b2::t_9437c396369ffa 1-17,19-31,36-53
+  s_a51021ff5142b2::t_6f230e514aadd1 18,32-35
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_a51021ff5142b2::t_3e01ac7e84eaea 455
+  s_a51021ff5142b2::t_e834df02679123 519
+  s_a51021ff5142b2::t_9e39f8c44f3347 463
+  s_a51021ff5142b2::t_9afcbdaa2f7748 56-59
+  s_a51021ff5142b2::t_8706ccaa20a158 346
+  s_a51021ff5142b2::t_a91ccd14748873 599-603
+  s_a51021ff5142b2::t_2b9bbe3ceee5c2 434-437
+src/components/interactions/graph-canvas.tsx
+  s_a51021ff5142b2::t_70ee340c287900 1-29
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_a51021ff5142b2::t_f495b8951983ba 23-27
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_a51021ff5142b2::t_0d678a44853f8b 749-760,765,769,778,788,797,802,805-806
+  s_a51021ff5142b2::t_1111e959403afc 40
+  s_a51021ff5142b2::t_7ab59bb5da8c20 17
+  s_a51021ff5142b2::t_11b01056caf0f6 155
+  s_a51021ff5142b2::t_b0c661608d4a86 80
+  s_a51021ff5142b2::t_5987d5a76d0f34 748,761-764,766-768,770-777,779-784,787,789-796,798-800,807-809,811-812
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b608ece3c58e7872fe3ff63ef52f0d0ad3dd7522",
+  "prompts": {},
+  "sessions": {
+    "s_a51021ff5142b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64c399b4-0030-4463-94c9-b08d12c343a8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,105 @@
+src/app/organisms/all/views/__tests__/overview.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1,67,70-75,152-164
+  s_e219a5582a730f::t_3f8401b4e10a77 165-166
+e2e/tests/taxonomy-tab-back-forward.spec.ts
+  s_e219a5582a730f::t_e9a54258f9e841 1-2,21-32,39,88-110
+  s_e219a5582a730f::t_4a80dbf671afa4 111
+src/lib/services/organisms/utils.ts
+  s_e219a5582a730f::t_e9a54258f9e841 24-26,100-101,107,110,126-135,146,153,168,181,192,195,221,228-233
+src/lib/views/__tests__/hrefs.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 16,38-59
+  s_e219a5582a730f::t_5197a9ac18b306 60-61
+src/components/organisms/data-summary/__tests__/data-summary.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-8,12-14,19,74,77-82,95,101-106,111-155,165,201,212-292,304,316
+src/components/organisms/taxon-views/features.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 4,10-12,16
+src/lib/services/organisms/__tests__/taxonomy.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 11,345-346
+src/app/api/e2e-mock/[...path]/route.ts
+  s_e219a5582a730f::t_e9a54258f9e841 982-983,997,1001,1004-1007,1021
+src/app/organisms/bacteria/views/overview.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 15-17,20,36
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-8,39,41-47,59,72-126,144,164,177,188,204,221,229,237-306,315
+src/lib/services/organisms/types.ts
+  s_e219a5582a730f::t_e9a54258f9e841 1-5,13-19
+src/lib/views/hrefs.ts
+  s_e219a5582a730f::t_e9a54258f9e841 2-6,30-36
+  s_e219a5582a730f::t_69199a66cb3efd 37-38
+docs/architecture.md
+  s_e219a5582a730f::t_e9a54258f9e841 230,290-291
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 317-324
+src/app/(views)/taxonomy/[taxonId]/views/__tests__/view-factories.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 362-365,368
+src/components/organisms/stat-tile/stat-tile.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-87
+e2e/pages/taxon-page.ts
+  s_e219a5582a730f::t_e9a54258f9e841 17-21,37-39
+  s_e219a5582a730f::t_f5eb4563dd64bb 40-41
+src/components/organisms/taxonomy-summary/taxonomy-summary-skeleton.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 5,7
+src/lib/services/organisms/taxonomy.ts
+  s_e219a5582a730f::t_e9a54258f9e841 3,11,95,112,202
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-5,7,14,56-57,75-83,85,89-105,110,112-118,126-143
+docs/url-schema/2026-06-16-url-schema-design.md
+  s_e219a5582a730f::t_e9a54258f9e841 542-545,702-703
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 3,8,15-18,44,52-56,461-467,472,489,501-528,531,536,543-547,551-556,565,570,575-581,585-586
+src/lib/views/legacy-hash-adapter.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 10-11,33-36
+src/components/ui/card.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 13,15-17,23
+src/lib/feature-view/__tests__/feature-view.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 19,262-303
+  s_e219a5582a730f::t_b19b1c0420fa3d 304-305
+src/components/organisms/taxon-views/__tests__/features.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 2,37
+src/lib/services/organisms/__tests__/fetch-timeout.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 2,12,24,46-48,78-95,117-150,158
+src/lib/feature-view/query.ts
+  s_e219a5582a730f::t_e9a54258f9e841 49-71
+src/lib/services/organisms/summary.ts
+  s_e219a5582a730f::t_e9a54258f9e841 1-6,34-41,43-52,58-60,87-96,101-105,135-137
+src/components/organisms/shared/pdb-count.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-78
+src/lib/services/organisms/__tests__/structure-count.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 2,7,9,11,21-22,25-27,29-30,45,47-61,85,99-274
+  s_e219a5582a730f::t_0b195943f4b5f7 275
+src/app/organisms/viruses/views/overview.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 14-16,19,29
+src/components/organisms/data-summary/data-summary.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-6,11-12,18-19,21-26,42-47,52,59,67-77,80,83-84,89-91,98,100-118,120-129
+src/app/organisms/all/views/overview.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 14-16,29,39
+src/lib/services/organisms/__tests__/summary.test.ts
+  s_e219a5582a730f::t_e9a54258f9e841 49-51,58-83,97-128,131,134-140,147-161,257-259,266,348-370
+  s_e219a5582a730f::t_18daba994408a7 371
+src/lib/services/organisms/structure-count.ts
+  s_e219a5582a730f::t_e9a54258f9e841 1-7,12-13,19,23-25,28-33,36,45,48-49,58-107
+src/lib/views/__tests__/legacy-hash-adapter.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 130-133,138
+src/components/organisms/stat-tile/__tests__/stat-tile.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-56
+src/components/organisms/shared/__tests__/pdb-count.test.tsx
+  s_e219a5582a730f::t_e9a54258f9e841 1-70
+src/components/organisms/landing-shell/organism-tab-collection-options.ts
+  s_e219a5582a730f::t_e9a54258f9e841 3,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ba37e77cb1978903c0b735ea730d71444cb7d93e",
+  "prompts": {},
+  "sessions": {
+    "s_e219a5582a730f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729e2cd2-762c-46f2-92eb-7e6185eec4e1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

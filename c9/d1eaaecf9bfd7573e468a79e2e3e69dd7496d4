@@ -1,0 +1,21 @@
+.claude/rules/testing.md
+  s_e219a5582a730f::t_feaa6002c5fdc5 74
+docs/architecture.md
+  s_e219a5582a730f::t_e7bd58d9c8ba6c 292
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c9d1eaaecf9bfd7573e468a79e2e3e69dd7496d4",
+  "prompts": {},
+  "sessions": {
+    "s_e219a5582a730f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729e2cd2-762c-46f2-92eb-7e6185eec4e1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

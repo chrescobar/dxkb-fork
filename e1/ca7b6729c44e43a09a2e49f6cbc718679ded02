@@ -1,0 +1,22 @@
+docs/interactions-graph-react-port.md
+  s_a51021ff5142b2::t_6cb167e4f77618 4
+  s_a51021ff5142b2::t_06100276a6e6a4 5
+docs/architecture.md
+  s_a51021ff5142b2::t_06100276a6e6a4 271
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e1ca7b6729c44e43a09a2e49f6cbc718679ded02",
+  "prompts": {},
+  "sessions": {
+    "s_a51021ff5142b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64c399b4-0030-4463-94c9-b08d12c343a8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

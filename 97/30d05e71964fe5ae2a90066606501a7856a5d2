@@ -1,0 +1,28 @@
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_94f6520ca0a62e::t_a834fa7b5db7f1 2,9,74-76,78,82-98,103,105-111
+  s_94f6520ca0a62e::t_fa972c73b94277 71-73
+src/lib/protein-structure-view/__tests__/protein-structure-view.test.ts
+  s_94f6520ca0a62e::t_9f4be60a941dd8 317-324
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_94f6520ca0a62e::t_42de965b6e9c08 58-64,66-98,100-109
+  s_94f6520ca0a62e::t_43ea344d8d33d3 65,99
+  s_94f6520ca0a62e::t_ba6c193774f837 110,128,148,172,213
+src/components/organisms/taxonomy-summary/taxonomy-summary-skeleton.tsx
+  s_94f6520ca0a62e::t_a834fa7b5db7f1 5,7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9730d05e71964fe5ae2a90066606501a7856a5d2",
+  "prompts": {},
+  "sessions": {
+    "s_94f6520ca0a62e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48d0b667-66c0-416e-be76-b303672baf28",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

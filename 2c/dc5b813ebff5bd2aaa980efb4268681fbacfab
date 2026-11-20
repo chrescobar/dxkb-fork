@@ -1,0 +1,37 @@
+.claude/rules/testing.md
+  s_e219a5582a730f::t_7787caa002d2c4 74
+src/components/organisms/geo-distribution/__tests__/color-scale.test.ts
+  s_e219a5582a730f::t_15e7dba2eee611 6
+  s_e219a5582a730f::t_546180ea844754 149-167
+docs/architecture.md
+  s_e219a5582a730f::t_7787caa002d2c4 292
+src/test-helpers/oklch-contrast.ts
+  s_e219a5582a730f::t_6374b12bb8b220 3-4,17,22-26,35-44
+  s_e219a5582a730f::t_504dbb11b210b7 45
+src/components/organisms/geo-distribution/choropleth-path.tsx
+  s_e219a5582a730f::t_33487601531ed8 7,49-66
+src/components/organisms/geo-distribution/__tests__/geo-border-contrast.test.ts
+  s_e219a5582a730f::t_53a13b9537e380 4-8,17-29,58-65,67-70,73-74,80-82,85-100,102-135
+src/components/organisms/geo-distribution/__tests__/choropleth-path.test.tsx
+  s_e219a5582a730f::t_379593d8ed3e6b 5-20,22-23,26,29,31-32,35,37-43
+src/components/organisms/geo-distribution/color-scale.ts
+  s_e219a5582a730f::t_1bb515aa12481f 18-29
+src/app/globals.css
+  s_e219a5582a730f::t_73bda5d219d603 332-336,339,344,357-363,374-380,391-397,408-414,425-431,442-448,459-465,476-482
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2cdc5b813ebff5bd2aaa980efb4268681fbacfab",
+  "prompts": {},
+  "sessions": {
+    "s_e219a5582a730f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729e2cd2-762c-46f2-92eb-7e6185eec4e1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

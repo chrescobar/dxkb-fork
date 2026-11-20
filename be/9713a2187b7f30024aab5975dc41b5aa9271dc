@@ -1,0 +1,57 @@
+src/lib/services/organisms/__tests__/structure-count.test.ts
+  s_94f6520ca0a62e::t_3c44794051d4ba 245
+  s_94f6520ca0a62e::t_6bbaf482a7dadd 85,177,244,246
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_94f6520ca0a62e::t_43ea344d8d33d3 45,66,100,161,188,205,221-262,271
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_94f6520ca0a62e::t_6f7abf534a432a 44,52-56,526
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_94f6520ca0a62e::t_52136f49bc9abf 59-61,99-102
+src/lib/services/organisms/types.ts
+  s_94f6520ca0a62e::t_212bd0c0a56663 1-5,13-14
+src/lib/services/organisms/taxonomy.ts
+  s_94f6520ca0a62e::t_3a058d25b92c30 3,11
+  s_94f6520ca0a62e::t_8f2e55f458aefd 95,112,202
+src/lib/services/organisms/__tests__/summary.test.ts
+  s_94f6520ca0a62e::t_6bbaf482a7dadd 56,70,87-92,97,100-106,113-122,124,229,311-328,331-332
+  s_94f6520ca0a62e::t_3c44794051d4ba 123,329
+  s_94f6520ca0a62e::t_b894f520a56783 330,333-334
+src/components/organisms/data-summary/__tests__/data-summary.test.tsx
+  s_94f6520ca0a62e::t_4910d6576e5a2c 5-7,199-278
+  s_94f6520ca0a62e::t_1718267668d12a 1,279
+src/components/organisms/data-summary/data-summary.tsx
+  s_94f6520ca0a62e::t_65faaf28a0dbb1 1,7,59-61,66-80,92-95,102,110,123-137
+  s_94f6520ca0a62e::t_12088812982510 138-139
+src/lib/services/organisms/__tests__/fetch-timeout.test.ts
+  s_94f6520ca0a62e::t_3c44794051d4ba 2,24,46-48,147,158
+  s_94f6520ca0a62e::t_720fe5b52c3135 117-146,148
+  s_94f6520ca0a62e::t_a850e6db6b0963 149-150
+src/lib/services/organisms/utils.ts
+  s_94f6520ca0a62e::t_8f2e55f458aefd 127-133
+  s_94f6520ca0a62e::t_d9da8431f77100 126,134-135
+src/lib/services/organisms/__tests__/taxonomy.test.ts
+  s_94f6520ca0a62e::t_bcdefc8c2d0819 11,345-346
+src/lib/services/organisms/summary.ts
+  s_94f6520ca0a62e::t_97acc43717ec70 2-6,34-41,46-50,58,86-95,100-103,133
+src/lib/services/organisms/structure-count.ts
+  s_94f6520ca0a62e::t_8f2e55f458aefd 12,19
+  s_94f6520ca0a62e::t_efbe62d205ecac 3,64,72-78,85-90
+docs/architecture.md
+  s_94f6520ca0a62e::t_c2b6de83166320 283-284
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "be9713a2187b7f30024aab5975dc41b5aa9271dc",
+  "prompts": {},
+  "sessions": {
+    "s_94f6520ca0a62e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48d0b667-66c0-416e-be76-b303672baf28",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

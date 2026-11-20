@@ -1,0 +1,144 @@
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1,14,229-249,296-316,401,652-653,658,660,664-669,680-681,696-715,750,764,766,771,867,984,1021,1083,1118,1142,1216,1218-1221,1265,1280-1282,1635,1653-1672,1686,1727,1734-1817,1841,1873,1918,1922-1925,1930,1936-1937
+src/components/interactions/graph-node-panel.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-363
+docs/architecture.md
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 268,272-276,278-279,288
+  s_94f6520ca0a62e::t_13517c454b8208 289,380
+src/components/interactions/__tests__/graph-node-panel.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-463
+src/components/interactions/__tests__/graph-edge-panel.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-281
+src/components/organisms/virus-families/__tests__/family-pathogens-disclosure.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-280
+src/components/views/collection-filters/toolbar-layout.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-69
+e2e/pages/taxon-interactions-page.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 74,116-125,127,131-133,137,144-155,182,197,202,206-207,216-217,219,221-222,226-227,229-235,237-250
+AGENTS.md
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 111
+src/__tests__/graph-list-drag-containment.test.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-32
+src/components/interactions/graph-edge-panel.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-322
+src/components/interactions/interactions-graph.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 9,34,54-55,58,83-84,93,95-103,203,425-428,457-459,464-471,473,475-476,478-540,542-566,568-585
+src/components/organisms/virus-families/virus-families-section.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 2,5-14,21-54,65,67,92,113
+src/components/views/collection-filters/__tests__/toolbar-layout.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-133
+src/components/views/collection-filters/collection-toolbar.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 28,59,127,131-134,140,304,309-310,316-317
+docs/interactions-graph-react-port.md
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 3,317
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 20-21,56-57,137,144-250
+  s_94f6520ca0a62e::t_5ed8e3496559c6 251-252
+e2e/tests/organisms/interactions.spec.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 13-18,127-128,153-154,179-180,190,229-230,271-272,276-277,304-305,317,343-344,349
+src/components/organisms/virus-families/use-hover-disclosure.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-101
+src/lib/interactions/node-insight.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-142
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 3,7,39,42,56,59,78,81,94,97,114,117,135,138,155,158,177,180,196,199,218,221,247,250,261,264,276,279,302,305,323,326,338-834
+src/lib/ui-preferences/definitions.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 4,20-21,81-83
+  s_94f6520ca0a62e::t_3d0ac213c7b1c5 84
+src/components/interactions/__tests__/graph-detail-panel.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 73,193-194,197-200,203-204,207,209,212,214-230,232-243,245-246
+src/components/ui/badge.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 30-32
+src/components/views/resource-collection.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 7,152,523-531,549,566
+src/app/globals.css
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 84-94,464-488
+  s_94f6520ca0a62e::t_a791786b1297b1 489
+src/__tests__/graph-notice-contrast.test.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-253
+src/lib/interactions/graph-columns.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-15
+src/components/organisms/virus-families/__tests__/virus-families-data.test.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-54
+src/components/interactions/graph-node-dot.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-29
+src/lib/interactions/__tests__/node-insight.test.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-215
+src/components/organisms/virus-families/family-pathogens-disclosure.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-205
+src/components/interactions/graph-columns.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-123
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 145-165,1461,1477,1494,1532
+src/components/interactions/__tests__/interactions-subview-shell.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 2,4-7,81-82,86,121-122,126,339-440
+  s_94f6520ca0a62e::t_543a396afac16c 441-442
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 180-225,490
+src/components/views/collection-filters/__tests__/fixtures/toolbar-harness.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 2,40-41,51,133
+src/components/organisms/genera-grid/avatar-colors.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-8
+src/components/interactions/__tests__/graph-controls.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-82
+src/components/organisms/virus-families/virus-families-data.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-2,7-15,37-99,105-163,169-219,227-236,240-249,253-259
+src/components/ui/card.tsx
+  s_94f6520ca0a62e::t_64b8d4bae195da 23
+src/components/interactions/graph-detail-panel.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-2,4,6-10,21-22,105-112,175-191,193-200
+src/components/interactions/interactions-subview-shell.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 7,229-232,241,243,247-292
+src/lib/ui-preferences/schemas.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 7,36-42
+e2e/pages/organism-landing-page.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 33-52
+src/components/interactions/graph-node-list.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 3-9,11,19,21-32,37-38,40-41,44-49,51-55,59,61,64-139,153,156-159,162-169,172-182,189,191-193,197,199,201,206-212,219-220,223,226-257,263-279
+e2e/tests/organisms/viruses.spec.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 56-135
+src/components/interactions/graph-controls.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-96
+docs/a11y-manual-checklist.md
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 23
+src/components/interactions/__tests__/graph-columns.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-154
+src/components/organisms/genera-grid/genera-card.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 3,8-10,18-19,22-28,32-35,39-42,48,64
+src/components/interactions/graph-truncation-notice.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-70
+src/components/organisms/genera-grid/__tests__/genera-card.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 46-67
+src/components/interactions/graph-legend.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 7-52
+src/lib/interactions/use-interactions.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 150,155
+src/components/interactions/__tests__/graph-truncation-notice.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-109
+src/components/interactions/graph-detail-parts.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-103
+src/components/organisms/virus-families/__tests__/virus-families-section.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1,3,6-11,41-97
+src/components/ui/button-variants.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 76-77
+src/components/views/__tests__/resource-collection-action-error-layout.test.tsx
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 1-152
+e2e/fixtures/overrides/interactions.ts
+  s_94f6520ca0a62e::t_dabb4a5fa6100b 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9775453490d942adebc7b38ea2470467255f8bed",
+  "prompts": {},
+  "sessions": {
+    "s_94f6520ca0a62e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "48d0b667-66c0-416e-be76-b303672baf28",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+src/__tests__/sigma-major-version.test.ts
+  s_a51021ff5142b2::t_2b97888323ed5b 1-31
+src/components/interactions/__tests__/sigma-canvas.test.tsx
+  s_a51021ff5142b2::t_e63c01c8a00853 61,69,73,77,178-185,193,208,227,239,310,321,341,390-395,398-399,401-418,657-662
+  s_a51021ff5142b2::t_0bb423fb96c84b 4,23,26-27,663-668,675-679,684,687,698,721
+src/components/interactions/sigma/sigma-canvas.tsx
+  s_a51021ff5142b2::t_b9ca2d57199f1b 84-92,95-99,101-105
+  s_a51021ff5142b2::t_c86bcecfd59905 100,106
+  s_a51021ff5142b2::t_e63c01c8a00853 93-94,107-137,218,348,358,431-433,443-446
+  s_a51021ff5142b2::t_28882fea9478ad 23,457,503-504,524,535
+package.json
+  s_a51021ff5142b2::t_7c356c88952777 61,63,111
+pnpm-lock.yaml
+  s_a51021ff5142b2::t_4ff6cdd694d9dc 256-257,262-263,406-407,2926-2927,2931,3264-3265,3267,8721-8722,12520,12524,12722,12725,19145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "85d1832a7f6bfa79bfa255c32475bf734984da02",
+  "prompts": {},
+  "sessions": {
+    "s_a51021ff5142b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64c399b4-0030-4463-94c9-b08d12c343a8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

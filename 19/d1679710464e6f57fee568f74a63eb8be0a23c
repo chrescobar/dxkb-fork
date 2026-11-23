@@ -1,0 +1,56 @@
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_8a142a5f007609::t_8cd74c6363ea95 19,80-82,168,241
+  s_8a142a5f007609::t_6f375d92ebe912 192,256
+src/components/organisms/geo-distribution/__tests__/map-controls.test.tsx
+  s_8a142a5f007609::t_f4b8c62dfceb86 52-90
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_8a142a5f007609::t_9f982bfad446d6 46
+  s_ec60a39bd2abad::t_4abf817f4f8084 67-75,136-138,149
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_8a142a5f007609::t_8cd74c6363ea95 26,62,73-80
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_8a142a5f007609::t_72014e370d06a9 40-49,320-323,345-348,357-375,380,400,420-436
+  s_8a142a5f007609::t_97a3dda32a9dff 384,394-396
+  s_8a142a5f007609::t_11932470b37018 403
+  s_8a142a5f007609::t_f4b8c62dfceb86 2,10,53-90,376-379,381-383,385-393,397-399,401-402,404-419,437
+  s_8a142a5f007609::t_daf87ab2b8eb3a 438-440
+  s_330247e99474a0::t_01a0f7f891c164 441
+docs/architecture.md
+  s_8a142a5f007609::t_9f982bfad446d6 292
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_8a142a5f007609::t_8cd74c6363ea95 60
+src/components/organisms/geo-distribution/__tests__/geo-distribution-layers.test.tsx
+  s_8a142a5f007609::t_72014e370d06a9 122-166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "19d1679710464e6f57fee568f74a63eb8be0a23c",
+  "prompts": {},
+  "sessions": {
+    "s_330247e99474a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a58381d49ff91848e",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ec60a39bd2abad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83677120-a930-4f70-96fe-fb640d14c6ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

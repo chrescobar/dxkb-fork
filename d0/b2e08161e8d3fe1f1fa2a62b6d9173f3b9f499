@@ -1,0 +1,34 @@
+src/components/organisms/overview-chart-visibility/chart-visibility-grid.tsx
+  s_dcec35043a00c2::t_c9724baed5fb95 5,15,20-35,38-40
+src/lib/__tests__/overview-charts.test.ts
+  s_dcec35043a00c2::t_39210e501411e3 1-2,4,42-60
+  s_dcec35043a00c2::t_98f80aa405bdff 61-63
+docs/a11y-manual-checklist.md
+  s_dcec35043a00c2::t_9376e79b24f5bd 59
+docs/architecture.md
+  s_dcec35043a00c2::t_30aaf68677ef26 292,374,381
+e2e/pages/taxon-page.ts
+  s_dcec35043a00c2::t_4b71e2fecc6923 71-74
+src/components/organisms/overview-chart-visibility/__tests__/chart-visibility.test.tsx
+  s_dcec35043a00c2::t_19b45fe9c1c808 116-175
+src/lib/overview-charts.ts
+  s_dcec35043a00c2::t_a7df4d7cf091cb 6-8,14
+src/lib/ui-preferences/schemas.ts
+  s_dcec35043a00c2::t_dbbde83876a560 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d0b2e08161e8d3fe1f1fa2a62b6d9173f3b9f499",
+  "prompts": {},
+  "sessions": {
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

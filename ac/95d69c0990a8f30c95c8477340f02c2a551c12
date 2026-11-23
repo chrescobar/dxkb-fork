@@ -1,0 +1,32 @@
+src/components/organisms/geo-distribution/__tests__/choropleth-svg-zoom.test.tsx
+  s_5df00c6e77a038::t_1a1aab175ccd19 207,218,229,237,280,307
+  s_5df00c6e77a038::t_d4b8799bd27c3c 1-105,109-115,118-206,208-217,219-228,230-236,238-279,281-306,308-330
+  s_5df00c6e77a038::t_fcb22377af91d0 106-108,116-117
+src/components/organisms/geo-distribution/choropleth-path.tsx
+  s_5df00c6e77a038::t_d99021531f5cbb 30-31,44,59
+src/components/organisms/geo-distribution/world-countries-layer.tsx
+  s_5df00c6e77a038::t_d99021531f5cbb 20,33,47,55,65,72-73,84-93
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_5df00c6e77a038::t_a3caf53ef978f0 152-153
+  s_5df00c6e77a038::t_872bf3bdb94dd4 3,12,21-28,41-48,77-112,151,154,189-191,195-200,202-204,206-210,216-227,231-234,239-252,296-299,306-307,338,421,434,447-450
+src/components/organisms/geo-distribution/__tests__/geo-distribution-layers.test.tsx
+  s_5df00c6e77a038::t_e20f192ad921f2 25-33,47-53,183,202,210-216,219-247
+  s_5df00c6e77a038::t_d99021531f5cbb 217-218
+  s_5df00c6e77a038::t_839d2217c6ca25 248
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ac95d69c0990a8f30c95c8477340f02c2a551c12",
+  "prompts": {},
+  "sessions": {
+    "s_5df00c6e77a038": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e13486c-f707-40a6-99fc-790ee659fcc1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

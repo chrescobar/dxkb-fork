@@ -1,0 +1,45 @@
+src/lib/ui-preferences/schemas.ts
+  s_dcec35043a00c2::t_36af35cfd9f696 60
+  s_dcec35043a00c2::t_63e3a6b5eb6aeb 58-59
+src/lib/overview-charts.ts
+  s_dcec35043a00c2::t_36af35cfd9f696 32
+  s_dcec35043a00c2::t_665782067a91c2 3-8,11-19
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_dcec35043a00c2::t_ad39ebe2159b38 50,53-59,202,217-225,232,250
+  s_dcec35043a00c2::t_dd9578fe841c9a 51-52,226
+  s_dcec35043a00c2::t_30fb095e6c4ff7 227-231
+src/components/organisms/taxon-views/overview.tsx
+  s_dcec35043a00c2::t_36af35cfd9f696 145
+  s_dcec35043a00c2::t_1a99a44a4204c5 17-19
+  s_dcec35043a00c2::t_bdb10705f2e9e2 16
+src/components/organisms/overview-chart-visibility/__tests__/chart-visibility.test.tsx
+  s_dcec35043a00c2::t_0488b47b2edc15 17-24,87-90,95,98,126,128,156,176,204,216,221-224,238,258,262,268-272,277-282,285-287,294-298,303-306,310-313
+  s_dcec35043a00c2::t_dcec7c238858dc 4-7
+src/lib/ui-preferences/__tests__/cookie.test.ts
+  s_dcec35043a00c2::t_b72e9f2d370699 233,236-237,240-241
+  s_dcec35043a00c2::t_f5f66ae17f1deb 169-174,180,190,234-235,238,247-248,250-256,258
+  s_dcec35043a00c2::t_29f81af9354ee6 178-179,181-189,191-194,198,202,204-207,210,214,216,218-222,239
+src/lib/__tests__/overview-charts.test.ts
+  s_dcec35043a00c2::t_26b9922461f2d6 6,8,13-19,22-44
+  s_dcec35043a00c2::t_2b52b27b315a4f 45
+docs/architecture.md
+  s_dcec35043a00c2::t_3ceb7930f62196 292,374,381
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_dcec35043a00c2::t_32dc1949d5c9f7 54,448,468-471,475,505,529,532-535,544,556,559-560
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2f493987fc72d15ca574bd7d883670374fff1cd0",
+  "prompts": {},
+  "sessions": {
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+src/components/organisms/geo-distribution/zoom-to-feature.ts
+  s_5df00c6e77a038::t_54bc978eda704c 3-4,7-38,83,231
+  s_5df00c6e77a038::t_f20e476e724095 2,138-143,145-196,198-199,205-209,213,215-216,218-230
+  s_5df00c6e77a038::t_b8cb86ea071a64 1,5-6,39-63,66-67,69-73,77-82,84-137
+  s_5df00c6e77a038::t_4aee15983e961b 64-65,74-76,197,200-204
+  s_5df00c6e77a038::t_53678ca4b84be2 68
+  s_5df00c6e77a038::t_ad22bc19e565a2 144
+  s_5df00c6e77a038::t_244525ce399651 210-212,214,217
+src/components/organisms/geo-distribution/__tests__/zoom-to-feature.test.ts
+  s_5df00c6e77a038::t_8b9641524a12dc 5,14,19,165-191,208-265,292-307,309-311
+  s_5df00c6e77a038::t_d7b4ce89301821 3,24-74,335-336
+  s_5df00c6e77a038::t_4744dfd56b540c 18,312-334
+  s_5df00c6e77a038::t_5de8f279d6e1b8 266-273,275-291,308
+  s_5df00c6e77a038::t_7aefa557abfc06 192-207
+  s_5df00c6e77a038::t_c8f6c94e7b5c31 1-2,4,6-13,15-17,20-23,75-164
+  s_5df00c6e77a038::t_244525ce399651 274
+src/components/organisms/geo-distribution/map-constants.ts
+  s_5df00c6e77a038::t_d7b4ce89301821 4-7,10-14,16,20
+  s_5df00c6e77a038::t_ad22bc19e565a2 15,17-19
+  s_5df00c6e77a038::t_4744dfd56b540c 8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "82ed02962f09a8df4757b72799b7bf2f8754b880",
+  "prompts": {},
+  "sessions": {
+    "s_5df00c6e77a038": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e13486c-f707-40a6-99fc-790ee659fcc1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+src/lib/services/organisms/__tests__/geo-distribution.test.ts
+  s_bcb0a3bcbf928d::t_270d6c8f31f88e 265-323
+src/lib/services/organisms/geo-distribution.ts
+  s_bcb0a3bcbf928d::t_3e7a7b13699df7 114
+  s_bcb0a3bcbf928d::t_1ffbdd44b46b8d 125
+  s_bcb0a3bcbf928d::t_91b47911fb95a8 158
+  s_bcb0a3bcbf928d::t_7939745d4b560f 55-73
+  s_bcb0a3bcbf928d::t_36e1d7417351bd 20
+  s_bcb0a3bcbf928d::t_92c5f3dd21b8a8 135
+  s_bcb0a3bcbf928d::t_9fff2e4ffbfa55 6-7
+src/lib/services/organisms/types.ts
+  s_bcb0a3bcbf928d::t_c6e640a562ccfe 60-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "88b7a8ba44341cbdc9e697eb9debae05fd7c931a",
+  "prompts": {},
+  "sessions": {
+    "s_bcb0a3bcbf928d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd0d8abd-3ab7-447a-a53c-ee655295094e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

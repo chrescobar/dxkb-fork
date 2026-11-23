@@ -1,0 +1,46 @@
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_8a142a5f007609::t_97a3dda32a9dff 384,394-396
+  s_8a142a5f007609::t_72014e370d06a9 40-49,320-323,345-348,357-375,380,400,420-437
+  s_8a142a5f007609::t_11932470b37018 403
+  s_8a142a5f007609::t_f4b8c62dfceb86 2,10,53-90,376-379,381-383,385-393,397-399,401-402,404-419
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_8a142a5f007609::t_8cd74c6363ea95 19,80-82,168,241
+  s_8a142a5f007609::t_6f375d92ebe912 192,256
+src/components/organisms/geo-distribution/__tests__/map-controls.test.tsx
+  s_8a142a5f007609::t_f4b8c62dfceb86 52-90
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_8a142a5f007609::t_8cd74c6363ea95 26,62,73-80
+docs/architecture.md
+  s_8a142a5f007609::t_9f982bfad446d6 292
+src/components/organisms/geo-distribution/__tests__/geo-distribution-layers.test.tsx
+  s_8a142a5f007609::t_72014e370d06a9 122-166
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_8a142a5f007609::t_8cd74c6363ea95 60
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_8a142a5f007609::t_9f982bfad446d6 46
+  s_ec60a39bd2abad::t_40b555b492372d 67-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "543a8f22334dc3ae305e144107588dfbb9157982",
+  "prompts": {},
+  "sessions": {
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ec60a39bd2abad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83677120-a930-4f70-96fe-fb640d14c6ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

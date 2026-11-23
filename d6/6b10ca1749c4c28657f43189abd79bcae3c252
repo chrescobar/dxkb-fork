@@ -1,0 +1,42 @@
+eslint.config.mjs
+  s_a51021ff5142b2::t_be101cb551ae9e 266
+src/test-helpers/virtual-list-layout.ts
+  s_a51021ff5142b2::t_1ed44691da093f 1-69
+docs/architecture.md
+  s_a51021ff5142b2::t_6e8ea32221eaf6 273-274
+src/components/interactions/graph-node-list.tsx
+  s_a51021ff5142b2::t_3ce071a2272b51 3-4,7-8,13,17-21,46-55,61-70,80-82,84-86,103-107,113-115,121-131,141,144-146,149,163-215,217-222,225-226,228-230,232-265,272-278,280-295,297-327,330,333-386
+  s_a51021ff5142b2::t_e5a3e9347927e3 296
+src/components/interactions/__tests__/interactions-graph.test.tsx
+  s_a51021ff5142b2::t_1ed44691da093f 31,230-231
+src/components/interactions/__tests__/interactions-shared-dataset.test.tsx
+  s_a51021ff5142b2::t_1ed44691da093f 7,151-152
+.claude/rules/testing.md
+  s_a51021ff5142b2::t_1ed44691da093f 71
+AGENTS.md
+  s_a51021ff5142b2::t_be101cb551ae9e 91
+src/components/interactions/__tests__/graph-node-list.test.tsx
+  s_a51021ff5142b2::t_01ce0673abccf6 68,79-80,88,103,105,109,120,122-124,142,145,163,183,186,205,208,211,689-706,709,712-713,718-726,728,731-734,736,740-749,752-758,760-762,766-769,771,773,777-787,792,794,796,799-805,807-814,818-819,822,827-829,831-958
+  s_a51021ff5142b2::t_1ed44691da093f 7,10-11,830
+  s_a51021ff5142b2::t_de81c6ab96c73d 820-821,824-826
+e2e/pages/taxon-interactions-page.ts
+  s_a51021ff5142b2::t_9733b629d92049 199-200
+src/__tests__/react-compiler-config.test.ts
+  s_a51021ff5142b2::t_be101cb551ae9e 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d66b10ca1749c4c28657f43189abd79bcae3c252",
+  "prompts": {},
+  "sessions": {
+    "s_a51021ff5142b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "64c399b4-0030-4463-94c9-b08d12c343a8",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

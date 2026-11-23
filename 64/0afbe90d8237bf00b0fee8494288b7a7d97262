@@ -1,0 +1,66 @@
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 1-2,20-21,27,44-45,48-53,84,174-193,198-202,204-208,215-254,257-260
+src/lib/ui-preferences/definitions.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 5-8,29-30,103-105
+  s_8a142a5f007609::t_cd1cfd157f3a77 106
+src/app/(views)/genome/genome-list-overview.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 31
+src/components/organisms/overview-chart-visibility/chart-visibility-menu.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 1-82
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 54-57,79-82,84,411-575
+  s_8a142a5f007609::t_0c049425e2360d 576
+src/lib/overview-charts.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 1-56
+AGENTS.md
+  s_8a142a5f007609::t_f8e8b6190a5398 101
+src/lib/__tests__/overview-charts.test.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 1-108
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 1,76-77,79-80,85-96,99-100,102,104-116,118,120-126,129-137,139-149,151-159,161-169,172-173,175-178,180-183,335-336,344-362
+  s_8a142a5f007609::t_498b4f79d6fdd5 363
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 50-59,202,217-232,250
+docs/a11y-manual-checklist.md
+  s_8a142a5f007609::t_f8e8b6190a5398 44,59
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 4,30,37-42,120,125-136,140-144,146-148,181,203-210,213-215,256-258,315-317,343-348,358
+src/components/organisms/taxon-views/overview.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 16-19,38-39,48,51-56,65,97,124,145
+src/components/organisms/overview-chart-visibility/__tests__/chart-visibility.test.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 1-339
+src/components/organisms/overview-chart-visibility/chart-visibility-grid.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 1-43
+src/hooks/views/use-hidden-overview-charts.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 1-36
+e2e/tests/taxonomy-overview-charts.spec.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 1-35
+src/app/(views)/genome/__tests__/genome-list-overview.test.tsx
+  s_8a142a5f007609::t_f8e8b6190a5398 1-29
+src/lib/ui-preferences/__tests__/cookie.test.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 8,164-260
+  s_8a142a5f007609::t_bf1bed19beffdb 261
+src/lib/ui-preferences/schemas.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 8,24-29,56-61
+e2e/pages/taxon-page.ts
+  s_8a142a5f007609::t_f8e8b6190a5398 5,47-88
+  s_8a142a5f007609::t_aee9e8777d48a8 89
+docs/architecture.md
+  s_8a142a5f007609::t_f8e8b6190a5398 293,301,375,382
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "640afbe90d8237bf00b0fee8494288b7a7d97262",
+  "prompts": {},
+  "sessions": {
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_8a142a5f007609::t_5f533ebb3904c4 62-75
+  s_8a142a5f007609::t_d2f23e86634696 86-88,93-100
+  s_8a142a5f007609::t_48406a34a5fdd5 101
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_8a142a5f007609::t_976c4567220920 425-430
+  s_8a142a5f007609::t_a95dd7c0b324bc 431-501
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bf5fd3886198f8413bf625b7587aca7b367e2395",
+  "prompts": {},
+  "sessions": {
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

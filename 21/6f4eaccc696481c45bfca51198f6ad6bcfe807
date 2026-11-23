@@ -1,0 +1,37 @@
+docs/architecture.md
+  s_ec60a39bd2abad::t_5756d61225a26e 299
+src/components/organisms/reference-genomes/reference-genomes-client.tsx
+  s_ec60a39bd2abad::t_8e04474deebe98 4,30,37,41-42,120,125-126,140-144,146-148,181,203-210,213-215,256,258,358
+  s_ec60a39bd2abad::t_47614d8e5de889 127,136
+  s_ec60a39bd2abad::t_cc7df088359b56 257
+  s_ec60a39bd2abad::t_cd647db6e35e98 315-317
+  s_ec60a39bd2abad::t_28186e25c06206 38-40
+  s_ec60a39bd2abad::t_c3200086cec9dd 343-348
+  s_ec60a39bd2abad::t_29b7181848c2d4 133-135
+  s_ec60a39bd2abad::t_52934d6a067cd2 128-132
+src/components/organisms/reference-genomes/__tests__/reference-genomes-client.test.tsx
+  s_ec60a39bd2abad::t_60684081d7f2cd 1
+  s_ec60a39bd2abad::t_5ab213b230e7de 111-116
+  s_ec60a39bd2abad::t_fdb823ce17d4c9 80
+  s_ec60a39bd2abad::t_2fe4ed45b6f5b6 129-137,139-149,151-159,161-169,172-173,175-178
+  s_ec60a39bd2abad::t_c4dc3e80582c32 335-336,344-350
+  s_ec60a39bd2abad::t_77cd4ca7b648a5 351-362
+  s_ec60a39bd2abad::t_cc4c72dd2823d5 76-77,79,85-96,99-100,102,104-110,118,120-126,180-183
+  s_ec60a39bd2abad::t_72a324e1448d02 363
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "216f4eaccc696481c45bfca51198f6ad6bcfe807",
+  "prompts": {},
+  "sessions": {
+    "s_ec60a39bd2abad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83677120-a930-4f70-96fe-fb640d14c6ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

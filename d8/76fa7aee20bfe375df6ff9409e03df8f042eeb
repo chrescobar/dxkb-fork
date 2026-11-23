@@ -1,0 +1,46 @@
+e2e/fixtures/overrides/index.ts
+  s_8a142a5f007609::t_03194013153185 82-84
+e2e/README.md
+  s_8a142a5f007609::t_fe6b50549324ec 78
+  s_8a142a5f007609::t_a1f85577277aa0 77
+e2e/tests/taxonomy-map.spec.ts
+  s_8a142a5f007609::t_bd9a9988248e3f 256-258
+  s_8a142a5f007609::t_f0ac7486b27861 247-255,259-264
+  s_8a142a5f007609::t_23d7bf66cc5fa5 265-271
+  s_8a142a5f007609::t_6b8fd35ec57a07 4-8
+  s_8a142a5f007609::t_80cb99a073b3aa 272-280
+src/lib/e2e-fixtures/records.ts
+  s_8a142a5f007609::t_66cfe4e2fbb986 997-1006
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_8a142a5f007609::t_f8d8b5193b43fc 14
+  s_8a142a5f007609::t_2abf32d0f76e37 1263-1314
+  s_ec60a39bd2abad::t_53cd735f2937d0 1315-1316
+src/app/api/e2e-mock/[...path]/route.ts
+  s_8a142a5f007609::t_510cf85698c302 938-942,946
+  s_8a142a5f007609::t_03d6e867975707 956
+  s_8a142a5f007609::t_bc61afe1eeda38 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d876fa7aee20bfe375df6ff9409e03df8f042eeb",
+  "prompts": {},
+  "sessions": {
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_ec60a39bd2abad": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83677120-a930-4f70-96fe-fb640d14c6ad",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

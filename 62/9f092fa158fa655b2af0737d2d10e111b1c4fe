@@ -1,0 +1,23 @@
+e2e/tests/taxonomy-overview-charts.spec.ts
+  s_dcec35043a00c2::t_a455223eaee0f8 1-35
+e2e/pages/taxon-page.ts
+  s_dcec35043a00c2::t_39210e501411e3 71-74
+  s_dcec35043a00c2::t_325cfe1bce2d7e 5
+  s_dcec35043a00c2::t_92352889346323 47-70,75-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "629f092fa158fa655b2af0737d2d10e111b1c4fe",
+  "prompts": {},
+  "sessions": {
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

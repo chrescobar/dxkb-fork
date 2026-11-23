@@ -1,0 +1,34 @@
+src/hooks/views/use-hidden-overview-charts.ts
+  s_dcec35043a00c2::t_8f39715bcca7a2 1-36
+src/components/organisms/overview-chart-visibility/chart-visibility-menu.tsx
+  s_dcec35043a00c2::t_74b118a27bb2a1 17-20,55-57
+  s_dcec35043a00c2::t_cc8db87d230483 50
+  s_dcec35043a00c2::t_20a8e411587ae3 1-16,21-49,51-54,58-77
+src/components/organisms/overview-chart-visibility/chart-visibility-grid.tsx
+  s_dcec35043a00c2::t_562ed414d600ea 1-13,15-18,29
+  s_dcec35043a00c2::t_c9724baed5fb95 14,19-28
+src/components/organisms/overview-chart-visibility/__tests__/chart-visibility.test.tsx
+  s_dcec35043a00c2::t_2b16e9ae3311b6 8
+  s_dcec35043a00c2::t_0488b47b2edc15 4-7,79-82,87,90,137
+  s_dcec35043a00c2::t_dc0d3205784275 122-123
+  s_dcec35043a00c2::t_63b96278fad4a5 113-116
+  s_dcec35043a00c2::t_174f7cdd54f4c9 211
+  s_dcec35043a00c2::t_6a8cba0bc5b8a9 1-3,9-78,83-86,88-89,91-112,117-121,124-136,138-210,212-218,220,228,230-231,233-234
+  s_dcec35043a00c2::t_8f435af22395bb 219,221-227,229,232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "94473f7882065ae3874db37ff2c8e165876814a0",
+  "prompts": {},
+  "sessions": {
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

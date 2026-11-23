@@ -1,0 +1,41 @@
+docs/architecture.md
+  s_5df00c6e77a038::t_d5d1fea9c87faf 292
+e2e/tests/taxonomy-map.spec.ts
+  s_5df00c6e77a038::t_772299ce472eb4 205-206
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_dcec35043a00c2::t_a233d829e61b28 152-153
+src/components/organisms/geo-distribution/zoom-to-feature.ts
+  s_50e376a1dd1873::t_6ea4e4d157f701 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d3777cf7dc780171c60489c1e9c5b7b3f48a6f6",
+  "prompts": {},
+  "sessions": {
+    "s_50e376a1dd1873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-ae554dc72d4aef9ba",
+        "model": "unknown"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_5df00c6e77a038": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7e13486c-f707-40a6-99fc-790ee659fcc1",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    },
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

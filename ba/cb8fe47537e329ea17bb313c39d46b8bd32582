@@ -1,0 +1,73 @@
+src/components/organisms/data-summary/data-summary.tsx
+  s_8a142a5f007609::t_8e3c5e2279071d 1-2,64,66,69,74-77,90-92,101-132
+  s_8a142a5f007609::t_42501ac7ba1b67 100
+src/lib/shared-cache.ts
+  s_8a142a5f007609::t_e8c9ca54b59d92 50-58,62-64,81-82,92,106-110,336-355,358
+src/components/organisms/shared/failed-count.ts
+  s_8a142a5f007609::t_7a7f85f13198d6 1-16
+docs/architecture.md
+  s_8a142a5f007609::t_c4884bd0224b4e 291
+  s_8a142a5f007609::t_e9a4ff63a9722f 88,94-95
+src/components/organisms/shared/__tests__/forget-failed-counts.test.ts
+  s_8a142a5f007609::t_14abc2eeec47a1 1-32,42-50,57-63,65-66,68-70,72-82,85-107,109-123,145-148,150-160,163-164,171,177-178,184,187-188
+  s_8a142a5f007609::t_4c5de5e92c33f8 33-39,41,51-56,64,67,71,83-84,108,124-144,149
+  s_8a142a5f007609::t_589cd772a4644b 161-162,165-170,172-176,179-183,185-186
+  s_8a142a5f007609::t_70d437c8ed8a3f 40
+src/components/organisms/shared/count-retry-scope.tsx
+  s_8a142a5f007609::t_07dc2608d874f4 5,8,15-21,23-28,30-37,41-47
+  s_8a142a5f007609::t_f5757a9e0fe69a 1-4,6-7,9-14,22,29,38-40,48-61
+src/components/organisms/shared/__tests__/pdb-count.test.tsx
+  s_8a142a5f007609::t_71c3560197eabc 19,52-53,66-72
+  s_8a142a5f007609::t_631d80eccdab07 1-3,13-14,16,18,20-32,35,38-40,42-45,48-49,51,55-56,59-60,62-64,73-77
+src/components/organisms/data-summary/__tests__/data-summary.test.tsx
+  s_8a142a5f007609::t_e025efe6a0e329 86-96,224,237-242,254,257,264-266,314,326-328,351-353,358
+  s_8a142a5f007609::t_40e31aec0400d8 3,255-256,258-263,267-283,285-291,293-297,301-304,308-311
+  s_8a142a5f007609::t_a24ccc854f4ffe 305-307
+src/components/organisms/shared/__tests__/unavailable-count.test.tsx
+  s_8a142a5f007609::t_c0dd7556179386 127,129,148,150
+  s_8a142a5f007609::t_5649f073997fa3 1,6-8,11,17-18,24,32-34,38-39,52-77,81,84-89,91,96-99,101-108,111,118,131-133,135-137,144,146,152
+  s_8a142a5f007609::t_589cd772a4644b 45-51,78-80,140-142,154-182
+  s_8a142a5f007609::t_3c42ab84dc4fa5 2-5,9-10,12-16,19-23,25-31,35-37,40-44,82-83,90,92-95,100,109-110,112-117,119-126,128,130,134,138-139,143,145,147,149,151,153,183-196
+src/components/organisms/shared/unavailable-count.tsx
+  s_8a142a5f007609::t_9f8a9005360914 15-19,31-35
+  s_8a142a5f007609::t_614657dbaddda7 1-2,4-8,20-30,36-37,41-47
+  s_8a142a5f007609::t_b9e29b2fbff415 3,9-14,38-40
+src/lib/services/organisms/structure-count.ts
+  s_8a142a5f007609::t_7a7f85f13198d6 108-116
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_8a142a5f007609::t_ba85c2e90eca39 2
+  s_8a142a5f007609::t_35f00f2c2d2045 137-138,143,146-148,153-155
+  s_8a142a5f007609::t_bdf143614ea4a8 1,3-4,17-20,77,98,131-136,139-142,144-145,149-151,156-159
+  s_8a142a5f007609::t_42501ac7ba1b67 35-53,78-81,83-87,90-97,102-126,130,152
+src/lib/__tests__/shared-cache.test.ts
+  s_8a142a5f007609::t_72a9bb0dda94ec 1287-1348,1351-1365,1367-1369,1371-1417,1453
+  s_8a142a5f007609::t_eba38c385efd48 1349-1350,1366,1370
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_8a142a5f007609::t_c0dd7556179386 236,238
+  s_8a142a5f007609::t_589cd772a4644b 239,247,252-256,258
+  s_8a142a5f007609::t_955a186340de39 9,34,56-60,72-82,84-85,178,182-183,185-186,188-193,201-204,207-210,216-235,237,243,245-246,248,250,267-278,343-344,350-356,382-388,393-394,396-399,409,435-436
+  s_8a142a5f007609::t_63ed083774c6ee 21-23,29,61-71,83,184,187,194-200,211-215,244,249,251,257,342,345-348,389-392
+src/components/organisms/shared/forget-failed-counts.ts
+  s_8a142a5f007609::t_7a7f85f13198d6 1-32
+src/components/organisms/shared/pdb-count.tsx
+  s_8a142a5f007609::t_e7df3f6d7afe08 3-7,12-16,18,20-23,25-28,31-32,36-41,47-55
+  s_8a142a5f007609::t_71def6c0f3b725 58
+  s_8a142a5f007609::t_ba85c2e90eca39 2,24,29-30
+  s_8a142a5f007609::t_cdfc8a56be386d 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bacb8fe47537e329ea17bb313c39d46b8bd32582",
+  "prompts": {},
+  "sessions": {
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+src/components/organisms/geo-distribution/__tests__/county-availability.test.ts
+  s_8a142a5f007609::t_2a8d49ff20aa13 16-18
+  s_8a142a5f007609::t_20b5911e8a735b 1-15,19-26
+  s_8a142a5f007609::t_c30729d99922ed 27-28
+src/components/organisms/geo-distribution/county-availability.ts
+  s_8a142a5f007609::t_9fdd66e71d0848 1-4,8-17
+  s_8a142a5f007609::t_48c99d55a78f59 5
+  s_8a142a5f007609::t_b8bdc5f5cf0e2b 6-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2b4825ddefe447e82a6c452c00dcfdf234bde265",
+  "prompts": {},
+  "sessions": {
+    "s_8a142a5f007609": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dffee103-02ad-416c-9fe2-694af3072930",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

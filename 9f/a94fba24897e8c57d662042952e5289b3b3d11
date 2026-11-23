@@ -1,0 +1,41 @@
+src/lib/__tests__/overview-charts.test.ts
+  s_dcec35043a00c2::t_e7babc3868c294 1-7,15,17-38
+  s_dcec35043a00c2::t_26b9922461f2d6 8-14,16
+src/lib/ui-preferences/schemas.ts
+  s_dcec35043a00c2::t_db70bf0b59341d 8
+  s_dcec35043a00c2::t_b3d7da3d17dd52 24-27,29
+  s_dcec35043a00c2::t_39210e501411e3 28
+  s_dcec35043a00c2::t_36af35cfd9f696 58-59
+  s_dcec35043a00c2::t_e9a5adf14290d7 56-57
+src/lib/ui-preferences/__tests__/cookie.test.ts
+  s_dcec35043a00c2::t_f5178f442d0945 8
+  s_dcec35043a00c2::t_f5f66ae17f1deb 172-188,192,196,198-201,204,208,210,212-216
+  s_dcec35043a00c2::t_8a8ad2780b97c3 164-171,189-191,193-195,197,202-203,205-207,209,211,217-218
+  s_dcec35043a00c2::t_9f9bc7a7f7a6d8 219-227
+src/lib/ui-preferences/definitions.ts
+  s_dcec35043a00c2::t_7e3d9e85565afb 5-8
+  s_dcec35043a00c2::t_09adb8c2abdc54 29-30
+  s_dcec35043a00c2::t_3f850558fc2f2b 103-106
+src/lib/overview-charts.ts
+  s_dcec35043a00c2::t_2cb838a2827441 1-2,9-10,33-34
+  s_dcec35043a00c2::t_74b118a27bb2a1 11-19
+  s_dcec35043a00c2::t_39210e501411e3 29-31
+  s_dcec35043a00c2::t_b32037d35c76f5 32
+  s_dcec35043a00c2::t_36af35cfd9f696 3-8,20-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9fa94fba24897e8c57d662042952e5289b3b3d11",
+  "prompts": {},
+  "sessions": {
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

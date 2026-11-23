@@ -1,0 +1,39 @@
+src/app/(views)/genome/__tests__/genome-list-overview.test.tsx
+  s_dcec35043a00c2::t_af120984f42a44 1-29
+src/components/organisms/metadata-distributions/metadata-distributions.tsx
+  s_dcec35043a00c2::t_3e895f3c6590c1 1-2,20-21,27,44-45,48-53,84,174-193,198-202,204-208,215-254,257-260
+src/app/(views)/genome/genome-list-overview.tsx
+  s_dcec35043a00c2::t_f0bd8cb77b8d71 31
+src/components/organisms/metadata-distributions/__tests__/metadata-distributions.test.tsx
+  s_dcec35043a00c2::t_2bfb4d842bc70f 54
+  s_dcec35043a00c2::t_5f607f646ccaa9 55-57
+  s_dcec35043a00c2::t_f894279d68e058 79-82,84
+  s_dcec35043a00c2::t_71535a5c6c1b1e 411-447,449-467,472-474,476-504,506-528,530-531,536-542,545-550,552,554-555,557-558,561-563,568,570
+  s_dcec35043a00c2::t_d795cfcf914427 543,551
+  s_dcec35043a00c2::t_03c830f3d00f07 448,468-471,475,505,529,532-535,544,556,559-560
+  s_dcec35043a00c2::t_46a05e4110e06c 553
+  s_dcec35043a00c2::t_2dc210fcbb0d30 564-567
+  s_dcec35043a00c2::t_5012a2cd9e1615 569
+src/components/organisms/taxon-views/overview.tsx
+  s_dcec35043a00c2::t_1a99a44a4204c5 16
+  s_dcec35043a00c2::t_f0bd8cb77b8d71 35-36,45,48-53,62,94,121
+  s_dcec35043a00c2::t_24e63b9f5cfa42 142
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_dcec35043a00c2::t_08846f03fa9e38 192,207,225
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "efc176e85c3395fdf5396e3a19270a7371e190ab",
+  "prompts": {},
+  "sessions": {
+    "s_dcec35043a00c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a3c441e4-5c3e-4f5f-af82-59244c0d27d7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

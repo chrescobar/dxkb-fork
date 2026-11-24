@@ -1,0 +1,83 @@
+src/app/api/e2e-mock/[...path]/route.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 18,938-942,946,956
+src/components/organisms/geo-distribution/__tests__/county-availability.test.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-28
+src/components/organisms/taxonomy-summary/taxonomy-summary.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-4,17-20,35-53,77-81,83-87,90-98,102-126,130-159
+src/lib/e2e-fixtures/records.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 997-1006
+src/components/organisms/geo-distribution/__tests__/map-controls.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-90
+src/components/organisms/shared/__tests__/unavailable-count.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-196
+src/components/organisms/geo-distribution/__tests__/geo-distribution-layers.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 122-166
+src/lib/__tests__/shared-cache.test.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1287-1417,1453
+src/components/organisms/geo-distribution/map-controls.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 3-4,14-19,22,33,41,46,49-65,67-74,76-98,100-101,109-110,113-120,126-127,134-152
+  s_bcb0a3bcbf928d::t_10af5c5c0bf4f3 153
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 2,10,44-53,57-94,368-371,393-396,405-566
+src/components/organisms/shared/forget-failed-counts.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-32
+src/components/organisms/taxonomy-summary/__tests__/taxonomy-summary.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 9,21-23,29,34,56-85,178,182-204,207-239,243-258,267-278,342-348,350-356,382-394,396-399,409,435-436
+src/lib/services/organisms/structure-count.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 108-116
+src/components/organisms/shared/unavailable-count.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-47
+src/components/organisms/geo-distribution/county-availability.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-17
+src/components/organisms/shared/__tests__/forget-failed-counts.test.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-188
+src/components/organisms/shared/pdb-count.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 2-7,12-16,18,20-32,36-41,43,47-55,58
+e2e/README.md
+  s_bcb0a3bcbf928d::t_c866771b36ad60 77-78
+src/components/organisms/geo-distribution/us-states-layer.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 26,62,73-80
+src/components/organisms/data-summary/__tests__/data-summary.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 3,86-96,224,237-242,254-283,285-291,293-297,301-311,314,326-328,351-353,358
+docs/architecture.md
+  s_bcb0a3bcbf928d::t_fe949c52255432 294
+  s_bcb0a3bcbf928d::t_c866771b36ad60 88,94-95,291
+src/components/organisms/shared/__tests__/pdb-count.test.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-3,13-14,16,18-32,35,38-40,42-45,48-49,51-53,55-56,59-60,62-64,66-77
+e2e/tests/taxonomy-map.spec.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 4-8,247-278
+  s_bcb0a3bcbf928d::t_de563cc5f3e664 279-280
+src/lib/shared-cache.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 50-58,62-64,81-82,92,106-110,336-355,358
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 60
+src/components/organisms/data-summary/data-summary.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-2,64,66,69,74-77,90-92,100-132
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 14,1263-1314
+  s_bcb0a3bcbf928d::t_ba0503cddf9a3f 1315-1316
+src/components/organisms/shared/count-retry-scope.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-61
+e2e/fixtures/overrides/index.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 82-84
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_bcb0a3bcbf928d::t_c866771b36ad60 19,62-75,86-100,187,211,260,275
+src/components/organisms/shared/failed-count.ts
+  s_bcb0a3bcbf928d::t_c866771b36ad60 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c61e3c2a3894c84400bf0f11e717c16f5d9034c5",
+  "prompts": {},
+  "sessions": {
+    "s_bcb0a3bcbf928d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd0d8abd-3ab7-447a-a53c-ee655295094e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

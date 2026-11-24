@@ -1,0 +1,24 @@
+src/components/organisms/geo-distribution/choropleth-svg.tsx
+  s_b816ed7e0f7474::t_a1ca9960160cc2 20,33,44,47-48,58-62,255-277,304
+src/components/organisms/geo-distribution/__tests__/choropleth-svg-zoom.test.tsx
+  s_b816ed7e0f7474::t_a1ca9960160cc2 5,331-486
+src/components/organisms/geo-distribution/zoom-to-feature.ts
+  s_b816ed7e0f7474::t_a1ca9960160cc2 1,140-155
+  s_b816ed7e0f7474::t_7605da2c3f3781 156
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d5077055926bd53a9a99acfb802e03deac5c0a8f",
+  "prompts": {},
+  "sessions": {
+    "s_b816ed7e0f7474": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3daf8adf-986d-4bf9-a58d-90fa73e6389a",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

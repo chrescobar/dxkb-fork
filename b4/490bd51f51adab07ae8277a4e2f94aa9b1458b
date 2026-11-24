@@ -1,0 +1,30 @@
+src/lib/auth/sign-in-prompt.ts
+  s_e796bbfedc9fed::t_de321585d2a6b3 50-54
+  s_e796bbfedc9fed::t_765c714d345f54 32-33,37,65,74
+src/components/ui/card.tsx
+  s_e796bbfedc9fed::t_ced15c2f61b36c 72-88,92
+src/app/(auth)/sign-up/sign-up-view.tsx
+  s_e796bbfedc9fed::t_c5ab75f5675f89 62
+src/app/(auth)/sign-in/sign-in-view.tsx
+  s_e796bbfedc9fed::t_c289080d8f3bba 83
+src/components/ui/__tests__/card-description.test.tsx
+  s_e796bbfedc9fed::t_4ad1310e0c08ab 1-39
+src/lib/auth/__tests__/sign-in-prompt.test.ts
+  s_e796bbfedc9fed::t_04aa1c9462a14e 47-49,51,56,63,65,72,81,85-94,100-111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b4490bd51f51adab07ae8277a4e2f94aa9b1458b",
+  "prompts": {},
+  "sessions": {
+    "s_e796bbfedc9fed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0167c2b4-6a8e-43b2-91c7-80615fc7735f",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+src/components/organisms/geo-distribution/__tests__/country-zoom-options.test.ts
+  s_b816ed7e0f7474::t_a1ca9960160cc2 1-57
+src/components/organisms/geo-distribution/country-zoom-options.ts
+  s_b816ed7e0f7474::t_a1ca9960160cc2 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9daed456fb2ae43bb7f47c8bd7a9dfafb31b533d",
+  "prompts": {},
+  "sessions": {
+    "s_b816ed7e0f7474": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3daf8adf-986d-4bf9-a58d-90fa73e6389a",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

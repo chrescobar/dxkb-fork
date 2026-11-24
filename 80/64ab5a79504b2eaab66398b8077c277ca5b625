@@ -1,0 +1,24 @@
+e2e/tests/header-overflow.spec.ts
+  s_a8ba8990e86040::t_ece43237114146 71-72
+  s_a8ba8990e86040::t_4baf326ba228f4 18-21,98-100,116
+  s_a8ba8990e86040::t_9601dc37fedb7f 9,17,22-33,82,97,101-102,119-121
+  s_a8ba8990e86040::t_4c141cf83371da 5,7,81,83-85
+  s_a8ba8990e86040::t_78c34154b0d03f 13
+  s_a8ba8990e86040::t_73602797c18858 1-4,6,8,10-12,14-16,34-70,73-80,86-96,103-115,117-118,122-129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8064ab5a79504b2eaab66398b8077c277ca5b625",
+  "prompts": {},
+  "sessions": {
+    "s_a8ba8990e86040": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "decf03cc-aefe-4bda-a8d0-497df5e86f02",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

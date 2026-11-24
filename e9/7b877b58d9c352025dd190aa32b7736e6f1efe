@@ -1,0 +1,29 @@
+docs/architecture.md
+  s_bcb0a3bcbf928d::t_eede2f8d999fc5 294
+src/components/organisms/geo-distribution/county-availability.ts
+  s_bcb0a3bcbf928d::t_d795b75551a404 4-7,15-24
+  s_bcb0a3bcbf928d::t_81efc8db735f5e 25-26
+src/components/organisms/geo-distribution/geo-distribution-client.tsx
+  s_bcb0a3bcbf928d::t_85e2d4560eeac2 19,90-92,95,97-98
+src/components/organisms/geo-distribution/__tests__/county-availability.test.ts
+  s_bcb0a3bcbf928d::t_40e097ec8f9328 3,23-38,40
+  s_bcb0a3bcbf928d::t_73b644266f86f7 39,41-42
+src/components/organisms/geo-distribution/__tests__/geo-distribution-client.test.tsx
+  s_bcb0a3bcbf928d::t_caf89e7362833c 321-378,565
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e97b877b58d9c352025dd190aa32b7736e6f1efe",
+  "prompts": {},
+  "sessions": {
+    "s_bcb0a3bcbf928d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bd0d8abd-3ab7-447a-a53c-ee655295094e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

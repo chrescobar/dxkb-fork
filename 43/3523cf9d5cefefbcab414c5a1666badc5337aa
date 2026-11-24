@@ -1,0 +1,21 @@
+docs/geo-distribution-map-react-guide.md
+  s_b816ed7e0f7474::t_a1ca9960160cc2 470
+docs/architecture.md
+  s_b816ed7e0f7474::t_fcc7729c3b46ae 294
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "433523cf9d5cefefbcab414c5a1666badc5337aa",
+  "prompts": {},
+  "sessions": {
+    "s_b816ed7e0f7474": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3daf8adf-986d-4bf9-a58d-90fa73e6389a",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

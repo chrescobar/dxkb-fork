@@ -1,0 +1,21 @@
+e2e/tests/a11y/routes-sweep.spec.ts
+  s_b816ed7e0f7474::t_a1ca9960160cc2 321-362
+e2e/a11y/scan-keys.ts
+  s_b816ed7e0f7474::t_a1ca9960160cc2 13-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dbafc64d8ca7006531c49de3681231f43bf1faa9",
+  "prompts": {},
+  "sessions": {
+    "s_b816ed7e0f7474": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3daf8adf-986d-4bf9-a58d-90fa73e6389a",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

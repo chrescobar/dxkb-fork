@@ -1,0 +1,34 @@
+src/components/organisms/landing-shell/__tests__/landing-shell-client.test.tsx
+  s_fa24311fac51fd::t_d8fbe8812d33b8 1,5,187,193-194,213-219,232,237-287
+  s_fa24311fac51fd::t_c3ee3e1fcb453f 188-192,195-212,220-231,233-236
+  s_fa24311fac51fd::t_f5c597d177b518 288
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_fa24311fac51fd::t_c0a7588f5d609c 21-24
+  s_fa24311fac51fd::t_aae8379932e001 18-20,25-38
+  s_fa24311fac51fd::t_040fc0a289acce 54,67,77-79
+src/components/organisms/landing-shell/__tests__/landing-shell.test.tsx
+  s_fa24311fac51fd::t_cb3e40ce06678b 191-247
+src/components/organisms/landing-shell/landing-shell-client.tsx
+  s_fa24311fac51fd::t_aae8379932e001 4-11,35-40,49-58,64,76-78,80-84,112-123,134-144,148-158
+src/app/(views)/taxonomy/[taxonId]/page.tsx
+  s_fa24311fac51fd::t_aae8379932e001 22-23,141-145,153
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_fa24311fac51fd::t_df0ae1cebf74e9 2,9-14,17,36-40,73-74,105-113,282-340
+  s_fa24311fac51fd::t_14e8a241d248e2 341
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c80e0eecc86c99c5fccc09ee3a9aede895c53d90",
+  "prompts": {},
+  "sessions": {
+    "s_fa24311fac51fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2811aa6a-026c-442a-938f-32ccbf840981",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

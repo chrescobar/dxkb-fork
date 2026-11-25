@@ -1,0 +1,38 @@
+src/lib/taxon-view/tab-availability.ts
+  s_fa24311fac51fd::t_971f9dbdf406c4 125-126
+  s_fa24311fac51fd::t_d276cb2a21ae0f 1-122,127-132
+  s_fa24311fac51fd::t_2552c76b8920c2 123-124,133
+src/lib/taxon-view/tab-policy.tsx
+  s_fa24311fac51fd::t_534e57ff850fbd 19
+  s_fa24311fac51fd::t_25d12b04a1c640 99-130
+  s_fa24311fac51fd::t_118b3bcb2b3e98 131-132
+src/lib/taxon-view/tab-context.ts
+  s_fa24311fac51fd::t_605fe5def64087 1,10-13
+  s_fa24311fac51fd::t_44def1a6601b6e 14
+src/lib/taxon-view/__tests__/tab-policy.test.ts
+  s_fa24311fac51fd::t_97e2722e30826d 6,8-11,134-195
+  s_fa24311fac51fd::t_24f641cb623e36 196
+src/lib/taxon-view/__tests__/tab-availability.test.ts
+  s_fa24311fac51fd::t_8d0e5c06cc6aad 57-58
+  s_fa24311fac51fd::t_00e690a2d0b9ba 1-32,35-56,59-101
+  s_fa24311fac51fd::t_2db9eb55a9408c 33-34
+  s_fa24311fac51fd::t_1632d49d6f6810 102
+src/lib/api/upstream-failure.ts
+  s_fa24311fac51fd::t_61aa0ae513718d 57-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9332aabb8358d13523a2aa6a2f590cfc900dca53",
+  "prompts": {},
+  "sessions": {
+    "s_fa24311fac51fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2811aa6a-026c-442a-938f-32ccbf840981",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

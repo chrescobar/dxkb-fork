@@ -1,0 +1,37 @@
+src/components/copilot/copilot-launcher.tsx
+  s_38fbc3e0f6bf0f::t_994d1ef23f4d86 25
+e2e/pages/navbar.ts
+  s_38fbc3e0f6bf0f::t_c373ee65ba6e39 87,96-97,119
+  s_38fbc3e0f6bf0f::t_5b7e39424914fe 88,110-113,117-118,120,123,125-126
+  s_38fbc3e0f6bf0f::t_370efc50e26827 3-6,91,99-100,106,114-115,121-122,127
+  s_38fbc3e0f6bf0f::t_7dbe71683f7e4e 116
+  s_38fbc3e0f6bf0f::t_537e26facf6491 102,124
+  s_38fbc3e0f6bf0f::t_134f5714235c07 128-129
+src/components/navbars/mobile-navbar.tsx
+  s_38fbc3e0f6bf0f::t_3063ac822d14de 91-92,141,146,150
+  s_38fbc3e0f6bf0f::t_994d1ef23f4d86 149,160
+e2e/tests/header-height.spec.ts
+  s_38fbc3e0f6bf0f::t_5b7e39424914fe 29,32-35,48,51-54
+src/components/ui/button-variants.ts
+  s_38fbc3e0f6bf0f::t_994d1ef23f4d86 67-70,94-95
+docs/architecture.md
+  s_38fbc3e0f6bf0f::t_7dbe71683f7e4e 366
+src/components/navbars/user-avatar-dropdown.tsx
+  s_38fbc3e0f6bf0f::t_3063ac822d14de 51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9ce756d68a56f75c5cf042dfd9d4a07aa299c036",
+  "prompts": {},
+  "sessions": {
+    "s_38fbc3e0f6bf0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9d59e76-4c0b-4916-ab65-fd20fa5beda6",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

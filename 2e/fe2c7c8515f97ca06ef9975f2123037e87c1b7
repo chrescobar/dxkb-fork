@@ -1,0 +1,62 @@
+src/app/(views)/taxonomy/[taxonId]/__tests__/page.test.tsx
+  s_fa24311fac51fd::t_4efa4bb69a61f7 355,458,549
+src/lib/taxon-view/__tests__/tab-availability.test.ts
+  s_fa24311fac51fd::t_8d0e5c06cc6aad 83-86,120,126,129-136,141-142,144-152,166-167
+  s_fa24311fac51fd::t_1b5ad13d8d26ba 137-140,143,153-165
+  s_fa24311fac51fd::t_2db9eb55a9408c 3-6,14,40-56
+  s_fa24311fac51fd::t_00e690a2d0b9ba 57-58
+e2e/fixtures/overrides/index.ts
+  s_fa24311fac51fd::t_32f1da84e9c0ab 85-87
+src/lib/e2e-fixtures/records.ts
+  s_fa24311fac51fd::t_e9e420e1ddf900 1007-1016
+AGENTS.md
+  s_fa24311fac51fd::t_b0a15e4548f7bd 100
+src/lib/taxon-view/tab-availability.ts
+  s_fa24311fac51fd::t_2552c76b8920c2 134-139
+  s_fa24311fac51fd::t_9adfc5c28f0cb1 123-126,133
+e2e/tests/taxonomy-disabled-tabs.spec.ts
+  s_fa24311fac51fd::t_23da8f75335b1c 1-2,12-28,47,67-72
+  s_fa24311fac51fd::t_7c820b3e9a020c 3-11,29-41,43-46,48-55,62-66,73-78
+  s_fa24311fac51fd::t_d7792ad3bd523d 42,56-61
+e2e/pages/view-nav-rail.ts
+  s_fa24311fac51fd::t_d7792ad3bd523d 11-16,27
+  s_fa24311fac51fd::t_7c820b3e9a020c 17,28,30-41
+docs/taxon-view-tab-visibility.md
+  s_fa24311fac51fd::t_ce641e40ef86cd 26-31,203-226,242-248,262,439-442,446-457
+  s_fa24311fac51fd::t_f31b08804593ac 228-239,249-255
+  s_fa24311fac51fd::t_b8bf94608ce37c 227,240-241,259-261
+  s_fa24311fac51fd::t_b0a15e4548f7bd 256-258
+src/app/api/e2e-mock/[...path]/route.ts
+  s_fa24311fac51fd::t_4f6f9d95df98bc 11,1215,1221-1229,1240-1241,1243-1248,1250-1266,1310-1311
+  s_fa24311fac51fd::t_ea1ba530aa69f6 1169-1173,1192-1193,1200,1202-1204,1213-1214,1230-1232,1234-1237,1249
+  s_fa24311fac51fd::t_5b4866a6edee6f 1174-1191,1194-1199,1201,1205-1212,1216-1220,1233,1238-1239,1242
+  s_fa24311fac51fd::t_2423cab9473089 1312
+src/app/api/e2e-mock/[...path]/__tests__/route.test.ts
+  s_fa24311fac51fd::t_c0a7588f5d609c 1556
+  s_fa24311fac51fd::t_fcf82bb3a00630 12,21,1503-1555,1560-1564,1566-1569,1575,1600
+  s_fa24311fac51fd::t_19260f1062bf83 1557-1559,1565,1570-1574,1576-1599,1601-1680
+  s_fa24311fac51fd::t_23099876262e02 1681-1682
+docs/architecture.md
+  s_fa24311fac51fd::t_b0a15e4548f7bd 89
+  s_fa24311fac51fd::t_971f9dbdf406c4 290
+src/components/organisms/landing-shell/landing-mobile-nav.tsx
+  s_fa24311fac51fd::t_e790fc25d67692 106
+src/components/organisms/landing-shell/landing-shell.tsx
+  s_fa24311fac51fd::t_22d73609b724f5 21-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2efe2c7c8515f97ca06ef9975f2123037e87c1b7",
+  "prompts": {},
+  "sessions": {
+    "s_fa24311fac51fd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2811aa6a-026c-442a-938f-32ccbf840981",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+src/lib/copilot/edge-tab.ts
+  s_38fbc3e0f6bf0f::t_bf69e114305449 15,18
+src/components/search/search-bar.tsx
+  s_38fbc3e0f6bf0f::t_240b88b04ca149 159
+e2e/pages/navbar.ts
+  s_38fbc3e0f6bf0f::t_6551e65b5ef62e 94-95
+  s_38fbc3e0f6bf0f::t_41461bf36d1a9f 80-82
+  s_38fbc3e0f6bf0f::t_46317730a6e4c0 83
+  s_38fbc3e0f6bf0f::t_ff28cef4a5fd41 75-79,84-93,96-111
+src/lib/copilot/__tests__/edge-tab.test.ts
+  s_38fbc3e0f6bf0f::t_bf69e114305449 42,61,63-64
+src/components/navbars/mobile-navbar.tsx
+  s_38fbc3e0f6bf0f::t_bf69e114305449 91
+  s_38fbc3e0f6bf0f::t_67ac3014fbac42 215
+src/app/layout.tsx
+  s_38fbc3e0f6bf0f::t_bf69e114305449 71
+e2e/tests/header-height.spec.ts
+  s_38fbc3e0f6bf0f::t_4822212735c219 1-11,16-20,24-107
+  s_38fbc3e0f6bf0f::t_875bd88e15e0c9 21-23
+  s_38fbc3e0f6bf0f::t_bf69e114305449 12-13,15
+  s_38fbc3e0f6bf0f::t_67ac3014fbac42 14
+src/components/navbars/desktop-navbar.tsx
+  s_38fbc3e0f6bf0f::t_bf69e114305449 56
+docs/architecture.md
+  s_38fbc3e0f6bf0f::t_bf69e114305449 365
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f2d57eef7f03d0781588679b86e203e319de2c07",
+  "prompts": {},
+  "sessions": {
+    "s_38fbc3e0f6bf0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9d59e76-4c0b-4916-ab65-fd20fa5beda6",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

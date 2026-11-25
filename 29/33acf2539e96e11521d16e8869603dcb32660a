@@ -1,0 +1,24 @@
+src/components/navbars/__tests__/desktop-navbar-resources.test.tsx
+  s_a588be3ad128f6::t_fb2e8335ebdbbe 68
+  s_a588be3ad128f6::t_b61bfd0abf5bd5 83
+  s_a588be3ad128f6::t_8543212619cf8e 50-52
+  s_a588be3ad128f6::t_4760521f854044 1-49,53-67,69-82,84-113
+src/components/navbars/desktop-navbar.tsx
+  s_a588be3ad128f6::t_d67ae6043a3543 284-285,288-296,298-310
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2933acf2539e96e11521d16e8869603dcb32660a",
+  "prompts": {},
+  "sessions": {
+    "s_a588be3ad128f6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5a9191b-cc33-4f12-bff9-01ff93e0f0cb",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}

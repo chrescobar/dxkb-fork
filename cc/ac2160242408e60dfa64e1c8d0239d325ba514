@@ -1,0 +1,55 @@
+src/app/(auth)/sign-in/__tests__/sign-in-view.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 10-13,16,24-27,67-122
+src/app/(auth)/sign-up/__tests__/sign-up-view.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 10-13,16,43,101-132
+src/app/workspace/__tests__/catch-all-redirects.test.ts
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 54-55
+src/app/(auth)/sign-in/sign-in-view.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 9,49-50,83-84,200
+src/app/(auth)/sign-up/sign-up-view.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 17,31-32,62-63,87
+src/components/navbars/navbar-links.ts
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 303-306,332,367,373
+src/components/ui/__tests__/card-description.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 1-39
+src/components/navbars/__tests__/mobile-workspace-section.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 25-34,70-85
+src/components/search/__tests__/command-palette.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 223-224,237-243
+src/components/navbars/__tests__/desktop-navbar-external-links.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 1-75
+src/lib/auth/__tests__/sign-in-prompt.test.ts
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 1-171
+src/lib/auth/sign-in-prompt.ts
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 1-157
+src/components/navbars/desktop-navbar.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 304-305,308-316,318-330
+src/components/navbars/__tests__/mobile-sheet-navigation.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 23-29,89-106
+  s_4570e28539e9a7::t_914e12122c9a16 107-108
+src/components/navbars/__tests__/workspace-nav-utils.test.ts
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 1-50
+src/components/ui/card.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 72-88,92
+src/components/navbars/__tests__/desktop-navbar-resources.test.tsx
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 1-113
+docs/architecture.md
+  s_4570e28539e9a7::t_bd242a2a0f8b8c 62
+  s_4570e28539e9a7::t_bafb479a0af10c 366
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ccac2160242408e60dfa64e1c8d0239d325ba514",
+  "prompts": {},
+  "sessions": {
+    "s_4570e28539e9a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b3f77b06-6434-45a2-8287-2ee703bb70f7",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Escobar <chrescobar@uchicago.edu>"
+    }
+  }
+}
